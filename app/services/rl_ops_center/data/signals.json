@@ -1,0 +1,2 @@
+{"metrics":{"reward_drift":0.032,"action_entropy":0.61,"policy_div":0.12,"coverage_gap":0.08},
+ "thresholds":{"reward_drift_max":0.08,"action_entropy_min":0.40,"policy_div_max":0.30,"coverage_gap_max":0.20}}

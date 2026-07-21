@@ -1,0 +1,1380 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>项目联动中枢</title>
+  <style>
+    :root{
+      --bg:#08111f;--panel:#0d1a2c;--panel2:#10213a;--line:#22385d;--text:#edf6ff;--muted:#9bb2d1;
+      --blue:#60a5fa;--cyan:#22d3ee;--green:#34d399;--amber:#f59e0b;--red:#fb7185;--violet:#a78bfa;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:radial-gradient(circle at 50% -10%,rgba(37,99,235,.20),transparent 34%),radial-gradient(circle at 88% 18%,rgba(34,211,238,.08),transparent 28%),linear-gradient(180deg,#08111f,#0b1424 48%,#07111d);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans SC",sans-serif}
+    button,input,textarea,select{font:inherit}
+    button{border:1px solid rgba(96,165,250,.30);background:#17345e;color:#f7fbff;border-radius:8px;min-height:36px;padding:0 12px;font-weight:850;cursor:pointer}
+    button:hover{border-color:rgba(34,211,238,.70);background:#1e4a84}
+    button.secondary{background:#111f35;color:#cfe1ff}
+    button.green{background:#0f5f49;border-color:rgba(52,211,153,.48)}
+    button.amber{background:#6b470d;border-color:rgba(245,158,11,.54)}
+    button.red{background:#6b1730;border-color:rgba(251,113,133,.50)}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    button.autoclick-target{border-color:rgba(34,211,238,.95);box-shadow:0 0 0 3px rgba(34,211,238,.18),0 0 30px rgba(34,211,238,.36);transform:translateY(-1px)}
+    .shell{width:min(1480px,calc(100vw - 36px));margin:0 auto;padding:24px 0 30px}
+    .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:16px}
+    h1{margin:0;font-size:26px;line-height:1.2;letter-spacing:0}
+    .subtitle{margin-top:6px;color:var(--muted);font-size:13px}
+    .top-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+    .status-strip{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:14px 0 16px}
+    .status-pill{border:1px solid var(--line);background:linear-gradient(180deg,rgba(16,33,58,.92),rgba(8,17,31,.92));border-radius:8px;padding:10px 12px;min-width:0}
+    .status-pill span{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}
+    .status-pill b{display:block;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .status-pill.ok b{color:var(--green)} .status-pill.warn b{color:var(--amber)} .status-pill.bad b{color:var(--red)}
+    .hub-grid{display:grid;grid-template-columns:.9fr 1.35fr .82fr;gap:14px;align-items:stretch}
+    .panel{border:1px solid var(--line);border-radius:8px;background:linear-gradient(180deg,rgba(14,29,50,.96),rgba(7,16,30,.96));box-shadow:0 18px 46px rgba(0,0,0,.24);min-width:0;overflow:hidden}
+    .panel-head{padding:14px 14px 10px;border-bottom:1px solid rgba(148,163,184,.14);display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .panel-head h2{margin:0;font-size:15px;line-height:1.3}
+    .panel-head .tag{font-size:11px;color:#c7d2fe;border:1px solid rgba(167,139,250,.35);border-radius:999px;padding:3px 8px;white-space:nowrap}
+    .panel-body{padding:14px;display:grid;gap:12px}
+    .field{display:grid;gap:7px}
+    .field label{font-size:12px;color:#b9c8df;font-weight:800}
+    textarea,input,select{width:100%;border:1px solid rgba(96,165,250,.24);border-radius:8px;background:#071321;color:var(--text);padding:10px;outline:none}
+    textarea{min-height:112px;resize:vertical;line-height:1.5}
+    textarea:focus,input:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 2px rgba(34,211,238,.12)}
+    .button-row{display:flex;gap:8px;flex-wrap:wrap}
+    .answer{min-height:112px;border:1px solid rgba(148,163,184,.16);border-radius:8px;background:#091628;padding:11px;color:#dbeafe;white-space:pre-line;line-height:1.6;font-size:13px}
+    .policy-recovery[hidden]{display:none}
+    .policy-recovery{border:1px solid rgba(245,158,11,.42);border-radius:10px;background:linear-gradient(180deg,rgba(91,52,8,.28),rgba(31,24,17,.58));padding:11px;display:grid;gap:9px;box-shadow:inset 3px 0 0 rgba(245,158,11,.72)}
+    .policy-recovery-head{display:flex;align-items:flex-start;gap:9px}.policy-recovery-icon{width:28px;height:28px;flex:0 0 28px;border-radius:50%;display:grid;place-items:center;background:#6b470d;color:#fde68a;font-weight:950}.policy-recovery-head b{display:block;color:#fde7b1;font-size:12px}.policy-recovery-head span{display:block;margin-top:3px;color:#c7b48f;font-size:10px;line-height:1.45}
+    .policy-recovery-status{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.policy-recovery-status div{border:1px solid rgba(245,158,11,.16);border-radius:7px;background:rgba(7,17,29,.58);padding:7px}.policy-recovery-status span{display:block;color:#9b8b6e;font-size:8px}.policy-recovery-status b{display:block;margin-top:3px;color:#f5dfb5;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .policy-recovery label{color:#d4c29f;font-size:10px;font-weight:850}.policy-recovery select{min-height:38px;font-size:11px}.policy-recovery-actions{display:flex;gap:7px;flex-wrap:wrap}.policy-recovery-actions button{flex:1;min-width:150px}.policy-recovery-note{color:#9f8e70;font-size:9px;line-height:1.45}
+    .packet{min-height:120px;max-height:310px;overflow:auto;border:1px solid rgba(96,165,250,.16);border-radius:8px;background:#07111d;padding:10px;color:#bdd7ff;font-size:12px;line-height:1.5;white-space:pre-wrap}
+    .metric-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+    .metric{border:1px solid rgba(148,163,184,.16);background:#0a1728;border-radius:8px;padding:10px;min-width:0}
+    .metric span{display:block;font-size:11px;color:var(--muted);margin-bottom:5px}
+    .metric b{display:block;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .flow{display:grid;gap:8px}
+    .flow-row{display:grid;grid-template-columns:28px minmax(0,1fr);gap:9px;align-items:start}
+    .flow-dot{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:#123a63;border:1px solid rgba(96,165,250,.35);color:#dff7ff;font-weight:900;font-size:12px}
+    .flow-row b{display:block;font-size:13px;margin-bottom:3px}
+    .flow-row span{display:block;color:var(--muted);font-size:12px;line-height:1.45}
+    .sailing-state{display:grid;gap:9px}
+    .state-line{display:flex;justify-content:space-between;gap:10px;border-bottom:1px dashed rgba(148,163,184,.14);padding-bottom:7px;font-size:12px}
+    .state-line span{color:var(--muted)} .state-line b{text-align:right;word-break:break-all}
+    .log-panel{margin-top:14px;border:1px solid var(--line);border-radius:8px;background:#07111f;overflow:hidden}
+    .log-head{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;border-bottom:1px solid rgba(148,163,184,.14)}
+    .log-head h2{margin:0;font-size:14px}
+    .log-list{min-height:150px;max-height:260px;overflow:auto;padding:10px 14px;display:grid;gap:8px}
+    .log-item{display:grid;grid-template-columns:132px 150px minmax(0,1fr);gap:10px;align-items:start;color:#cfe1ff;font-size:12px;border-bottom:1px solid rgba(148,163,184,.10);padding-bottom:7px}
+    .log-item .time{color:#8fb2d8}.log-item .kind{font-weight:900;color:#7dd3fc}.log-item .msg{white-space:pre-wrap;word-break:break-word}
+    .mono{font-family:"SFMono-Regular",Consolas,Menlo,monospace}
+    .en{color:#7fa1ce;font-size:.76em;font-weight:800;letter-spacing:.02em}
+    .impact-deck{position:relative;display:grid;grid-template-columns:230px minmax(0,1fr) 320px;gap:14px;margin:0 0 16px;padding:14px;border:1px solid rgba(34,211,238,.34);border-radius:12px;background:linear-gradient(120deg,rgba(7,24,43,.98),rgba(12,28,53,.96) 54%,rgba(10,34,55,.96));box-shadow:0 0 0 1px rgba(96,165,250,.08),0 22px 56px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.04);overflow:hidden}
+    .impact-deck::before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(34,211,238,.06),transparent);transform:translateX(-100%);animation:deckScan 6s linear infinite;pointer-events:none}
+    @keyframes deckScan{to{transform:translateX(100%)}}
+    .impact-block{position:relative;z-index:1;min-width:0}
+    .impact-kicker{color:#67e8f9;font-size:10px;letter-spacing:.16em;font-weight:950;text-transform:uppercase;margin-bottom:7px}
+    .target-live{height:100%;border:1px solid rgba(96,165,250,.20);border-radius:9px;background:rgba(4,15,29,.58);padding:11px;display:grid;align-content:center;gap:5px}
+    .target-live strong{font-size:17px;color:#f2f8ff}.target-live .model-id{color:#93c5fd;font-size:11px}.target-live .target-state{display:inline-flex;align-items:center;gap:6px;color:#6ee7b7;font-size:11px;font-weight:900}
+    .target-state::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 14px var(--green)}
+    .policy-pipeline{height:100%;display:grid;align-content:center}
+    .pipeline-track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;position:relative;margin-top:6px}
+    .pipeline-track::before{content:"";position:absolute;left:10%;right:10%;top:20px;height:2px;background:linear-gradient(90deg,rgba(52,211,153,.70),rgba(34,211,238,.55),rgba(96,165,250,.24));box-shadow:0 0 12px rgba(34,211,238,.28)}
+    .stage-node{position:relative;z-index:1;text-align:center;display:grid;justify-items:center;gap:5px;color:#7891b4;transition:.28s ease}
+    .stage-node .stage-icon{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;border:1px solid rgba(148,163,184,.28);background:#081629;font-size:13px;font-weight:950;transition:.28s ease}
+    .stage-node b{font-size:11px}.stage-node span{font-size:9px;letter-spacing:.08em}
+    .stage-node.done{color:#b9f6df}.stage-node.done .stage-icon{border-color:rgba(52,211,153,.78);background:#0c4338;color:#d1fae5;box-shadow:0 0 22px rgba(52,211,153,.30)}
+    .stage-node.active{color:#cffafe;transform:translateY(-2px)}.stage-node.active .stage-icon{border-color:#22d3ee;background:#0c3a53;color:white;box-shadow:0 0 0 5px rgba(34,211,238,.10),0 0 28px rgba(34,211,238,.58);animation:stagePulse 1s ease-in-out infinite alternate}
+    .stage-node.blocked{color:#fecdd3}.stage-node.blocked .stage-icon{border-color:var(--red);background:#4c1728}
+    @keyframes stagePulse{to{box-shadow:0 0 0 8px rgba(34,211,238,.04),0 0 38px rgba(34,211,238,.72)}}
+    .live-events{border-left:1px solid rgba(96,165,250,.18);padding-left:14px;min-width:0}
+    .live-event-list{display:grid;gap:6px;max-height:98px;overflow:hidden}
+    .live-event{display:grid;grid-template-columns:54px 68px minmax(0,1fr);gap:6px;align-items:center;border-bottom:1px solid rgba(148,163,184,.10);padding-bottom:5px;font-size:10px}
+    .live-event time{color:#7394bd}.live-event b{color:#67e8f9;white-space:nowrap}.live-event span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#d5e6fa}
+    .impact-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;margin-top:8px}
+    .impact-metric{border:1px solid rgba(96,165,250,.16);border-radius:7px;padding:6px 7px;background:rgba(5,16,30,.72)}
+    .impact-metric span{display:block;color:#7891b4;font-size:9px}.impact-metric b{display:block;margin-top:2px;color:#e0f2fe;font-size:12px}
+    .target-selector{display:grid;gap:8px}
+    .section-title{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#dbeafe;font-weight:900;font-size:12px}
+    .section-title small{color:#718caf;font-size:9px;letter-spacing:.08em;text-transform:uppercase}
+    .target-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+    .target-card{position:relative;display:grid;gap:3px;text-align:left;min-height:58px;padding:9px 10px;border-radius:9px;background:#0a1930;border:1px solid rgba(96,165,250,.20);overflow:hidden}
+    .target-card:last-child{grid-column:1/-1}
+    .target-card strong{font-size:12px;line-height:1.25}.target-card span{color:#86a5ce;font-size:9px;letter-spacing:.03em}.target-card em{position:absolute;right:8px;top:8px;font-style:normal;color:#7891b4;font-size:9px;font-weight:900}
+    .target-card.selected{border-color:#22d3ee;background:linear-gradient(135deg,#0c2a45,#12305b);box-shadow:0 0 0 2px rgba(34,211,238,.10),0 10px 24px rgba(3,105,161,.18)}
+    .target-card.selected::after{content:"SELECTED";position:absolute;right:8px;bottom:6px;color:#5ee6f6;font-size:7px;letter-spacing:.12em;font-weight:950}
+    .parameter-panel{border:1px solid rgba(167,139,250,.28);border-radius:10px;background:linear-gradient(180deg,rgba(12,24,48,.88),rgba(7,17,32,.88));padding:11px;display:grid;gap:10px}
+    .config-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+    .config-chip{border:1px solid rgba(96,165,250,.16);border-radius:8px;background:rgba(5,17,33,.72);padding:8px;min-width:0}.config-chip span{display:block;color:#7891b4;font-size:8px;letter-spacing:.05em;text-transform:uppercase}.config-chip b{display:block;margin-top:3px;color:#e6f2ff;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .config-weight-bars{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.config-weight{display:grid;gap:4px;color:#8ea6c8;font-size:8px}.config-weight div{height:4px;border-radius:99px;background:#06101d;overflow:hidden}.config-weight i{display:block;height:100%;width:var(--weight);background:linear-gradient(90deg,#2563eb,#22d3ee);box-shadow:0 0 10px rgba(34,211,238,.45)}
+    .parameter-open-row{display:flex;align-items:center;gap:8px}.parameter-open-row button{flex:1;min-height:42px;background:linear-gradient(135deg,#312e81,#2563eb);border-color:rgba(129,140,248,.58)}.parameter-count{min-width:98px;border:1px solid rgba(167,139,250,.26);border-radius:8px;background:#0c1630;padding:7px 9px;text-align:center}.parameter-count b{display:block;color:#c4b5fd;font-size:15px}.parameter-count span{display:block;color:#718caf;font-size:8px}
+    .weight-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 18px}
+    .weight-field{display:grid;grid-template-columns:92px minmax(0,1fr) 38px;align-items:center;gap:7px;font-size:10px;color:#9eb5d4}.weight-field output{text-align:right;color:#67e8f9;font-weight:900}
+    input[type="range"]{height:4px;padding:0;accent-color:#22d3ee;border:0;box-shadow:none}
+    .recommend-row{display:flex;gap:8px;align-items:stretch}.recommend-row button{min-height:40px}.recommend-row .xiaoyi-recommend{flex:1;background:linear-gradient(135deg,#6d28d9,#2563eb 56%,#0891b2);border-color:rgba(165,180,252,.66);box-shadow:0 8px 24px rgba(79,70,229,.24)}
+    .recommend-note{border-left:3px solid #a78bfa;border-radius:0 7px 7px 0;background:rgba(76,29,149,.13);padding:7px 9px;color:#b9ccec;font-size:10px;line-height:1.45;min-height:44px}
+    button.primary-impact{background:linear-gradient(135deg,#0369a1,#0e7490);border-color:rgba(34,211,238,.70);box-shadow:0 8px 22px rgba(6,182,212,.17)}
+    .modal-backdrop{position:fixed;inset:0;z-index:5000;display:none;align-items:center;justify-content:center;padding:22px;background:rgba(2,8,18,.82);backdrop-filter:blur(10px)}
+    .modal-backdrop.open{display:flex}
+    .modal-window{width:min(1120px,calc(100vw - 34px));max-height:calc(100vh - 36px);display:flex;flex-direction:column;border:1px solid rgba(96,165,250,.38);border-radius:14px;background:linear-gradient(180deg,#0d1c32,#071321);box-shadow:0 36px 100px rgba(0,0,0,.62),0 0 0 1px rgba(34,211,238,.06);overflow:hidden}
+    .modal-head{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;padding:16px 18px;border-bottom:1px solid rgba(148,163,184,.15);background:linear-gradient(90deg,rgba(30,58,138,.18),rgba(8,145,178,.08))}.modal-head h2{margin:0;font-size:19px}.modal-head p{margin:5px 0 0;color:#8fa8c9;font-size:11px;line-height:1.45}.modal-close{min-width:36px;width:36px;padding:0;border-radius:50%;background:#101d31;color:#a9bdd7}
+    .modal-scroll{overflow:auto;padding:16px 18px;display:grid;gap:14px;overscroll-behavior:contain}
+    .modal-foot{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 18px;border-top:1px solid rgba(148,163,184,.15);background:#081423}.modal-foot-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}.modal-foot-note{color:#7f99bb;font-size:10px}
+    .advanced-intro{display:grid;grid-template-columns:1.2fr repeat(3,minmax(0,.55fr));gap:8px}.advanced-intro-card{border:1px solid rgba(96,165,250,.18);border-radius:9px;background:#09172a;padding:10px}.advanced-intro-card span{display:block;color:#7891b4;font-size:9px}.advanced-intro-card b{display:block;margin-top:4px;color:#e3f1ff;font-size:12px}
+    .advanced-section{border:1px solid rgba(96,165,250,.16);border-radius:10px;background:rgba(6,17,31,.62);padding:12px;display:grid;gap:10px}.advanced-section-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.advanced-section-head h3{margin:0;font-size:12px;color:#dbeafe}.advanced-section-head span{color:#6986ad;font-size:8px;letter-spacing:.10em;text-transform:uppercase}
+    .advanced-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.advanced-field{display:grid;gap:5px;min-width:0}.advanced-field label{color:#8fa8c9;font-size:9px;font-weight:850}.advanced-field input,.advanced-field select{min-height:36px;padding:8px;border-radius:7px;font-size:11px}.advanced-field small{color:#607ba0;font-size:8px;line-height:1.35}
+    .algo-panel{display:none}.algo-panel.active{display:grid}.algo-badge{display:inline-flex;align-items:center;gap:6px;border:1px solid rgba(34,211,238,.25);border-radius:999px;padding:4px 9px;color:#67e8f9;font-size:9px;font-weight:900;background:rgba(8,145,178,.08)}
+    .xiaoyi-gate-window{width:min(640px,calc(100vw - 34px));border-color:rgba(167,139,250,.48)}.human-gate-banner{display:flex;align-items:center;gap:10px;border:1px solid rgba(245,158,11,.28);border-radius:9px;background:rgba(120,53,15,.14);padding:10px;color:#fcd58b;font-size:11px}.human-gate-icon{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:#5f3a0a;border:1px solid rgba(245,158,11,.45);font-weight:950}.confirm-details{display:grid;gap:7px}.confirm-line{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;border-bottom:1px solid rgba(148,163,184,.11);padding:7px 0;font-size:11px}.confirm-line span{color:#829cbd}.confirm-line b{color:#e4effc;text-align:right;word-break:break-word}.confirm-boundary{border-left:3px solid var(--green);background:rgba(6,78,59,.13);padding:9px 10px;color:#a7f3d0;font-size:10px;line-height:1.55}
+    body.modal-open{overflow:hidden}
+    @media(max-width:1250px){.impact-deck{grid-template-columns:190px minmax(0,1fr) 270px}.advanced-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:1100px){.hub-grid,.status-strip,.impact-deck{grid-template-columns:1fr}.topbar{align-items:flex-start;flex-direction:column}.top-actions{justify-content:flex-start}.log-item{grid-template-columns:1fr}.live-events{border-left:0;border-top:1px solid rgba(96,165,250,.18);padding:10px 0 0}.advanced-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:650px){.target-grid,.weight-grid,.config-summary,.advanced-grid,.advanced-intro{grid-template-columns:1fr}.target-card:last-child{grid-column:auto}.pipeline-track{gap:6px}.pipeline-track::before{left:8%;right:8%}.stage-node b{font-size:9px}.impact-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.modal-backdrop{padding:8px}.modal-window{width:100%;max-height:calc(100vh - 16px)}.confirm-line{grid-template-columns:1fr}.confirm-line b{text-align:left}.modal-foot{align-items:flex-start;flex-direction:column}.modal-foot-actions{width:100%}.modal-foot-actions button{flex:1}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <div class="topbar">
+      <div>
+        <h1>项目联动中枢</h1>
+        <div class="subtitle">小懿AI · RL 训练/策略测试 · Godot 航行模拟器</div>
+      </div>
+      <div class="top-actions">
+        <button class="secondary" id="btnBackHome">回首页</button>
+        <button class="secondary" id="btnOpenRl">打开 RL 面板</button>
+        <button id="btnRefreshAll">刷新联动状态</button>
+      </div>
+    </div>
+
+    <section class="status-strip">
+      <div class="status-pill ok"><span>port-dt-multi</span><b id="stPlatform">在线</b></div>
+      <div class="status-pill warn" id="pillXiaoyi"><span>小懿AI</span><b id="stXiaoyi">检测中</b></div>
+      <div class="status-pill warn" id="pillRl"><span>RL 接口</span><b id="stRl">检测中</b></div>
+      <div class="status-pill warn" id="pillSailing"><span>航行模拟器</span><b id="stSailing">检测中</b></div>
+    </section>
+
+    <section class="impact-deck" aria-label="策略验证实时态势">
+      <div class="impact-block target-live">
+        <div class="impact-kicker">Experiment Profile · Configured</div>
+        <strong id="impactTargetName">岸电储能</strong>
+        <span class="model-id mono" id="impactTargetModel">shore_bess · SAC policy</span>
+        <span class="target-state" id="impactTargetState">等待后端训练与评测产物</span>
+      </div>
+      <div class="impact-block policy-pipeline">
+        <div class="impact-kicker">Policy Validation Flight Deck</div>
+        <div class="pipeline-track">
+          <div class="stage-node done" id="stageArtifact"><div class="stage-icon">01</div><b>POLICY 产物</b><span>ARTIFACT READY</span></div>
+          <div class="stage-node" id="stageSimulation"><div class="stage-icon">02</div><b>策略仿真</b><span>SIMULATION</span></div>
+          <div class="stage-node" id="stageGuardrail"><div class="stage-icon">03</div><b>安全护栏</b><span>RLOPS GATE</span></div>
+          <div class="stage-node" id="stageDryRun"><div class="stage-icon">04</div><b>DRY-RUN</b><span>NO PRODUCTION</span></div>
+        </div>
+      </div>
+      <div class="impact-block live-events">
+        <div class="impact-kicker">Unified Action Stream</div>
+        <div class="live-event-list" id="impactEventList"></div>
+        <div class="impact-metrics">
+          <div class="impact-metric"><span>节电</span><b id="impactEnergy">—</b></div>
+          <div class="impact-metric"><span>降碳</span><b id="impactCarbon">—</b></div>
+          <div class="impact-metric"><span>削峰</span><b id="impactPeak">—</b></div>
+          <div class="impact-metric"><span>风险</span><b id="impactRisk">WAIT</b></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="hub-grid">
+      <div class="panel">
+        <div class="panel-head">
+          <h2>小懿问答 / 指令网关</h2>
+          <span class="tag">assistant gateway</span>
+        </div>
+        <div class="panel-body">
+          <div class="field">
+            <label for="assistantCommand">自然语言或动作 ID</label>
+            <textarea id="assistantCommand" placeholder="例如：小懿，启动航线演示"></textarea>
+          </div>
+          <div class="field">
+            <label for="assistantAction">动作映射</label>
+            <select id="assistantAction">
+              <option value="">自动识别</option>
+            </select>
+          </div>
+          <div class="button-row">
+            <button class="secondary" id="btnXiaoyiStart">启动小懿AI</button>
+            <button id="btnAskXiaoyi">让小懿判断</button>
+            <button class="green" id="btnConfirmAction" disabled>确认执行</button>
+            <button class="secondary" id="btnClearAssistant">清空</button>
+          </div>
+          <div class="answer" id="assistantAnswer"></div>
+          <div class="policy-recovery" id="policyRecovery" hidden>
+            <div class="policy-recovery-head"><span class="policy-recovery-icon">!</span><div><b id="policyRecoveryTitle">当前训练未完成，无法验证上线</b><span id="policyRecoveryMessage">未开始安全校验和上线演练。</span></div></div>
+            <div class="policy-recovery-status">
+              <div><span>当前训练状态</span><b id="policyRecoveryStatus">—</b></div>
+              <div><span>当前训练进度</span><b id="policyRecoveryProgress">—</b></div>
+            </div>
+            <label for="completedPolicySelect">选择已完成并归档的演练策略</label>
+            <select id="completedPolicySelect"></select>
+            <div class="policy-recovery-actions">
+              <button type="button" class="amber" id="btnUseCompletedPolicy">使用已完成策略继续演练</button>
+              <button type="button" class="secondary" id="btnCancelPolicyRecovery">取消本次验证</button>
+            </div>
+            <div class="policy-recovery-note">改用归档策略前仍需再次人工确认；后续只执行安全护栏、策略仿真和 dry-run 演练记录，不进入生产。</div>
+          </div>
+          <pre class="packet" id="assistantPacket">等待指令。</pre>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>RL 训练 / 测试链路</h2>
+          <span class="tag">policy loop</span>
+        </div>
+        <div class="panel-body">
+          <div class="target-selector">
+            <div class="section-title"><span>实验配置档案 <span class="en">/ Experiment Profile</span></span><small>5 integration profiles</small></div>
+            <div class="target-grid" id="trainingTargetGrid">
+              <button type="button" class="target-card" data-training-target="yard_lighting"><strong>堆场照明</strong><span>Yard Lighting</span><em>DQN</em></button>
+              <button type="button" class="target-card" data-training-target="hvac_cooling"><strong>暖通空调</strong><span>HVAC Cooling</span><em>SAC</em></button>
+              <button type="button" class="target-card selected" data-training-target="shore_bess"><strong>岸电储能</strong><span>Shore Power &amp; BESS</span><em>SAC</em></button>
+              <button type="button" class="target-card" data-training-target="bess_energy"><strong>储能能量调度</strong><span>BESS Energy Dispatch</span><em>TD3</em></button>
+              <button type="button" class="target-card" data-training-target="yard_crane"><strong>场桥作业</strong><span>Yard Crane Operations</span><em>PPO</em></button>
+            </div>
+          </div>
+          <div class="parameter-panel">
+            <div class="section-title"><span>训练配置摘要 <span class="en">/ Training Configuration</span></span><small id="parameterProfile">PORT-SAFE PROFILE</small></div>
+            <div class="config-summary">
+              <div class="config-chip"><span>Algorithm</span><b id="summaryAlgorithm">SAC</b></div>
+              <div class="config-chip"><span>Total Steps</span><b id="summarySteps">260,000</b></div>
+              <div class="config-chip"><span>Learning Rate</span><b id="summaryLearningRate">0.00026</b></div>
+              <div class="config-chip"><span>Batch / Horizon</span><b id="summaryBatchHorizon">256 · 12 h</b></div>
+              <div class="config-chip"><span>Network</span><b id="summaryNetwork">256 × 256 · SiLU</b></div>
+              <div class="config-chip"><span>Guardrail</span><b id="summaryGuardrail">STRICT</b></div>
+            </div>
+            <div class="config-weight-bars" aria-label="奖励权重摘要">
+              <div class="config-weight"><span>能耗 0.18</span><div><i id="summaryCostBar" style="--weight:30%"></i></div></div>
+              <div class="config-weight"><span>降碳 0.30</span><div><i id="summaryCarbonBar" style="--weight:50%"></i></div></div>
+              <div class="config-weight"><span>削峰 0.20</span><div><i id="summaryPeakBar" style="--weight:33%"></i></div></div>
+              <div class="config-weight"><span>安全 0.28</span><div><i id="summarySafetyBar" style="--weight:47%"></i></div></div>
+            </div>
+            <div class="parameter-open-row">
+              <button type="button" id="btnOpenAdvancedParams">打开高级训练参数窗口 / Advanced Settings</button>
+              <div class="parameter-count"><b id="parameterCount">30+</b><span>可调参数 / controls</span></div>
+            </div>
+            <div class="recommend-row">
+              <button type="button" class="xiaoyi-recommend" id="btnXiaoyiRecommend">✦ 小懿一键推荐参数</button>
+              <button type="button" class="green" id="btnRlLowRisk">送入小懿确认</button>
+            </div>
+            <div class="recommend-note" id="trainingRecommendation">已加载岸电与 BESS 联动的安全训练基线。点击“小懿一键推荐参数”，将通过动作网关生成可解释的参数建议。</div>
+          </div>
+          <div class="metric-grid">
+            <div class="metric"><span>训练状态</span><b id="rlStatus">—</b></div>
+            <div class="metric"><span>进度</span><b id="rlProgress">—</b></div>
+            <div class="metric"><span>step / reward</span><b id="rlStepReward">—</b></div>
+            <div class="metric"><span>policy</span><b id="rlPolicy">—</b></div>
+          </div>
+          <div class="button-row">
+            <button id="btnRlStatus">查看训练状态</button>
+            <button class="primary-impact" id="btnRlPolicyTest">策略测试 / Policy Test</button>
+            <button class="secondary" id="btnRlPanel">进入训练 UI</button>
+          </div>
+          <div class="flow">
+            <div class="flow-row"><div class="flow-dot">1</div><div><b>小懿识别目标</b><span id="flowIntent">等待训练或测试指令。</span></div></div>
+            <div class="flow-row"><div class="flow-dot">2</div><div><b>RL 面板执行</b><span id="flowRl">训练启动保留人工确认，策略测试读取最新 artifact。</span></div></div>
+            <div class="flow-row"><div class="flow-dot">3</div><div><b>航行模拟器承接</b><span id="flowSailing">航行场景启动、视角动作和 smoke test 进入统一日志。</span></div></div>
+          </div>
+          <pre class="packet" id="rlPacket">等待 RL 状态。</pre>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <h2>航行模拟器状态</h2>
+          <span class="tag">Godot bridge</span>
+        </div>
+        <div class="panel-body">
+          <div class="sailing-state">
+            <div class="state-line"><span>项目路径</span><b id="sailingProject">—</b></div>
+            <div class="state-line"><span>Godot</span><b id="sailingGodot">—</b></div>
+            <div class="state-line"><span>控制模式</span><b id="sailingControl">—</b></div>
+            <div class="state-line"><span>进程</span><b id="sailingProcess">—</b></div>
+          </div>
+          <div class="button-row">
+            <button id="btnSailingLaunch">打开 Godot 航行模拟器</button>
+            <button id="btnSailingRouteDemo">启动航线演示</button>
+            <button class="secondary" id="btnSailingSwitchView">切换船舶视角</button>
+            <button class="amber" id="btnSailingSmoke">运行 smoke test</button>
+          </div>
+          <pre class="packet" id="sailingPacket">等待航行模拟器状态。</pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="log-panel">
+      <div class="log-head">
+        <h2>动作日志</h2>
+        <div class="button-row">
+          <button class="secondary" id="btnLoadSailingLogs">同步航行日志</button>
+          <button class="secondary" id="btnClearLogs">清空前端日志</button>
+        </div>
+      </div>
+      <div class="log-list" id="actionLog"></div>
+    </section>
+  </main>
+
+  <div class="modal-backdrop" id="trainingParamBackdrop" aria-hidden="true">
+    <section class="modal-window" role="dialog" aria-modal="true" aria-labelledby="trainingParamTitle">
+      <div class="modal-head">
+        <div>
+          <h2 id="trainingParamTitle">高级训练参数窗口 <span class="en">/ Advanced RL Configuration</span></h2>
+          <p>单独编辑训练、网络、算法专属、奖励和安全参数；点击“确认应用并返回”后回到联动中枢。</p>
+        </div>
+        <button type="button" class="modal-close" id="btnCloseAdvancedParams" aria-label="关闭高级参数窗口">×</button>
+      </div>
+      <div class="modal-scroll">
+        <div class="advanced-intro">
+          <div class="advanced-intro-card"><span>当前训练目标</span><b id="paramTargetName">岸电储能 / Shore Power &amp; BESS</b></div>
+          <div class="advanced-intro-card"><span>Policy Artifact</span><b class="mono" id="paramModelId">shore_bess</b></div>
+          <div class="advanced-intro-card"><span>配置状态</span><b id="paramConfigState">已应用</b></div>
+          <div class="advanced-intro-card"><span>可调参数</span><b id="paramControlCount">—</b></div>
+        </div>
+
+        <section class="advanced-section">
+          <div class="advanced-section-head"><h3>基础训练参数</h3><span>Core Training</span></div>
+          <div class="advanced-grid">
+            <div class="advanced-field"><label for="trainAlgorithm">算法 / Algorithm</label><select id="trainAlgorithm"><option value="sac">SAC</option><option value="ppo">PPO</option><option value="td3">TD3</option><option value="dqn">DQN</option></select><small>切换后自动显示对应算法专属参数。</small></div>
+            <div class="advanced-field"><label for="trainScenario">训练场景 / Scenario</label><select id="trainScenario"><option value="mapped_dataset">当前映射数据集</option><option value="noon_peak">午间作业高峰</option><option value="night_low_carbon">夜间低碳窗口</option><option value="storm_disruption">台风扰动</option><option value="shore_power_peak">岸电接入高峰</option></select></div>
+            <div class="advanced-field"><label for="trainSteps">训练步数 / Total Steps</label><input id="trainSteps" type="number" min="20000" max="5000000" step="10000" value="260000"></div>
+            <div class="advanced-field"><label for="trainBatch">批次 / Batch Size</label><select id="trainBatch"><option value="64">64</option><option value="128">128</option><option value="256" selected>256</option><option value="512">512</option><option value="1024">1024</option></select></div>
+            <div class="advanced-field"><label for="trainLearningRate">学习率 / Learning Rate</label><input id="trainLearningRate" type="number" min="0.000001" max="0.01" step="0.000001" value="0.00026"></div>
+            <div class="advanced-field"><label for="trainHorizon">预测窗口 / Horizon</label><select id="trainHorizon"><option value="240">4 h</option><option value="360">6 h</option><option value="480">8 h</option><option value="720" selected>12 h</option><option value="1440">24 h</option><option value="2880">48 h</option></select></div>
+            <div class="advanced-field"><label for="trainStepMin">环境步长 / Environment Step</label><select id="trainStepMin"><option value="1">1 min</option><option value="5" selected>5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="30">30 min</option></select></div>
+            <div class="advanced-field"><label for="trainGuardrail">安全护栏 / Guardrail</label><select id="trainGuardrail"><option value="strict" selected>严格 / Strict</option><option value="balanced">均衡 / Balanced</option><option value="audit_only">仅审计 / Audit Only</option></select></div>
+          </div>
+        </section>
+
+        <section class="advanced-section">
+          <div class="advanced-section-head"><h3>网络与优化器</h3><span>Network &amp; Optimizer</span></div>
+          <div class="advanced-grid">
+            <div class="advanced-field"><label for="trainOptimizer">优化器 / Optimizer</label><select id="trainOptimizer"><option value="adamw" selected>AdamW</option><option value="adam">Adam</option><option value="rmsprop">RMSprop</option></select></div>
+            <div class="advanced-field"><label for="trainLrSchedule">学习率计划 / LR Schedule</label><select id="trainLrSchedule"><option value="cosine" selected>Cosine Decay</option><option value="linear">Linear Decay</option><option value="constant">Constant</option></select></div>
+            <div class="advanced-field"><label for="trainGamma">折扣因子 / Gamma</label><input id="trainGamma" type="number" min="0.8" max="0.9999" step="0.0001" value="0.995"></div>
+            <div class="advanced-field"><label for="trainTau">目标网络 τ / Tau</label><input id="trainTau" type="number" min="0.0001" max="0.1" step="0.0001" value="0.005"></div>
+            <div class="advanced-field"><label for="trainEntropyCoef">熵系数 / Entropy Coef</label><input id="trainEntropyCoef" type="number" min="0" max="2" step="0.0001" value="0.016"></div>
+            <div class="advanced-field"><label for="trainWeightDecay">权重衰减 / Weight Decay</label><input id="trainWeightDecay" type="number" min="0" max="1" step="0.000001" value="0.00001"></div>
+            <div class="advanced-field"><label for="trainAdamEpsilon">Adam ε</label><input id="trainAdamEpsilon" type="number" min="0.0000000001" max="0.01" step="0.0000000001" value="0.00000001"></div>
+            <div class="advanced-field"><label for="trainReplayBuffer">回放池 / Replay Buffer</label><input id="trainReplayBuffer" type="number" min="10000" max="5000000" step="10000" value="140000"></div>
+            <div class="advanced-field"><label for="trainWarmupSteps">预热步数 / Warm-up</label><input id="trainWarmupSteps" type="number" min="0" max="500000" step="1000" value="10000"></div>
+            <div class="advanced-field"><label for="trainUpdateFrequency">更新频率 / Update Every</label><input id="trainUpdateFrequency" type="number" min="1" max="128" step="1" value="1"></div>
+            <div class="advanced-field"><label for="trainGradientSteps">梯度更新 / Gradient Steps</label><input id="trainGradientSteps" type="number" min="1" max="128" step="1" value="1"></div>
+            <div class="advanced-field"><label for="trainTargetUpdate">目标网络更新 / Target Update</label><input id="trainTargetUpdate" type="number" min="1" max="10000" step="1" value="1"></div>
+            <div class="advanced-field"><label for="trainHiddenLayers">隐藏层 / Hidden Layers</label><input id="trainHiddenLayers" type="text" value="256,256" placeholder="256,256"></div>
+            <div class="advanced-field"><label for="trainActivation">激活函数 / Activation</label><select id="trainActivation"><option value="silu" selected>SiLU</option><option value="relu">ReLU</option><option value="tanh">Tanh</option><option value="gelu">GELU</option></select></div>
+            <div class="advanced-field"><label for="trainLayerNorm">层归一化 / Layer Norm</label><select id="trainLayerNorm"><option value="true" selected>启用 / Enabled</option><option value="false">关闭 / Disabled</option></select></div>
+            <div class="advanced-field"><label for="trainGradClip">梯度裁剪 / Grad Clip</label><input id="trainGradClip" type="number" min="0" max="100" step="0.1" value="1.0"></div>
+            <div class="advanced-field"><label for="trainObservationNorm">观测归一化 / Obs Norm</label><select id="trainObservationNorm"><option value="true" selected>启用</option><option value="false">关闭</option></select></div>
+            <div class="advanced-field"><label for="trainRewardNorm">奖励归一化 / Reward Norm</label><select id="trainRewardNorm"><option value="true" selected>启用</option><option value="false">关闭</option></select></div>
+            <div class="advanced-field"><label for="trainNStep">N-step Return</label><input id="trainNStep" type="number" min="1" max="20" step="1" value="3"></div>
+          </div>
+        </section>
+
+        <section class="advanced-section">
+          <div class="advanced-section-head"><h3>采样、评估与归档</h3><span>Schedule &amp; Evaluation</span></div>
+          <div class="advanced-grid">
+            <div class="advanced-field"><label for="trainEpisodeLength">单回合长度 / Episode Length</label><input id="trainEpisodeLength" type="number" min="24" max="10000" step="12" value="288"></div>
+            <div class="advanced-field"><label for="trainEvalEpisodes">评估回合 / Eval Episodes</label><input id="trainEvalEpisodes" type="number" min="1" max="100" step="1" value="8"></div>
+            <div class="advanced-field"><label for="trainCheckpointInterval">检查点间隔 / Checkpoint</label><input id="trainCheckpointInterval" type="number" min="1000" max="500000" step="1000" value="20000"></div>
+            <div class="advanced-field"><label for="trainEarlyStopPatience">早停耐心 / Early-stop Patience</label><input id="trainEarlyStopPatience" type="number" min="1" max="100" step="1" value="12"></div>
+            <div class="advanced-field"><label for="trainSeed">随机种子 / Seed</label><input id="trainSeed" type="number" min="1" max="999999" step="1" value="42"></div>
+            <div class="advanced-field"><label for="trainRewardScale">奖励缩放 / Reward Scale</label><input id="trainRewardScale" type="number" min="0.01" max="100" step="0.01" value="1.0"></div>
+          </div>
+        </section>
+
+        <section class="advanced-section">
+          <div class="advanced-section-head"><h3>算法专属参数 <span class="algo-badge" id="activeAlgoBadge">SAC</span></h3><span>Algorithm Specific</span></div>
+          <div class="advanced-grid algo-panel" data-algo-panel="sac">
+            <div class="advanced-field"><label for="sacAutoAlpha">熵自动调节 / Auto Alpha</label><select id="sacAutoAlpha"><option value="true" selected>启用</option><option value="false">关闭</option></select></div>
+            <div class="advanced-field"><label for="sacInitialAlpha">初始 α / Initial Alpha</label><input id="sacInitialAlpha" type="number" min="0.0001" max="2" step="0.0001" value="0.2"></div>
+            <div class="advanced-field"><label for="sacTargetEntropy">目标熵 / Target Entropy</label><input id="sacTargetEntropy" type="number" min="-100" max="10" step="0.1" value="-4"></div>
+            <div class="advanced-field"><label for="sacPolicyDelay">策略延迟 / Policy Delay</label><input id="sacPolicyDelay" type="number" min="1" max="20" step="1" value="1"></div>
+          </div>
+          <div class="advanced-grid algo-panel" data-algo-panel="ppo">
+            <div class="advanced-field"><label for="ppoRolloutSteps">Rollout Steps</label><input id="ppoRolloutSteps" type="number" min="64" max="32768" step="64" value="2048"></div>
+            <div class="advanced-field"><label for="ppoEpochs">更新轮数 / Epochs</label><input id="ppoEpochs" type="number" min="1" max="100" step="1" value="10"></div>
+            <div class="advanced-field"><label for="ppoClipRange">裁剪范围 / Clip Range</label><input id="ppoClipRange" type="number" min="0.01" max="1" step="0.01" value="0.2"></div>
+            <div class="advanced-field"><label for="ppoGaeLambda">GAE λ</label><input id="ppoGaeLambda" type="number" min="0.5" max="1" step="0.001" value="0.95"></div>
+            <div class="advanced-field"><label for="ppoValueCoef">价值损失系数 / Value Coef</label><input id="ppoValueCoef" type="number" min="0" max="5" step="0.01" value="0.5"></div>
+          </div>
+          <div class="advanced-grid algo-panel" data-algo-panel="td3">
+            <div class="advanced-field"><label for="td3PolicyNoise">策略噪声 / Policy Noise</label><input id="td3PolicyNoise" type="number" min="0" max="2" step="0.01" value="0.2"></div>
+            <div class="advanced-field"><label for="td3NoiseClip">噪声裁剪 / Noise Clip</label><input id="td3NoiseClip" type="number" min="0" max="5" step="0.01" value="0.5"></div>
+            <div class="advanced-field"><label for="td3PolicyDelay">策略延迟 / Policy Delay</label><input id="td3PolicyDelay" type="number" min="1" max="20" step="1" value="2"></div>
+            <div class="advanced-field"><label for="td3ExplorationNoise">探索噪声 / Exploration</label><input id="td3ExplorationNoise" type="number" min="0" max="2" step="0.01" value="0.1"></div>
+          </div>
+          <div class="advanced-grid algo-panel" data-algo-panel="dqn">
+            <div class="advanced-field"><label for="dqnExplorationInitial">初始探索率 / Initial ε</label><input id="dqnExplorationInitial" type="number" min="0" max="1" step="0.01" value="1.0"></div>
+            <div class="advanced-field"><label for="dqnExplorationFinal">最终探索率 / Final ε</label><input id="dqnExplorationFinal" type="number" min="0" max="1" step="0.01" value="0.05"></div>
+            <div class="advanced-field"><label for="dqnExplorationFraction">探索阶段 / Exploration Fraction</label><input id="dqnExplorationFraction" type="number" min="0.01" max="1" step="0.01" value="0.15"></div>
+            <div class="advanced-field"><label for="dqnTargetUpdate">目标网络更新 / Target Update</label><input id="dqnTargetUpdate" type="number" min="1" max="100000" step="1" value="1000"></div>
+          </div>
+        </section>
+
+        <section class="advanced-section">
+          <div class="advanced-section-head"><h3>奖励权重与安全约束</h3><span>Reward &amp; Safety</span></div>
+          <div class="weight-grid" aria-label="奖励权重">
+            <label class="weight-field"><span>能耗/成本</span><input id="weightCost" type="range" min="5" max="60" value="18"><output id="weightCostValue">0.18</output></label>
+            <label class="weight-field"><span>降碳</span><input id="weightCarbon" type="range" min="5" max="60" value="30"><output id="weightCarbonValue">0.30</output></label>
+            <label class="weight-field"><span>削峰</span><input id="weightPeak" type="range" min="5" max="60" value="20"><output id="weightPeakValue">0.20</output></label>
+            <label class="weight-field"><span>安全</span><input id="weightSafety" type="range" min="10" max="70" value="28"><output id="weightSafetyValue">0.28</output></label>
+          </div>
+          <div class="advanced-grid">
+            <div class="advanced-field"><label for="trainDemandCap">需量上限 / Demand Cap kW</label><input id="trainDemandCap" type="number" min="100" max="200000" step="10" value="520"></div>
+            <div class="advanced-field"><label for="trainMaxRamp">最大爬坡 / Max Ramp kW</label><input id="trainMaxRamp" type="number" min="1" max="50000" step="10" value="800"></div>
+            <div class="advanced-field"><label for="trainMaxActionDelta">动作变化上限 / Action Delta</label><input id="trainMaxActionDelta" type="number" min="0.01" max="1" step="0.01" value="0.15"></div>
+            <div class="advanced-field"><label for="trainSafetyPenalty">安全惩罚 / Safety Penalty</label><input id="trainSafetyPenalty" type="number" min="0" max="1000" step="1" value="120"></div>
+            <div class="advanced-field"><label for="trainConstraintTolerance">约束容差 / Tolerance</label><input id="trainConstraintTolerance" type="number" min="0" max="1" step="0.001" value="0.02"></div>
+            <div class="advanced-field"><label for="trainViolationBudget">违规预算 / Violation Budget</label><input id="trainViolationBudget" type="number" min="0" max="100" step="1" value="2"></div>
+          </div>
+        </section>
+      </div>
+      <div class="modal-foot">
+        <div class="modal-foot-note">取消会恢复打开窗口前的配置；确认后参数会进入小懿动作包和 RL 训练链路。</div>
+        <div class="modal-foot-actions">
+          <button type="button" class="secondary" id="btnResetAdvancedParams">恢复模块基线</button>
+          <button type="button" class="secondary" id="btnCancelAdvancedParams">取消</button>
+          <button type="button" class="green" id="btnApplyAdvancedParams">确认应用并返回</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="xiaoyiConfirmBackdrop" aria-hidden="true">
+    <section class="modal-window xiaoyi-gate-window" role="dialog" aria-modal="true" aria-labelledby="xiaoyiConfirmTitle">
+      <div class="modal-head">
+        <div><h2 id="xiaoyiConfirmTitle">小懿人工确认</h2><p id="xiaoyiConfirmSubtitle">请核对本次动作、接口和安全边界。</p></div>
+        <button type="button" class="modal-close" id="btnCloseXiaoyiConfirm" aria-label="关闭小懿人工确认">×</button>
+      </div>
+      <div class="modal-scroll">
+        <div class="human-gate-banner"><span class="human-gate-icon">H</span><div><b>人工审批节点 / Human-in-the-loop Gate</b><br>只有点击窗口底部的确认按钮，系统才会继续调用小懿或执行已识别动作。</div></div>
+        <div class="confirm-details" id="xiaoyiConfirmDetails"></div>
+        <div class="confirm-boundary" id="xiaoyiConfirmBoundary">当前操作不会绕过生产控制边界。</div>
+      </div>
+      <div class="modal-foot">
+        <div class="modal-foot-note">所有确认与取消都会写入统一动作日志。</div>
+        <div class="modal-foot-actions">
+          <button type="button" class="secondary" id="btnCancelXiaoyiConfirm">取消</button>
+          <button type="button" class="green" id="btnApproveXiaoyiConfirm">人工确认并继续</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const $ = (s)=>document.querySelector(s);
+    const params = new URLSearchParams(window.location.search);
+    let actionRegistry = [];
+    let pendingPacket = null;
+    let policyRecoveryContext = null;
+    let logItems = [];
+    let selectedTrainingTarget = "shore_bess";
+
+    const TRAINING_TARGETS = {
+      yard_lighting: {
+        label:"堆场照明", en:"Yard Lighting", artifact:"DQN experiment profile", objective:"energy_min", objectiveLabel:"能耗最低",
+        reason:"基于照度、作业活跃度、天气天文和投诉区约束，优先保证主通道与摄像识别照度。",
+        config:{algorithm:"dqn", scenario:"night_low_carbon", asset_group:"yard_lighting", total_steps:160000, batch_size:256, learning_rate:.00018, horizon_min:480, guardrail_mode:"strict", reward_weights:{cost:.32,carbon:.18,peak:.14,safety:.36}}
+      },
+      hvac_cooling: {
+        label:"暖通空调", en:"HVAC Cooling", artifact:"SAC experiment profile", objective:"energy_min", objectiveLabel:"能耗最低",
+        reason:"结合天气、冷负荷、设备效率曲线和温度舒适区，避免单纯节能导致冷链与舒适边界越限。",
+        config:{algorithm:"sac", scenario:"mapped_dataset", asset_group:"hvac_cooling", total_steps:260000, batch_size:256, learning_rate:.00028, horizon_min:720, guardrail_mode:"strict", reward_weights:{cost:.30,carbon:.20,peak:.16,safety:.34}}
+      },
+      shore_bess: {
+        label:"岸电储能", en:"Shore Power & BESS", artifact:"SAC experiment profile", objective:"shore_power_priority", objectiveLabel:"岸电优先",
+        reason:"协同靠泊窗口、岸电功率、BESS SOC 与馈线容量，在保障船舶接入的同时控制峰值风险。",
+        config:{algorithm:"sac", scenario:"shore_power_peak", asset_group:"shore_power", total_steps:260000, batch_size:256, learning_rate:.00026, horizon_min:720, guardrail_mode:"strict", reward_weights:{cost:.18,carbon:.30,peak:.20,safety:.28}}
+      },
+      bess_energy: {
+        label:"储能能量调度", en:"BESS Energy Dispatch", artifact:"TD3 experiment profile", objective:"peak_shaving", objectiveLabel:"需量峰值削减",
+        reason:"围绕电价、碳因子、SOC、充放电效率与需量上限，训练削峰填谷和备用容量策略。",
+        config:{algorithm:"td3", scenario:"noon_peak", asset_group:"bess_energy", total_steps:320000, batch_size:256, learning_rate:.00022, horizon_min:720, guardrail_mode:"strict", reward_weights:{cost:.22,carbon:.16,peak:.38,safety:.24}}
+      },
+      yard_crane: {
+        label:"场桥作业", en:"Yard Crane Operations", artifact:"PPO experiment profile", objective:"throughput_max", objectiveLabel:"吞吐最大",
+        reason:"联合作业队列、场区任务和设备功率，在吞吐、等待时间、峰值与安全间隔之间做约束优化。",
+        config:{algorithm:"ppo", scenario:"noon_peak", asset_group:"yard_crane", total_steps:240000, batch_size:512, learning_rate:.00020, horizon_min:360, guardrail_mode:"balanced", reward_weights:{cost:.14,carbon:.12,peak:.18,safety:.36}}
+      }
+    };
+
+    const ADVANCED_DEFAULTS = {
+      step_min:5, optimizer:"adamw", lr_schedule:"cosine", gamma:.995, tau:.005, entropy_coef:.016,
+      weight_decay:.00001, adam_epsilon:.00000001, observation_norm:true, reward_norm:true, n_step:3,
+      replay_buffer:140000, warmup_steps:10000, update_frequency:1, gradient_steps:1,
+      target_update_interval:1, hidden_layers:"256,256", activation:"silu", layer_norm:true,
+      grad_clip:1.0, episode_length:288, eval_episodes:8, checkpoint_interval:20000,
+      early_stop_patience:12, seed:42, reward_scale:1.0, demand_cap_kw:520,
+      max_ramp_kw:800, max_action_delta:.15, safety_penalty:120,
+      constraint_tolerance:.02, violation_budget:2,
+      algorithm_profiles:{
+        sac:{auto_alpha:true, initial_alpha:.2, target_entropy:-4, policy_delay:1},
+        ppo:{rollout_steps:2048, epochs:10, clip_range:.2, gae_lambda:.95, value_coef:.5},
+        td3:{policy_noise:.2, noise_clip:.5, policy_delay:2, exploration_noise:.1},
+        dqn:{exploration_initial_eps:1.0, exploration_final_eps:.05, exploration_fraction:.15, target_update_interval:1000}
+      }
+    };
+    let parameterSnapshot = null;
+    let manualConfirmResolver = null;
+    let manualConfirmMeta = null;
+    let lastModalFocus = null;
+
+    function now(){ return new Date().toLocaleTimeString("zh-CN",{hour12:false}); }
+    function pretty(data){ return JSON.stringify(data, null, 2); }
+    function wait(ms){ return new Promise(resolve=>setTimeout(resolve, ms)); }
+    function setText(sel, text){ const el=$(sel); if(el) el.textContent = text ?? ""; }
+    function escapeHtml(value){
+      return String(value ?? "").replace(/[&<>"']/g, ch=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+    }
+    function statusClass(pill, ok, warn=false){
+      pill.classList.toggle("ok", Boolean(ok));
+      pill.classList.toggle("bad", !ok && !warn);
+      pill.classList.toggle("warn", !ok && warn);
+    }
+    function addLog(kind, msg, detail){
+      logItems.unshift({time:now(), kind, msg, detail});
+      logItems = logItems.slice(0, 80);
+      renderLog();
+    }
+    function renderLog(){
+      const box = $("#actionLog");
+      if(!logItems.length){
+        box.innerHTML = `<div class="log-item"><span class="time">${now()}</span><span class="kind">READY</span><span class="msg">等待联动动作。</span></div>`;
+        renderImpactEvents();
+        return;
+      }
+      box.innerHTML = logItems.map(item => `
+        <div class="log-item">
+          <span class="time">${escapeHtml(item.time)}</span>
+          <span class="kind">${escapeHtml(item.kind)}</span>
+          <span class="msg">${escapeHtml(item.msg)}${item.detail ? "\n" + escapeHtml(item.detail) : ""}</span>
+        </div>`).join("");
+      renderImpactEvents();
+    }
+    function renderImpactEvents(){
+      const box = $("#impactEventList");
+      if(!box) return;
+      const items = logItems.slice(0,4);
+      if(!items.length){
+        box.innerHTML = `<div class="live-event"><time>${now()}</time><b>READY</b><span>联动网关等待指令</span></div>`;
+        return;
+      }
+      box.innerHTML = items.map(item=>`<div class="live-event"><time>${escapeHtml(item.time)}</time><b>${escapeHtml(item.kind)}</b><span>${escapeHtml(item.msg)}</span></div>`).join("");
+    }
+    async function api(path, options={}){
+      const res = await fetch(path, {
+        cache:"no-store",
+        headers: options.body ? {"Content-Type":"application/json"} : undefined,
+        ...options,
+        body: options.body ? JSON.stringify(options.body) : undefined
+      });
+      const data = await res.json().catch(()=>({}));
+      if(!res.ok) throw new Error(data.detail || res.statusText);
+      return data;
+    }
+    async function typeAnswer(text){
+      const el = $("#assistantAnswer");
+      el.textContent = "思考中...";
+      await new Promise(r=>setTimeout(r, 650));
+      el.textContent = "";
+      for(const ch of text){
+        el.textContent += ch;
+        await new Promise(r=>setTimeout(r, 18));
+      }
+    }
+    function currentTrainingTarget(){
+      return TRAINING_TARGETS[selectedTrainingTarget] || TRAINING_TARGETS.shore_bess;
+    }
+    function setControlValue(selector, value){
+      const el = $(selector);
+      if(el && value !== undefined && value !== null) el.value = String(value);
+    }
+    function syncWeightLabels(){
+      ["Cost","Carbon","Peak","Safety"].forEach(key=>{
+        const input = $(`#weight${key}`);
+        const output = $(`#weight${key}Value`);
+        if(input && output) output.textContent = (Number(input.value) / 100).toFixed(2);
+      });
+    }
+    function boolValue(selector, fallback=true){
+      const el = $(selector);
+      return el ? el.value === "true" : fallback;
+    }
+    function numberValue(selector, fallback=0){
+      const n = Number($(selector)?.value);
+      return Number.isFinite(n) ? n : fallback;
+    }
+    function applyAlgorithmProfiles(profiles={}){
+      const merged = {...ADVANCED_DEFAULTS.algorithm_profiles, ...profiles};
+      const sac = {...ADVANCED_DEFAULTS.algorithm_profiles.sac, ...(merged.sac || {})};
+      const ppo = {...ADVANCED_DEFAULTS.algorithm_profiles.ppo, ...(merged.ppo || {})};
+      const td3 = {...ADVANCED_DEFAULTS.algorithm_profiles.td3, ...(merged.td3 || {})};
+      const dqn = {...ADVANCED_DEFAULTS.algorithm_profiles.dqn, ...(merged.dqn || {})};
+      setControlValue("#sacAutoAlpha", sac.auto_alpha);
+      setControlValue("#sacInitialAlpha", sac.initial_alpha);
+      setControlValue("#sacTargetEntropy", sac.target_entropy);
+      setControlValue("#sacPolicyDelay", sac.policy_delay);
+      setControlValue("#ppoRolloutSteps", ppo.rollout_steps);
+      setControlValue("#ppoEpochs", ppo.epochs);
+      setControlValue("#ppoClipRange", ppo.clip_range);
+      setControlValue("#ppoGaeLambda", ppo.gae_lambda);
+      setControlValue("#ppoValueCoef", ppo.value_coef);
+      setControlValue("#td3PolicyNoise", td3.policy_noise);
+      setControlValue("#td3NoiseClip", td3.noise_clip);
+      setControlValue("#td3PolicyDelay", td3.policy_delay);
+      setControlValue("#td3ExplorationNoise", td3.exploration_noise);
+      setControlValue("#dqnExplorationInitial", dqn.exploration_initial_eps);
+      setControlValue("#dqnExplorationFinal", dqn.exploration_final_eps);
+      setControlValue("#dqnExplorationFraction", dqn.exploration_fraction);
+      setControlValue("#dqnTargetUpdate", dqn.target_update_interval);
+    }
+    function applyTrainingConfig(config={}){
+      const merged = {...ADVANCED_DEFAULTS, ...config};
+      const optimizer = {...(config.optimizer_config || {})};
+      const network = {...(config.network || {})};
+      const schedule = {...(config.schedule || {})};
+      const safety = {...(config.safety_limits || {})};
+      setControlValue("#trainAlgorithm", merged.algorithm);
+      setControlValue("#trainScenario", merged.scenario);
+      setControlValue("#trainSteps", merged.total_steps);
+      setControlValue("#trainBatch", merged.batch_size);
+      setControlValue("#trainLearningRate", merged.learning_rate);
+      setControlValue("#trainHorizon", merged.horizon_min);
+      setControlValue("#trainStepMin", merged.step_min);
+      setControlValue("#trainGuardrail", merged.guardrail_mode);
+      setControlValue("#trainOptimizer", optimizer.name ?? merged.optimizer);
+      setControlValue("#trainLrSchedule", optimizer.lr_schedule ?? merged.lr_schedule);
+      setControlValue("#trainGamma", merged.gamma);
+      setControlValue("#trainTau", merged.tau);
+      setControlValue("#trainEntropyCoef", merged.entropy_coef);
+      setControlValue("#trainWeightDecay", optimizer.weight_decay ?? merged.weight_decay);
+      setControlValue("#trainAdamEpsilon", optimizer.epsilon ?? merged.adam_epsilon);
+      setControlValue("#trainReplayBuffer", merged.replay_buffer);
+      setControlValue("#trainWarmupSteps", schedule.warmup_steps ?? merged.warmup_steps);
+      setControlValue("#trainUpdateFrequency", schedule.update_frequency ?? merged.update_frequency);
+      setControlValue("#trainGradientSteps", schedule.gradient_steps ?? merged.gradient_steps);
+      setControlValue("#trainTargetUpdate", schedule.target_update_interval ?? merged.target_update_interval);
+      setControlValue("#trainHiddenLayers", network.hidden_layers ?? merged.hidden_layers);
+      setControlValue("#trainActivation", network.activation ?? merged.activation);
+      setControlValue("#trainLayerNorm", network.layer_norm ?? merged.layer_norm);
+      setControlValue("#trainGradClip", optimizer.grad_clip ?? merged.grad_clip);
+      setControlValue("#trainObservationNorm", network.observation_norm ?? merged.observation_norm);
+      setControlValue("#trainRewardNorm", network.reward_norm ?? merged.reward_norm);
+      setControlValue("#trainNStep", schedule.n_step ?? merged.n_step);
+      setControlValue("#trainEpisodeLength", schedule.episode_length ?? merged.episode_length);
+      setControlValue("#trainEvalEpisodes", schedule.eval_episodes ?? merged.eval_episodes);
+      setControlValue("#trainCheckpointInterval", schedule.checkpoint_interval ?? merged.checkpoint_interval);
+      setControlValue("#trainEarlyStopPatience", schedule.early_stop_patience ?? merged.early_stop_patience);
+      setControlValue("#trainSeed", merged.seed);
+      setControlValue("#trainRewardScale", merged.reward_scale);
+      setControlValue("#trainDemandCap", safety.demand_cap_kw ?? merged.demand_cap_kw);
+      setControlValue("#trainMaxRamp", safety.max_ramp_kw ?? merged.max_ramp_kw);
+      setControlValue("#trainMaxActionDelta", safety.max_action_delta ?? merged.max_action_delta);
+      setControlValue("#trainSafetyPenalty", safety.safety_penalty ?? merged.safety_penalty);
+      setControlValue("#trainConstraintTolerance", safety.constraint_tolerance ?? merged.constraint_tolerance);
+      setControlValue("#trainViolationBudget", safety.violation_budget ?? merged.violation_budget);
+      applyAlgorithmProfiles(config.algorithm_profiles || (config.algorithm && config.algorithm_params ? {[config.algorithm]:config.algorithm_params} : {}));
+      const weights = merged.reward_weights || {};
+      if(weights.cost !== undefined) setControlValue("#weightCost", Math.round(Number(weights.cost) * 100));
+      if(weights.carbon !== undefined) setControlValue("#weightCarbon", Math.round(Number(weights.carbon) * 100));
+      if(weights.peak !== undefined) setControlValue("#weightPeak", Math.round(Number(weights.peak) * 100));
+      if(weights.safety !== undefined) setControlValue("#weightSafety", Math.round(Number(weights.safety) * 100));
+      syncWeightLabels();
+      syncAlgorithmPanel();
+    }
+    function trainingConfigFromUi(){
+      const target = currentTrainingTarget();
+      const base = target.config || {};
+      const algorithm = $("#trainAlgorithm").value;
+      const algorithmProfiles = {
+        sac:{auto_alpha:boolValue("#sacAutoAlpha"),initial_alpha:numberValue("#sacInitialAlpha",.2),target_entropy:numberValue("#sacTargetEntropy",-4),policy_delay:numberValue("#sacPolicyDelay",1)},
+        ppo:{rollout_steps:numberValue("#ppoRolloutSteps",2048),epochs:numberValue("#ppoEpochs",10),clip_range:numberValue("#ppoClipRange",.2),gae_lambda:numberValue("#ppoGaeLambda",.95),value_coef:numberValue("#ppoValueCoef",.5)},
+        td3:{policy_noise:numberValue("#td3PolicyNoise",.2),noise_clip:numberValue("#td3NoiseClip",.5),policy_delay:numberValue("#td3PolicyDelay",2),exploration_noise:numberValue("#td3ExplorationNoise",.1)},
+        dqn:{exploration_initial_eps:numberValue("#dqnExplorationInitial",1),exploration_final_eps:numberValue("#dqnExplorationFinal",.05),exploration_fraction:numberValue("#dqnExplorationFraction",.15),target_update_interval:numberValue("#dqnTargetUpdate",1000)}
+      };
+      const optimizerConfig = {
+        name:$("#trainOptimizer").value, lr_schedule:$("#trainLrSchedule").value,
+        weight_decay:numberValue("#trainWeightDecay",.00001), epsilon:numberValue("#trainAdamEpsilon",.00000001),
+        grad_clip:numberValue("#trainGradClip",1)
+      };
+      const network = {
+        hidden_layers:$("#trainHiddenLayers").value.trim(), activation:$("#trainActivation").value,
+        layer_norm:boolValue("#trainLayerNorm"), observation_norm:boolValue("#trainObservationNorm"), reward_norm:boolValue("#trainRewardNorm")
+      };
+      const schedule = {
+        warmup_steps:numberValue("#trainWarmupSteps",10000), update_frequency:numberValue("#trainUpdateFrequency",1),
+        gradient_steps:numberValue("#trainGradientSteps",1), target_update_interval:numberValue("#trainTargetUpdate",1),
+        n_step:numberValue("#trainNStep",3), episode_length:numberValue("#trainEpisodeLength",288),
+        eval_episodes:numberValue("#trainEvalEpisodes",8), checkpoint_interval:numberValue("#trainCheckpointInterval",20000),
+        early_stop_patience:numberValue("#trainEarlyStopPatience",12)
+      };
+      const safetyLimits = {
+        demand_cap_kw:numberValue("#trainDemandCap",520), max_ramp_kw:numberValue("#trainMaxRamp",800),
+        max_action_delta:numberValue("#trainMaxActionDelta",.15), safety_penalty:numberValue("#trainSafetyPenalty",120),
+        constraint_tolerance:numberValue("#trainConstraintTolerance",.02), violation_budget:numberValue("#trainViolationBudget",2)
+      };
+      return {
+        algorithm,
+        objective: target.objective,
+        objective_label: target.objectiveLabel,
+        scenario: $("#trainScenario").value || base.scenario || "mapped_dataset",
+        asset_group: base.asset_group || selectedTrainingTarget,
+        module_target: selectedTrainingTarget,
+        module_label: `${target.label} / ${target.en}`,
+        horizon_min: Number($("#trainHorizon").value),
+        step_min: numberValue("#trainStepMin",5),
+        total_steps: Number($("#trainSteps").value),
+        batch_size: Number($("#trainBatch").value),
+        learning_rate: Number($("#trainLearningRate").value),
+        gamma: numberValue("#trainGamma",.995),
+        tau: numberValue("#trainTau",.005),
+        entropy_coef: numberValue("#trainEntropyCoef",.016),
+        replay_buffer: numberValue("#trainReplayBuffer",140000),
+        optimizer:optimizerConfig.name,
+        lr_schedule:optimizerConfig.lr_schedule,
+        seed:numberValue("#trainSeed",42),
+        reward_scale:numberValue("#trainRewardScale",1),
+        demand_cap_kw:safetyLimits.demand_cap_kw,
+        guardrail_mode: $("#trainGuardrail").value,
+        optimizer_config:optimizerConfig,
+        network,
+        schedule,
+        algorithm_params:algorithmProfiles[algorithm],
+        algorithm_profiles:algorithmProfiles,
+        safety_limits:safetyLimits,
+        reward_weights: {
+          cost: Number($("#weightCost").value) / 100,
+          carbon: Number($("#weightCarbon").value) / 100,
+          peak: Number($("#weightPeak").value) / 100,
+          safety: Number($("#weightSafety").value) / 100
+        }
+      };
+    }
+    function syncAlgorithmPanel(){
+      const algorithm = $("#trainAlgorithm")?.value || "sac";
+      document.querySelectorAll("[data-algo-panel]").forEach(panel=>panel.classList.toggle("active", panel.dataset.algoPanel === algorithm));
+      setText("#activeAlgoBadge", algorithm.toUpperCase());
+    }
+    function syncConfigSummary(){
+      const cfg = trainingConfigFromUi();
+      setText("#summaryAlgorithm", cfg.algorithm.toUpperCase());
+      setText("#summarySteps", cfg.total_steps.toLocaleString("zh-CN"));
+      setText("#summaryLearningRate", String(cfg.learning_rate));
+      setText("#summaryBatchHorizon", `${cfg.batch_size} · ${(cfg.horizon_min / 60).toFixed(cfg.horizon_min % 60 ? 1 : 0)} h`);
+      setText("#summaryNetwork", `${cfg.network.hidden_layers.replace(/,/g," × ")} · ${cfg.network.activation.toUpperCase()}`);
+      setText("#summaryGuardrail", cfg.guardrail_mode.toUpperCase());
+      const weights = cfg.reward_weights;
+      [["Cost",weights.cost,"能耗"],["Carbon",weights.carbon,"降碳"],["Peak",weights.peak,"削峰"],["Safety",weights.safety,"安全"]].forEach(([key,value,label])=>{
+        const bar = $(`#summary${key}Bar`);
+        if(!bar) return;
+        bar.style.setProperty("--weight", `${Math.min(100, Math.round(Number(value) / .6 * 100))}%`);
+        const labelEl = bar.closest(".config-weight")?.querySelector("span");
+        if(labelEl) labelEl.textContent = `${label} ${Number(value).toFixed(2)}`;
+      });
+      const count = document.querySelectorAll("#trainingParamBackdrop input,#trainingParamBackdrop select").length;
+      setText("#parameterCount", String(count));
+      setText("#paramControlCount", `${count} controls`);
+      setText("#paramTargetName", `${currentTrainingTarget().label} / ${currentTrainingTarget().en}`);
+      setText("#paramModelId", selectedTrainingTarget);
+    }
+    function setBackdropOpen(backdrop, open){
+      if(!backdrop) return;
+      backdrop.classList.toggle("open", open);
+      backdrop.setAttribute("aria-hidden", open ? "false" : "true");
+      document.body.classList.toggle("modal-open", Boolean(document.querySelector(".modal-backdrop.open")));
+    }
+    function openAdvancedParams(){
+      parameterSnapshot = trainingConfigFromUi();
+      lastModalFocus = document.activeElement;
+      syncConfigSummary();
+      setText("#paramConfigState", "编辑中 · 未应用");
+      setBackdropOpen($("#trainingParamBackdrop"), true);
+      window.setTimeout(()=>$("#trainAlgorithm")?.focus(), 0);
+    }
+    function closeAdvancedParams(restore=true){
+      if(restore && parameterSnapshot) applyTrainingConfig(parameterSnapshot);
+      setBackdropOpen($("#trainingParamBackdrop"), false);
+      parameterSnapshot = null;
+      lastModalFocus?.focus?.();
+    }
+    function applyAdvancedParamsAndReturn(){
+      const cfg = trainingConfigFromUi();
+      syncConfigSummary();
+      setText("#parameterProfile", `MANUAL · ${selectedTrainingTarget.toUpperCase()}`);
+      setText("#paramConfigState", "已应用");
+      setText("#impactTargetState", "高级参数已应用 · 待小懿复核");
+      setText("#trainingRecommendation", `${currentTrainingTarget().label}高级训练配置已应用：${cfg.algorithm.toUpperCase()} · ${cfg.total_steps.toLocaleString("zh-CN")} steps · ${cfg.network.hidden_layers} network · ${cfg.guardrail_mode} guardrail。`);
+      addLog("RL/CONFIG", `高级训练参数已应用：${currentTrainingTarget().label}`, `${cfg.algorithm.toUpperCase()} · ${cfg.total_steps} steps · ${cfg.optimizer_config.name}`);
+      closeAdvancedParams(false);
+    }
+    function resetAdvancedParams(){
+      applyTrainingConfig({...ADVANCED_DEFAULTS, ...currentTrainingTarget().config, algorithm_profiles:ADVANCED_DEFAULTS.algorithm_profiles});
+      setText("#paramConfigState", "模块基线 · 待确认");
+    }
+    function requestXiaoyiConfirmation(spec){
+      if(manualConfirmResolver) manualConfirmResolver(false);
+      manualConfirmMeta = spec;
+      lastModalFocus = document.activeElement;
+      setText("#xiaoyiConfirmTitle", spec.title || "小懿人工确认");
+      setText("#xiaoyiConfirmSubtitle", spec.subtitle || "请核对本次动作、接口和安全边界。");
+      setText("#xiaoyiConfirmBoundary", spec.boundary || "当前操作不会绕过生产控制边界。");
+      setText("#btnApproveXiaoyiConfirm", spec.confirmLabel || "人工确认并继续");
+      const details = Array.isArray(spec.details) ? spec.details : [];
+      $("#xiaoyiConfirmDetails").innerHTML = details.map(item=>`<div class="confirm-line"><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b></div>`).join("");
+      setBackdropOpen($("#xiaoyiConfirmBackdrop"), true);
+      addLog("HMI/GATE", `人工确认窗口：${spec.operation || spec.title || "小懿动作"}`, "等待操作员确认");
+      window.setTimeout(()=>$("#btnApproveXiaoyiConfirm")?.focus(), 0);
+      return new Promise(resolve=>{ manualConfirmResolver = resolve; });
+    }
+    function resolveXiaoyiConfirmation(approved){
+      const resolver = manualConfirmResolver;
+      const operation = manualConfirmMeta?.operation || manualConfirmMeta?.title || "小懿动作";
+      manualConfirmResolver = null;
+      manualConfirmMeta = null;
+      setBackdropOpen($("#xiaoyiConfirmBackdrop"), false);
+      addLog("HMI/GATE", approved ? `人工确认通过：${operation}` : `人工取消：${operation}`, approved ? "approved" : "cancelled");
+      resolver?.(approved);
+      lastModalFocus?.focus?.();
+    }
+    async function confirmXiaoyiOperation(kind){
+      const target = currentTrainingTarget();
+      const cfg = trainingConfigFromUi();
+      if(kind === "ask"){
+        const instruction = $("#assistantCommand").value.trim();
+        const actionId = selectedActionId();
+        if(!instruction && !actionId){
+          await typeAnswer("请输入一句指令，或者选择一个动作。");
+          return false;
+        }
+        return requestXiaoyiConfirmation({
+          title:"确认发送给小懿判断", operation:"小懿意图识别", confirmLabel:"确认发送并判断",
+          details:[{label:"自然语言指令",value:instruction || "未填写"},{label:"动作映射",value:actionId || "自动识别"},{label:"执行模式",value:"只生成动作包 / dry-run preview"},{label:"接口",value:"POST /api/assistant/actions/execute"}],
+          boundary:"本次只做意图识别和动作编排，不会直接启动训练、控制设备或下发生产策略。"
+        });
+      }
+      if(kind === "launch"){
+        return requestXiaoyiConfirmation({
+          title:"确认启动小懿 AI", operation:"启动本地小懿服务", confirmLabel:"确认启动小懿",
+          details:[{label:"目标服务",value:"小懿 AI · 127.0.0.1:8010"},{label:"接口",value:"POST /api/xiaoyi/launch"},{label:"影响",value:"启动或复用本地服务进程"},{label:"来源",value:"integration_hub"}],
+          boundary:"仅启动本地小懿服务，不会自动执行 RL 训练、策略下发或现场设备控制。"
+        });
+      }
+      if(kind === "recommend"){
+        return requestXiaoyiConfirmation({
+          title:"确认让小懿推荐参数", operation:"生成 RL 高级参数建议", confirmLabel:"确认生成并应用建议",
+          details:[{label:"训练目标",value:`${target.label} / ${target.en}`},{label:"当前算法",value:cfg.algorithm.toUpperCase()},{label:"当前配置规模",value:`${document.querySelectorAll("#trainingParamBackdrop input,#trainingParamBackdrop select").length} 个可调项`},{label:"接口",value:"POST /api/assistant/actions/execute"}],
+          boundary:"小懿只生成并应用参数建议，不会启动训练。建议应用后仍可打开高级参数窗口复核和修改。"
+        });
+      }
+      if(kind === "prepare_training"){
+        return requestXiaoyiConfirmation({
+          title:"确认提交训练计划给小懿", operation:"训练计划意图识别", confirmLabel:"确认提交给小懿",
+          details:[{label:"实验配置",value:`${target.label} / ${target.en}`},{label:"算法与网络",value:`${cfg.algorithm.toUpperCase()} · ${cfg.network.hidden_layers}`},{label:"训练规模",value:`${cfg.total_steps.toLocaleString("zh-CN")} steps · batch ${cfg.batch_size}`},{label:"安全模式",value:cfg.guardrail_mode},{label:"接口",value:"POST /api/assistant/actions/execute"}],
+          boundary:"这里只把完整高级配置送入小懿动作网关；真正启动训练还需要下一次人工确认，并在 RL 训练界面再次核对。"
+        });
+      }
+      if(kind === "execute"){
+        if(!pendingPacket) return false;
+        const action = pendingPacket.action || {};
+        const will = pendingPacket.will_execute || {};
+        const actionId = action.id || will.action_id || "unknown";
+        const endpoint = will.backend_request?.path || will.route || "前端映射按钮";
+        let boundary = "该动作将在本次人工确认后继续执行；执行结果会写入统一动作日志。";
+        if(actionId === "verify_policy_for_online") boundary = "只执行 RLOps 守护栏、策略仿真和 dry-run 记录；绝不进入生产控制。";
+        if(actionId === "start_rl_training") boundary = "确认后进入 RL 训练界面进行第二次参数核对，不会在当前页面直接启动训练。";
+        return requestXiaoyiConfirmation({
+          title:"确认执行小懿识别动作", operation:`执行 ${actionId}`, confirmLabel:"人工确认执行",
+          details:[{label:"动作名称",value:action.label || actionId},{label:"动作 ID",value:actionId},{label:"接口或路由",value:endpoint},{label:"执行方式",value:will.execution_type || "registered action"},{label:"当前目标",value:target.label}],
+          boundary
+        });
+      }
+      return false;
+    }
+    function selectTrainingTarget(targetId, announce=true){
+      const target = TRAINING_TARGETS[targetId];
+      if(!target) return;
+      selectedTrainingTarget = targetId;
+      document.querySelectorAll("[data-training-target]").forEach(btn=>btn.classList.toggle("selected", btn.dataset.trainingTarget === targetId));
+      applyTrainingConfig({...ADVANCED_DEFAULTS, ...target.config, algorithm_profiles:ADVANCED_DEFAULTS.algorithm_profiles});
+      syncConfigSummary();
+      setText("#impactTargetName", target.label);
+      setText("#impactTargetModel", `${targetId} · ${target.artifact}`);
+      setText("#impactTargetState", "等待后端训练与评测产物");
+      setText("#parameterProfile", `${targetId.toUpperCase()} · PORT-SAFE`);
+      setText("#trainingRecommendation", `${target.reason} 当前参数为该模块的安全演示基线，可继续手动调节或交给小懿推荐。`);
+      setText("#flowIntent", `已选择 ${target.label}，等待参数确认或小懿推荐。`);
+      if(announce) addLog("TARGET", `训练目标切换：${target.label}`, `${targetId} · ${target.en}`);
+    }
+    function setImpactStage(selector, state){
+      const node = $(selector);
+      if(!node) return;
+      node.classList.remove("done","active","blocked");
+      if(state) node.classList.add(state);
+    }
+    function simulationSummaryFrom(data){
+      const result = data?.execution_result?.result || {};
+      return result?.test_metrics?.summary || result?.result?.data?.summary || result?.simulation?.data?.summary || result?.simulation?.result?.summary || null;
+    }
+    function updateImpactMetrics(summary){
+      if(!summary) return;
+      const energySaving = -Number(summary.delta_kWh || 0);
+      const carbonSaving = -Number(summary.delta_carbon_kg || 0);
+      const peak = Number(summary.peak_reduction_kW || 0);
+      setText("#impactEnergy", `${energySaving >= 0 ? "+" : ""}${energySaving.toFixed(1)} kWh`);
+      setText("#impactCarbon", `${carbonSaving >= 0 ? "+" : ""}${carbonSaving.toFixed(1)} kg`);
+      setText("#impactPeak", `${peak >= 0 ? "+" : ""}${peak.toFixed(1)} kW`);
+      setText("#impactRisk", summary.dispatch_ready ? "LOW" : "WATCH");
+    }
+    function hidePolicyRecovery(){
+      policyRecoveryContext = null;
+      const panel = $("#policyRecovery");
+      if(panel) panel.hidden = true;
+      if($("#completedPolicySelect")) $("#completedPolicySelect").innerHTML = "";
+    }
+    function renderPolicyRecovery(execution){
+      const training = execution?.current_training || {};
+      const candidates = Array.isArray(execution?.completed_strategy_candidates) ? execution.completed_strategy_candidates : [];
+      policyRecoveryContext = {training, candidates};
+      setText("#policyRecoveryTitle", "当前训练未完成，该策略无法进入上线验证");
+      setText("#policyRecoveryMessage", execution?.operator_message || "安全校验、策略仿真和 dry-run 均未开始。可改用已完成并归档的策略继续演练。");
+      setText("#policyRecoveryStatus", training.status || "IDLE");
+      setText("#policyRecoveryProgress", `${Number(training.progress || 0).toFixed(1)}% · ${training.policy_version || "无可用版本"}`);
+      const select = $("#completedPolicySelect");
+      select.innerHTML = candidates.length
+        ? candidates.map(item=>`<option value="${escapeHtml(item.id)}">${escapeHtml(item.title)} · ${escapeHtml(item.category)} · ${escapeHtml(item.risk_level)}</option>`).join("")
+        : `<option value="">暂无可用归档策略</option>`;
+      if(execution?.suggested_strategy_id && candidates.some(item=>item.id === execution.suggested_strategy_id)) select.value = execution.suggested_strategy_id;
+      $("#btnUseCompletedPolicy").disabled = !candidates.length;
+      $("#policyRecovery").hidden = false;
+    }
+    function cancelPolicyRecovery(){
+      hidePolicyRecovery();
+      setImpactStage("#stageArtifact", "blocked");
+      setImpactStage("#stageGuardrail", "");
+      setImpactStage("#stageDryRun", "");
+      setText("#impactRisk", "CANCELLED");
+      setText("#impactTargetState", "上线验证已取消 · 未进入生产");
+      addLog("HMI/GATE", "已取消改用归档策略", "no verification executed");
+      void typeAnswer("已取消本次上线演练验证。\n当前未完成训练仍不可用，也没有执行安全校验、策略仿真或 dry-run。");
+    }
+    async function recommendTrainingParameters(){
+      const button = $("#btnXiaoyiRecommend");
+      const target = currentTrainingTarget();
+      button.disabled = true;
+      button.textContent = "小懿正在分析数据与约束...";
+      setText("#trainingRecommendation", `正在读取 ${target.label} 的目标、作业边界和 reward 权重，生成可解释推荐。`);
+      addLog("XIAOYI", `开始推荐 ${target.label} 训练参数`, target.objective);
+      try{
+        const data = await api("/api/assistant/actions/execute", {method:"POST", body:{
+          action_id:"start_rl_training",
+          instruction:`小懿，为${target.label}推荐一套安全可解释的训练参数`,
+          objective:target.objective,
+          dry_run:true,
+          source:"integration_hub_parameter_recommendation",
+          config:{
+            module_target:selectedTrainingTarget,
+            module_label:`${target.label} / ${target.en}`,
+            asset_group:target.config.asset_group
+          }
+        }});
+        const recommendation = data.recommendation || {};
+        applyTrainingConfig(recommendation.config || {});
+        syncConfigSummary();
+        setText("#parameterProfile", `XIAOYI · ${selectedTrainingTarget.toUpperCase()}`);
+        setText("#trainingRecommendation", `${recommendation.title || "小懿参数建议"}：${recommendation.reason || target.reason} ${recommendation.operator_note || "训练仍需人工确认。"}`);
+        setText("#impactTargetState", "小懿推荐已应用 · 待人工确认");
+        addLog("XIAOYI/REC", `${recommendation.title || "参数推荐已生成"}`, `${target.label} · ${$("#trainAlgorithm").value.toUpperCase()} · steps=${Number($("#trainSteps").value).toLocaleString("zh-CN")}`);
+      }catch(err){
+        setText("#trainingRecommendation", `小懿推荐暂不可用，已保留 ${target.label} 的本地安全基线：${String(err)}`);
+        addLog("ERROR", "小懿参数推荐失败", String(err));
+      }finally{
+        button.disabled = false;
+        button.textContent = "✦ 小懿一键推荐参数";
+      }
+    }
+    function selectedActionId(){
+      return $("#assistantAction").value || params.get("action") || "";
+    }
+    async function loadRegistry(){
+      const data = await api("/api/rl/actions/registry");
+      actionRegistry = data.actions || [];
+      const select = $("#assistantAction");
+      select.innerHTML = `<option value="">自动识别</option>` + actionRegistry.map(a=>`<option value="${a.id}">${a.label} · ${a.id}</option>`).join("");
+      const fromQuery = params.get("action");
+      if(fromQuery && actionRegistry.some(a=>a.id === fromQuery)) select.value = fromQuery;
+    }
+    async function refreshHealth(){
+      const [health, sailing] = await Promise.all([
+        api("/api/rl/integration/health").catch(err=>({systems:{}, summary:{xiaoyi:"小懿待检查", rl:"RL待检查", sailing:"航行待检查"}, error:String(err)})),
+        api("/api/sailing/status").catch(err=>({label:"航行模拟器不可启动", error:String(err)}))
+      ]);
+      const systems = health.systems || {};
+      setText("#stXiaoyi", health.summary?.xiaoyi || "小懿待检查");
+      setText("#stRl", health.summary?.rl || "RL待检查");
+      setText("#stSailing", sailing.label || health.summary?.sailing || "航行待检查");
+      statusClass($("#pillXiaoyi"), Boolean(systems.xiaoyi_ai?.online), true);
+      statusClass($("#pillRl"), Boolean(systems.rl_interface?.online), false);
+      statusClass($("#pillSailing"), Boolean(sailing.launchable), false);
+      renderSailing(sailing);
+      addLog("HEALTH", "联动状态已刷新", `${health.summary?.rl || "RL"} / ${sailing.label || "Sailing"}`);
+    }
+    function renderSailing(data){
+      setText("#sailingProject", data.project_root?.exists ? data.project_root.path : "未找到项目");
+      setText("#sailingGodot", data.godot_executable?.exists ? "可用" : "不可用");
+      setText("#sailingControl", data.control_mode || "launch");
+      const proc = data.process || {};
+      setText("#sailingProcess", proc.running ? `RUNNING pid=${proc.pid}` : "未跟踪运行进程");
+      setText("#sailingPacket", pretty(data));
+    }
+    function renderRlStatus(data){
+      const st = data.status || data;
+      const m = st.metrics || {};
+      const state = String(st.status || "IDLE").toUpperCase();
+      const progress = Number.isFinite(Number(st.progress)) ? Number(st.progress) : 0;
+      setText("#rlStatus", state);
+      setText("#rlProgress", Number.isFinite(Number(st.progress)) ? `${progress.toFixed(1)}%` : "—");
+      setText("#rlStepReward", `${st.step ?? m.step ?? "—"} / ${Number(st.reward ?? m.reward ?? 0).toFixed(2)}`);
+      setText("#rlPolicy", st.policy_version || m.policy_version || "—");
+      const policy = st.policy_version || m.policy_version;
+      if(policy) setText("#impactTargetModel", `${selectedTrainingTarget} · ${policy}`);
+      if(state === "COMPLETED" && progress >= 99.9){
+        setImpactStage("#stageArtifact", "done");
+        setText("#impactTargetState", `训练已完成 · ${policy || "policy ready"}`);
+      }else{
+        setImpactStage("#stageArtifact", state === "RUNNING" || state === "PAUSED" ? "active" : "blocked");
+        setText("#impactTargetState", `训练 ${state} · ${progress.toFixed(1)}% · 当前策略不可上线`);
+      }
+      setText("#rlPacket", pretty(st));
+    }
+    async function refreshRlStatus(){
+      const data = await api("/api/rl/train/status");
+      renderRlStatus(data);
+      addLog("RL", "训练状态已读取", data.status?.summary || data.summary || "");
+      return data;
+    }
+    function buildAssistantPayload(dryRun, confirm=false){
+      const actionId = $("#assistantAction").value || params.get("action") || "";
+      const instruction = $("#assistantCommand").value.trim();
+      const payload = {instruction, dry_run: dryRun, source:"integration_hub"};
+      if(actionId) payload.action_id = actionId;
+      if(actionId === "start_rl_training"){
+        const target = currentTrainingTarget();
+        payload.objective = target.objective;
+        payload.training_goal = target.objective;
+        payload.config = trainingConfigFromUi();
+      }
+      if(confirm) payload.confirm = true;
+      return payload;
+    }
+    async function askXiaoyi(){
+      pendingPacket = null;
+      hidePolicyRecovery();
+      $("#btnConfirmAction").disabled = true;
+      const payload = buildAssistantPayload(true, false);
+      if(!payload.instruction && !payload.action_id){
+        await typeAnswer("请输入一句指令，或者选择一个动作。");
+        return;
+      }
+      setText("#assistantPacket", "小懿正在判断动作...");
+      const data = await api("/api/assistant/actions/execute", {method:"POST", body:payload});
+      pendingPacket = data;
+      setText("#assistantPacket", pretty(data));
+      const action = data.action || {};
+      const will = data.will_execute || {};
+      const needConfirm = Boolean(data.human_confirmation?.required);
+      $("#btnConfirmAction").disabled = !data.matched;
+      if(action.id === "start_rl_training") $("#btnConfirmAction").disabled = false;
+      if(action.id === "verify_policy_for_online"){
+        setImpactStage("#stageGuardrail", "active");
+        setText("#impactTargetState", "上线验证待人工确认");
+      }
+      const rec = data.recommendation || {};
+      const targetLine = action.id === "start_rl_training" ? `实验配置：${currentTrainingTarget().label} / ${currentTrainingTarget().en}` : "";
+      const answer = [
+        `已识别：${action.label || "待确认动作"}`,
+        targetLine,
+        rec.title ? `参数建议：${rec.title}。${rec.reason || ""}` : "",
+        will.button?.label ? `将执行按钮：${will.button.label}` : `将打开界面：${will.route || "—"}`,
+        will.backend_request?.path ? `将调用接口：${will.backend_request.method || "POST"} ${will.backend_request.path}` : `执行方式：${will.execution_type || "open_route"}`,
+        needConfirm ? "需要人工确认后执行。" : "该动作可直接执行或打开界面。",
+      ].filter(Boolean).join("\n");
+      await typeAnswer(answer);
+      addLog("XIAOYI", `动作识别：${action.id || "unknown"}`, action.label || "");
+    }
+    async function executeOnlineVerification(payloadOverrides={}){
+      hidePolicyRecovery();
+      $("#btnConfirmAction").disabled = true;
+      setText("#assistantPacket", "正在检查训练完成状态...");
+      setImpactStage("#stageSimulation", "");
+      setImpactStage("#stageGuardrail", "active");
+      setImpactStage("#stageDryRun", "");
+      addLog("XIAOYI", "上线验证指令已确认", payloadOverrides.strategy_id || "verify_policy_for_online");
+      const payload = {...buildAssistantPayload(false, true), action_id:"verify_policy_for_online", ...payloadOverrides};
+      try{
+        const data = await api("/api/assistant/actions/execute", {method:"POST", body:payload});
+        setText("#assistantPacket", pretty(data));
+        const status = data.execution_result?.status || "完成";
+        const execution = data.execution_result?.result || {};
+
+        if(status === "training_incomplete" || status === "completed_strategy_selection_required"){
+          const training = execution.current_training || {};
+          setImpactStage("#stageArtifact", "blocked");
+          setImpactStage("#stageSimulation", "");
+          setImpactStage("#stageGuardrail", "");
+          setImpactStage("#stageDryRun", "");
+          setText("#impactRisk", "WAIT");
+          setText("#impactTargetState", `训练 ${training.status || "IDLE"} · 未完成 · 等待改用归档策略`);
+          addLog("RLOPS/GATE", "当前训练未完成，上线验证未启动", `${training.status || "IDLE"} · ${Number(training.progress || 0).toFixed(1)}%`);
+          await typeAnswer(`执行结果：当前训练未完成，该训练中策略无法验证上线。\n状态：${training.status || "IDLE"} · 进度 ${Number(training.progress || 0).toFixed(1)}% · 策略 ${training.policy_version || "—"}。\n安全校验、策略仿真和 dry-run 均未启动。\n可以选择已完成并归档的演练策略继续，也可以取消本次验证。`);
+          renderPolicyRecovery(execution);
+          return data;
+        }
+
+        hidePolicyRecovery();
+        updateImpactMetrics(simulationSummaryFrom(data));
+        setImpactStage("#stageArtifact", "done");
+        if(status === "dry_run_recorded"){
+          setImpactStage("#stageSimulation", "done");
+          setImpactStage("#stageGuardrail", "done");
+          setImpactStage("#stageDryRun", "done");
+          setText("#impactRisk", "LOW");
+          setText("#impactTargetState", "dry-run 已记录 · 未控制设备");
+          addLog("RLOPS", "安全护栏校验通过", execution.strategy_id || "latest policy");
+          addLog("EXEC", "DRY_RUN_RECORDED · 生产控制隔离", execution.production_boundary || "dry-run only");
+          await typeAnswer(`执行结果：${status}。\n已使用${execution.strategy_source === "archived_completed_strategy" ? "已完成并归档的" : "已完成的"}策略 ${execution.strategy_id || "—"}。\nRLOps 守护栏、策略仿真与 dry-run 已按顺序完成。\n边界：${execution.production_boundary || "仅记录验证结果，不控制真实设备。"}`);
+        }else{
+          setImpactStage("#stageSimulation", "blocked");
+          setImpactStage("#stageGuardrail", "blocked");
+          setImpactStage("#stageDryRun", "blocked");
+          setText("#impactRisk", "BLOCKED");
+          setText("#impactTargetState", "护栏已阻断 · 未进入生产");
+          addLog("RLOPS", `上线验证已阻断：${status}`, execution.production_boundary || "no production execution");
+          await typeAnswer(`执行结果：${status}。\n策略 ${execution.strategy_id || "—"} 未通过安全护栏或策略仿真，dry-run 未执行。\n边界：${execution.production_boundary || "未进入生产控制。"}`);
+        }
+        await refreshHealth();
+        return data;
+      }catch(err){
+        setImpactStage("#stageGuardrail", "blocked");
+        setText("#assistantPacket", String(err));
+        addLog("ERROR", "verify_policy_for_online 执行失败", String(err));
+        await typeAnswer(`执行失败：${String(err)}。未进入生产控制。`);
+        return null;
+      }
+    }
+    async function useCompletedPolicyForVerification(){
+      const context = policyRecoveryContext;
+      const strategyId = $("#completedPolicySelect").value;
+      const strategy = context?.candidates?.find(item=>item.id === strategyId);
+      if(!context || !strategyId || !strategy){
+        await typeAnswer("暂无可用的已完成归档策略，本次验证未执行。");
+        return;
+      }
+      const training = context.training || {};
+      const approved = await requestXiaoyiConfirmation({
+        title:"确认改用已完成策略继续演练", operation:`改用归档策略 ${strategyId}`, confirmLabel:"人工确认并继续演练",
+        details:[{label:"当前训练",value:`${training.status || "IDLE"} · ${Number(training.progress || 0).toFixed(1)}%`},{label:"当前策略",value:`${training.policy_version || "—"} · 不可用`},{label:"改用策略",value:`${strategy.title} · ${strategyId}`},{label:"归档状态",value:strategy.archive_status || "COMPLETED"},{label:"接口",value:"POST /api/assistant/actions/execute"}],
+        boundary:"改用已完成策略后，只执行 RLOps 安全护栏、策略仿真和 dry-run 演练记录；不会将策略下发到生产设备。"
+      });
+      if(!approved) return;
+      $("#btnUseCompletedPolicy").disabled = true;
+      addLog("HMI/GATE", "已确认改用已完成归档策略", strategyId);
+      await executeOnlineVerification({strategy_id:strategyId, use_completed_strategy:true});
+    }
+    async function confirmAssistantAction(){
+      if(!pendingPacket) return;
+      const actionId = pendingPacket.action?.id || pendingPacket.will_execute?.action_id;
+      if(actionId === "start_rl_training"){
+        const url = pendingPacket.will_execute?.open_url || "/rl-panel?action=start_rl_training&from=integration_hub&confirm=prompt";
+        addLog("XIAOYI", "进入 RL 面板人工确认", url);
+        window.location.assign(url);
+        return;
+      }
+      if(await clickMappedButton(pendingPacket)) return;
+      if(actionId === "verify_policy_for_online"){
+        await executeOnlineVerification();
+        return;
+      }
+      setText("#assistantPacket", "正在执行确认动作...");
+      const payload = buildAssistantPayload(false, true);
+      payload.action_id = actionId;
+      try{
+        const data = await api("/api/assistant/actions/execute", {method:"POST", body:payload});
+        setText("#assistantPacket", pretty(data));
+        const status = data.execution_result?.status || "完成";
+        await typeAnswer(`执行结果：${status}。\n动作：${data.action?.label || actionId}`);
+        addLog("EXEC", `${actionId} · ${status}`, "");
+        await refreshHealth();
+      }catch(err){
+        setText("#assistantPacket", String(err));
+        addLog("ERROR", `${actionId} 执行失败`, String(err));
+        await typeAnswer(`执行失败：${String(err)}。未进入生产控制。`);
+      }
+    }
+    async function clickMappedButton(packet){
+      const actionId = packet.action?.id || packet.will_execute?.action_id || "";
+      const clickable = new Set(["start_xiaoyi_ai", "open_sailing_simulator", "start_navigation_demo", "switch_ship_view", "run_sailing_rl_smoke_test"]);
+      const selector = packet.will_execute?.button?.selector || packet.action?.button_selector || "";
+      if(!clickable.has(actionId) || !selector) return false;
+      const target = document.querySelector(selector);
+      if(!target) return false;
+      target.scrollIntoView({block:"center", inline:"nearest", behavior:"smooth"});
+      target.classList.add("autoclick-target");
+      const label = packet.will_execute?.button?.label || packet.action?.button_label || target.textContent.trim() || actionId;
+      addLog("XIAOYI/CLICK", `定位按钮：${label}`, selector);
+      await typeAnswer(`小懿已定位到按钮：${label}。\n现在点击执行，执行结果会写入右侧状态和底部动作日志。`);
+      await wait(360);
+      if(actionId === "start_xiaoyi_ai") await launchXiaoyi();
+      else target.click();
+      window.setTimeout(()=>target.classList.remove("autoclick-target"), 1400);
+      return true;
+    }
+    async function launchXiaoyi(){
+      setText("#assistantPacket", "正在启动小懿AI...");
+      const data = await api("/api/xiaoyi/launch", {method:"POST", body:{confirm:true, source:"integration_hub"}});
+      setText("#assistantPacket", pretty(data));
+      await typeAnswer(`执行结果：${data.result?.status || "完成"}。\n小懿地址：${data.status?.base_url || "http://127.0.0.1:8010"}`);
+      addLog("XIAOYI", `start_xiaoyi_ai · ${data.result?.status || "done"}`, data.result?.pid ? `pid=${data.result.pid}` : "");
+      await refreshHealth();
+    }
+    async function executeSailing(actionId){
+      setText("#sailingPacket", "正在执行航行模拟器动作...");
+      const data = await api("/api/sailing/actions/execute", {method:"POST", body:{action_id:actionId, dry_run:false, confirm:true, source:"integration_hub"}});
+      setText("#sailingPacket", pretty(data));
+      addLog("SAILING", `${actionId} · ${data.execution?.status || "done"}`, data.execution?.output_tail ? data.execution.output_tail.split("\n").slice(-4).join("\n") : "");
+      renderSailing(data.status || {});
+      return data;
+    }
+    async function launchSailing(){
+      const data = await api("/api/sailing/launch", {method:"POST", body:{confirm:true, source:"integration_hub", preset:"main_scene"}});
+      setText("#sailingPacket", pretty(data));
+      addLog("SAILING", `open_sailing_simulator · ${data.result?.status || "done"}`, data.result?.pid ? `pid=${data.result.pid}` : "");
+      renderSailing(data.status || {});
+    }
+    async function runPolicyTest(){
+      const button = $("#btnRlPolicyTest");
+      button.disabled = true;
+      setText("#rlPacket", "正在执行策略测试...");
+      setText("#flowRl", "正在读取最新 policy artifact，并进入候选策略仿真。");
+      setImpactStage("#stageArtifact", "active");
+      setImpactStage("#stageSimulation", "");
+      setImpactStage("#stageGuardrail", "");
+      setImpactStage("#stageDryRun", "");
+      setText("#impactRisk", "TESTING");
+      addLog("RL", "读取最新 policy artifact", currentTrainingTarget().label);
+      await wait(260);
+      setImpactStage("#stageArtifact", "done");
+      setImpactStage("#stageSimulation", "active");
+      try{
+        const data = await api("/api/assistant/actions/execute", {method:"POST", body:{action_id:"run_policy_test", instruction:"小懿，训练完成后运行策略测试", dry_run:false, source:"integration_hub", horizon_min:Number($("#trainHorizon").value), step_min:5}});
+        setText("#rlPacket", pretty(data));
+        const status = data.execution_result?.status || "done";
+        updateImpactMetrics(simulationSummaryFrom(data));
+        if(status === "executed"){
+          setImpactStage("#stageSimulation", "done");
+          setText("#flowRl", "策略仿真完成；节电、降碳、削峰与风险指标已回写，等待上线前护栏校验。");
+          setText("#impactTargetState", "策略测试完成 · 等待 RLOps 护栏");
+        }else{
+          setImpactStage("#stageSimulation", "blocked");
+          setText("#flowRl", `策略测试未通过：${status}。`);
+        }
+        addLog("RL/SIM", `策略测试：${status}`, data.execution_result?.result?.strategy_id || "latest strategy");
+      }catch(err){
+        setImpactStage("#stageSimulation", "blocked");
+        setText("#rlPacket", String(err));
+        setText("#impactRisk", "ERROR");
+        addLog("ERROR", "策略测试失败", String(err));
+      }finally{
+        button.disabled = false;
+      }
+    }
+    async function startLowRiskTraining(){
+      const target = currentTrainingTarget();
+      const config = trainingConfigFromUi();
+      $("#assistantCommand").value = `小懿，按当前参数启动${target.label}低风险训练，训练步数 ${config.total_steps}，保留人工确认`;
+      $("#assistantAction").value = "start_rl_training";
+      setText("#flowIntent", `${target.label}训练目标和参数已送入小懿动作网关。`);
+      setText("#impactTargetState", "训练计划已生成 · 待人工确认");
+      await askXiaoyi();
+    }
+    async function loadSailingLogs(){
+      const data = await api("/api/sailing/logs?limit=12");
+      (data.items || []).reverse().forEach(item=>{
+        addLog("SAILING/API", `${item.action_id} · ${item.status}`, item.detail?.preset || item.detail?.script || "");
+      });
+    }
+    function bindEvents(){
+      $("#btnBackHome").addEventListener("click", ()=>window.location.assign("/"));
+      $("#btnOpenRl").addEventListener("click", ()=>window.location.assign("/rl-panel"));
+      $("#btnRlPanel").addEventListener("click", ()=>window.location.assign("/rl-panel"));
+      $("#btnRefreshAll").addEventListener("click", refreshAll);
+      $("#btnXiaoyiStart").addEventListener("click", async()=>{if(await confirmXiaoyiOperation("launch")) await launchXiaoyi();});
+      $("#btnAskXiaoyi").addEventListener("click", async()=>{if(await confirmXiaoyiOperation("ask")) await askXiaoyi();});
+      $("#btnConfirmAction").addEventListener("click", async()=>{if(await confirmXiaoyiOperation("execute")) await confirmAssistantAction();});
+      $("#btnClearAssistant").addEventListener("click", ()=>{
+        $("#assistantCommand").value = ""; $("#assistantAction").value = ""; setText("#assistantAnswer", ""); setText("#assistantPacket", "等待指令。"); pendingPacket = null; $("#btnConfirmAction").disabled = true; hidePolicyRecovery();
+      });
+      $("#btnUseCompletedPolicy").addEventListener("click", useCompletedPolicyForVerification);
+      $("#btnCancelPolicyRecovery").addEventListener("click", cancelPolicyRecovery);
+      $("#btnRlLowRisk").addEventListener("click", async()=>{if(await confirmXiaoyiOperation("prepare_training")) await startLowRiskTraining();});
+      $("#btnXiaoyiRecommend").addEventListener("click", async()=>{if(await confirmXiaoyiOperation("recommend")) await recommendTrainingParameters();});
+      $("#btnRlStatus").addEventListener("click", refreshRlStatus);
+      $("#btnRlPolicyTest").addEventListener("click", runPolicyTest);
+      $("#btnSailingLaunch").addEventListener("click", launchSailing);
+      $("#btnSailingRouteDemo").addEventListener("click", ()=>executeSailing("start_navigation_demo"));
+      $("#btnSailingSwitchView").addEventListener("click", ()=>executeSailing("switch_ship_view"));
+      $("#btnSailingSmoke").addEventListener("click", ()=>executeSailing("run_sailing_rl_smoke_test"));
+      $("#btnLoadSailingLogs").addEventListener("click", loadSailingLogs);
+      $("#btnClearLogs").addEventListener("click", ()=>{logItems=[];renderLog();});
+      document.querySelectorAll("[data-training-target]").forEach(button=>button.addEventListener("click", ()=>selectTrainingTarget(button.dataset.trainingTarget)));
+      $("#btnOpenAdvancedParams").addEventListener("click", openAdvancedParams);
+      $("#btnCloseAdvancedParams").addEventListener("click", ()=>closeAdvancedParams(true));
+      $("#btnCancelAdvancedParams").addEventListener("click", ()=>closeAdvancedParams(true));
+      $("#btnResetAdvancedParams").addEventListener("click", resetAdvancedParams);
+      $("#btnApplyAdvancedParams").addEventListener("click", applyAdvancedParamsAndReturn);
+      $("#btnCancelXiaoyiConfirm").addEventListener("click", ()=>resolveXiaoyiConfirmation(false));
+      $("#btnCloseXiaoyiConfirm").addEventListener("click", ()=>resolveXiaoyiConfirmation(false));
+      $("#btnApproveXiaoyiConfirm").addEventListener("click", ()=>resolveXiaoyiConfirmation(true));
+      document.querySelectorAll("#trainingParamBackdrop input,#trainingParamBackdrop select").forEach(control=>{
+        const eventName = control.type === "range" ? "input" : "change";
+        control.addEventListener(eventName, ()=>{
+          syncWeightLabels();
+          if(control.id === "trainAlgorithm") syncAlgorithmPanel();
+          setText("#paramConfigState", "编辑中 · 未应用");
+        });
+      });
+      document.addEventListener("keydown", event=>{
+        if(event.key !== "Escape") return;
+        if($("#xiaoyiConfirmBackdrop").classList.contains("open")) resolveXiaoyiConfirmation(false);
+        else if($("#trainingParamBackdrop").classList.contains("open")) closeAdvancedParams(true);
+      });
+    }
+    async function refreshAll(){
+      await Promise.allSettled([refreshHealth(), refreshRlStatus()]);
+    }
+    async function init(){
+      renderLog();
+      bindEvents();
+      selectTrainingTarget(selectedTrainingTarget, false);
+      const cmd = params.get("command");
+      if(cmd) $("#assistantCommand").value = cmd;
+      await loadRegistry();
+      await refreshAll();
+      if(params.get("auto") === "1" && cmd){
+        await askXiaoyi();
+      }else if(params.get("action") || cmd){
+        setText("#assistantPacket", "已带入联动指令，等待点击“让小懿判断”。");
+        addLog("XIAOYI", "联动指令已带入，等待人工触发判断", cmd || params.get("action") || "");
+      }
+    }
+    init().catch(err=>{
+      addLog("ERROR", "初始化失败", String(err));
+      setText("#assistantPacket", String(err));
+    });
+  </script>
+</body>
+</html>

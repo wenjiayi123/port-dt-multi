@@ -1,0 +1,6 @@
+{
+  "items": [
+    {"feature":"wind_speed_10m","source":"meteo.api","freshness_min":12,"null_rate":0.0,"schema_ok":true,"status":"OK"},
+    {"feature":"qc_telemetry","source":"opcua","freshness_min":5,"null_rate":0.01,"schema_ok":false,"status":"SCHEMA_DIFF"}
+  ]
+}

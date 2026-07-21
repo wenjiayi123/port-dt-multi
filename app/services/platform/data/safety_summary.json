@@ -1,0 +1,7 @@
+{
+  "updated_at": "2025-11-05T08:00:00Z",
+  "cvar95_kwh": 62.5,
+  "guard_pass_rate": 0.86,
+  "violations_ppm": 220,
+  "rules": [{"rule":"capacity_limit","ppm":90},{"rule":"ramp_rate","ppm":70},{"rule":"thermal_bound","ppm":60}]
+}

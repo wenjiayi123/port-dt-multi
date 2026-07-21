@@ -1,0 +1,14 @@
+{
+  "@id": "dtmi:org:portdt:EnergyAsset;1",
+  "@type": "Interface",
+  "@context": "dtmi:dtdl:context;2",
+  "displayName": "Port Energy Asset",
+  "description": "Energy asset measurements and operating limits for decision support.",
+  "contents": [
+    {"@type": "Property", "name": "stateOfCharge", "schema": "double"},
+    {"@type": ["Property", "Power"], "name": "activePower", "schema": "double", "unit": "kilowatt"},
+    {"@type": ["Property", "Power"], "name": "powerLimit", "schema": "double", "unit": "kilowatt"},
+    {"@type": "Property", "name": "operatingMode", "schema": "string"},
+    {"@type": "Relationship", "name": "serves", "target": "dtmi:org:portdt:PortOperations;1"}
+  ]
+}

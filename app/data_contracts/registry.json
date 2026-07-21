@@ -1,0 +1,85 @@
+{
+  "version": "v1",
+  "updated_at": "2026-04-05T00:00:00Z",
+  "purpose": "历史字段契约示例；只用于适配器设计参考，不代表运行时数据源或就绪证据。运行状态以 /api/system/provenance 为准。",
+  "runtime_enabled": false,
+  "evidence_status": "contract_only_not_runtime_data",
+  "default_mode": "contract_only",
+  "mode_resolution": {
+    "strategy": "优先读取模块级 source_mode；若为空则回落到 registry.default_mode。",
+    "allowed_values": ["contract_only", "dataset_replay", "live"],
+    "hybrid_rule": "允许读真实主数据 + mock 推演结果，但必须在 contract_ready=false 时显式标注 adapter_pending。"
+  },
+  "modules": [
+    {
+      "module": "portviz",
+      "label": "港区态势 / PortViz",
+      "source_mode": "contract_only",
+      "contract_file": "app/data_contracts/portviz_contract.json",
+      "adapter_key": "PORTVIZ_SOURCE",
+      "mock_adapter": "mock://portviz/stream",
+      "real_adapter": "real://portviz/stream",
+      "primary_key": "asset_id",
+      "time_field": "ts",
+      "contract_ready": true,
+      "status": "contract-only"
+    },
+    {
+      "module": "scene",
+      "label": "场景仿真 / Twin Scene",
+      "source_mode": "contract_only",
+      "contract_file": "app/data_contracts/scene_contract.json",
+      "adapter_key": "SCENE_SOURCE",
+      "mock_adapter": "mock://scene/base",
+      "real_adapter": "real://scene/base",
+      "primary_key": "scene_id",
+      "time_field": "ts",
+      "contract_ready": true,
+      "status": "contract-only"
+    },
+    {
+      "module": "exec_closedloop",
+      "label": "执行闭环 / Dispatch",
+      "source_mode": "contract_only",
+      "contract_file": "app/data_contracts/exec_contract.json",
+      "adapter_key": "EXEC_SOURCE",
+      "mock_adapter": "mock://exec/jobs",
+      "real_adapter": "real://exec/jobs",
+      "primary_key": "job_id",
+      "time_field": "created_at",
+      "contract_ready": true,
+      "status": "contract-only"
+    },
+    {
+      "module": "energyx",
+      "label": "能源侧 / EnergyX",
+      "source_mode": "contract_only",
+      "contract_file": "app/data_contracts/energyx_contract.json",
+      "adapter_key": "ENERGYX_SOURCE",
+      "mock_adapter": "mock://energyx/summary",
+      "real_adapter": "real://energyx/summary",
+      "primary_key": "asset_id",
+      "time_field": "ts",
+      "contract_ready": true,
+      "status": "contract-only"
+    },
+    {
+      "module": "copilot",
+      "label": "运营助手 / Ops Copilot",
+      "source_mode": "contract_only",
+      "contract_file": "app/data_contracts/copilot_contract.json",
+      "adapter_key": "COPILOT_SOURCE",
+      "mock_adapter": "mock://copilot/events",
+      "real_adapter": "real://copilot/events",
+      "primary_key": "event_id",
+      "time_field": "ts",
+      "contract_ready": true,
+      "status": "contract-only"
+    }
+  ],
+  "switching_rule": {
+    "principle": "未来真实落地时，只替换 adapter target，不改上层字段名。",
+    "ui_expectation": "前端只看 contract_file 中声明的 output_schema，不直接拼接下游私有字段。",
+    "service_expectation": "service 层必须做字段归一化，输出统一 summary / list / detail 结构。"
+  }
+}

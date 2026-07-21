@@ -1,0 +1,8 @@
+{
+  "ts": "2025-11-10T08:00:00Z",
+  "summary": {"best_policy":"rl-stable-A","cvar95_kwh":18.4,"violation_ppm":6.0,"samples":12543},
+  "leaderboard": [
+    {"policy":"rl-stable-A","mape":0.029,"cvar95":18.4,"viol_ppm":6,"n":5200},
+    {"policy":"rl-canary-B","mape":0.033,"cvar95":21.2,"viol_ppm":9,"n":2600}
+  ]
+}

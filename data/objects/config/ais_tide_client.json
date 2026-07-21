@@ -1,0 +1,32 @@
+{
+  "site_code": "INTL-MEGA-PORT",
+  "tz_offset_min": 0,
+  "prefer_live_radius_km": 25,
+  "ais": {
+    "base_url": "",
+    "auth": {
+      "token": "REPLACE_WITH_AIS_TOKEN"
+    },
+    "paths": {
+      "live": "/api/ais/v1/live",
+      "track": "/api/ais/v1/track"
+    },
+    "timeout_sec": 4
+  },
+  "tide": {
+    "base_url": "",
+    "auth": {
+      "token": "REPLACE_WITH_TIDE_TOKEN"
+    },
+    "paths": {
+      "series": "/api/tide/v1/series"
+    },
+    "timeout_sec": 4
+  },
+  "fallback_mock": false,
+  "mock_seed": 2233,
+  "port_center": {
+    "lat": 22.555,
+    "lon": 114.055
+  }
+}

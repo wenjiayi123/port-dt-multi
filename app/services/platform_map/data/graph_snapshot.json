@@ -1,0 +1,58 @@
+{
+  "meta": {
+    "version": "2025.11-demo",
+    "updated_at": "2025-11-20T08:00:00+08:00",
+    "description": "港口 AI 数字运营平台平台地图快照：设备 / 数据孪生 / RL 与协同 / 应用运营。"
+  },
+  "layers": [
+    {
+      "id": "devices",
+      "name": "设备 / 场景层",
+      "nodes": [
+        { "id": "qc_yc",         "label": "QC / YC / 场桥",                    "kind": "device" },
+        { "id": "agv_truck",     "label": "AGV / 集卡",                        "kind": "device" },
+        { "id": "shore_power",   "label": "岸电 / Shore Power",                "kind": "device" },
+        { "id": "bess",          "label": "BESS / 储能",                       "kind": "device" },
+        { "id": "hvac",          "label": "HVAC / 冷站",                       "kind": "device" },
+        { "id": "yard_lighting", "label": "场区照明 / Yard Lighting",          "kind": "device" }
+      ]
+    },
+    {
+      "id": "data_twin",
+      "name": "数据 / 孪生层",
+      "nodes": [
+        { "id": "telemetry",     "label": "Telemetry / TSDB（遥测 & 时序库）", "kind": "data" },
+        { "id": "sim_scenarios", "label": "Simulation / Scenario Lib",         "kind": "data" },
+        { "id": "twin",          "label": "Digital Twin / Twin",               "kind": "data" },
+        { "id": "twinlab",       "label": "TwinLab 演练 / Drills",             "kind": "data" },
+        { "id": "twinplus",      "label": "TwinPlus 参数模型",                 "kind": "data" }
+      ]
+    },
+    {
+      "id": "rl_coordination",
+      "name": "策略 / RL 层",
+      "nodes": [
+        { "id": "rl_agv",          "label": "RL Model：AGV Charge",          "kind": "core" },
+        { "id": "rl_bess",         "label": "RL Model：BESS Energy",         "kind": "core" },
+        { "id": "rl_yard_crane",   "label": "RL Model：Yard Crane",          "kind": "core" },
+        { "id": "rl_hvac",         "label": "RL Model：HVAC Cooling",        "kind": "core" },
+        { "id": "rl_lighting",     "label": "RL Model：Yard Lighting",       "kind": "core" },
+        { "id": "rl_ops_center",   "label": "RL Ops Center / Platform",      "kind": "core" },
+        { "id": "mas_orchestrator","label": "MAS Orchestrator（多智能体协同）", "kind": "core" },
+        { "id": "opsx",            "label": "OpsX / Ops Health（Ops 健康度）","kind": "core" }
+      ]
+    },
+    {
+      "id": "apps",
+      "name": "应用 / 运营层",
+      "nodes": [
+        { "id": "exec_cockpit",    "label": "管理驾驶舱（Exec Cockpit）",      "kind": "app" },
+        { "id": "exec_closedloop", "label": "执行与闭环 / Dispatch",          "kind": "app" },
+        { "id": "energyx",         "label": "EnergyX（市场 & 碳）",           "kind": "app" },
+        { "id": "compliance",      "label": "报表与合规 / Compliance",        "kind": "app" },
+        { "id": "twinlab_drills",  "label": "TwinLab 演练 / Drill 场景",      "kind": "app" },
+        { "id": "ops_copilot",     "label": "Ops Copilot（运维助手）",        "kind": "app" }
+      ]
+    }
+  ]
+}

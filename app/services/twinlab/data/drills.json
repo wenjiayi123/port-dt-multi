@@ -1,0 +1,8 @@
+{
+  "state": "shadow",
+  "items": [
+    {"name":"断网-边缘自保持","window":"02:00-02:30","result":"PASS","duration_min":26},
+    {"name":"黑启动-孤网","window":"03:00-03:20","result":"PASS","duration_min":19}
+  ],
+  "sla_series": {"name":["RTO","RPO"], "rto":[12,10,11], "rpo":[3,4,3]}
+}

@@ -1,0 +1,7 @@
+{ "sample_total": 8200, "items": [
+  {"id":"S-baseline","mape":0.036,"cvar95_kwh":88.2,"violations_ppm":820,"n":1600},
+  {"id":"S-ruleV1","mape":0.033,"cvar95_kwh":76.5,"violations_ppm":420,"n":1500},
+  {"id":"S-ruleV2","mape":0.031,"cvar95_kwh":69.0,"violations_ppm":260,"n":1500},
+  {"id":"S-rlA","mape":0.029,"cvar95_kwh":62.8,"violations_ppm":180,"n":1700},
+  {"id":"S-rlB","mape":0.028,"cvar95_kwh":58.6,"violations_ppm":140,"n":1900}
+]}

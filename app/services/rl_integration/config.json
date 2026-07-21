@@ -1,0 +1,21 @@
+{
+  "port_dt_multi": {
+    "name": "port-dt-multi",
+    "health_route": "/api/rl/integration/health",
+    "rl_panel_route": "/rl-panel"
+  },
+  "xiaoyi_ai": {
+    "name": "小懿AI",
+    "base_url": "http://127.0.0.1:8010",
+    "health_path": "/health",
+    "chat_path": "/api/chat",
+    "project_path": "",
+    "start_command": ""
+  },
+  "sailing_simulator": {
+    "name": "航行模拟器",
+    "project_path": "",
+    "project_file": "",
+    "godot_executable": ""
+  }
+}

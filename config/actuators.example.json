@@ -1,0 +1,40 @@
+{
+  "enabled": false,
+  "reason": "Replace all example values, configure secrets, validate site constraints, then set enabled=true",
+  "whitelist": {
+    "BESS-SITE-01": ["charge", "discharge", "set"]
+  },
+  "routing": {
+    "asset": {
+      "BESS-SITE-01": {
+        "channel": "http",
+        "endpoint": "https://ems.example.invalid/api/v1"
+      }
+    },
+    "type": {}
+  },
+  "mqtt": {
+    "username": "",
+    "password_env": "PORT_DT_MQTT_PASSWORD"
+  },
+  "http": {
+    "auth": {
+      "token_env": "PORT_DT_HTTP_ACTUATOR_TOKEN"
+    }
+  },
+  "security": {
+    "confirmation_token_env": "PORT_DT_SECOND_CHANNEL_TOKEN",
+    "require_two_channel": true,
+    "require_constraints": true
+  },
+  "constraints": {
+    "asset": {
+      "BESS-SITE-01": {
+        "set": {"power_kw": {"required": true, "min": -900.0, "max": 900.0}},
+        "charge": {"power_kw": {"required": true, "min": 0.0, "max": 900.0}},
+        "discharge": {"power_kw": {"required": true, "min": 0.0, "max": 900.0}}
+      }
+    },
+    "type": {}
+  }
+}

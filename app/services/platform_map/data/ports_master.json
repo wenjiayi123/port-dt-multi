@@ -1,0 +1,213 @@
+{
+  "meta": {
+    "version": "2025.11-demo",
+    "updated_at": "2025-11-20T08:00:00+08:00",
+    "description": "示例港口主数据：国际大港+典型场景，用于平台地图顶层视图（可直接替换为生产数据）。",
+    "notes": [
+      "throughput_teu_2023 来自公开统计口径的近似值，仅作 demo 使用。",
+      "modules.*_nodes 对应 app/services/platform_map/data/graph_snapshot.json 中的节点 id。"
+    ]
+  },
+  "ports": [
+    {
+      "code": "CNSHA",
+      "unlocode": "CNSHA",
+      "name": "港口1",
+      "name_en": "Port of Shanghai",
+      "country": "CN",
+      "region": "East Asia",
+      "throughput_teu_2023": 49000000,
+      "geo": {
+        "lat": 31.4,
+        "lon": 121.8
+      },
+      "is_demo": true,
+      "modules": {
+        "device_nodes": [
+          "qc_yc",
+          "agv_truck",
+          "shore_power",
+          "bess",
+          "hvac",
+          "yard_lighting"
+        ],
+        "twin_nodes": [
+          "telemetry",
+          "sim_scenarios",
+          "twin",
+          "twinlab",
+          "twinplus"
+        ],
+        "rl_nodes": [
+          "rl_agv",
+          "rl_bess",
+          "rl_yard_crane",
+          "rl_hvac",
+          "rl_lighting",
+          "rl_ops_center",
+          "mas_orchestrator",
+          "opsx"
+        ],
+        "app_nodes": [
+          "exec_cockpit",
+          "exec_closedloop",
+          "energyx",
+          "compliance",
+          "twinlab_drills",
+          "ops_copilot"
+        ]
+      },
+      "kpi_demo": {
+        "co2_reduction_tonnes_per_year": 160000,
+        "energy_savings_mwh_per_year": 120000,
+        "yard_throughput_increase_pct": 9.5
+      }
+    },
+    {
+      "code": "SGSIN",
+      "unlocode": "SGSIN",
+      "name": "港口2",
+      "name_en": "Port of Singapore",
+      "country": "SG",
+      "region": "Southeast Asia",
+      "throughput_teu_2023": 39010000,
+      "geo": {
+        "lat": 1.26,
+        "lon": 103.84
+      },
+      "is_demo": true,
+      "modules": {
+        "device_nodes": [
+          "qc_yc",
+          "agv_truck",
+          "shore_power",
+          "bess",
+          "yard_lighting"
+        ],
+        "twin_nodes": [
+          "telemetry",
+          "sim_scenarios",
+          "twin",
+          "twinlab"
+        ],
+        "rl_nodes": [
+          "rl_agv",
+          "rl_bess",
+          "rl_yard_crane",
+          "rl_lighting",
+          "rl_ops_center",
+          "mas_orchestrator"
+        ],
+        "app_nodes": [
+          "exec_cockpit",
+          "exec_closedloop",
+          "energyx",
+          "compliance",
+          "ops_copilot"
+        ]
+      },
+      "kpi_demo": {
+        "co2_reduction_tonnes_per_year": 140000,
+        "energy_savings_mwh_per_year": 95000,
+        "yard_throughput_increase_pct": 8.0
+      }
+    },
+    {
+      "code": "NLRTM",
+      "unlocode": "NLRTM",
+      "name": "港口3",
+      "name_en": "Port of Rotterdam",
+      "country": "NL",
+      "region": "Europe",
+      "throughput_teu_2023": 13400000,
+      "geo": {
+        "lat": 51.95,
+        "lon": 4.13
+      },
+      "is_demo": true,
+      "modules": {
+        "device_nodes": [
+          "qc_yc",
+          "agv_truck",
+          "shore_power",
+          "bess"
+        ],
+        "twin_nodes": [
+          "telemetry",
+          "twin",
+          "twinplus"
+        ],
+        "rl_nodes": [
+          "rl_bess",
+          "rl_yard_crane",
+          "rl_lighting",
+          "opsx"
+        ],
+        "app_nodes": [
+          "exec_cockpit",
+          "energyx",
+          "compliance"
+        ]
+      },
+      "kpi_demo": {
+        "co2_reduction_tonnes_per_year": 90000,
+        "energy_savings_mwh_per_year": 60000,
+        "yard_throughput_increase_pct": 6.5
+      }
+    },
+    {
+      "code": "CNNGB",
+      "unlocode": "CNNGB",
+      "name": "港口4",
+      "name_en": "Ningbo-Zhoushan Port",
+      "country": "CN",
+      "region": "East China",
+      "throughput_teu_2023": 35300000,
+      "geo": {
+        "lat": 29.9,
+        "lon": 121.8
+      },
+      "is_demo": true,
+      "modules": {
+        "device_nodes": [
+          "qc_yc",
+          "agv_truck",
+          "shore_power",
+          "bess",
+          "hvac",
+          "yard_lighting"
+        ],
+        "twin_nodes": [
+          "telemetry",
+          "sim_scenarios",
+          "twin",
+          "twinlab",
+          "twinplus"
+        ],
+        "rl_nodes": [
+          "rl_agv",
+          "rl_bess",
+          "rl_yard_crane",
+          "rl_hvac",
+          "rl_lighting",
+          "rl_ops_center",
+          "mas_orchestrator",
+          "opsx"
+        ],
+        "app_nodes": [
+          "exec_cockpit",
+          "exec_closedloop",
+          "energyx",
+          "compliance",
+          "twinlab_drills",
+          "ops_copilot"
+        ]
+      },
+      "kpi_demo": {
+        "co2_reduction_tonnes_per_year": 150000,
+        "energy_savings_mwh_per_year": 110000,
+        "yard_throughput_increase_pct": 9.0
+      }
+    }
+  ]
+}

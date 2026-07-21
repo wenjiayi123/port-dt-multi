@@ -1,0 +1,38 @@
+{
+  "meta": {
+    "scenario": "港区 A · 夏季高温 + 船舶集中靠泊",
+    "currency": "CNY"
+  },
+  "events": [
+    { "t": -6, "label": "船舶集中靠泊" },
+    { "t": 0,  "label": "热浪来袭" },
+    { "t": 3,  "label": "电价飙升" }
+  ],
+  "keyframes": [
+    {
+      "t": -24,
+      "baseline": { "peak_kw": 7800, "bill_cny": 126000 },
+      "with_rl":  { "peak_kw": 7200, "bill_cny": 119000, "co2_ton": 1.5 }
+    },
+    {
+      "t": -6,
+      "baseline": { "peak_kw": 9800, "bill_cny": 158000 },
+      "with_rl":  { "peak_kw": 8200, "bill_cny": 134000, "co2_ton": 3.4 }
+    },
+    {
+      "t": 0,
+      "baseline": { "peak_kw": 11000, "bill_cny": 181000 },
+      "with_rl":  { "peak_kw": 8600, "bill_cny": 142000, "co2_ton": 5.2 }
+    },
+    {
+      "t": 6,
+      "baseline": { "peak_kw": 9500, "bill_cny": 160000 },
+      "with_rl":  { "peak_kw": 7900, "bill_cny": 133000, "co2_ton": 4.0 }
+    },
+    {
+      "t": 24,
+      "baseline": { "peak_kw": 8000, "bill_cny": 129000 },
+      "with_rl":  { "peak_kw": 7300, "bill_cny": 121000, "co2_ton": 2.1 }
+    }
+  ]
+}

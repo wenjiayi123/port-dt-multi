@@ -1,0 +1,53 @@
+# editor/patch backups
+*.bak.*
+*.bak
+app/ui/_archive/
+app/_archive/
+app/services/**/_archive/
+
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*~
+
+# Python
+.venv/
+.venv*/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Runtime state and generated experiment artifacts
+data/rl/runs/
+data/rl/benchmarks.json
+data/rl/model_registry.json
+data/rl/model_registry_audit.jsonl
+data/objects/audit/
+data/objects/exec/
+data/objects/config/actuators.json
+logs/
+tmp/
+*.log
+
+# The unaudited legacy model library is retained only in the private workspace.
+app/services/rl_model/
+
+# Superseded local raster; the open-source UI uses the original vector asset.
+app/static/xiaoyi_maritime_officer.png
+
+# Local command/validation remnants
+/--*
+/bc_*.txt
+
+# Local packaging and private submission material
+.codex_artifacts/
+soft_copyright_materials/
+港口AI运营中枢TwinLab与RL推演平台软件_V1.0_软著申请材料_直接提交包/
+*.docx
+*.pdf
+*.zip

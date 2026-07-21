@@ -1,0 +1,230 @@
+{
+  "meta": {
+    "port": "Shanghai",
+    "currency": "CNY",
+    "window": "P30D"
+  },
+  "kpis": {
+    "throughput_teu": 4956000,
+    "vessel_calls": 1947,
+    "truck_turn_min": 41.8,
+    "crane_uptime_pct": 92.4,
+    "shore_power_h": 3160,
+    "energy_kwh": 113280000,
+    "peak_kw": 10762,
+    "bill_cny": 184499999,
+    "co2_ton": 5148
+  },
+  "trend": [
+    {
+      "t": -29,
+      "throughput_teu": 156940,
+      "energy_kwh": 3813760,
+      "bill_cny": 5842499,
+      "co2_ton": 163.0
+    },
+    {
+      "t": -28,
+      "throughput_teu": 160244,
+      "energy_kwh": 3813760,
+      "bill_cny": 5965499,
+      "co2_ton": 166.5
+    },
+    {
+      "t": -27,
+      "throughput_teu": 163548,
+      "energy_kwh": 3813760,
+      "bill_cny": 6088499,
+      "co2_ton": 169.9
+    },
+    {
+      "t": -26,
+      "throughput_teu": 166852,
+      "energy_kwh": 3813760,
+      "bill_cny": 6211499,
+      "co2_ton": 173.3
+    },
+    {
+      "t": -25,
+      "throughput_teu": 170156,
+      "energy_kwh": 3813760,
+      "bill_cny": 6334499,
+      "co2_ton": 176.7
+    },
+    {
+      "t": -24,
+      "throughput_teu": 173460,
+      "energy_kwh": 3813760,
+      "bill_cny": 6457499,
+      "co2_ton": 180.2
+    },
+    {
+      "t": -23,
+      "throughput_teu": 176764,
+      "energy_kwh": 3813760,
+      "bill_cny": 6580499,
+      "co2_ton": 183.6
+    },
+    {
+      "t": -22,
+      "throughput_teu": 156940,
+      "energy_kwh": 3813760,
+      "bill_cny": 5842499,
+      "co2_ton": 163.0
+    },
+    {
+      "t": -21,
+      "throughput_teu": 160244,
+      "energy_kwh": 3813760,
+      "bill_cny": 5965499,
+      "co2_ton": 166.5
+    },
+    {
+      "t": -20,
+      "throughput_teu": 163548,
+      "energy_kwh": 3813760,
+      "bill_cny": 6088499,
+      "co2_ton": 169.9
+    },
+    {
+      "t": -19,
+      "throughput_teu": 166852,
+      "energy_kwh": 3813760,
+      "bill_cny": 6211499,
+      "co2_ton": 173.3
+    },
+    {
+      "t": -18,
+      "throughput_teu": 170156,
+      "energy_kwh": 3813760,
+      "bill_cny": 6334499,
+      "co2_ton": 176.7
+    },
+    {
+      "t": -17,
+      "throughput_teu": 173460,
+      "energy_kwh": 3813760,
+      "bill_cny": 6457499,
+      "co2_ton": 180.2
+    },
+    {
+      "t": -16,
+      "throughput_teu": 176764,
+      "energy_kwh": 3813760,
+      "bill_cny": 6580499,
+      "co2_ton": 183.6
+    },
+    {
+      "t": -15,
+      "throughput_teu": 156940,
+      "energy_kwh": 3813760,
+      "bill_cny": 5842499,
+      "co2_ton": 163.0
+    },
+    {
+      "t": -14,
+      "throughput_teu": 160244,
+      "energy_kwh": 3813760,
+      "bill_cny": 5965499,
+      "co2_ton": 166.5
+    },
+    {
+      "t": -13,
+      "throughput_teu": 163548,
+      "energy_kwh": 3813760,
+      "bill_cny": 6088499,
+      "co2_ton": 169.9
+    },
+    {
+      "t": -12,
+      "throughput_teu": 166852,
+      "energy_kwh": 3813760,
+      "bill_cny": 6211499,
+      "co2_ton": 173.3
+    },
+    {
+      "t": -11,
+      "throughput_teu": 170156,
+      "energy_kwh": 3813760,
+      "bill_cny": 6334499,
+      "co2_ton": 176.7
+    },
+    {
+      "t": -10,
+      "throughput_teu": 173460,
+      "energy_kwh": 3813760,
+      "bill_cny": 6457499,
+      "co2_ton": 180.2
+    },
+    {
+      "t": -9,
+      "throughput_teu": 176764,
+      "energy_kwh": 3813760,
+      "bill_cny": 6580499,
+      "co2_ton": 183.6
+    },
+    {
+      "t": -8,
+      "throughput_teu": 156940,
+      "energy_kwh": 3813760,
+      "bill_cny": 5842499,
+      "co2_ton": 163.0
+    },
+    {
+      "t": -7,
+      "throughput_teu": 160244,
+      "energy_kwh": 3813760,
+      "bill_cny": 5965499,
+      "co2_ton": 166.5
+    },
+    {
+      "t": -6,
+      "throughput_teu": 163548,
+      "energy_kwh": 3813760,
+      "bill_cny": 6088499,
+      "co2_ton": 169.9
+    },
+    {
+      "t": -5,
+      "throughput_teu": 166852,
+      "energy_kwh": 3813760,
+      "bill_cny": 6211499,
+      "co2_ton": 173.3
+    },
+    {
+      "t": -4,
+      "throughput_teu": 170156,
+      "energy_kwh": 3813760,
+      "bill_cny": 6334499,
+      "co2_ton": 176.7
+    },
+    {
+      "t": -3,
+      "throughput_teu": 173460,
+      "energy_kwh": 3813760,
+      "bill_cny": 6457499,
+      "co2_ton": 180.2
+    },
+    {
+      "t": -2,
+      "throughput_teu": 176764,
+      "energy_kwh": 3813760,
+      "bill_cny": 6580499,
+      "co2_ton": 183.6
+    },
+    {
+      "t": -1,
+      "throughput_teu": 156940,
+      "energy_kwh": 3813760,
+      "bill_cny": 5842499,
+      "co2_ton": 163.0
+    },
+    {
+      "t": 0,
+      "throughput_teu": 160244,
+      "energy_kwh": 3813760,
+      "bill_cny": 5965499,
+      "co2_ton": 166.5
+    }
+  ]
+}

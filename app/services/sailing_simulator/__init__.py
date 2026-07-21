@@ -1,0 +1,1 @@
+"""Desktop sailing simulator integration."""

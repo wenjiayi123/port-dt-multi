@@ -1,0 +1,46 @@
+{
+  "updated_at": "2025-12-06T08:16:14Z",
+  "ports": [
+    {
+      "id": "shanghai-ys4",
+      "name": "上海港 · 洋山四期（自动化）",
+      "phase": "全量",
+      "twin_fidelity": 0.95,
+      "annual_saving_mwy": 1850,
+      "annual_co2_t": 5600,
+      "scenes": [
+        "AGV 充电节能调度（纯电 AGV）",
+        "岸电 BESS 峰谷套利 / 削峰",
+        "QC/YC 场桥节能（起落速度 / 等待策略优化）",
+        "HVAC 冷站负荷移峰",
+        "场区照明智能调光 / 分区控制"
+      ]
+    },
+    {
+      "id": "shanghai-wgq",
+      "name": "上海港 · 外高桥（一期-五期）",
+      "phase": "Pilot",
+      "twin_fidelity": 0.9,
+      "annual_saving_mwy": 1320,
+      "annual_co2_t": 3850,
+      "scenes": [
+        "岸电 BESS 供电策略（靠泊船舶）",
+        "QC/YC 场桥节能",
+        "堆场照明智能调光"
+      ]
+    },
+    {
+      "id": "shanghai-lj",
+      "name": "上海港 · 罗泾作业区",
+      "phase": "PoC",
+      "twin_fidelity": 0.86,
+      "annual_saving_mwy": 420,
+      "annual_co2_t": 1180,
+      "scenes": [
+        "园区 BESS + 光伏自用最大化",
+        "仓储冷库 HVAC 节能控制",
+        "园区照明智能调光"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "period_label": "2024 报告期（国际港·演示）",
+  "port_name": "国际港（示例）",
+  "score_esg": 89.2,
+  "score_e": 91.0,
+  "score_s": 87.0,
+  "score_g": 88.0,
+  "co2_12m_ton": 1250000.0,
+  "co2_vs_target_pct": -8.5,
+  "renewable_share_pct": 38.0,
+  "auto_compliance_pct": 90.0,
+  "incidents_12m": 0,
+  "audits_on_time_pct": 99.0,
+  "ci_kg_per_teu": 25.0,
+  "comment": "基于公开吞吐量与电网排放因子的合理估算示例，用于展示上海港在 2024 报告期的电碳表现：单位 TEU 碳排强度约 25 kgCO₂e/TEU，可再生电占比约 38%，重大环境/安全事件为 0 起，合规审计按时率约 99%。该数据仅供数字孪生与 ESG 驾驶舱演示，不代表任何官方披露。",
+  "_source": "esg.snapshot_demo_shanghai"
+}

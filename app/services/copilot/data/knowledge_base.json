@@ -1,0 +1,232 @@
+{
+  "meta": {
+    "version": "0.1",
+    "note": "示例知识库：抽象自上海、宁波舟山、新加坡、鹿特丹等国际大港的通用做法，用于本地 demo。落地时可直接替换为真实港口文档。"
+  },
+  "items": [
+    {
+      "id": "sop-agv-charging-window",
+      "type": "sop",
+      "scopes": [
+        "sop",
+        "device",
+        "energy"
+      ],
+      "title": "AGV 智能充电窗口策略（自动化集装箱码头）",
+      "snippet": "适用于年吞吐量 > 800 万 TEU 的自动化集装箱码头。将 AGV 充电分为谷电集中充电、作业间隙补电和应急快充三类，尽量在夜间和低负荷时段完成 80% 以上充电量。",
+      "keywords": [
+        "AGV",
+        "充电",
+        "自动化堆场",
+        "谷电",
+        "作业窗口"
+      ],
+      "link": "#rl-agv-section"
+    },
+    {
+      "id": "sop-qc-night-shift",
+      "type": "sop",
+      "scopes": [
+        "sop"
+      ],
+      "title": "岸桥夜班作业能效与安全 SOP",
+      "snippet": "国际大港普遍采用“低速起吊 + 智能防摆 + 任务合并”策略；高峰时禁止长时间空吊和跨贝移动，单机小时作业量控制在 25〜32 自然箱，避免超负荷带来的峰值功率和设备疲劳。",
+      "keywords": [
+        "岸桥",
+        "QC",
+        "夜班",
+        "能效",
+        "安全"
+      ],
+      "link": "#twin-section"
+    },
+    {
+      "id": "sop-typhoon-mode",
+      "type": "sop",
+      "scopes": [
+        "sop",
+        "alert"
+      ],
+      "title": "台风模式启停流程（集装箱码头）",
+      "snippet": "当港区风力 ≥ 10 级或气象台发布台风红色预警时，提前 6 小时启动台风模式：停止高门机和桥吊作业、锁定堆场箱位、切换岸电和关键负荷到保障电源，并生成调度广播与短信。",
+      "keywords": [
+        "台风",
+        "停工",
+        "大风",
+        "气象预警"
+      ],
+      "link": "#scenario-section"
+    },
+    {
+      "id": "alert-shore-harmonics",
+      "type": "alert",
+      "scopes": [
+        "alert",
+        "device"
+      ],
+      "title": "岸电系统谐波电流超标告警处理",
+      "snippet": "在上海、鹿特丹等大港，岸电变流器总谐波电流 THDi 一般控制在 5% 以下。告警出现时先检查并联船舶是否启用大功率变频负载，再核对有源滤波装置投运状态，必要时采取限功率或切负荷措施。",
+      "keywords": [
+        "岸电",
+        "谐波",
+        "THDi",
+        "有源滤波",
+        "告警"
+      ],
+      "link": "#energy-section"
+    },
+    {
+      "id": "alert-peak-demand",
+      "type": "alert",
+      "scopes": [
+        "alert",
+        "energy"
+      ],
+      "title": "合同需量超用预警说明",
+      "snippet": "国际大港通常按 15 分钟计费需量。连续 2〜4 个计量周期超过合同需量上限时，会触发黄色或红色预警。典型处置：推迟非关键装置启动、降低冷站负荷、触发 AGV/BESS 削峰策略。",
+      "keywords": [
+        "合同需量",
+        "削峰填谷",
+        "BESS",
+        "计费周期"
+      ],
+      "link": "#curves-section"
+    },
+    {
+      "id": "device-main-transformer",
+      "type": "device",
+      "scopes": [
+        "device"
+      ],
+      "title": "港区 110/35kV 主变典型运行区间",
+      "snippet": "在宁波舟山、新加坡等大港，港区主变长期运行负载率建议控制在 40%〜75%。当油温 > 80℃ 或负载率持续超过 90% 超过 2 小时时，应触发运维巡检并评估短期负荷转移方案。",
+      "keywords": [
+        "主变",
+        "变压器",
+        "负载率",
+        "油温",
+        "港区变电站"
+      ],
+      "link": "#exec-cockpit"
+    },
+    {
+      "id": "device-yard-crane-eco-mode",
+      "type": "device",
+      "scopes": [
+        "device",
+        "sop"
+      ],
+      "title": "场桥 Eco 模式配置建议",
+      "snippet": "国际大港常见做法：在低作业密度时启用 Eco 模式，自动限制同时起升数和长行程空载运行；对轨道吊采用再生制动与能量回馈装置，单机能耗可下降 8〜15%。",
+      "keywords": [
+        "场桥",
+        "RTG",
+        "RMG",
+        "再生制动",
+        "能量回馈"
+      ],
+      "link": "#rl-yard-section"
+    },
+    {
+      "id": "protocol-shore-power-80005",
+      "type": "protocol",
+      "scopes": [
+        "protocol"
+      ],
+      "title": "岸电国际标准 IEC/ISO/IEEE 80005 概要",
+      "snippet": "80005 系列定义了大功率岸电接口的电压等级、接地方式、同步并网及安全联锁等要求。主流集装箱和滚装码头多采用 6.6kV 或 11kV，频率 50/60Hz 兼容，采用专用接插件和岸桥上电缆管理系统。",
+      "keywords": [
+        "IEC/ISO/IEEE 80005",
+        "岸电",
+        "高压岸电",
+        "标准"
+      ],
+      "link": "https://www.iso.org/standard/53588.html"
+    },
+    {
+      "id": "protocol-green-port-esg",
+      "type": "protocol",
+      "scopes": [
+        "protocol",
+        "compliance"
+      ],
+      "title": "国际大港常见 ESG 评价指标框架",
+      "snippet": "领先港口通常围绕能效、碳排放、空气质量、安全生产和员工多元化等维度建立 ESG 指标。电力相关 KPI 包括单位 TEU 综合能耗、岸电使用小时数、绿色电力占比以及年度减排量等。",
+      "keywords": [
+        "ESG",
+        "KPI",
+        "碳排放",
+        "绿色港口"
+      ],
+      "link": "#esg-section"
+    },
+    {
+      "id": "compliance-carbon-inventory",
+      "type": "compliance",
+      "scopes": [
+        "compliance"
+      ],
+      "title": "港口年度碳排放盘查边界示例",
+      "snippet": "对标世界银行与 PIANC 指南，港口通常将自用发电、购网电、装卸机械、车辆、拖轮及办公楼宇纳入盘查边界；同时区分 Scope1、Scope2、Scope3，便于与航运公司共同核算靠港排放。",
+      "keywords": [
+        "碳盘查",
+        "Scope1",
+        "Scope2",
+        "Scope3"
+      ],
+      "link": "#twinplus-section"
+    },
+    {
+      "id": "compliance-tou-tariff",
+      "type": "compliance",
+      "scopes": [
+        "compliance",
+        "energy"
+      ],
+      "title": "典型港区分时电价窗口",
+      "snippet": "参考多地沿海港口电价：一般将 23:00〜7:00 作为谷时，7:00〜10:00、15:00〜18:00、21:00〜23:00 作为峰时，其余为平时。大部分港口会将冷站和充电负荷尽量移到谷、平时段运行。",
+      "keywords": [
+        "分时电价",
+        "峰谷",
+        "港口电价",
+        "负荷转移"
+      ],
+      "link": "#curves-section"
+    },
+    {
+      "id": "sop-hvac-night-economy",
+      "type": "sop",
+      "scopes": [
+        "sop",
+        "device"
+      ],
+      "title": "冷站夜间经济运行策略",
+      "snippet": "新加坡和中东部分港口采用“深冷蓄冰 + 日间削峰”模式：夜间负荷低时以高 COP 工况运行冷机并蓄冷，白天高温高负荷时减少启停次数，避免频繁大幅度调节导致效率下降。",
+      "keywords": [
+        "冷站",
+        "HVAC",
+        "蓄冷",
+        "COP",
+        "夜间运行"
+      ],
+      "link": "#rl-hvac-section"
+    },
+    {
+      "id": "alert-it-system-degradation",
+      "type": "alert",
+      "scopes": [
+        "alert"
+      ],
+      "title": "TOS/设备管理系统性能下降告警",
+      "snippet": "在吞吐量高峰期，如果 TOS、EAM 或轨道交通信号系统响应时间显著增加，应在 5 分钟内完成三项检查：服务器资源占用、关键接口错误率和消息队列堆积长度，并视情况切入降级运行。",
+      "keywords": [
+        "TOS",
+        "EAM",
+        "IT 系统",
+        "性能下降",
+        "降级运行"
+      ],
+      "link": "#opsx-section"
+    }
+  ]
+}

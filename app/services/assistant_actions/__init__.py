@@ -1,0 +1,1 @@
+"""Assistant action gateway."""

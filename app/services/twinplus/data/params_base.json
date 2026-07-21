@@ -1,0 +1,8 @@
+{
+  "bess_eff": 0.94,
+  "ramp_kw_s": 430,
+  "thermal_max_C": 86,
+  "shore_pf": 0.92,
+  "cap_norm": 0.78,
+  "delay_norm": 0.52
+}
