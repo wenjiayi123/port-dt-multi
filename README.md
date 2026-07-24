@@ -25,6 +25,27 @@
   <a href="docs/OPEN_SOURCE_READINESS_AUDIT.md">开源审计</a>
 </p>
 
+<table>
+  <tr>
+    <th align="center">公开数据驱动记录<br /><sub>PUBLIC-DATA DRIVEN</sub></th>
+    <th align="center">泊位有效利用率<br /><sub>BERTH UTILIZATION</sub></th>
+    <th align="center">平均待泊时间<br /><sub>MEAN WAITING TIME</sub></th>
+    <th align="center">情景用电成本<br /><sub>SCENARIO ENERGY COST</sub></th>
+    <th align="center">稳定性复验<br /><sub>PAIRED BOOTSTRAP</sub></th>
+  </tr>
+  <tr>
+    <td align="center"><strong>52,608</strong><br />小时记录</td>
+    <td align="center"><strong>83.63% → 91.09%</strong><br />相对 +8.91%</td>
+    <td align="center"><strong>−16.94%</strong><br />5.90 h → 4.90 h</td>
+    <td align="center"><strong>−11.80%</strong><br />同吞吐情景</td>
+    <td align="center"><strong>365 × 2,000</strong><br />日级配对复验</td>
+  </tr>
+</table>
+
+<p align="center">
+  <sub><strong>Evidence scope:</strong> parameter-declared digital-twin counterfactual over public MPA anchors; not a measured terminal KPI, online A/B test, or audited financial saving.</sub>
+</p>
+
 ---
 
 ## 为什么是 Port DT Multi？ / Why Port DT Multi?
