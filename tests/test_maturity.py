@@ -190,6 +190,9 @@ class RuntimeHardeningTests(unittest.TestCase):
         self.assertNotIn("future://", html)
         self.assertNotIn("需量预测（演示用合成", html)
         self.assertIn("/api/system/provenance", html)
+        self.assertIn("window.__markOptionalModuleUnavailable", html)
+        self.assertIn("等待接入港口 · 旧版实验制品未启用", html)
+        self.assertIn("现场曲线须等待港口适配器接入", html)
 
     def test_default_public_apis_hide_local_paths_and_legacy_artifacts(self):
         from app import server as server_module

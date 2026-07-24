@@ -8893,6 +8893,45 @@ window.__portDtFeatureFlagsPromise = window.__portDtFeatureFlagsPromise || fetch
   .then(payload => payload.feature_flags || {})
   .catch(() => ({engineering_simulators_enabled:false, legacy_rl_enabled:false}));
 
+window.__markOptionalModuleUnavailable = window.__markOptionalModuleUnavailable || function(flag, button){
+  const card = button?.closest('.card');
+  if(!card || card.dataset.optionalModuleState === 'disabled') return;
+  card.dataset.optionalModuleState = 'disabled';
+
+  for(const child of Array.from(card.children)){
+    if(child.classList?.contains('kpi-grid') || child.classList?.contains('row') || child.querySelector?.('canvas')){
+      child.hidden = true;
+    }
+  }
+
+  const notice = document.createElement('div');
+  notice.className = 'optional-module-notice';
+  notice.style.cssText = [
+    'margin-top:14px',
+    'padding:18px 20px',
+    'border:1px solid #2b4c78',
+    'border-radius:12px',
+    'background:linear-gradient(135deg,rgba(24,54,91,.72),rgba(10,24,48,.88))',
+    'color:#cfe0ff',
+    'line-height:1.7'
+  ].join(';');
+
+  const heading = document.createElement('div');
+  heading.style.cssText = 'font-weight:800;color:#93c5fd;margin-bottom:5px;';
+  heading.textContent = flag === 'legacy_rl_enabled'
+    ? '等待接入港口 · 旧版实验制品未启用'
+    : '等待接入港口 · 工程联调模块未启用';
+
+  const body = document.createElement('div');
+  body.className = 'small';
+  body.textContent = flag === 'legacy_rl_enabled'
+    ? '开源仓库不会携带本机训练 JSONL、缓存或运行数据库。可在“强化学习面板”查看仓库内公开数据离线证据；现场曲线须等待港口适配器接入。'
+    : '该区域依赖港口现场适配器或显式联调开关；未配置时保持失效安全，不生成伪实时数据。';
+
+  notice.append(heading, body);
+  card.appendChild(notice);
+};
+
 window.__enableOptionalModule = window.__enableOptionalModule || function(flag, button, task, delay=0){
   window.__portDtFeatureFlagsPromise.then(flags=>{
     if(flags?.[flag] === true){
@@ -8910,6 +8949,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
         ? '旧 RL 产物路由默认关闭；请使用真实训练与模型登记主链'
         : '工程模拟器默认关闭；仅用于显式开启的接港联调';
     }
+    window.__markOptionalModuleUnavailable(flag, button);
   });
 };
 </script>
