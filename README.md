@@ -65,7 +65,7 @@ The hard part of port AI is not another dashboard. It is making data origin, alg
 | 受控执行 / Bounded execution | 默认关闭；白名单、参数约束、幂等、异人复核、独立二通道<br><sub>Disabled by default; allowlist, bounds, idempotency, four-eyes review, and an independent second channel</sub> | 原子审计、失败关闭、可重试回滚<br><sub>Atomic audit, fail-closed behavior, and retry-safe rollback</sub> |
 | 双语交互 / Bilingual UX | 中文/English 主界面、RL 面板、运营助手、集成中枢<br><sub>Chinese/English cockpit, RL panel, copilot, and integration hub</sub> | 页面级来源状态和能力边界<br><sub>Page-level provenance state and capability boundary</sub> |
 
-> **定位 / Positioning** — 这是研究、教学、软件验证与现场集成前评估平台，不是已经认证的自主港口控制器。所有推理输出默认是建议，`dispatch_allowed=false`；生产执行权始终位于独立现场审批、设备联锁与变更管理之后。
+> <strong>定位 / Positioning</strong> — 这是研究、教学、软件验证与现场集成前评估平台，不是已经认证的自主港口控制器。所有推理输出默认是建议，`dispatch_allowed=false`；生产执行权始终位于独立现场审批、设备联锁与变更管理之后。
 >
 > This is a research, teaching, software-verification, and pre-integration assessment platform—not a certified autonomous port controller. All inference is advisory by default with `dispatch_allowed=false`; production authority remains behind independent site approval, equipment interlocks, and change management.
 
@@ -119,15 +119,15 @@ This is not a monolithic “AI that does everything.” Provenance levels, envir
   <img src="docs/assets/rl-governance.jpg" alt="Port DT Multi RL governance panel" width="96%" />
 </p>
 
-- **运营总览 / Operations cockpit**：港区态势、数据来源、KPI、ESG/合规、策略链与审计入口。缺少正式证据时显示“未接入/未评定”，不补造优秀指标。<br>
+- <strong>运营总览 / Operations cockpit</strong>：港区态势、数据来源、KPI、ESG/合规、策略链与审计入口。缺少正式证据时显示“未接入/未评定”，不补造优秀指标。<br>
   *Port situation, provenance, KPI, ESG/compliance, policy chain, and audit entry points. Missing formal evidence is shown as “not connected / not assessed,” never replaced with flattering metrics.*
-- **强化学习面板 / RL panel**：选择规范数据集和五类控制器，读取后端真实进度，训练完成后再启动留出集评测与轨迹回放。<br>
+- <strong>强化学习面板 / RL panel</strong>：选择规范数据集和五类控制器，读取后端真实进度，训练完成后再启动留出集评测与轨迹回放。<br>
   *Select a canonical dataset and one of five controllers, read backend-owned progress, and start holdout evaluation and replay only after training completes.*
-- **运营助手 / Ops copilot**：把自然语言意图映射为受支持的只读查询或白名单候选动作；不扩大调用者权限。<br>
+- <strong>运营助手 / Ops copilot</strong>：把自然语言意图映射为受支持的只读查询或白名单候选动作；不扩大调用者权限。<br>
   *Maps natural-language intent to supported read-only queries or allowlisted candidate actions without expanding caller authority.*
-- **集成中枢 / Integration hub**：展示现场连接、功能开关和安全门；验证链运行在 dry-run，不能冒充生产下发。<br>
+- <strong>集成中枢 / Integration hub</strong>：展示现场连接、功能开关和安全门；验证链运行在 dry-run，不能冒充生产下发。<br>
   *Surfaces site connections, feature flags, and safety gates. Integration verification runs as dry-run and cannot masquerade as production dispatch.*
-- **Story / OpsX / TwinLab**：用于证据叙事、运行治理、故障注入和接港前契约联调；每类数据保持 replay、simulation、derived、measured 标签。<br>
+- <strong>Story / OpsX / TwinLab</strong>：用于证据叙事、运行治理、故障注入和接港前契约联调；每类数据保持 replay、simulation、derived、measured 标签。<br>
   *Supports evidence narratives, operational governance, fault injection, and pre-integration contract testing while preserving replay/simulation/derived/measured labels.*
 
 ## 🧠 真实训练与评测 / Real training & evaluation
@@ -276,9 +276,9 @@ python -m scripts.rl_benchmark \
 timestamp,base_load_kw,throughput_teu,vessel_arrivals,tide_m,price_per_kwh,carbon_kg_per_kwh,ambient_c
 ```
 
-`public_port_ops_v1` 是为了复现接口、环境和测试构造的集成数据集：公开输入为新加坡海事及港务管理局 2020–2025 月度集装箱吞吐量与集装箱船到港量，官方输入的港口地理口径一致；小时负荷、小时吞吐/到港分配、分时电价、碳因子、气温和潮位压力项是有记录的确定性工程派生量，潮位项不参与三项业务 KPI。因此该数据集**不是**港口小时实测时序，不能用于现场绩效归因。
+`public_port_ops_v1` 是为了复现接口、环境和测试构造的集成数据集：公开输入为新加坡海事及港务管理局 2020–2025 月度集装箱吞吐量与集装箱船到港量，官方输入的港口地理口径一致；小时负荷、小时吞吐/到港分配、分时电价、碳因子、气温和潮位压力项是有记录的确定性工程派生量，潮位项不参与三项业务 KPI。因此该数据集<strong>不是</strong>港口小时实测时序，不能用于现场绩效归因。
 
-`public_port_ops_v1` is an integration dataset for reproducible adapters, environments, and tests. Its public inputs are MPA Singapore monthly container throughput and container-vessel arrivals for 2020–2025. Hourly load, throughput/arrival allocation, tariff, carbon, temperature and tide-stress fields are documented deterministic derivatives; tide is excluded from the three business KPIs. It is **not** measured hourly terminal telemetry and must not be used for site-performance attribution.
+`public_port_ops_v1` is an integration dataset for reproducible adapters, environments, and tests. Its public inputs are MPA Singapore monthly container throughput and container-vessel arrivals for 2020–2025. Hourly load, throughput/arrival allocation, tariff, carbon, temperature and tide-stress fields are documented deterministic derivatives; tide is excluded from the three business KPIs. It is <strong>not</strong> measured hourly terminal telemetry and must not be used for site-performance attribution.
 
 接入新港口无需改写算法，只需通过 `/api/rl/datasets/upload` 提供：
 
@@ -295,17 +295,17 @@ Datasets cannot overwrite an existing identifier unless `replace_existing=true` 
 
 ## 🛡️ 安全和治理边界 / Safety & governance boundaries
 
-- **来源不混淆 / No provenance blur**：`dataset`、`engineering_simulator`、`live_rest`、`measured` 是不同等级；真实接口失败不会静默生成业务值。<br>
+- <strong>来源不混淆 / No provenance blur</strong>：`dataset`、`engineering_simulator`、`live_rest`、`measured` 是不同等级；真实接口失败不会静默生成业务值。<br>
   *`dataset`, `engineering_simulator`, `live_rest`, and `measured` are distinct levels; a failed live interface never silently generates business values.*
-- **模型不越权 / Models have no authority**：模型注册、`champion` 别名和软件包络都不是现场部署批准。<br>
+- <strong>模型不越权 / Models have no authority</strong>：模型注册、`champion` 别名和软件包络都不是现场部署批准。<br>
   *Registration, a `champion` alias, and a software envelope do not constitute site deployment approval.*
-- **执行失败关闭 / Execution fails closed**：南向网关默认禁用；启用后仍需资产/动作白名单、参数上下界、幂等键、异人确认和独立二通道密钥。<br>
+- <strong>执行失败关闭 / Execution fails closed</strong>：南向网关默认禁用；启用后仍需资产/动作白名单、参数上下界、幂等键、异人确认和独立二通道密钥。<br>
   *The southbound gateway is disabled by default and, when enabled, still requires asset/action allowlists, parameter bounds, idempotency, four-eyes confirmation, and an independent second-channel key.*
-- **生产认证分离 / Certification is external**：ESG、合规、孪生保真度和安全指标只有在提供正式证据时才成立，软件输出不构成法律、财务或安全认证。<br>
+- <strong>生产认证分离 / Certification is external</strong>：ESG、合规、孪生保真度和安全指标只有在提供正式证据时才成立，软件输出不构成法律、财务或安全认证。<br>
   *ESG, compliance, twin fidelity, and safety claims require formal evidence; software output is not legal, financial, or safety certification.*
-- **生产模式门禁 / Production gate**：`PORT_DT_ENV=production` 时 API 需要长密钥、显式 CORS；数据覆盖、模型晋级/回滚和执行变更另需独立管理员密钥；Swagger 默认关闭。<br>
+- <strong>生产模式门禁 / Production gate</strong>：`PORT_DT_ENV=production` 时 API 需要长密钥、显式 CORS；数据覆盖、模型晋级/回滚和执行变更另需独立管理员密钥；Swagger 默认关闭。<br>
   *With `PORT_DT_ENV=production`, APIs require strong keys and explicit CORS; dataset replacement, model promotion/rollback, and execution changes require a separate administrator key; Swagger is disabled.*
-- **标识符安全 / Identifier safety**：训练、评测和模型目录只接受受限标识符，并拒绝路径穿越与符号链接逃逸。<br>
+- <strong>标识符安全 / Identifier safety</strong>：训练、评测和模型目录只接受受限标识符，并拒绝路径穿越与符号链接逃逸。<br>
   *Training, evaluation, and model directories accept constrained identifiers and reject path traversal and symlink escape.*
 
 进一步阅读 / Further reading:
