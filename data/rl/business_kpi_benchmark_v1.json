@@ -1,12 +1,12 @@
 {
   "schema_version": "port_business_kpi_benchmark_v1",
   "benchmark_id": "public_port_ops_coordinated_dispatch_v1",
-  "generated_at": "2026-07-24T11:12:15+00:00",
+  "generated_at": "2026-07-24T12:45:47+00:00",
   "evidence_level": "public_input_driven_fixed_digital_twin_counterfactual",
   "dataset": {
     "dataset_id": "public_port_ops_v1",
     "path": "data/rl/datasets/public_port_ops_v1.csv",
-    "sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+    "sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
     "rows": 52608,
     "split_method": "chronological_calendar_boundaries_no_shuffle",
     "split_sizes": {
@@ -21,7 +21,7 @@
   },
   "evidence_sha256": {
     "config/business_kpi_benchmark_v1.json": "bed99a5e0af94cb23cd762ac747715ffd3e016a5d5e177e42251ed8c31efb759",
-    "data/rl/datasets/public_port_ops_v1.csv": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+    "data/rl/datasets/public_port_ops_v1.csv": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
     "app/services/business_benchmark.py": "e69a19eb65b9a17bef90dad6c4a38a63d91a914e19e57afe5b8e48600b389280"
   },
   "baseline": {
