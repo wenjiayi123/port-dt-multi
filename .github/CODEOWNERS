@@ -1,0 +1,7 @@
+* @wenjiayi123
+
+/app/services/rl_training/ @wenjiayi123
+/app/services/execution/ @wenjiayi123
+/app/adapters/actuators.py @wenjiayi123
+/data/rl/datasets/ @wenjiayi123
+/.github/workflows/ @wenjiayi123

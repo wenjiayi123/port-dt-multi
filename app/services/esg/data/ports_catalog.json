@@ -1,0 +1,22 @@
+[
+  {
+    "code": "CNSHA",
+    "name": "上海港",
+    "region": "CN/East"
+  },
+  {
+    "code": "SGSIN",
+    "name": "新加坡港",
+    "region": "SG"
+  },
+  {
+    "code": "NLRTM",
+    "name": "鹿特丹港",
+    "region": "NL"
+  },
+  {
+    "code": "USLAXLGB",
+    "name": "洛杉矶-长滩港",
+    "region": "US/CA"
+  }
+]

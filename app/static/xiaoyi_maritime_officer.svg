@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="371" height="720" viewBox="0 0 371 720" role="img" aria-labelledby="title desc">
+  <title id="title">Xiaoyi maritime operations copilot</title>
+  <desc id="desc">Original stylised vector officer illustration.</desc>
+  <defs>
+    <linearGradient id="uniform" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#173d67"/><stop offset="1" stop-color="#07192d"/></linearGradient>
+    <linearGradient id="trim" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#fbbf24"/><stop offset="1" stop-color="#f59e0b"/></linearGradient>
+    <radialGradient id="skin"><stop stop-color="#ffe1cb"/><stop offset="1" stop-color="#e9b89a"/></radialGradient>
+    <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#020617" flood-opacity=".45"/></filter>
+  </defs>
+  <ellipse cx="185" cy="685" rx="132" ry="22" fill="#020617" opacity=".35"/>
+  <g filter="url(#shadow)">
+    <path d="M80 361c22-38 61-59 105-59s83 21 106 59l37 245c4 30-17 57-47 61H90c-30-4-51-31-47-61z" fill="url(#uniform)" stroke="#38bdf8" stroke-opacity=".38" stroke-width="3"/>
+    <path d="M119 318l66 99 68-99 32 27-38 75 23 214H101l23-214-38-75z" fill="#f8fafc"/>
+    <path d="M126 330l59 87 60-87-15 292h-91z" fill="#0a2542"/>
+    <path d="M168 407h34l12 206h-58z" fill="#0ea5e9" opacity=".75"/>
+    <circle cx="185" cy="202" r="104" fill="url(#skin)" stroke="#f8fafc" stroke-opacity=".5" stroke-width="3"/>
+    <path d="M86 203c0-80 42-127 99-127 60 0 102 47 101 126-21-18-40-47-50-82-42 42-88 63-150 83z" fill="#152238"/>
+    <path d="M109 224c12-4 24-3 35 3M226 227c12-5 24-4 35 2" fill="none" stroke="#4b2e2a" stroke-width="5" stroke-linecap="round"/>
+    <ellipse cx="128" cy="235" rx="8" ry="10" fill="#11334a"/><ellipse cx="245" cy="235" rx="8" ry="10" fill="#11334a"/>
+    <path d="M171 257c8 7 20 7 28 0M150 279c22 21 49 21 71 0" fill="none" stroke="#b86d63" stroke-width="4" stroke-linecap="round"/>
+    <path d="M76 151c18-75 67-112 110-112 46 0 94 37 111 112z" fill="#0b2848" stroke="#60a5fa" stroke-width="3"/>
+    <path d="M101 116h169l25 35H77z" fill="#102f53"/>
+    <path d="M157 67h58l10 45h-78z" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+    <path d="M186 73l9 14-9 14-9-14z" fill="url(#trim)"/>
+    <path d="M103 116h166" stroke="url(#trim)" stroke-width="7"/>
+    <path d="M62 469h91v54H69c-18 0-31-13-31-29s10-25 24-25zM309 469h-91v54h84c18 0 31-13 31-29s-10-25-24-25z" fill="#12365d"/>
+    <path d="M106 365h37M228 365h37" stroke="url(#trim)" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="116" cy="450" r="22" fill="#0c2542" stroke="#fbbf24" stroke-width="3"/>
+    <path d="M106 450l7 7 14-17" fill="none" stroke="#fbbf24" stroke-width="4" stroke-linecap="round"/>
+  </g>
+</svg>

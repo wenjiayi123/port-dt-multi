@@ -1,0 +1,7 @@
+{
+  "module": "A",
+  "name": "AGV充换电",
+  "latest_peak_shaving_mw": 4.9,
+  "cumulative_economic_saving_yuan": 68000,
+  "sample_count": 2000
+}

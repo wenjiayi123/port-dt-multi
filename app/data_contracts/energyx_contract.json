@@ -1,0 +1,166 @@
+{
+  "runtime_enabled": false,
+  "evidence_status": "legacy_contract_example_not_runtime_data",
+  "contract_name": "energyx_contract",
+  "version": "v1",
+  "scope": "EnergyX energy optimization and power orchestration for container terminal assets",
+  "city_anchor": "Shanghai",
+  "design_principle": {
+    "positioning": "Aligned to a Shanghai-port-like high-throughput terminal energy scenario, but explicitly not a live production feed.",
+    "usage_mode": "Mock-ready now, adapter-ready for future real interfaces.",
+    "guardrails": [
+      "Do not present values as live production telemetry.",
+      "Keep savings and operational improvements within conservative, interview-safe ranges.",
+      "Respect weather, tide, berth window, reefer load and shift rhythm as exogenous drivers."
+    ]
+  },
+  "entities": {
+    "energy_site": {
+      "primary_key": "site_id",
+      "examples": ["ysg_phase4", "waigaoqiao_phase5", "luojing_phase1"]
+    },
+    "energy_asset": {
+      "primary_key": "asset_id",
+      "examples": ["yard-lighting-a01", "hvac-cooling-c02", "shore-power-s01", "bess-e01", "reefer-bank-r03"]
+    },
+    "dispatch_plan": {
+      "primary_key": "plan_id"
+    }
+  },
+  "site_weight_reference": {
+    "yangshan": 0.56,
+    "waigaoqiao": 0.31,
+    "luojing": 0.13,
+    "note": "Weights mimic a Shanghai-like throughput structure where Yangshan carries the largest load, Waigaoqiao follows, and Luojing remains a smaller but growing smart area."
+  },
+  "drivers": {
+    "required": [
+      "timestamp",
+      "port_zone",
+      "weather_code",
+      "temperature_c",
+      "humidity_pct",
+      "berth_window_pressure",
+      "yard_utilization_pct",
+      "truck_gate_pressure_idx",
+      "vessel_workload_idx",
+      "day_night_flag",
+      "tariff_period",
+      "tide_risk_level"
+    ],
+    "optional": [
+      "shore_power_session_count",
+      "reefer_slot_load_idx",
+      "maintenance_outage_flag",
+      "festival_shipping_wave_flag"
+    ]
+  },
+  "asset_classes": {
+    "yard_lighting": {
+      "dispatchability": "medium",
+      "main_driver": ["sunset_window", "yard_utilization_pct", "weather_code"],
+      "baseline_profile": "lower daytime, stronger after dusk and during night operations",
+      "safe_dimming_range_pct": [8, 22],
+      "expected_energy_reduction_pct": [4, 12]
+    },
+    "hvac_cooling": {
+      "dispatchability": "medium",
+      "main_driver": ["temperature_c", "humidity_pct", "occupancy_idx"],
+      "baseline_profile": "rises from late morning, peaks in hot humid afternoon, falls after evening",
+      "safe_setpoint_shift_c": [0.5, 1.5],
+      "expected_energy_reduction_pct": [3, 10]
+    },
+    "shore_power": {
+      "dispatchability": "low_to_medium",
+      "main_driver": ["shore_power_session_count", "berth_window_pressure", "vessel_workload_idx"],
+      "baseline_profile": "step-like by vessel berthing and shore connection events",
+      "optimization_focus": "session sequencing, peak avoidance, transformer margin protection",
+      "expected_energy_reduction_pct": [1, 6]
+    },
+    "bess_energy": {
+      "dispatchability": "high",
+      "main_driver": ["tariff_period", "net_load_kw", "critical_equipment_reserve_flag"],
+      "baseline_profile": "charge in valley/shoulder, discharge during peak or grid stress windows",
+      "soc_operating_band_pct": [18, 88],
+      "expected_peak_shaving_pct": [6, 18]
+    },
+    "reefer_bank": {
+      "dispatchability": "low",
+      "main_driver": ["reefer_slot_load_idx", "ambient_temp_c", "cargo_sensitivity_class"],
+      "baseline_profile": "highly persistent load with safety-first control",
+      "expected_energy_reduction_pct": [0, 4]
+    }
+  },
+  "operating_ranges": {
+    "total_site_load_mw": {
+      "yangshan": [18, 62],
+      "waigaoqiao": [10, 34],
+      "luojing": [4, 16]
+    },
+    "shore_power_session_count_daily": [12, 85],
+    "yard_utilization_pct": [45, 92],
+    "reefer_slot_load_idx": [0.35, 0.9],
+    "bess_cycle_count_daily": [0, 2]
+  },
+  "optimization_targets": {
+    "primary": [
+      "peak_shaving",
+      "energy_cost_reduction",
+      "demand_charge_smoothing",
+      "equipment_margin_protection"
+    ],
+    "secondary": [
+      "carbon_intensity_reduction",
+      "shore_power_friendly_scheduling",
+      "night-ops comfort and safety preservation"
+    ]
+  },
+  "output_schema": {
+    "required": [
+      "timestamp",
+      "site_id",
+      "asset_id",
+      "asset_class",
+      "baseline_kw",
+      "optimized_kw",
+      "actual_kw",
+      "predicted_saving_pct",
+      "confidence_band",
+      "dispatch_mode",
+      "constraint_hit_list",
+      "data_source_mode"
+    ],
+    "derived": [
+      "peak_reduction_kw",
+      "cost_saving_rmb",
+      "estimated_co2_reduction_kg",
+      "operator_explanation"
+    ]
+  },
+  "explainability_templates": {
+    "operator_style": [
+      "先讲后果，不先讲算法名词。",
+      "明确说明是否影响夜间作业安全、岸电连续性、冷链安全或设备寿命。",
+      "把节能收益写成区间，不写夸张单点值。"
+    ]
+  },
+  "real_adapter_targets": {
+    "yard_lighting": "real://energyx/lighting/telemetry",
+    "hvac_cooling": "real://energyx/hvac/telemetry",
+    "shore_power": "real://energyx/shore_power/session",
+    "bess_energy": "real://energyx/bess/dispatch",
+    "reefer_bank": "real://energyx/reefer/load"
+  },
+  "mock_adapter_targets": {
+    "yard_lighting": "mock://energyx/lighting",
+    "hvac_cooling": "mock://energyx/hvac",
+    "shore_power": "mock://energyx/shore_power",
+    "bess_energy": "mock://energyx/bess",
+    "reefer_bank": "mock://energyx/reefer"
+  },
+  "readiness_labels": {
+    "mock_ready": "Schema stable for demo and interview use.",
+    "adapter_pending": "Schema stable, awaiting live telemetry adapter.",
+    "real_ready": "Adapter and validation path both available."
+  }
+}

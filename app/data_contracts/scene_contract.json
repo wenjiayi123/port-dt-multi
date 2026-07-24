@@ -1,0 +1,224 @@
+{
+  "runtime_enabled": false,
+  "evidence_status": "legacy_contract_example_not_runtime_data",
+  "contract_name": "scene_contract",
+  "version": "v1",
+  "intent": "Twin scene and resilience drill inputs/outputs shaped to resemble Shanghai port operating patterns using public aggregate characteristics, not live production data.",
+  "scope": {
+    "geography": "Shanghai port-style multi-terminal environment",
+    "port_areas": [
+      {
+        "code": "YANGSHAN",
+        "name": "Yangshan Deep Water Port",
+        "role": "deep-water core hub",
+        "weight_hint": 0.5
+      },
+      {
+        "code": "WAIGAOQIAO",
+        "name": "Waigaoqiao Area",
+        "role": "outer harbor gateway",
+        "weight_hint": 0.28
+      },
+      {
+        "code": "LUOJING",
+        "name": "Luojing Container Terminal",
+        "role": "river-sea intermodal growth area",
+        "weight_hint": 0.1
+      },
+      {
+        "code": "OTHER",
+        "name": "Other river/coastal nodes",
+        "role": "supporting feeders and overflow",
+        "weight_hint": 0.12
+      }
+    ],
+    "business_profile": {
+      "container_throughput_reference_annual_teu_millions": 51.5,
+      "water_water_transshipment_ratio_target": [
+        0.56,
+        0.64
+      ],
+      "sea_rail_intermodal_reference_teu_ytd": [
+        650000,
+        800000
+      ],
+      "notes": [
+        "Use these as realism anchors for mock ranges, not as real-time telemetry.",
+        "Yangshan should remain the highest-throughput deep-water scene in most dashboards."
+      ]
+    }
+  },
+  "entities": {
+    "scene_header": {
+      "primary_key": "scene_id",
+      "required_fields": {
+        "scene_id": "string",
+        "scene_name": "string",
+        "port_area_code": "enum[YANGSHAN,WAIGAOQIAO,LUOJING,OTHER]",
+        "scenario_type": "enum[normal_peak,weather_disruption,berth_conflict,gate_surge,energy_stress,equipment_outage,resilience_drill]",
+        "time_bucket_start": "iso8601",
+        "horizon_minutes": "integer",
+        "status": "enum[draft,ready,running,completed]"
+      }
+    },
+    "scene_state": {
+      "required_fields": {
+        "vessel_eta_pressure_index": "number_0_100",
+        "berth_window_utilization_pct": "number_0_100",
+        "yard_occupancy_pct": "number_0_100",
+        "truck_gate_queue_minutes": "number",
+        "rail_connection_load_index": "number_0_100",
+        "transshipment_ratio_pct": "number_0_100",
+        "energy_load_mw": "number",
+        "shore_power_sessions": "integer",
+        "weather_impact_level": "enum[none,low,medium,high]",
+        "tide_constraint_level": "enum[none,low,medium,high]"
+      }
+    },
+    "scene_outputs": {
+      "required_fields": {
+        "risk_level": "enum[stable,watch,stressed,critical]",
+        "recommended_focus": "string",
+        "expected_delay_minutes_p50": "number",
+        "expected_delay_minutes_p90": "number",
+        "berth_conflict_count": "integer",
+        "yard_spillback_risk_pct": "number_0_100",
+        "power_peak_risk_pct": "number_0_100",
+        "explainers": "array[string]"
+      }
+    }
+  },
+  "realism_rules": [
+    {
+      "rule_id": "SCN-001",
+      "description": "Night low -> daytime rise -> afternoon plateau -> evening decline should dominate energy and equipment utilization curves.",
+      "applies_to": [
+        "energy_load_mw",
+        "yard_activity_curve",
+        "qc_activity_curve"
+      ]
+    },
+    {
+      "rule_id": "SCN-002",
+      "description": "Yangshan scenes should typically show higher berth intensity and transshipment dependence than Waigaoqiao and Luojing.",
+      "applies_to": [
+        "berth_window_utilization_pct",
+        "transshipment_ratio_pct"
+      ]
+    },
+    {
+      "rule_id": "SCN-003",
+      "description": "Water-to-water transshipment should usually stay around the low-60% band for Shanghai-style aggregate scenes unless a disruption scenario explicitly changes it.",
+      "applies_to": [
+        "transshipment_ratio_pct"
+      ]
+    },
+    {
+      "rule_id": "SCN-004",
+      "description": "Luojing should be modeled as a smaller but rising intelligent/intermodal node; do not let it dominate the whole-port dashboard.",
+      "applies_to": [
+        "throughput_share",
+        "rail_connection_load_index"
+      ]
+    }
+  ],
+  "recommended_mock_ranges": {
+    "YANGSHAN": {
+      "berth_window_utilization_pct": [
+        72,
+        92
+      ],
+      "yard_occupancy_pct": [
+        63,
+        86
+      ],
+      "truck_gate_queue_minutes": [
+        8,
+        35
+      ],
+      "transshipment_ratio_pct": [
+        58,
+        68
+      ],
+      "energy_load_mw": [
+        48,
+        92
+      ],
+      "shore_power_sessions": [
+        8,
+        30
+      ]
+    },
+    "WAIGAOQIAO": {
+      "berth_window_utilization_pct": [
+        65,
+        88
+      ],
+      "yard_occupancy_pct": [
+        58,
+        82
+      ],
+      "truck_gate_queue_minutes": [
+        10,
+        42
+      ],
+      "transshipment_ratio_pct": [
+        42,
+        56
+      ],
+      "energy_load_mw": [
+        36,
+        76
+      ],
+      "shore_power_sessions": [
+        4,
+        18
+      ]
+    },
+    "LUOJING": {
+      "berth_window_utilization_pct": [
+        50,
+        78
+      ],
+      "yard_occupancy_pct": [
+        46,
+        72
+      ],
+      "truck_gate_queue_minutes": [
+        6,
+        28
+      ],
+      "transshipment_ratio_pct": [
+        18,
+        36
+      ],
+      "energy_load_mw": [
+        18,
+        42
+      ],
+      "shore_power_sessions": [
+        1,
+        8
+      ]
+    }
+  },
+  "integration_targets": {
+    "twin_input_adapter": "mock://twin/scene_state",
+    "twin_output_adapter": "mock://twin/scene_output",
+    "future_real_targets": [
+      "real://tos/berth-plan",
+      "real://yard/wip-snapshot",
+      "real://gate/queue-stream",
+      "real://energy/submeter-aggregate"
+    ]
+  },
+  "switching_policy": {
+    "mode": "mock_first_adapter_ready",
+    "ui_should_not_change_when_switching": true,
+    "required_to_go_real": [
+      "stable scene_id and time bucket key",
+      "validated berth/yard/gate timestamp alignment",
+      "documented missing-value fallback"
+    ]
+  }
+}

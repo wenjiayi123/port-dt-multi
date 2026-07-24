@@ -1,0 +1,4 @@
+{"items":[
+  {"level":"hard","rule":"peak_kw <= contract_kw","reason":"防越峰"},
+  {"level":"hard","rule":"soc in [0.2, 0.9]","reason":"保护BESS"}
+]}

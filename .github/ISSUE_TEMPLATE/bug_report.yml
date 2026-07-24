@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a reproducible software defect without sensitive port data
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Do not include credentials, private vessel tracks, equipment addresses or production telemetry.
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      description: Include the smallest safe example and exact command.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected and actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: provenance
+    attributes:
+      label: Data and model provenance
+      description: Use dataset/model hashes and source type; do not upload private data.
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Safety checks
+      options:
+        - label: This is not a security vulnerability.
+          required: true
+        - label: I removed credentials and confidential port information.
+          required: true

@@ -1,0 +1,15 @@
+{
+  "@id": "dtmi:org:portdt:PortOperations;1",
+  "@type": "Interface",
+  "@context": "dtmi:dtdl:context;2",
+  "displayName": "Port Operations",
+  "description": "Canonical operational state used by the open-source RL environment.",
+  "contents": [
+    {"@type": ["Property", "Power"], "name": "baseLoad", "schema": "double", "unit": "kilowatt"},
+    {"@type": "Property", "name": "throughput", "schema": "double", "description": "TEU per hour; TEU is documented in the application data contract."},
+    {"@type": "Property", "name": "vesselArrivals", "schema": "integer"},
+    {"@type": ["Property", "Length"], "name": "tide", "schema": "double", "unit": "metre"},
+    {"@type": ["Property", "Temperature"], "name": "ambientTemperature", "schema": "double", "unit": "degreeCelsius"},
+    {"@type": "Relationship", "name": "hasEnergyAsset", "target": "dtmi:org:portdt:EnergyAsset;1"}
+  ]
+}

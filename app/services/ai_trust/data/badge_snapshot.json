@@ -1,0 +1,158 @@
+{
+  "port": {
+    "code": "CNSHG",
+    "name": "上海港洋山深水港区（示例）",
+    "operator": "上海国际港务集团（示例）",
+    "timezone": "Asia/Shanghai"
+  },
+  "meta": {
+    "is_sample": true,
+    "note": "所有数值为示例数据，不代表上海港真实生产数据。",
+    "generated_at": "2025-01-15T08:30:00+08:00",
+    "policy_bundle_version": "port_rl_suite_v1.2.3"
+  },
+  "grade": "A+",
+  "grade_label": "生产可用",
+  "ai_grade_reason": "AGV 充电、岸电 BESS、场桥、冷站与照明五大场景已通过 OPE 与守护栏验证，线上 A/B 实验显示综合能耗下降约 9%。",
+  "ope_pass": true,
+  "ope": {
+    "offline_hours": 8760,
+    "episodes": 120000,
+    "coverage": 0.93,
+    "baseline_energy_mwh": 100000.0,
+    "policy_energy_mwh": 91000.0
+  },
+  "guardrail": {
+    "total": 42,
+    "pending": 1,
+    "by_category": {
+      "safety": {
+        "total": 12,
+        "pending": 0
+      },
+      "equipment_health": {
+        "total": 8,
+        "pending": 0
+      },
+      "grid_contract": {
+        "total": 10,
+        "pending": 1
+      },
+      "operations_sla": {
+        "total": 12,
+        "pending": 0
+      }
+    }
+  },
+  "experiments": {
+    "running": 2,
+    "completed": 7,
+    "highlights": [
+      "AGV 夜间充电窗口实验：能耗 -11%，峰段负荷 -18%。",
+      "岸电 BESS 峰谷套利策略：岸电利用率 +16%。"
+    ]
+  },
+  "causal_effect": -0.09,
+  "scenes": [
+    {
+      "id": "agv_charge",
+      "name": "AGV 充电策略",
+      "terminal": "洋山四期自动化集装箱码头（示例）",
+      "grade": "A+",
+      "ope_pass": true,
+      "guardrail": {
+        "total": 8,
+        "pending": 0
+      },
+      "experiments": {
+        "running": 1,
+        "completed": 3
+      },
+      "causal_effect": -0.13,
+      "notes": [
+        "采用 RL 策略对接 TOS 作业计划与电价曲线。",
+        "夜间低谷充电占比 82%，峰段电量削减 20%（示例）。"
+      ]
+    },
+    {
+      "id": "shore_bess",
+      "name": "岸电 + 储能调度",
+      "terminal": "集装箱泊位岸电系统（示例）",
+      "grade": "A",
+      "ope_pass": true,
+      "guardrail": {
+        "total": 10,
+        "pending": 0
+      },
+      "experiments": {
+        "running": 0,
+        "completed": 2
+      },
+      "causal_effect": -0.11,
+      "notes": [
+        "对接岸电负荷、船期与电网需量管理。",
+        "昼间削峰 + 夜间充电实现峰谷差套利（示例）。"
+      ]
+    },
+    {
+      "id": "yard_crane",
+      "name": "场桥节能调度",
+      "terminal": "堆场场桥群组（示例）",
+      "grade": "A",
+      "ope_pass": true,
+      "guardrail": {
+        "total": 9,
+        "pending": 1
+      },
+      "experiments": {
+        "running": 1,
+        "completed": 1
+      },
+      "causal_effect": -0.07,
+      "notes": [
+        "按作业量自适应开机台数，低负荷时按区轮换休眠。",
+        "单箱能耗下降约 6%（示例）。"
+      ]
+    },
+    {
+      "id": "hvac_cooling",
+      "name": "冷站 / HVAC 优化",
+      "terminal": "冷链与办公建筑群（示例）",
+      "grade": "B",
+      "ope_pass": true,
+      "guardrail": {
+        "total": 6,
+        "pending": 0
+      },
+      "experiments": {
+        "running": 0,
+        "completed": 1
+      },
+      "causal_effect": -0.05,
+      "notes": [
+        "结合天气与负荷预测调节冷机台数与出水温度。",
+        "舒适度投诉率保持在基线水平（示例）。"
+      ]
+    },
+    {
+      "id": "yard_lighting",
+      "name": "堆场照明智能调光",
+      "terminal": "堆场分区照明（示例）",
+      "grade": "A+",
+      "ope_pass": true,
+      "guardrail": {
+        "total": 7,
+        "pending": 0
+      },
+      "experiments": {
+        "running": 0,
+        "completed": 0
+      },
+      "causal_effect": -0.2,
+      "notes": [
+        "结合作业活动与天文日落时间实时调光。",
+        "年化照明电耗下降约 20%（示例）。"
+      ]
+    }
+  ]
+}

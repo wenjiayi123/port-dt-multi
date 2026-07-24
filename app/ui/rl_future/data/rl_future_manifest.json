@@ -1,0 +1,18 @@
+{
+  "name": "港口 AI 决策舱",
+  "entry": "rl_future_panel.html",
+  "modules": [
+    "Twin Hologram",
+    "Situation Pulse",
+    "RL Strategy Candidates",
+    "Counterfactual Simulator",
+    "Guardrail Matrix",
+    "MAS Swarm",
+    "Execution Loop",
+    "Carbon & Energy Radar"
+  ],
+  "integration": {
+    "index_button": "未来决策舱",
+    "route": "rl_future/rl_future_panel.html"
+  }
+}

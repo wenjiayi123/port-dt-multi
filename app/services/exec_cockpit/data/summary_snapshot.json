@@ -1,0 +1,92 @@
+{
+  "schema_version": 1,
+  "yearly_saving_cny": 15600000,
+  "yearly_co2_ton": 4680,
+  "peak_risk_30d": 0.045,
+  "auto_cover_pct": 0.81,
+  "ai_grade": "A+",
+  "ai_grade_reason": "关键场景 OPE 通过率 ≥ 97%，核心守护栏全部通过，近 90 天 A/B 实验平均收益约 +9.7%。",
+  "status_level": "ok",
+  "status_label": "运行健康 · 无重大风险",
+  "status_detail": "重点港区设备在线率 99.3%，峰值需量持续下降，能源成本和碳排均优于去年同期。",
+  "port_profile": {
+    "port_name": "示例国际枢纽港",
+    "country_region": "东亚 · 国际干线枢纽",
+    "timezone": "Asia/Shanghai",
+    "annual_throughput_teu": 23000000,
+    "vessel_calls_12m": 7200,
+    "berth_count_total": 34,
+    "berth_count_deepwater": 28,
+    "rail_ratio_pct": 0.3,
+    "yard_area_hectare": 650,
+    "shore_power_coverage_pct": 0.92,
+    "bess_capacity_mwh": 360.0
+  },
+  "ops_kpi": {
+    "teu_per_gg_per_hour": 35.8,
+    "teu_per_gg_best_hour": 46.2,
+    "avg_vessel_berth_time_hour": 22.5,
+    "avg_truck_turnaround_p50_min": 26.0,
+    "avg_truck_turnaround_p95_min": 40.0,
+    "yard_occupancy_pct": 0.68,
+    "gate_appointment_compliance_pct": 0.91,
+    "vessel_on_time_departure_pct": 0.94
+  },
+  "energy_kpi": {
+    "annual_electricity_mwh": 610000.0,
+    "annual_power_cost_cny": 240000000.0,
+    "shore_power_energy_share_pct": 0.37,
+    "renewable_energy_share_pct": 0.26,
+    "bess_discharge_share_pct": 0.12
+  },
+  "ai_coverage": {
+    "scenes_total": 5,
+    "scenes_prod": 4,
+    "scenes_pilot": 1,
+    "scenes": [
+      {
+        "id": "agv_charge",
+        "name": "AGV 智能充电",
+        "stage": "prod",
+        "ope": 0.978,
+        "ab_gain_pct": 0.112
+      },
+      {
+        "id": "yard_crane",
+        "name": "场桥节能 + 排队优化",
+        "stage": "prod",
+        "ope": 0.973,
+        "ab_gain_pct": 0.089
+      },
+      {
+        "id": "hvac_cooling",
+        "name": "冷站节能",
+        "stage": "prod",
+        "ope": 0.969,
+        "ab_gain_pct": 0.076
+      },
+      {
+        "id": "yard_lighting",
+        "name": "场区照明智能调光",
+        "stage": "prod",
+        "ope": 0.982,
+        "ab_gain_pct": 0.054
+      },
+      {
+        "id": "shore_bess",
+        "name": "岸电 + 储能削峰",
+        "stage": "pilot",
+        "ope": 0.961,
+        "ab_gain_pct": 0.061
+      }
+    ]
+  },
+  "risk_summary": {
+    "grid_peak_risk_30d": 0.045,
+    "ops_delay_risk_7d": 0.07,
+    "safety_incidents_12m": 1,
+    "safety_incidents_target_12m": 3,
+    "critical_alerts_open": 0,
+    "major_alerts_open": 3
+  }
+}

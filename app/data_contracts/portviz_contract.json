@@ -1,0 +1,215 @@
+{
+  "runtime_enabled": false,
+  "evidence_status": "legacy_contract_example_not_runtime_data",
+  "contract_name": "portviz_contract",
+  "version": "v1.0-shanghai-profile",
+  "city_profile": "Shanghai",
+  "scope": "港区态势流 / 设备在线 / 泊位占用 / 堆场压力 / 集疏运波峰",
+  "mode": "mock_with_realistic_bounds",
+  "design_note": "本合同文件用于演示与未来真实接口替换。字段结构保持稳定，数值范围按上海港公开业务特征做近现实约束，不代表实时生产数据。",
+  "public_reality_anchor": {
+    "annual_container_throughput_teu_2024": 51506300,
+    "yangshan_share_of_total_2024_pct": {
+      "min": 50.0,
+      "max": 52.0
+    },
+    "water_to_water_transshipment_ratio_pct_2024_q1_q3": {
+      "min": 60.0,
+      "max": 61.0
+    },
+    "luojing_phase1_designed_capacity_teu_per_year": 2600000
+  },
+  "adapter": {
+    "current_target": "mock://portviz/stream",
+    "future_target": "/api/portviz/stream",
+    "replace_strategy": "保持字段名、主键、时间戳不变，仅替换数据提供方"
+  },
+  "primary_keys": {
+    "event_id": "string",
+    "terminal_id": "string",
+    "asset_id": "string"
+  },
+  "time_fields": {
+    "event_ts": "ISO-8601",
+    "sample_minute": "int",
+    "window_start": "ISO-8601",
+    "window_end": "ISO-8601"
+  },
+  "terminal_profiles": [
+    {
+      "terminal_id": "yangshan",
+      "role": "深水枢纽 / 主集装箱吞吐",
+      "throughput_share_hint_pct": [50, 52],
+      "berth_pressure_norm_pct": [68, 92],
+      "truck_gate_pressure_norm": [0.45, 0.82]
+    },
+    {
+      "terminal_id": "waigaoqiao",
+      "role": "集装箱主作业区 / 与外高桥腹地联动",
+      "throughput_share_hint_pct": [24, 34],
+      "berth_pressure_norm_pct": [60, 88],
+      "truck_gate_pressure_norm": [0.50, 0.86]
+    },
+    {
+      "terminal_id": "luojing",
+      "role": "新改造智能集装箱区 / 江海联运增强点",
+      "throughput_share_hint_pct": [3, 8],
+      "berth_pressure_norm_pct": [35, 75],
+      "truck_gate_pressure_norm": [0.25, 0.65]
+    }
+  ],
+  "stream_schema": {
+    "event_id": "pv_${ts}_${seq}",
+    "event_ts": "2026-04-05T10:30:00+08:00",
+    "port_id": "shanghai_port_demo",
+    "terminal_id": "yangshan|waigaoqiao|luojing",
+    "berth_id": "b01..b32",
+    "asset_id": "qc-01|agv-018|yc-12|gate-03",
+    "asset_type": "berth|qc|agv|yc|yard_block|truck_gate|shore_power",
+    "status": "normal|watch|critical|maintenance",
+    "kpis": {
+      "berth_occupancy_pct": 81.4,
+      "yard_utilization_pct": 73.2,
+      "queue_length_truck": 46,
+      "agv_online_rate_pct": 97.8,
+      "qc_online_rate_pct": 96.4,
+      "avg_vessel_wait_hours": 3.8,
+      "gate_turn_time_min": 29,
+      "water_to_water_ratio_pct": 60.4,
+      "rail_sea_connection_load_idx": 0.58,
+      "shore_power_connection_rate_pct": 63.0,
+      "carbon_intensity_idx": 0.91
+    },
+    "drivers": {
+      "eta_deviation_hours": 1.6,
+      "tidal_window_level": "normal|tight",
+      "weather_level": "clear|rain|wind",
+      "holiday_peak_flag": false,
+      "electricity_price_bucket": "offpeak|mid|peak"
+    },
+    "explain_tags": [
+      "外贸干线集中到港",
+      "水水中转占比抬升",
+      "闸口波峰前移",
+      "午后作业面切换"
+    ]
+  },
+  "field_constraints": {
+    "berth_occupancy_pct": {
+      "type": "number",
+      "unit": "%",
+      "normal_range": [55, 88],
+      "alert_range": [88, 95],
+      "hard_limit": [0, 100]
+    },
+    "yard_utilization_pct": {
+      "type": "number",
+      "unit": "%",
+      "normal_range": [45, 78],
+      "alert_range": [78, 90],
+      "hard_limit": [0, 100]
+    },
+    "queue_length_truck": {
+      "type": "integer",
+      "unit": "vehicles",
+      "normal_range": [5, 60],
+      "alert_range": [60, 120],
+      "hard_limit": [0, 200]
+    },
+    "agv_online_rate_pct": {
+      "type": "number",
+      "unit": "%",
+      "normal_range": [96.0, 99.5],
+      "alert_range": [92.0, 96.0],
+      "hard_limit": [0, 100]
+    },
+    "qc_online_rate_pct": {
+      "type": "number",
+      "unit": "%",
+      "normal_range": [95.0, 99.0],
+      "alert_range": [90.0, 95.0],
+      "hard_limit": [0, 100]
+    },
+    "avg_vessel_wait_hours": {
+      "type": "number",
+      "unit": "hours",
+      "normal_range": [0.5, 6.0],
+      "alert_range": [6.0, 12.0],
+      "hard_limit": [0, 48]
+    },
+    "gate_turn_time_min": {
+      "type": "number",
+      "unit": "minutes",
+      "normal_range": [12, 35],
+      "alert_range": [35, 60],
+      "hard_limit": [0, 180]
+    },
+    "water_to_water_ratio_pct": {
+      "type": "number",
+      "unit": "%",
+      "normal_range": [58.0, 61.0],
+      "alert_range": [54.0, 58.0],
+      "hard_limit": [0, 100]
+    },
+    "shore_power_connection_rate_pct": {
+      "type": "number",
+      "unit": "%",
+      "normal_range": [40, 75],
+      "alert_range": [25, 40],
+      "hard_limit": [0, 100]
+    },
+    "carbon_intensity_idx": {
+      "type": "number",
+      "unit": "index",
+      "normal_range": [0.78, 0.98],
+      "alert_range": [0.98, 1.10],
+      "hard_limit": [0.5, 1.5]
+    }
+  },
+  "ui_mapping": {
+    "overview_status": [
+      "berth_occupancy_pct",
+      "yard_utilization_pct",
+      "avg_vessel_wait_hours"
+    ],
+    "risk_banner": [
+      "queue_length_truck",
+      "eta_deviation_hours",
+      "weather_level"
+    ],
+    "ops_bridge_note": [
+      "water_to_water_ratio_pct",
+      "agv_online_rate_pct",
+      "qc_online_rate_pct"
+    ]
+  },
+  "mock_generation_rules": {
+    "time_of_day_shape": {
+      "00_06": "低位平稳",
+      "06_10": "逐步抬升",
+      "10_16": "高位平台",
+      "16_20": "闸口与集卡波峰",
+      "20_24": "缓慢回落"
+    },
+    "weather_impact": {
+      "rain": {
+        "gate_turn_time_min": "+6~+18",
+        "avg_vessel_wait_hours": "+0.3~+1.2"
+      },
+      "wind": {
+        "qc_online_rate_pct": "-1.0~-3.0",
+        "berth_occupancy_pct": "+2~+5"
+      }
+    },
+    "schedule_impact": {
+      "eta_deviation_hours_positive": "yard_utilization_pct +2~+6",
+      "holiday_peak_flag_true": "queue_length_truck +15~+45"
+    }
+  },
+  "acceptance_checks": [
+    "不得长期出现 berth_occupancy_pct < 20 且 queue_length_truck > 100 的反常组合",
+    "不得长期出现 avg_vessel_wait_hours = 0 且 yard_utilization_pct > 90 的反常组合",
+    "yangshan 的吞吐权重应显著高于 luojing",
+    "water_to_water_ratio_pct 默认应贴近 60% 左右，不应长期漂到 30% 或 80%"
+  ]
+}

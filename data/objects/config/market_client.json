@@ -1,0 +1,22 @@
+{
+  "region": "CN-EXAMPLE",
+  "currency": "CNY",
+  "base_url": "",
+  "auth": {
+    "token": "REPLACE_WITH_MARKET_TOKEN"
+  },
+  "paths": {
+    "day_ahead": "/api/market/v1/day_ahead",
+    "real_time": "/api/market/v1/real_time",
+    "demand_charge": "/api/market/v1/demand_charge",
+    "demand_limit": "/api/market/v1/demand_limit",
+    "dr_events": "/api/market/v1/dr_events",
+    "carbon_price": "/api/market/v1/carbon_price",
+    "grid_factor": "/api/market/v1/grid_factor",
+    "rec_price": "/api/market/v1/rec_price"
+  },
+  "timeout_sec": 4,
+  "fallback_mock": false,
+  "mock_seed": 4317,
+  "tz_offset_min": 0
+}

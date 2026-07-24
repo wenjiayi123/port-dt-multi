@@ -1,0 +1,157 @@
+{
+  "runtime_enabled": false,
+  "evidence_status": "legacy_contract_example_not_runtime_data",
+  "contract_name": "exec_contract",
+  "version": "v1",
+  "intent": "Execution closed-loop work order contract for AI recommendations, approvals, dispatch, receipt, and audit replay.",
+  "positioning": "Designed to look like Shanghai-port-style operations governance, without claiming access to production execution systems.",
+  "job_header": {
+    "primary_key": "job_id",
+    "required_fields": {
+      "job_id": "uuid",
+      "created_at": "iso8601",
+      "module": "enum[yard_lighting,hvac_cooling,shore_bess,bess_energy,yard_crane,agv_charge]",
+      "port_area_code": "enum[YANGSHAN,WAIGAOQIAO,LUOJING,OTHER]",
+      "decision_type": "enum[advisory,dry_run,approved_execution,manual_override]",
+      "status": "enum[pending_review,approved,executing,acknowledged,failed,cancelled]",
+      "priority": "enum[P1,P2,P3]"
+    }
+  },
+  "dispatch_payload": {
+    "required_fields": {
+      "asset_scope": "array[string]",
+      "baseline_window_minutes": "integer",
+      "control_window_minutes": "integer",
+      "expected_savings_pct": "number",
+      "risk_guardrail": "object",
+      "operator_note": "string",
+      "approval_actor": "string|null",
+      "execution_mode": "enum[mock,shadow,real]"
+    }
+  },
+  "evidence_payload": {
+    "required_fields": {
+      "receipt_status": "enum[pending,partial,success,failed]",
+      "receipt_time": "iso8601|null",
+      "before_after_metrics": "object",
+      "ab_test_summary": "object",
+      "data_source": "object",
+      "audit_trace_id": "string"
+    }
+  },
+  "data_source_profile": {
+    "required_fields": {
+      "source_mode": "enum[mock-ready,adapter-pending,real-ready]",
+      "contract_id": "string",
+      "adapter_target": "string",
+      "timestamp_field": "string",
+      "asset_key": "string",
+      "data_contract_ready": "boolean"
+    },
+    "recommended_defaults": {
+      "source_mode": "mock-ready",
+      "contract_id": "exec_closedloop.v1",
+      "adapter_target": "mock://exec_closedloop",
+      "timestamp_field": "created_at",
+      "asset_key": "job_id",
+      "data_contract_ready": true
+    }
+  },
+  "realism_rules": [
+    {
+      "rule_id": "EXE-001",
+      "description": "Do not present direct auto-execution on high-risk actions without an explicit approval or dry-run stage."
+    },
+    {
+      "rule_id": "EXE-002",
+      "description": "Expected savings for lighting/HVAC should usually be modest per dispatch; avoid unrealistic one-shot gains."
+    },
+    {
+      "rule_id": "EXE-003",
+      "description": "AGV, crane, and berth-adjacent actions should expose guardrails before execution, because schedule disturbance cost can outweigh energy savings."
+    },
+    {
+      "rule_id": "EXE-004",
+      "description": "A/B summaries may exist before full work-order detail is queryable, but production-grade mode should converge to a single registry."
+    }
+  ],
+  "recommended_mock_ranges_by_module": {
+    "yard_lighting": {
+      "expected_savings_pct": [
+        4,
+        12
+      ],
+      "control_window_minutes": [
+        30,
+        180
+      ],
+      "typical_priority": "P3"
+    },
+    "hvac_cooling": {
+      "expected_savings_pct": [
+        3,
+        10
+      ],
+      "control_window_minutes": [
+        30,
+        120
+      ],
+      "typical_priority": "P3"
+    },
+    "shore_bess": {
+      "expected_savings_pct": [
+        2,
+        8
+      ],
+      "control_window_minutes": [
+        15,
+        90
+      ],
+      "typical_priority": "P2"
+    },
+    "bess_energy": {
+      "expected_savings_pct": [
+        5,
+        15
+      ],
+      "control_window_minutes": [
+        30,
+        180
+      ],
+      "typical_priority": "P2"
+    },
+    "yard_crane": {
+      "expected_savings_pct": [
+        1,
+        6
+      ],
+      "control_window_minutes": [
+        15,
+        60
+      ],
+      "typical_priority": "P2"
+    },
+    "agv_charge": {
+      "expected_savings_pct": [
+        2,
+        7
+      ],
+      "control_window_minutes": [
+        15,
+        60
+      ],
+      "typical_priority": "P1"
+    }
+  },
+  "future_real_targets": [
+    "real://ems/dispatch-orders",
+    "real://scada/receipt-status",
+    "real://wms-yard/equipment-state",
+    "real://opsx/audit-log"
+  ],
+  "acceptance_checks": [
+    "Every executed job must have job_id, module, port_area_code, created_at, and status.",
+    "Every approved or executed job should expose a guardrail summary.",
+    "Every replayable job should have audit_trace_id and before_after_metrics."
+  ]
+}

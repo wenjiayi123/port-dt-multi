@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>未来决策舱 · RL Cyber Command</title>
+  <link rel="stylesheet" href="rl_future.css?v=future_run_closed_loop_v1" />
+</head>
+<body>
+  <div class="cyber-bg" aria-hidden="true"></div>
+  <header class="command-header">
+    <div>
+      <div class="eyebrow"><span class="pulse-dot"></span> RL Cyber Command · Future Decision Deck</div>
+      <h1>港口 AI 决策舱</h1>
+      <p>离线工程推演界面：从 FastAPI 读取数字孪生场景快照，生成候选策略并完成反事实模拟、硬约束校验与审计回执。页面不连接港口生产控制系统，也不把情景数据展示为实时运营数据。</p>
+    </div>
+    <div class="header-actions">
+      <a class="ghost-link" href="/#strategy-exec-module">返回主平台</a>
+      <button class="primary-action" id="btnIgnite">启动推演</button>
+    </div>
+  </header>
+
+  <main class="deck-shell">
+    <section class="hero-grid">
+      <article class="holo-card core-panel">
+        <div class="panel-head">
+          <span>01 · Twin Hologram</span>
+          <b id="systemMode">SEMI-AUTO</b>
+        </div>
+        <div class="orbital-stage">
+          <div class="orbit orbit-a"></div>
+          <div class="orbit orbit-b"></div>
+          <div class="core-orb"></div>
+          <div class="node node-a">AGV</div>
+          <div class="node node-b">BESS</div>
+          <div class="node node-c">HVAC</div>
+          <div class="node node-d">YARD</div>
+          <div class="scan-line"></div>
+        </div>
+        <div class="telemetry-row">
+          <div><span>硬约束通过率</span><strong id="stabilityValue">--</strong></div>
+          <div><span>决策状态</span><strong id="riskValue">WAIT</strong></div>
+          <div><span>候选可信度</span><strong id="trustValue">--</strong></div>
+        </div>
+      </article>
+
+      <article class="holo-card situation-panel">
+        <div class="panel-head"><span>02 · Situation Pulse</span><b>OFFLINE</b></div>
+        <div class="situation-bars" id="situationBars"></div>
+        <div class="insight-box">
+          <div class="insight-title">AI 总结</div>
+          <p id="aiSummary">尚未取得后端推演证据。点击“启动推演”后，本页才会展示本次请求返回的候选、约束和审计摘要。</p>
+        </div>
+      </article>
+
+      <article class="holo-card strategy-panel">
+        <div class="panel-head"><span>03 · Strategy Candidates</span><b>BACKEND OWNED</b></div>
+        <div class="strategy-stack" id="strategyStack"></div>
+      </article>
+    </section>
+
+    <section class="mission-grid">
+      <article class="holo-card wide-card">
+        <div class="panel-head"><span>04 · Counterfactual Simulator</span><b>WHAT-IF</b></div>
+        <div class="timeline" id="timeline"></div>
+        <div class="counter-grid" id="counterGrid">
+          <div class="counter-item"><span>候选 A</span><strong>等待后端结果</strong><em>尚未执行反事实仿真</em></div>
+          <div class="counter-item"><span>候选 B</span><strong>等待后端结果</strong><em>尚未执行反事实仿真</em></div>
+          <div class="counter-item"><span>候选 C</span><strong>等待后端结果</strong><em>尚未执行反事实仿真</em></div>
+        </div>
+      </article>
+
+      <article class="holo-card">
+        <div class="panel-head"><span>05 · Guardrail Matrix</span><b id="guardStatus">WAIT</b></div>
+        <ul class="guard-list" id="guardList">
+          <li><span></span>等待 BESS SoC 约束证据</li>
+          <li><span></span>等待岸电容量约束证据</li>
+          <li><span></span>等待服务水平约束证据</li>
+          <li><span></span>等待模型漂移审查结果</li>
+        </ul>
+      </article>
+
+      <article class="holo-card">
+        <div class="panel-head"><span>06 · Decision Services</span><b>SERVICES</b></div>
+        <div class="agent-grid">
+          <div>Strategy</div><div>Energy</div><div>Yard</div><div>Safety</div><div>Audit</div><div>Copilot</div>
+        </div>
+      </article>
+    </section>
+
+    <section class="console-grid">
+      <article class="holo-card console-card">
+        <div class="panel-head"><span>07 · Evidence Loop</span><b>HITL</b></div>
+        <div class="loop-chain">
+          <span>推荐</span><i></i><span>仿真</span><i></i><span>审批</span><i></i><span>执行</span><i></i><span>回执</span><i></i><span>审计</span>
+        </div>
+        <pre id="consoleLog"></pre>
+      </article>
+
+      <article class="holo-card console-card">
+        <div class="panel-head"><span>08 · Carbon & Energy Radar</span><b>OPTIMIZE</b></div>
+        <div class="radar-shell">
+          <div class="radar-ring"></div>
+          <div class="radar-beam"></div>
+          <div class="radar-label l1">削峰</div>
+          <div class="radar-label l2">降碳</div>
+          <div class="radar-label l3">保供</div>
+          <div class="radar-label l4">成本</div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <div class="simulation-overlay" id="simulationOverlay" aria-hidden="true">
+    <div class="simulation-portal" aria-hidden="true">
+      <i></i><i></i><i></i><i></i>
+    </div>
+    <section class="simulation-command-panel" role="dialog" aria-modal="true" aria-labelledby="simulationTitle">
+      <header class="simulation-panel-head">
+        <div>
+          <div class="simulation-kicker"><span></span> FUTURE RUN · COUNTERFACTUAL COMMAND</div>
+          <h2 id="simulationTitle">港口策略推演指挥台</h2>
+          <p>态势重读 → 候选生成 → 反事实模拟 → 守护栏校验 → 审计回执</p>
+        </div>
+        <div class="simulation-head-meta">
+          <div><span>运行编号</span><strong id="runIdValue">等待生成</strong></div>
+          <button type="button" class="simulation-close" id="closeSimulation" aria-label="关闭推演详情">×</button>
+        </div>
+      </header>
+
+      <div class="simulation-stage-rail" id="simulationStages" aria-label="推演进度">
+        <div class="run-stage pending" data-stage="situation"><span>01</span><b>态势锁定</b><em>WAIT</em></div>
+        <div class="run-stage pending" data-stage="candidates"><span>02</span><b>候选生成</b><em>WAIT</em></div>
+        <div class="run-stage pending" data-stage="counterfactual"><span>03</span><b>反事实模拟</b><em>WAIT</em></div>
+        <div class="run-stage pending" data-stage="guardrails"><span>04</span><b>守护栏校验</b><em>WAIT</em></div>
+        <div class="run-stage pending" data-stage="receipt"><span>05</span><b>审计回执</b><em>WAIT</em></div>
+      </div>
+
+      <div class="simulation-body">
+        <div class="simulation-left-column">
+          <section class="run-module snapshot-module">
+            <div class="run-module-head"><span>OFFLINE SCENARIO SNAPSHOT</span><b id="snapshotStatus">待读取</b></div>
+            <div class="snapshot-grid" id="snapshotGrid">
+              <div><span>BESS 荷电状态</span><strong>--</strong><em>等待态势快照</em></div>
+              <div><span>岸电当前功率</span><strong>--</strong><em>等待态势快照</em></div>
+              <div><span>模型奖励漂移</span><strong>--</strong><em>等待可观测信号</em></div>
+              <div><span>策略候选池</span><strong>--</strong><em>等待候选生成</em></div>
+            </div>
+          </section>
+
+          <section class="run-module terminal-module">
+            <div class="run-module-head"><span>ORCHESTRATION STREAM</span><b class="live-badge">BACKEND EVIDENCE</b></div>
+            <div class="simulation-terminal" id="simulationTerminal" aria-live="polite">
+              <div class="terminal-idle">推演通道已建立，等待锁定态势……</div>
+            </div>
+          </section>
+        </div>
+
+        <div class="simulation-right-column">
+          <section class="run-module candidate-module">
+            <div class="run-module-head"><span>COUNTERFACTUAL CANDIDATES</span><b id="candidateStatus">0 / 3</b></div>
+            <div class="run-candidate-grid" id="runCandidateGrid">
+              <div class="candidate-placeholder"></div><div class="candidate-placeholder"></div><div class="candidate-placeholder"></div>
+            </div>
+          </section>
+
+          <section class="run-module guard-module">
+            <div class="run-module-head"><span>GUARDRAIL EVIDENCE MATRIX</span><b id="overlayGuardStatus">等待校验</b></div>
+            <div class="run-guard-grid" id="runGuardGrid">
+              <div class="guard-placeholder"></div><div class="guard-placeholder"></div><div class="guard-placeholder"></div>
+            </div>
+          </section>
+
+          <section class="run-module decision-module" id="decisionModule">
+            <div class="decision-orb" aria-hidden="true"><span></span></div>
+            <div class="decision-copy">
+              <span class="decision-eyebrow">FINAL DECISION / HUMAN IN THE LOOP</span>
+              <h3 id="decisionLabel">推演进行中</h3>
+              <p id="decisionReason">系统正在读取态势并生成反事实证据，完成前不会进入任何执行步骤。</p>
+              <div class="decision-receipt">
+                <span>推荐策略 <b id="recommendedStrategy">等待计算</b></span>
+                <span>证据摘要 <b id="evidenceDigest">等待生成</b></span>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <footer class="simulation-footer">
+        <div class="production-boundary"><span>演练安全边界</span><b id="productionBoundary">只做候选、仿真、护栏与审计，不向生产设备下发控制指令。</b></div>
+        <button type="button" class="simulation-done" id="finishSimulation" disabled>关闭推演详情</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="rl_future.js?v=evidence_driven_v2"></script>
+  <script src="/ui/adapters/bilingual_ui.js?v=20260715-zh-headings-v5"></script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "module": "E",
+  "name": "BESS Energy",
+  "soc_pct": 52,
+  "delta_kwh": -120,
+  "economic_saving_yuan": 21000,
+  "peak_shaving_mw": 1.9,
+  "charge_mwh": 18,
+  "discharge_mwh": 16.8
+}

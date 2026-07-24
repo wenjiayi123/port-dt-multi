@@ -1,0 +1,3 @@
+# 供 adapter.py 读取的最小配置
+data_dir: ./data
+artifact_dir: ./app/static/api/rl/artifacts

@@ -1,0 +1,8 @@
+{
+  "items": [
+    {"name":"台风-泊位减少","tags":["typhoon","berth"],"pass_rate":0.82,"last_run":"2025-11-09 22:10","cases":64},
+    {"name":"AGV-双机故障","tags":["agv","fault"],"pass_rate":0.76,"last_run":"2025-11-09 21:30","cases":48}
+  ],
+  "pass_series": {"ts": ["-4","-3","-2","-1","now"], "rate": [0.62,0.70,0.85,0.81,0.88]},
+  "duration_hist": [3,12,18,22,15,8,4]
+}

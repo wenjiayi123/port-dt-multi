@@ -1,0 +1,41 @@
+{
+  "feat_names": [
+    "P_bess_kW",
+    "P_pcc_kW",
+    "P_roll15_kW",
+    "P_shore_B1_kW",
+    "P_shore_B2_kW",
+    "P_shore_B3_kW",
+    "P_shore_B4_kW",
+    "SOC",
+    "ef_kg_per_kWh",
+    "price_yuan_per_kWh",
+    "r_res_kW"
+  ],
+  "act_names": [
+    "delta_P_shore_B1_kW",
+    "delta_P_shore_B2_kW",
+    "delta_P_shore_B3_kW",
+    "delta_P_shore_B4_kW",
+    "delta_P_bess_kW",
+    "delta_r_res_kW"
+  ],
+  "berth_order": [
+    "B1",
+    "B2",
+    "B3",
+    "B4"
+  ],
+  "timestamp": "2026-04-08T09:57:04.763158Z",
+  "algo": "SAC",
+  "core_metrics": [
+    "step_reward",
+    "econ_save",
+    "carbon_save",
+    "service_support_score",
+    "cumulative_reward",
+    "cumulative_econ_save",
+    "cumulative_carbon_save",
+    "cumulative_service_support_score"
+  ]
+}

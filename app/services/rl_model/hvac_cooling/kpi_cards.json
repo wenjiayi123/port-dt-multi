@@ -1,0 +1,10 @@
+{
+  "module": "C",
+  "name": "HVAC Cooling",
+  "chws_c": 6.6,
+  "sat_c": 13.0,
+  "sp_pa": 720,
+  "planned_peak_load_mw": 2.15,
+  "planned_total_energy_mwh": 148,
+  "mse": 0.018
+}

@@ -1,0 +1,13 @@
+{
+  "port_name": "MegaPort-X",
+  "berth_count": 6,
+  "qc_count": 12,
+  "yc_count": 80,
+  "agv_count": 220,
+  "bess_mwh": 20,
+  "shore_power_mva": 25,
+  "groups": ["QC", "YC", "AGV", "BESS", "Shore"],
+  "obs_per_group": 400,
+  "noise_kw": 6.0,
+  "coverage_target": 0.90
+}

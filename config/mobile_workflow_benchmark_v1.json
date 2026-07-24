@@ -1,0 +1,16 @@
+{
+  "schema_version": "mobile_workflow_benchmark_config_v1",
+  "benchmark_id": "shared_backend_mobile_workflow_v1",
+  "cases_per_category": 100,
+  "categories": [
+    "new_dry_run_decision",
+    "exact_idempotent_retry",
+    "conflicting_key_reuse",
+    "unsafe_production_dispatch",
+    "client_audit_upload"
+  ],
+  "persistence": "atomic_json_mode_0600",
+  "audit_chain": "sha256_forward_chain",
+  "production_dispatch_default": false
+}
+

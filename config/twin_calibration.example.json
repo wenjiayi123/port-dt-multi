@@ -1,0 +1,10 @@
+{
+  "dataset_sha256": "replace-with-64-character-dataset-hash",
+  "model_version": "port-operations-calibration-v1",
+  "parameters": {"bess_capacity_kwh": 2500.0, "bess_power_kw": 900.0, "step_hours": 1.0},
+  "validation_window": {"start_at": "2026-07-01T00:00:00Z", "end_at": "2026-07-07T23:00:00Z"},
+  "metrics": {"net_load_mae_kw": 80.0, "soc_mae": 0.02},
+  "thresholds": {"net_load_mae_kw": 100.0, "soc_mae": 0.03},
+  "approved_by": "replace-with-site-reviewer",
+  "provenance": {"type": "site_measurement", "system": "replace-with-source-system", "ticket": "replace-with-change-ticket"}
+}

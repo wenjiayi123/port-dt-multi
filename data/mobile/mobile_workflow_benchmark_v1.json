@@ -1,0 +1,53 @@
+{
+  "schema_version": "mobile_workflow_benchmark_v1",
+  "benchmark_id": "shared_backend_mobile_workflow_v1",
+  "generated_at": "2026-04-01T00:00:01Z",
+  "evidence_level": "deterministic_local_integration_benchmark",
+  "config": {
+    "schema_version": "mobile_workflow_benchmark_config_v1",
+    "benchmark_id": "shared_backend_mobile_workflow_v1",
+    "cases_per_category": 100,
+    "categories": [
+      "new_dry_run_decision",
+      "exact_idempotent_retry",
+      "conflicting_key_reuse",
+      "unsafe_production_dispatch",
+      "client_audit_upload"
+    ],
+    "persistence": "atomic_json_mode_0600",
+    "audit_chain": "sha256_forward_chain",
+    "production_dispatch_default": false,
+    "sha256": "507ea90411015cbeab88eb87ff445508ca6bd4f7843aa52965c138ab0a84f83c"
+  },
+  "operations": {
+    "total": 500,
+    "new_dry_run_decisions": 100,
+    "exact_idempotent_retries": 100,
+    "conflicting_key_reuse_attempts": 100,
+    "unsafe_production_dispatch_attempts": 100,
+    "client_audit_uploads": 100
+  },
+  "results": {
+    "duplicate_suppression_percent": 100.0,
+    "conflicting_reuse_block_percent": 100.0,
+    "unsafe_dispatch_block_percent": 100.0,
+    "client_audit_accept_percent": 100.0,
+    "audit_chain_valid": true,
+    "audit_event_count": 300,
+    "unique_decision_receipt_count": 200,
+    "production_execution_receipt_count": 0
+  },
+  "release_gate": {
+    "passed": true
+  },
+  "boundary": {
+    "measures": "shared-backend API workflow semantics and durable local evidence",
+    "does_not_measure": [
+      "mobile network latency",
+      "port field availability",
+      "production actuator success",
+      "business KPI uplift"
+    ],
+    "business_kpis_are_system_level": true
+  }
+}

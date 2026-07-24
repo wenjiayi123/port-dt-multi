@@ -1,0 +1,24 @@
+name: Feature request
+description: Propose a scoped, evidence-driven improvement
+title: "[Feature]: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem and user
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Data, algorithm and safety impact
+      description: Explain provenance, validation and failure behavior.
+    validations:
+      required: true

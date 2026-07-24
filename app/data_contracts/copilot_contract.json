@@ -1,0 +1,156 @@
+{
+  "runtime_enabled": false,
+  "evidence_status": "legacy_contract_example_not_runtime_data",
+  "contract_name": "copilot_contract",
+  "version": "v1",
+  "scope": "Ops Copilot knowledge, recommendation and operator-explanation contract for a Shanghai-port-like AI operations platform",
+  "city_anchor": "Shanghai",
+  "design_principle": {
+    "positioning": "Copilot explains and recommends based on platform state, but does not impersonate a live command authority.",
+    "guardrails": [
+      "Recommendations must cite whether they come from mock data, simulated result, or future real adapter.",
+      "Avoid pretending to know confidential ship schedules or internal terminal KPIs.",
+      "Prefer consequence-oriented explanation over model jargon."
+    ]
+  },
+  "knowledge_domains": {
+    "required": [
+      "berth_window_pressure",
+      "yard_pressure",
+      "gate_congestion",
+      "shore_power_load",
+      "energy_peak_risk",
+      "weather_and_tide_constraint",
+      "audit_and_execution_status",
+      "strategy_candidate_comparison"
+    ],
+    "optional": [
+      "rail_waterway_coordination",
+      "reefer_density_risk",
+      "maintenance_and_outage_context",
+      "seasonal_import_export_wave"
+    ]
+  },
+  "input_schema": {
+    "required": [
+      "query_id",
+      "timestamp",
+      "port_zone",
+      "user_role",
+      "scenario_id",
+      "state_snapshot_ref",
+      "strategy_candidate_refs",
+      "alert_refs",
+      "audit_refs",
+      "data_source_mode"
+    ],
+    "optional": [
+      "ship_call_ref",
+      "berth_ref",
+      "yard_block_ref",
+      "asset_ref",
+      "esg_report_ref"
+    ]
+  },
+  "output_schema": {
+    "required": [
+      "answer_id",
+      "summary",
+      "recommended_action",
+      "why_now",
+      "expected_consequence",
+      "risk_if_ignored",
+      "confidence_label",
+      "source_refs",
+      "data_source_mode"
+    ],
+    "optional": [
+      "counterfactual_note",
+      "operator_checklist",
+      "audit_writeback_hint",
+      "handoff_target"
+    ]
+  },
+  "operator_explanation_style": {
+    "must_follow": [
+      "先说结论，再说原因，再说建议动作。",
+      "先说运营后果，例如船期、泊位、堆场、集卡、岸电，而不是先讲算法。",
+      "明确哪些内容来自 simulated、mock 或 future real source。",
+      "涉及高风险动作时，必须提醒人工确认。"
+    ],
+    "forbidden": [
+      "把模拟结果说成真实生产指令。",
+      "夸大节能或效率收益。",
+      "输出缺少来源说明的硬结论。"
+    ]
+  },
+  "recommendation_types": {
+    "priority_watch": {
+      "description": "Highlight the most important current operational concern.",
+      "examples": [
+        "优先关注洋山某时段泊位窗口压缩风险。",
+        "优先关注外高桥闸口排队与堆场联动压力。"
+      ]
+    },
+    "strategy_compare": {
+      "description": "Explain differences across candidate strategies in operator language.",
+      "examples": [
+        "策略A更稳但节能收益有限；策略B削峰更强但需要更严审批。"
+      ]
+    },
+    "execution_followup": {
+      "description": "Explain what to verify after dispatch or during abnormal closure.",
+      "examples": [
+        "检查是否已收到回执，若未回执优先核查执行链路和人工确认节点。"
+      ]
+    }
+  },
+  "shanghai_like_context_ranges": {
+    "water_water_transshipment_ratio_pct": [55, 63],
+    "yard_utilization_pct": [45, 92],
+    "berth_window_pressure_idx": [0.2, 0.95],
+    "gate_congestion_idx": [0.1, 0.9],
+    "shore_power_session_count_daily": [12, 85]
+  },
+  "source_reference_contract": {
+    "allowed_sources": [
+      "mock://platform/home_brief",
+      "mock://portviz/stream",
+      "mock://exec/dispatch",
+      "mock://energyx/telemetry",
+      "real://future_adapter/*"
+    ],
+    "required_fields_per_ref": [
+      "source_name",
+      "source_mode",
+      "timestamp",
+      "confidence_label"
+    ]
+  },
+  "handoff_rules": {
+    "to_strategy_module": [
+      "When recommendation requires comparing candidates before action."
+    ],
+    "to_exec_module": [
+      "When recommendation is already selected and needs dispatch confirmation."
+    ],
+    "to_opsx_module": [
+      "When audit, exception, rollback or health verification is required."
+    ]
+  },
+  "real_adapter_targets": {
+    "knowledge_bus": "real://copilot/context_bus",
+    "strategy_explainer": "real://copilot/strategy_explainer",
+    "audit_explainer": "real://copilot/audit_explainer"
+  },
+  "mock_adapter_targets": {
+    "knowledge_bus": "mock://copilot/context_bus",
+    "strategy_explainer": "mock://copilot/strategy_explainer",
+    "audit_explainer": "mock://copilot/audit_explainer"
+  },
+  "readiness_labels": {
+    "mock_ready": "Copilot can support demo and operator walkthroughs with source disclosure.",
+    "adapter_pending": "Contracts stable, waiting on live context integration.",
+    "real_ready": "Live context and validation rules both available."
+  }
+}

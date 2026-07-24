@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "entities": [
+    {
+      "id": "port-site-001",
+      "model": "dtmi:org:portdt:PortOperations;1",
+      "properties": {"baseLoad": 2300.0, "throughput": 190.0, "vesselArrivals": 3, "tide": 0.4, "ambientTemperature": 31.0},
+      "source": {"type": "site_adapter", "system": "replace-with-real-source", "observed_at": "2026-07-20T00:00:00Z"}
+    },
+    {
+      "id": "bess-001",
+      "model": "dtmi:org:portdt:EnergyAsset;1",
+      "properties": {"stateOfCharge": 0.58, "activePower": 0.0, "powerLimit": 900.0, "operatingMode": "manual"},
+      "source": {"type": "site_adapter", "system": "replace-with-real-source", "observed_at": "2026-07-20T00:00:00Z"}
+    }
+  ],
+  "relationships": [{"source": "port-site-001", "name": "hasEnergyAsset", "target": "bess-001"}]
+}

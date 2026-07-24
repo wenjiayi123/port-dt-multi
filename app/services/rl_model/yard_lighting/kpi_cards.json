@@ -1,0 +1,10 @@
+{
+  "module": "B",
+  "name": "堆场照明",
+  "reward_baseline_yuan": -11500,
+  "reward_policy_yuan": -9200,
+  "net_gain_yuan": 2300,
+  "delta_kwh": 1260,
+  "peak_shaving_kw": 68,
+  "ulx": 1080
+}

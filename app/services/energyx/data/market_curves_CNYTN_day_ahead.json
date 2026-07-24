@@ -1,0 +1,7 @@
+{
+  "base_price": 0.42,
+  "peak_price": 0.95,
+  "sin_amp": 0.06,
+  "noise": 0.01,
+  "points": 60
+}

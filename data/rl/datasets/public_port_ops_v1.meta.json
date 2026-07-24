@@ -1,0 +1,44 @@
+{
+  "dataset_id": "public_port_ops_v1",
+  "title": "Public port operations driver example v1",
+  "created_at": "2026-07-24T09:40:18.792861Z",
+  "provenance_type": "public_official_inputs_plus_deterministic_engineering_derivatives",
+  "owner": "port-dt-multi maintainers",
+  "timezone": "UTC",
+  "intended_use": "integration testing, reproducible RL research, and port data-adapter validation",
+  "license": "Singapore Open Data Licence; code MIT",
+  "geographically_coherent_single_port_series": false,
+  "official_input_geography_coherent": true,
+  "official_source_columns": [
+    "monthly_container_throughput",
+    "monthly_container_vessel_arrivals"
+  ],
+  "derived_columns": [
+    "base_load_kw",
+    "hourly_throughput_teu",
+    "hourly_vessel_arrivals",
+    "tide_m",
+    "price_per_kwh",
+    "carbon_kg_per_kwh",
+    "ambient_c"
+  ],
+  "sources": [
+    {
+      "publisher": "Maritime and Port Authority of Singapore",
+      "dataset_id": "d_da030f7028200d19ffcbe4a2d71af39c",
+      "role": "monthly_container_throughput_anchor",
+      "accessed_at": "2026-07-24",
+      "license_url": "https://data.gov.sg/open-data-licence",
+      "url": "https://data.gov.sg/api/action/datastore_search?resource_id=d_da030f7028200d19ffcbe4a2d71af39c&limit=500"
+    },
+    {
+      "publisher": "Maritime and Port Authority of Singapore",
+      "dataset_id": "d_8f264219109e61fffa87ac64dd5a9a65",
+      "role": "monthly_container_vessel_arrivals_anchor",
+      "accessed_at": "2026-07-24",
+      "license_url": "https://data.gov.sg/open-data-licence",
+      "url": "https://data.gov.sg/api/action/datastore_search?resource_id=d_8f264219109e61fffa87ac64dd5a9a65&limit=5000"
+    }
+  ],
+  "warning": "This is an integration/reproducibility dataset, not a production telemetry export. Replace it with a mapped port dataset for deployment."
+}

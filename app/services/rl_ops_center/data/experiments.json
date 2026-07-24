@@ -1,0 +1,4 @@
+{"items":[
+  {"id":"rl-stable-A","phase":"stable","traffic":1.0,"mape":0.029,"guard":0.005,"sla":0.0,"updated_at":"2025-11-10T08:00:00Z"},
+  {"id":"rl-canary-B","phase":"canary","traffic":0.25,"mape":0.033,"guard":0.010,"sla":0.0,"updated_at":"2025-11-10T08:00:00Z"}
+]}

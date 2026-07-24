@@ -1,0 +1,5 @@
+step_sec: 600
+horizon_steps: 72
+algo:
+  kind: safe_sac
+policy_file: ./policy.bin

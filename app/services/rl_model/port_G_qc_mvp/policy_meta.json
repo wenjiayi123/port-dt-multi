@@ -1,0 +1,29 @@
+{
+  "algo": "iql",
+  "steps": 4000,
+  "batch": 256,
+  "tau": 0.7,
+  "gamma": 0.995,
+  "beta": 3.0,
+  "lr": 0.0003,
+  "feature_keys": [
+    "pwr_ref_pct",
+    "idle_ref_min",
+    "gmph_target",
+    "queue_p50",
+    "power_base_kW",
+    "price",
+    "ef",
+    "moves_5min",
+    "tmotor",
+    "tinv",
+    "sway_deg",
+    "wind_mps",
+    "prev_pwr_pct",
+    "prev_idle_min"
+  ],
+  "action_names": [
+    "d_power_pct",
+    "d_idle_min"
+  ]
+}

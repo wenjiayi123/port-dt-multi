@@ -1,0 +1,13 @@
+# 告诉适配器：数据文件里的时间列叫 timestamp（不是默认的 time）
+time_col: timestamp
+
+# 下面这些保持默认即可；留着方便你以后改
+price_col: price_yuan_per_kwh
+ef_col: ef_kg_per_kwh
+grid_kw_col: pcc_kw
+
+# 训练/上线的一些常用阈值（按需调整）
+dt_min: 5
+max_c_rate: 1.0
+low_soc_threshold: 0.30
+target_soc: 0.80

@@ -1,0 +1,19 @@
+{
+  "site_code": "INTL-MEGA-PORT",
+  "base_url": "",
+  "auth": {
+    "token": "REPLACE_WITH_TOS_TOKEN"
+  },
+  "paths": {
+    "vessel_calls": "/api/tos/v1/vessel_calls",
+    "berth_plan": "/api/tos/v1/berths",
+    "crane_plan": "/api/tos/v1/crane_plan",
+    "move_orders": "/api/tos/v1/move_orders",
+    "yard_inventory": "/api/tos/v1/yard_inventory",
+    "truck_appointments": "/api/tos/v1/truck_appointments"
+  },
+  "timeout_sec": 3,
+  "fallback_mock": false,
+  "mock_seed": 1729,
+  "tz_offset_min": 0
+}

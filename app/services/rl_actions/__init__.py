@@ -1,0 +1,2 @@
+"""RL panel action registry."""
+

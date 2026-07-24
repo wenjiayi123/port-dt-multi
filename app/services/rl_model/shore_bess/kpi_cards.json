@@ -1,0 +1,10 @@
+{
+  "module": "D",
+  "name": "Shore BESS",
+  "soc_pct": 56,
+  "economic_saving_yuan": 98000,
+  "peak_shaving_mw": 4.6,
+  "charge_mwh": 62,
+  "discharge_mwh": 58,
+  "carbon_reduction_ton": 28
+}

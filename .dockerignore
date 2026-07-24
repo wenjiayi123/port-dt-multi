@@ -1,0 +1,15 @@
+.git
+.github
+.venv*
+__pycache__
+*.pyc
+*.log
+.DS_Store
+.codex_artifacts
+soft_copyright_materials
+data/rl/runs
+data/rl/benchmarks.json
+data/rl/model_registry*.json*
+*.docx
+*.pdf
+*.zip
