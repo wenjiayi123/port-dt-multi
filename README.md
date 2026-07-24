@@ -17,12 +17,12 @@
 </p>
 
 <p align="center">
-  <a href="#-系统全景--system-at-a-glance">系统全景</a> ·
-  <a href="#-快速开始--quick-start">快速开始</a> ·
-  <a href="#-真实训练与评测--real-training--evaluation">训练与评测</a> ·
-  <a href="#-数据与接港契约--data--port-adapter-contract">数据契约</a> ·
-  <a href="#-安全和治理边界--safety--governance-boundaries">安全治理</a> ·
-  <a href="docs/OPEN_SOURCE_READINESS_AUDIT.md">开源审计</a>
+  <a href="#-系统全景--system-at-a-glance">系统全景 / Overview</a> ·
+  <a href="#-快速开始--quick-start">快速开始 / Quick start</a> ·
+  <a href="#-真实训练与评测--real-training--evaluation">训练与评测 / Evaluation</a> ·
+  <a href="#-数据与接港契约--data--port-adapter-contract">数据契约 / Data</a> ·
+  <a href="#-安全和治理边界--safety--governance-boundaries">安全治理 / Safety</a> ·
+  <a href="docs/OPEN_SOURCE_READINESS_AUDIT.md">开源审计 / Audit</a>
 </p>
 
 <table>
@@ -34,11 +34,11 @@
     <th align="center">稳定性复验<br /><sub>PAIRED BOOTSTRAP</sub></th>
   </tr>
   <tr>
-    <td align="center"><strong>52,608</strong><br />小时记录</td>
-    <td align="center"><strong>83.63% → 91.09%</strong><br />相对 +8.91%</td>
+    <td align="center"><strong>52,608</strong><br />小时记录 / hourly records</td>
+    <td align="center"><strong>83.63% → 91.09%</strong><br />相对提升 / relative +8.91%</td>
     <td align="center"><strong>−16.94%</strong><br />5.90 h → 4.90 h</td>
-    <td align="center"><strong>−11.80%</strong><br />同吞吐情景</td>
-    <td align="center"><strong>365 × 2,000</strong><br />日级配对复验</td>
+    <td align="center"><strong>−11.80%</strong><br />同吞吐情景 / throughput held</td>
+    <td align="center"><strong>365 × 2,000</strong><br />日级配对复验 / paired daily resampling</td>
   </tr>
 </table>
 
@@ -56,16 +56,18 @@ The hard part of port AI is not another dashboard. It is making data origin, alg
 
 | 能力域 / Domain | 已实现 / Implemented | 可审计证据 / Evidence |
 |---|---|---|
-| 数据与来源 / Data & provenance | 规范字段映射、质量门禁、单位/时区/许可元数据、SHA-256 | 数据卡、质量报告、数据集指纹 |
-| 港区孪生 / Port twin | 数据集确定性投影；可切换严格 JSONL 实体轨迹 | 来源等级、帧序号、时间戳、适配器状态 |
-| 策略实验 / Policy lab | SAC、PPO、TD3、DQN + 滚动时域 MPC | 真实库版本、随机种子、配置、监控日志 |
-| 独立评测 / Independent evaluation | 时间顺序留出集、多窗口评测、95% 自助法区间 | 每轮指标、窗口索引、轨迹回放、评测协议 |
-| 模型治理 / Model governance | 模型卡、产物哈希、candidate/champion/rollback/archive | 门禁阻断项、审批人、理由、审计日志 |
-| 运行治理 / Operational governance | OpsX、漂移/异常、来源总览、故障响应流程 | 请求 ID、健康检查、Prometheus 指标、事件证据 |
-| 受控执行 / Bounded execution | 默认关闭；白名单、参数约束、幂等、异人复核、独立二通道 | 原子审计、失败关闭、可重试回滚 |
-| 双语交互 / Bilingual UX | 中文/English 主界面、RL 面板、运营助手、集成中枢 | 页面级来源状态和能力边界 |
+| 数据与来源 / Data & provenance | 规范字段映射、质量门禁、单位/时区/许可元数据、SHA-256<br><sub>Canonical mapping, quality gates, unit/time-zone/licence metadata, and SHA-256</sub> | 数据卡、质量报告、数据集指纹<br><sub>Dataset card, quality report, and fingerprint</sub> |
+| 港区孪生 / Port twin | 数据集确定性投影；可切换严格 JSONL 实体轨迹<br><sub>Deterministic dataset projection with switchable strict JSONL entity traces</sub> | 来源等级、帧序号、时间戳、适配器状态<br><sub>Provenance level, frame sequence, timestamp, and adapter status</sub> |
+| 策略实验 / Policy lab | SAC、PPO、TD3、DQN + 滚动时域 MPC<br><sub>SAC, PPO, TD3, DQN plus receding-horizon MPC</sub> | 真实库版本、随机种子、配置、监控日志<br><sub>Runtime library, seed, configuration, and monitored logs</sub> |
+| 独立评测 / Independent evaluation | 时间顺序留出集、多窗口评测、95% 自助法区间<br><sub>Chronological holdout, multi-window evaluation, and 95% bootstrap intervals</sub> | 每轮指标、窗口索引、轨迹回放、评测协议<br><sub>Per-run metrics, window indices, replay, and protocol</sub> |
+| 模型治理 / Model governance | 模型卡、产物哈希、candidate/champion/rollback/archive | 门禁阻断项、审批人、理由、审计日志<br><sub>Blocking gates, approver, rationale, and audit log</sub> |
+| 运行治理 / Operational governance | OpsX、漂移/异常、来源总览、故障响应流程<br><sub>OpsX, drift/anomaly checks, provenance overview, and incident workflow</sub> | 请求 ID、健康检查、Prometheus 指标、事件证据<br><sub>Request ID, health checks, Prometheus metrics, and incident evidence</sub> |
+| 受控执行 / Bounded execution | 默认关闭；白名单、参数约束、幂等、异人复核、独立二通道<br><sub>Disabled by default; allowlist, bounds, idempotency, four-eyes review, and an independent second channel</sub> | 原子审计、失败关闭、可重试回滚<br><sub>Atomic audit, fail-closed behavior, and retry-safe rollback</sub> |
+| 双语交互 / Bilingual UX | 中文/English 主界面、RL 面板、运营助手、集成中枢<br><sub>Chinese/English cockpit, RL panel, copilot, and integration hub</sub> | 页面级来源状态和能力边界<br><sub>Page-level provenance state and capability boundary</sub> |
 
 > **定位 / Positioning** — 这是研究、教学、软件验证与现场集成前评估平台，不是已经认证的自主港口控制器。所有推理输出默认是建议，`dispatch_allowed=false`；生产执行权始终位于独立现场审批、设备联锁与变更管理之后。
+>
+> This is a research, teaching, software-verification, and pre-integration assessment platform—not a certified autonomous port controller. All inference is advisory by default with `dispatch_allowed=false`; production authority remains behind independent site approval, equipment interlocks, and change management.
 
 ## 🧭 系统全景 / System at a glance
 
@@ -117,11 +119,16 @@ This is not a monolithic “AI that does everything.” Provenance levels, envir
   <img src="docs/assets/rl-governance.jpg" alt="Port DT Multi RL governance panel" width="96%" />
 </p>
 
-- **运营总览 / Operations cockpit**：港区态势、数据来源、KPI、ESG/合规、策略链与审计入口。缺少正式证据时显示“未接入/未评定”，不补造优秀指标。
-- **强化学习面板 / RL panel**：选择规范数据集和五类控制器，读取后端真实进度，训练完成后再启动留出集评测与轨迹回放。
-- **运营助手 / Ops copilot**：把自然语言意图映射为受支持的只读查询或白名单候选动作；不扩大调用者权限。
-- **集成中枢 / Integration hub**：展示现场连接、功能开关和安全门；验证链运行在 dry-run，不能冒充生产下发。
-- **Story / OpsX / TwinLab**：用于证据叙事、运行治理、故障注入和接港前契约联调；每类数据保持 replay、simulation、derived、measured 标签。
+- **运营总览 / Operations cockpit**：港区态势、数据来源、KPI、ESG/合规、策略链与审计入口。缺少正式证据时显示“未接入/未评定”，不补造优秀指标。<br>
+  *Port situation, provenance, KPI, ESG/compliance, policy chain, and audit entry points. Missing formal evidence is shown as “not connected / not assessed,” never replaced with flattering metrics.*
+- **强化学习面板 / RL panel**：选择规范数据集和五类控制器，读取后端真实进度，训练完成后再启动留出集评测与轨迹回放。<br>
+  *Select a canonical dataset and one of five controllers, read backend-owned progress, and start holdout evaluation and replay only after training completes.*
+- **运营助手 / Ops copilot**：把自然语言意图映射为受支持的只读查询或白名单候选动作；不扩大调用者权限。<br>
+  *Maps natural-language intent to supported read-only queries or allowlisted candidate actions without expanding caller authority.*
+- **集成中枢 / Integration hub**：展示现场连接、功能开关和安全门；验证链运行在 dry-run，不能冒充生产下发。<br>
+  *Surfaces site connections, feature flags, and safety gates. Integration verification runs as dry-run and cannot masquerade as production dispatch.*
+- **Story / OpsX / TwinLab**：用于证据叙事、运行治理、故障注入和接港前契约联调；每类数据保持 replay、simulation、derived、measured 标签。<br>
+  *Supports evidence narratives, operational governance, fault injection, and pre-integration contract testing while preserving replay/simulation/derived/measured labels.*
 
 ## 🧠 真实训练与评测 / Real training & evaluation
 
@@ -155,15 +162,21 @@ All five baselines share one canonical data contract and evaluation protocol wit
 
 Web端提供 `/api/rl/business-benchmark`，只展示经过数据、配置和计算代码 SHA-256 校验的固定反事实报告。`public_port_ops_v1` 以 MPA 新加坡 2020–2025 月度集装箱吞吐量和集装箱船到港量为官方锚点，构造 52,608 条连续小时驱动记录，并按 35,064 train / 8,784 validation / 8,760 test 时序隔离；最终测试相对“静态 FCFS + 固定能源时刻表”得到：
 
-| 指标 | 精确测试结果 | 简历整数口径 |
+The Web endpoint `/api/rl/business-benchmark` exposes only the pinned counterfactual report whose data, configuration, and computation code pass SHA-256 verification. `public_port_ops_v1` anchors 52,608 consecutive hourly driver records to official MPA Singapore monthly container throughput and container-vessel arrivals for 2020–2025, then applies a chronological 35,064 train / 8,784 validation / 8,760 test split. Against static FCFS plus a fixed energy schedule, the sealed test produces:
+
+| 指标 / Metric | 精确测试结果 / Exact test result | 简历整数口径 / Rounded resume claim |
 |---|---:|---:|
-| 泊位有效利用率 | 83.63% → 91.09%，+7.45 个百分点 | 相对 +9% |
-| 平均待泊时间 | 5.90 h → 4.90 h，-16.94% | -17% |
-| 情景用电成本 | 26.83M → 23.66M，-11.80% | -12% |
+| 泊位有效利用率 / Effective berth utilization | 83.63% → 91.09%，+7.45 个百分点 / percentage points | 相对 / relative +9% |
+| 平均待泊时间 / Mean waiting time | 5.90 h → 4.90 h，-16.94% | -17% |
+| 情景用电成本 / Scenario energy cost | 26.83M → 23.66M，-11.80% | -12% |
 
 吞吐量保持一致；每天未恢复的柔性负荷与 BESS 期末电量按固定参考价结算，避免跨日借能或通过欠供制造节省。365 个完整测试日进行 2,000 次成对 bootstrap，三项指标的 95% 区间分别为 8.89%–8.97%、16.92%–16.97% 和 11.79%–11.84%；27 组预声明参数敏感性亦保存于报告。上述数字是公开输入驱动的数字孪生情景结果，不是港口实测 KPI、现场 A/B 或财务审计结论。完整公式、参数和边界见 [业务KPI基准](docs/BUSINESS_KPI_BENCHMARK.md) 与 [简历证据页](docs/RESUME_CLAIMS_WEB.md)。
 
+Throughput is held constant. Unrestored flexible load and terminal BESS state of charge are settled daily at a fixed reference price to prevent cross-day energy borrowing or artificial savings through under-supply. Across 365 complete test days, 2,000 paired bootstrap resamples yield 95% intervals of 8.89%–8.97%, 16.92%–16.97%, and 11.79%–11.84%; the report also retains 27 predeclared parameter-sensitivity cases. These are public-input-driven digital-twin scenario results—not measured terminal KPIs, an online A/B test, or a financial audit. See the [business KPI benchmark](docs/BUSINESS_KPI_BENCHMARK.md) and [resume evidence page](docs/RESUME_CLAIMS_WEB.md) for formulas, parameters, and boundaries.
+
 Flutter 移动端通过同一 FastAPI 的 `/api/mobile/*` 契约读取候选、提交人工表态、获取回执并上传审计，不是另一套独立后端。500项固定闭环操作验证了重复提交、冲突幂等键、越权生产下发与审计链，详见 [双端架构](docs/SHARED_WEB_MOBILE_ARCHITECTURE.md)、[移动闭环基准](docs/MOBILE_WORKFLOW_BENCHMARK.md)和[双端简历证据](docs/RESUME_CLAIMS_DUAL_FRONTEND.md)。
+
+The Flutter frontend uses the same FastAPI `/api/mobile/*` contract to read candidates, submit human decisions, obtain receipts, and upload audit evidence; it is not a separate backend. A fixed suite of 500 closed-loop operations checks duplicate submissions, conflicting idempotency keys, unauthorized production dispatch, and the audit chain. See the [dual-frontend architecture](docs/SHARED_WEB_MOBILE_ARCHITECTURE.md), [mobile workflow benchmark](docs/MOBILE_WORKFLOW_BENCHMARK.md), and [dual-frontend resume evidence](docs/RESUME_CLAIMS_DUAL_FRONTEND.md).
 
 ```bash
 python -m scripts.business_kpi_benchmark --verify
@@ -272,20 +285,28 @@ timestamp,base_load_kw,throughput_teu,vessel_arrivals,tide_m,price_per_kwh,carbo
 To connect another port without rewriting algorithms, upload through `/api/rl/datasets/upload` with:
 
 - 显式字段映射 / explicit field mapping;
-- `license`、`owner`、`timezone`、`intended_use` 治理元数据;
-- 严格递增 ISO-8601 时间和至少 48 条记录;
-- 通过物理边界、非有限值、采样间隔和必填元数据门禁的数据。
+- `license`、`owner`、`timezone`、`intended_use` 治理元数据 / governance metadata;
+- 严格递增 ISO-8601 时间和至少 48 条记录 / strictly increasing ISO-8601 timestamps and at least 48 records;
+- 通过物理边界、非有限值、采样间隔和必填元数据门禁的数据 / data passing physical-bound, non-finite-value, sampling-interval, and required-metadata gates.
 
 同名数据集默认禁止覆盖，只有显式 `replace_existing=true` 才允许替换。详细说明见 [数据与接港契约](docs/DATASET_AND_PORT_ADAPTER.md)、[数据卡](docs/DATASET_CARD_public_port_ops_v1.md) 和 [数据血缘](docs/RL_DATA_LINEAGE.md)。
 
+Datasets cannot overwrite an existing identifier unless `replace_existing=true` is explicitly supplied. See the [dataset and port-adapter contract](docs/DATASET_AND_PORT_ADAPTER.md), [dataset card](docs/DATASET_CARD_public_port_ops_v1.md), and [RL data lineage](docs/RL_DATA_LINEAGE.md).
+
 ## 🛡️ 安全和治理边界 / Safety & governance boundaries
 
-- **来源不混淆 / No provenance blur**：`dataset`、`engineering_simulator`、`live_rest`、`measured` 是不同等级；真实接口失败不会静默生成业务值。
-- **模型不越权 / Models have no authority**：模型注册、`champion` 别名和软件包络都不是现场部署批准。
-- **执行失败关闭 / Execution fails closed**：南向网关默认禁用；启用后仍需资产/动作白名单、参数上下界、幂等键、异人确认和独立二通道密钥。
-- **生产认证分离 / Certification is external**：ESG、合规、孪生保真度和安全指标只有在提供正式证据时才成立，软件输出不构成法律、财务或安全认证。
-- **生产模式门禁 / Production gate**：`PORT_DT_ENV=production` 时 API 需要长密钥、显式 CORS；数据覆盖、模型晋级/回滚和执行变更另需独立管理员密钥；Swagger 默认关闭。
-- **标识符安全 / Identifier safety**：训练、评测和模型目录只接受受限标识符，并拒绝路径穿越与符号链接逃逸。
+- **来源不混淆 / No provenance blur**：`dataset`、`engineering_simulator`、`live_rest`、`measured` 是不同等级；真实接口失败不会静默生成业务值。<br>
+  *`dataset`, `engineering_simulator`, `live_rest`, and `measured` are distinct levels; a failed live interface never silently generates business values.*
+- **模型不越权 / Models have no authority**：模型注册、`champion` 别名和软件包络都不是现场部署批准。<br>
+  *Registration, a `champion` alias, and a software envelope do not constitute site deployment approval.*
+- **执行失败关闭 / Execution fails closed**：南向网关默认禁用；启用后仍需资产/动作白名单、参数上下界、幂等键、异人确认和独立二通道密钥。<br>
+  *The southbound gateway is disabled by default and, when enabled, still requires asset/action allowlists, parameter bounds, idempotency, four-eyes confirmation, and an independent second-channel key.*
+- **生产认证分离 / Certification is external**：ESG、合规、孪生保真度和安全指标只有在提供正式证据时才成立，软件输出不构成法律、财务或安全认证。<br>
+  *ESG, compliance, twin fidelity, and safety claims require formal evidence; software output is not legal, financial, or safety certification.*
+- **生产模式门禁 / Production gate**：`PORT_DT_ENV=production` 时 API 需要长密钥、显式 CORS；数据覆盖、模型晋级/回滚和执行变更另需独立管理员密钥；Swagger 默认关闭。<br>
+  *With `PORT_DT_ENV=production`, APIs require strong keys and explicit CORS; dataset replacement, model promotion/rollback, and execution changes require a separate administrator key; Swagger is disabled.*
+- **标识符安全 / Identifier safety**：训练、评测和模型目录只接受受限标识符，并拒绝路径穿越与符号链接逃逸。<br>
+  *Training, evaluation, and model directories accept constrained identifiers and reject path traversal and symlink escape.*
 
 进一步阅读 / Further reading:
 
@@ -303,13 +324,13 @@ The default runtime exposes the trusted core only. Legacy engineering simulators
 
 | 变量 / Variable | 作用 / Purpose | 默认 / Default |
 |---|---|---|
-| `PORT_DT_ENABLE_ENGINEERING_SIMULATORS` | 旧 Dashlets / OpsX / PortX 等界面联调模拟器 | off |
-| `PORT_DT_ENABLE_LEGACY_RL` | 旧 RL 模块只读查看，不用于结论 | off |
-| `PORT_DT_ENABLE_DESKTOP_INTEGRATIONS` | 小懿/航行模拟器本机联动 | off |
-| `PORT_DT_TWIN_GRAPH_PATH` | 现场孪生实体关系图 | unset |
-| `PORT_DT_TWIN_CALIBRATION_PATH` | 现场校准证据 | unset |
-| `PORT_DT_ACTUATOR_CONFIG` | 私有南向执行配置 | unset |
-| `PORT_DT_ALLOW_MODEL_PROMOTION` | 允许通过门禁后设置 champion | off |
+| `PORT_DT_ENABLE_ENGINEERING_SIMULATORS` | 旧 Dashlets / OpsX / PortX 等界面联调模拟器<br><sub>Legacy Dashlets/OpsX/PortX UI-integration simulators</sub> | off |
+| `PORT_DT_ENABLE_LEGACY_RL` | 旧 RL 模块只读查看，不用于结论<br><sub>Read-only legacy RL view, excluded from claims</sub> | off |
+| `PORT_DT_ENABLE_DESKTOP_INTEGRATIONS` | 小懿/航行模拟器本机联动<br><sub>Local Xiaoyi/sailing-simulator integration</sub> | off |
+| `PORT_DT_TWIN_GRAPH_PATH` | 现场孪生实体关系图<br><sub>Site twin entity graph</sub> | unset |
+| `PORT_DT_TWIN_CALIBRATION_PATH` | 现场校准证据<br><sub>Site calibration evidence</sub> | unset |
+| `PORT_DT_ACTUATOR_CONFIG` | 私有南向执行配置<br><sub>Private southbound execution configuration</sub> | unset |
+| `PORT_DT_ALLOW_MODEL_PROMOTION` | 允许通过门禁后设置 champion<br><sub>Permit gated promotion to champion</sub> | off |
 
 ## 🗂️ 仓库结构 / Repository map
 
@@ -350,10 +371,12 @@ Contributions should be provenance-aware, reproducible, and explicit about safet
 
 安全问题请不要提交公开 Issue；请使用 GitHub Private Vulnerability Reporting。/ Do not disclose vulnerabilities in public issues; use GitHub Private Vulnerability Reporting.
 
-## 📄 License & citation
+## 📄 许可证与引用 / License & citation
 
+源代码和仓库原生视觉资产使用 [MIT License](LICENSE)；公开数据仍遵循各自来源条款，详见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 与[数据卡](docs/DATASET_CARD_public_port_ops_v1.md)。<br>
 Source code and repository-native visual assets are released under the [MIT License](LICENSE). Public data retains its source terms; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) and the [dataset card](docs/DATASET_CARD_public_port_ops_v1.md).
 
+用于研究或教学时，请通过 [CITATION.cff](CITATION.cff) 引用具体软件版本，并分别引用原始数据集。<br>
 If this repository supports research or teaching, cite the versioned software release through [CITATION.cff](CITATION.cff) and cite the original datasets independently.
 
 ---
