@@ -37,6 +37,9 @@ data/runtime/
 logs/
 tmp/
 *.log
+/1.py
+app/static/opsx/*.html
+static/opsx/*.html
 
 # Legacy model outputs are local evidence, not source inputs
 app/services/rl_model/**/artifacts/
