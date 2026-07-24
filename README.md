@@ -17,6 +17,10 @@
 </p>
 
 <p align="center">
+  <strong>研发作者：</strong>温家懿 · <strong>Research Author:</strong> Wen Jiayi
+</p>
+
+<p align="center">
   <a href="#-系统全景--system-at-a-glance">系统全景 / Overview</a> ·
   <a href="#-快速开始--quick-start">快速开始 / Quick start</a> ·
   <a href="#-真实训练与评测--real-training--evaluation">训练与评测 / Evaluation</a> ·
