@@ -115,7 +115,7 @@
           <small>您的港航智能助手</small>
           <span class="xiaoyi-sprite-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
         </span>
-        <img class="xiaoyi-sprite-character" src="/static/xiaoyi_maritime_officer.svg?v=20260721-oss" alt="Xiaoyi maritime operations copilot" draggable="false" />
+        <img class="xiaoyi-sprite-character" src="/static/xiaoyi_maritime_officer.png?v=20260725-q" alt="小懿Q版海事运营助手" draggable="false" />
       </button>
     `;
     document.body.appendChild(root);

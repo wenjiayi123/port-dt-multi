@@ -46,6 +46,8 @@ REQUIRED = (
     "scripts/fetch_public_la_benchmark.py",
     "scripts/export_rl_evidence.py",
     "app/ui/adapters/rl_evidence_console.js",
+    "app/static/xiaoyi_maritime_officer.png",
+    "docs/assets/system-overview-provenance-governance.png",
     "docs/assets/training-center-algorithm-matrix-xiaoyi.png",
     "docs/assets/xiaoyi-system-assistant-button-linkage.png",
     "docs/assets/rl-training-console-real-backend.png",
@@ -118,6 +120,11 @@ def main() -> int:
     for relative in REQUIRED:
         if not (ROOT / relative).is_file():
             errors.append(f"missing release evidence: {relative}")
+    xiaoyi_asset = ROOT / "app/static/xiaoyi_maritime_officer.png"
+    if xiaoyi_asset.is_file():
+        observed_xiaoyi_sha256 = hashlib.sha256(xiaoyi_asset.read_bytes()).hexdigest()
+        if observed_xiaoyi_sha256 != "8f56a569dcb098ef08cd2bed92ffc098474c7d6ef911141760982e9323ffe714":
+            errors.append("Xiaoyi Q-style character asset fingerprint changed")
     try:
         report = load_verified_report()
         claims = report.get("resume_claims_rounded_percent") or {}
@@ -252,6 +259,25 @@ def main() -> int:
     ):
         if marker not in server:
             errors.append(f"Web evidence surface missing: {marker}")
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    screenshot_paths = (
+        "docs/assets/system-overview-provenance-governance.png",
+        "docs/assets/training-center-algorithm-matrix-xiaoyi.png",
+        "docs/assets/rl-training-console-real-backend.png",
+        "docs/assets/seven-controller-backend-results.png",
+        "docs/assets/xiaoyi-system-assistant-button-linkage.png",
+    )
+    if any(readme.count(path) != 1 for path in screenshot_paths):
+        errors.append("README must embed each of the five evidence screenshots exactly once")
+    for script_path in (
+        ROOT / "app/ui/adapters/xiaoyi_sprite.js",
+        ROOT / "app/ui/adapters/rl_evidence_console.js",
+    ):
+        source = script_path.read_text(encoding="utf-8")
+        if "/static/xiaoyi_maritime_officer.png" not in source:
+            errors.append(f"Xiaoyi Q-style asset is not wired: {script_path.name}")
+        if "xiaoyi_maritime_officer.svg" in source:
+            errors.append(f"legacy Xiaoyi SVG is still referenced: {script_path.name}")
     if errors:
         for error in errors:
             print(f"ERROR: {error}")

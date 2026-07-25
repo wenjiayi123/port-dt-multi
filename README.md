@@ -113,26 +113,23 @@ flowchart LR
 
 This is not a monolithic “AI that does everything.” Provenance levels, environment isolation, registry gates, and authority separation keep sensing, experimentation, evaluation, recommendations, and equipment actuation accountable to different boundaries.
 
+<p align="center">
+  <img src="docs/assets/system-overview-provenance-governance.png" alt="Port AI operations hub showing provenance status, system modules, decision state, contract registry, and Xiaoyi Q-style assistant" width="96%" />
+  <br />
+  <sub>图 1 · 系统总览与数据契约登记：训练评测、遥测、孪生校准、南向执行和外部适配器状态同屏可核验。</sub>
+</p>
+
 ## 🖥️ 产品界面 / Product surfaces
 
 <p align="center">
   <img src="docs/assets/training-center-algorithm-matrix-xiaoyi.png" alt="Training center with seven-controller matrix, objectives, observations, actions, public-data evidence, and Xiaoyi advisor" width="96%" />
+  <br />
+  <sub>图 2 · 训练中心：7 类控制器、87,459 行公开训练包、37D/5D 环境、正式种子门禁与小懿 Q 版训练顾问同屏。</sub>
 </p>
 
-<table>
-  <tr>
-    <td width="50%"><img src="docs/assets/xiaoyi-system-assistant-button-linkage.png" alt="Xiaoyi system assistant opened from the training-center linkage button" /></td>
-    <td width="50%"><img src="docs/assets/seven-controller-backend-results.png" alt="Seven backend-evaluated controller cards and algorithm adapter" /></td>
-  </tr>
-  <tr>
-    <td align="center"><sub>小懿训练顾问 → 全系统助手按钮联动</sub></td>
-    <td align="center"><sub>6 RL + 1 MPC 后端评测登记</sub></td>
-  </tr>
-</table>
+项目统一使用同一份透明背景“小懿 Q 版海事官”资产；训练顾问、全系统助手和页面悬浮入口不再混用旧写实 SVG。人物只承担解释、导航和受控命令编排，不绕过训练确认或设备执行门禁。
 
-<p align="center">
-  <img src="docs/assets/rl-training-console-real-backend.png" alt="Real backend training console with public dataset, profile-bound weights, and training controls" width="96%" />
-</p>
+The training advisor, full-system assistant, and floating entry point now share one transparent Xiaoyi Q-style maritime-officer asset. The character explains evidence, navigates, and prepares bounded commands without bypassing training confirmation or actuation gates.
 
 - <strong>运营总览 / Operations cockpit</strong>：港区态势、数据来源、KPI、ESG/合规、策略链与审计入口。缺少正式证据时显示“未接入/未评定”，不补造优秀指标。<br>
   *Port situation, provenance, KPI, ESG/compliance, policy chain, and audit entry points. Missing formal evidence is shown as “not connected / not assessed,” never replaced with flattering metrics.*
@@ -155,6 +152,12 @@ All seven baselines share one canonical data contract and evaluation protocol wi
 
 For port replacement, `port_ops_v2` exposes 37 observations (base state, twelve international-port factors, and per-factor availability masks) and five advisory actions (BESS, service intensity, flexible load, berth priority, and yard flow). Existing `port_ops_v1` models and metrics remain readable. Port assets, objectives, safety bounds, and factor requirements live in replaceable `config/ports/*.json` profiles.
 
+<p align="center">
+  <img src="docs/assets/rl-training-console-real-backend.png" alt="Real backend RL training console with Los Angeles public dataset, profile-bound objective weights, optimizer parameters, progress source, and test-only replay control" width="96%" />
+  <br />
+  <sub>图 3 · 真实训练控制台：数据集、目标权重、算法超参数、随机种子、无渲染训练与测试回放边界由后端统一承接。</sub>
+</p>
+
 | 控制器 / Controller | 类型 / Type | 动作空间 / Action space | 实现 / Implementation |
 |---|---|---|---|
 | SAC | off-policy actor–critic | 连续 / continuous | `stable_baselines3.SAC` |
@@ -164,6 +167,12 @@ For port replacement, `port_ops_v2` exposes 37 observations (base state, twelve 
 | A2C | on-policy actor–critic | 连续 / continuous | `stable_baselines3.A2C` |
 | TQC | distributional off-policy actor–critic | 连续 / continuous | `sb3_contrib.TQC` |
 | MPC | rolling-horizon control | 连续约束 / constrained continuous | `scipy.optimize.minimize` |
+
+<p align="center">
+  <img src="docs/assets/seven-controller-backend-results.png" alt="Seven evaluated backend controller cards with SAC PPO TD3 DQN A2C TQC and MPC metrics plus algorithm-adapter evidence" width="96%" />
+  <br />
+  <sub>图 4 · 七算法后端评测登记：6 种 RL 与 MPC 的状态、指标和实现适配器来自真实 API，不由前端生成。</sub>
+</p>
 
 上游实现说明： [Stable-Baselines3 A2C](https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html) · [SB3-Contrib TQC](https://sb3-contrib.readthedocs.io/en/master/modules/tqc.html)。
 
@@ -350,6 +359,12 @@ Datasets cannot overwrite an existing identifier unless `replace_existing=true` 
 默认启动只开放可信主链；旧工程模拟器、旧 RL 产物、本机应用联动和生产执行都必须显式开启。完整变量见 [.env.example](.env.example)。
 
 The default runtime exposes the trusted core only. Legacy engineering simulators, legacy RL artifacts, local desktop launchers, and production execution require explicit opt-in. See [.env.example](.env.example).
+
+<p align="center">
+  <img src="docs/assets/xiaoyi-system-assistant-button-linkage.png" alt="Training-center button opening the Xiaoyi Q-style full-system assistant while preserving the seven-controller matrix and human confirmation boundary" width="96%" />
+  <br />
+  <sub>图 5 · 小懿按钮联动：训练中心直接打开全系统助手，指令仍进入人工确认，不能直接生产执行。</sub>
+</p>
 
 | 变量 / Variable | 作用 / Purpose | 默认 / Default |
 |---|---|---|

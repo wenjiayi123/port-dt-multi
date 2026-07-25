@@ -31,4 +31,8 @@ All terminal electrical, operational, occupancy, tariff, carbon, and
 sub-monthly allocation fields are documented engineering derivatives. The
 dataset is a public benchmark, not a measured terminal telemetry export.
 
-The vector Xiaoyi maritime-officer illustration and repository diagrams were created specifically for this repository and are released under the repository MIT License. No private screenshots, proprietary models or software-copyright submission materials are included.
+The bundled Xiaoyi Q-style maritime-officer PNG is a project-owned character
+asset supplied by the repository author and shared across the author's port-AI
+projects. It and the repository-native diagrams are released under the
+repository MIT License. No private screenshots, proprietary models or
+software-copyright submission materials are included.

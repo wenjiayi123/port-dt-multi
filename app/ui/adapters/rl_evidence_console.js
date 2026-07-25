@@ -67,7 +67,7 @@
         <div class="rl-proof-panel xiaoyi">
           <h3>小懿训练顾问 <small>按钮—接口—门禁联动</small></h3>
           <div class="rl-xiaoyi-card">
-            <img src="/static/xiaoyi_maritime_officer.svg?v=20260721-oss" alt="小懿Q版海事训练顾问">
+            <img src="/static/xiaoyi_maritime_officer.png?v=20260725-q" alt="小懿Q版海事训练顾问">
             <div><strong>小懿AI · 训练与全系统助手</strong><p>读取后端数据指纹、算法实现、多种子门禁和场景包状态；训练按钮仍保留人工确认。</p></div>
           </div>
           <div class="rl-xiaoyi-advice" data-proof-advice-text>等待后端证据。点击“解读训练门禁”后，小懿只解释真实状态，不生成优秀指标。</div>

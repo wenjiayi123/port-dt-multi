@@ -49,9 +49,6 @@ app/services/rl_model/**/data/
 app/services/rl_model/**/data_*/
 app/services/rl_model/**/offline_dataset*.jsonl
 
-# Superseded local raster; the open-source UI uses the original vector asset.
-app/static/xiaoyi_maritime_officer.png
-
 # Local command/validation remnants
 /--*
 /bc_*.txt
