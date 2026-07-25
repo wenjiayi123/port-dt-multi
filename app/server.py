@@ -42,14 +42,14 @@ from app.services.curves.peak_risk import CurvesPeakRisk
 from app.services.curves.carbon_intensity import CurvesCarbonIntensity
 from app.services.curves.economic_benefit import CurvesEconomicBenefit
 from app.services.curves.bess_capability import CurvesBessCapability
-from app.services.dashlets import router as dashlets_router  # ← 新增：dashlets 路由
+from app.services.dashlets import router as dashlets_router  # Dashlet API routes
 from app.services.opsx.api import router as opsx_router  # OpsX：上线与运维控制（8个子模块）
 from app.services.platform.api import router as platform_router
 from app.services.twinplus.api import router as twin_router
 from app.services.portx.api import router as portx_router
 from app.services.ux.api import router as ux_router
 from app.services.portx.deep import router as port_deep_router
-from app.services.portviz.api import router as portviz_router  # ← 新增：港区渲染/数据流路由
+from app.services.portviz.api import router as portviz_router  # Port visualization and stream routes
 from app.services.mas_orchestrator.api import router as mas_router
 from app.services.rl_ops_center.api import router as rlops_router
 from app.services.rl_integration.api import router as rl_integration_router
@@ -166,7 +166,7 @@ async def multiport_summary() -> JSONResponse:
     """
     # 延迟导入，避免 services 目录未创建时启动失败
     try:
-        from app.services.multiport.service import MultiportService  # 下一步我们会创建
+        from app.services.multiport.service import MultiportService
     except Exception:
         # services 还没就绪 → 返回 503，让前端显示“接口错误或暂无数据”
         return JSONResponse(
@@ -278,7 +278,7 @@ if _ENABLE_ENGINEERING_SIMULATORS:
 if os.getenv("PORT_DT_ENABLE_TWINPLUS_DEMO", "").strip().lower() in {"1", "true", "yes", "on"}:
     app.include_router(twin_router, prefix="/api/twin", tags=["twinplus-demo"])
 app.include_router(ux_router,       prefix="/api/ux",       tags=["ux"])
-app.include_router(portviz_router, prefix="/api/portviz", tags=["portviz"])  # ← 新增：/api/portviz/*
+app.include_router(portviz_router, prefix="/api/portviz", tags=["portviz"])
 app.include_router(rlops_router, prefix="/api/rlops", tags=["rlops"])
 app.include_router(rl_integration_router)
 app.include_router(rl_actions_router)
@@ -399,6 +399,7 @@ _OPS_COPILOT_UI = Path(__file__).resolve().parent / "ui" / "ops_copilot.html"
 _INTEGRATION_HUB_UI = Path(__file__).resolve().parent / "ui" / "integration_hub.html"
 _XIAOYI_SPRITE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "xiaoyi_sprite.js"
 _BILINGUAL_UI_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "bilingual_ui.js"
+_RL_EVIDENCE_CONSOLE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "rl_evidence_console.js"
 
 
 def _inject_xiaoyi_sprite(html: str) -> str:
@@ -416,6 +417,16 @@ def _inject_bilingual_ui(html: str) -> str:
     if marker in html:
         return html
     tag = '  <script src="/ui/adapters/bilingual_ui.js?v=20260715-zh-headings-v5"></script>\n'
+    if "</body>" in html:
+        return html.replace("</body>", f"{tag}</body>")
+    return html + tag
+
+
+def _inject_rl_evidence_console(html: str) -> str:
+    marker = "/ui/adapters/rl_evidence_console.js"
+    if marker in html:
+        return html
+    tag = '  <script src="/ui/adapters/rl_evidence_console.js?v=20260725-v1"></script>\n'
     if "</body>" in html:
         return html.replace("</body>", f"{tag}</body>")
     return html + tag
@@ -494,7 +505,7 @@ _RL_PANEL_HTML = r"""
     .field label{display:block;margin:0 0 5px;color:#9fb3d9;font-size:11px;font-weight:700}
     .field input,.field select{width:100%;background:#0a1325;color:#e5e7eb;border:1px solid #23324e;border-radius:10px;padding:8px 9px;outline:none}
     .field input:focus,.field select:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.16)}
-    .baseline-grid{display:grid;grid-template-columns:repeat(5,minmax(150px,1fr));gap:10px;margin-top:12px}
+    .baseline-grid{display:grid;grid-template-columns:repeat(4,minmax(130px,1fr));gap:10px;margin-top:12px}
     .algo-card{appearance:none;text-align:left;color:#dbeafe;background:linear-gradient(180deg,#111c32,#0b1324);border:1px solid #23324e;border-radius:12px;padding:11px;min-height:128px;cursor:pointer;transition:.18s ease}
     .algo-card:hover{border-color:#4f7fc7;transform:translateY(-1px)}
     .algo-card.active{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.18),0 14px 32px rgba(37,99,235,.16)}
@@ -632,12 +643,14 @@ _RL_PANEL_HTML = r"""
               <option value="ppo">PPO · Proximal Policy Optimization</option>
               <option value="td3">TD3 · Twin Delayed DDPG</option>
               <option value="dqn">DQN · Deep Q-Network</option>
+              <option value="a2c">A2C · Advantage Actor-Critic</option>
+              <option value="tqc">TQC · Truncated Quantile Critics</option>
               <option value="mpc">MPC · 模型预测控制基线</option>
             </select>
           </div>
           <div class="field">
             <label for="selDataset">训练数据集 / Dataset</label>
-            <select id="selDataset"><option value="public_port_ops_v1">正在校验数据集…</option></select>
+            <select id="selDataset"><option value="public_us_la_6min_v1">正在校验数据集…</option></select>
           </div>
           <div class="field">
             <label for="selObjective">优化目标 / Objective</label>
@@ -715,7 +728,7 @@ _RL_PANEL_HTML = r"""
           <div class="field"><label for="inpSafetyW">安全权重 / Safety W</label><input id="inpSafetyW" type="number" value="0.20" min="0" max="1" step="0.01"></div>
         </div>
 
-        <div class="section-label" style="margin-top:14px;">五算法可复现实验 / 4 RL + 1 Control Baseline</div>
+        <div class="section-label" style="margin-top:14px;">七算法可复现实验 / 6 RL + 1 Control Baseline</div>
         <div id="baselineGrid" class="baseline-grid"></div>
 
         <div class="connector-grid">
@@ -894,6 +907,8 @@ const BASELINE_ALGOS = [
   {id:"ppo", label:"PPO", type:"RL", cn:"Proximal Policy Optimization", desc:"Stable-Baselines3 裁剪式 on-policy 策略优化。"},
   {id:"td3", label:"TD3", type:"RL", cn:"Twin Delayed DDPG", desc:"Stable-Baselines3 双 critic 连续控制。"},
   {id:"dqn", label:"DQN", type:"RL", cn:"Deep Q-Network", desc:"Stable-Baselines3 离散动作回放池 Q 学习。"},
+  {id:"a2c", label:"A2C", type:"RL", cn:"Advantage Actor-Critic", desc:"Stable-Baselines3 同步优势 actor-critic。"},
+  {id:"tqc", label:"TQC", type:"RL", cn:"Truncated Quantile Critics", desc:"SB3-Contrib 截断分位数分布式连续控制。"},
   {id:"mpc", label:"MPC", type:"Control", cn:"模型预测控制", desc:"SciPy 约束优化的滚动时域控制基线。"}
 ];
 const TRAIN_STAGES = [
@@ -930,6 +945,7 @@ let trainPaused = false;
 let trainJobId = null;
 let trainArtifactPaths = null;
 let trainStatusPollTimer = null;
+let trainingDatasetCatalog = [];
 let lastTrainStatus = null;
 let connectorOnline = false;
 let linkHealth = null;
@@ -1077,12 +1093,17 @@ function selectLabel(sel){
 function trainConfig(){
   const horizon = numberValue("#inpTrainHorizon", 720);
   const stepMinutes = numberValue("#inpTrainStep", 5);
+  const selectedDataset = trainingDatasetCatalog.find(
+    item => item.dataset_id === ($("#selDataset")?.value || "")
+  ) || {};
   return {
     ...advancedConfigFrom,
     algorithm: $("#selAlgo")?.value || "sac",
     algorithm_label: selectLabel("#selAlgo"),
-    dataset_id: $("#selDataset")?.value || "public_port_ops_v1",
+    dataset_id: $("#selDataset")?.value || "public_us_la_6min_v1",
     dataset_label: selectLabel("#selDataset"),
+    port_profile_id: selectedDataset.port_profile_id,
+    environment_version: selectedDataset.environment_version,
     objective: $("#selObjective")?.value || "multi_objective",
     objective_label: selectLabel("#selObjective"),
     scenario: $("#selScenario")?.value || "mapped_dataset",
@@ -1091,7 +1112,7 @@ function trainConfig(){
     asset_label: selectLabel("#selAsset"),
     horizon_min: horizon,
     step_min: stepMinutes,
-    episode_steps: Math.max(12, Math.min(168, Math.round(horizon / 60))),
+    episode_hours: Math.max(1, horizon / 60),
     test_ratio: 0.20,
     total_steps: numberValue("#inpTotalSteps", 20000),
     batch_size: numberValue("#inpBatch", 256),
@@ -1628,11 +1649,47 @@ async function loadTrainingDatasets(){
   const payload = await response.json();
   const valid = (payload.datasets || []).filter(item=>item.valid !== false);
   if(!valid.length) throw new Error("没有通过字段契约校验的训练数据集");
+  trainingDatasetCatalog = valid;
   select.innerHTML = valid.map(item=>{
     const source = item.provenance_type || "mapped_dataset";
     return `<option value="${item.dataset_id}">${item.dataset_id} · ${Number(item.rows||0).toLocaleString("zh-CN")} rows · ${source}</option>`;
   }).join("");
-  if(valid.some(item=>item.dataset_id === "public_port_ops_v1")) select.value = "public_port_ops_v1";
+  if(valid.some(item=>item.dataset_id === "public_us_la_6min_v1")) {
+    select.value = "public_us_la_6min_v1";
+  } else if(valid.some(item=>item.dataset_id === "public_port_ops_v1")) {
+    select.value = "public_port_ops_v1";
+  }
+  select.onchange = ()=>{ syncSelectedDatasetContract().catch(()=>updateConnectorPreview()); };
+  await syncSelectedDatasetContract();
+}
+
+async function syncSelectedDatasetContract(){
+  const selected = trainingDatasetCatalog.find(item=>item.dataset_id === $("#selDataset")?.value);
+  if(!selected) return;
+  const cadenceMinutes = Number(selected.quality?.time?.median_cadence_seconds || 0) / 60;
+  if(cadenceMinutes > 0 && $("#inpTrainStep")){
+    $("#inpTrainStep").value = String(cadenceMinutes);
+    $("#inpTrainStep").readOnly = true;
+    $("#inpTrainStep").title = "由所选数据集采样间隔决定";
+  }
+  if(selected.port_profile_id){
+    const response = await fetch(`/api/rl/port-profiles/${encodeURIComponent(selected.port_profile_id)}`, {cache:"no-store"});
+    if(!response.ok) throw new Error(await response.text());
+    const profile = await response.json();
+    const objectives = profile.objectives || {};
+    const values = {
+      inpCostW: objectives.cost,
+      inpCarbonW: objectives.carbon,
+      inpPeakW: objectives.peak,
+      inpSafetyW: objectives.safety,
+      inpDemandCap: profile.assets?.demand_cap_kw
+    };
+    Object.entries(values).forEach(([id,value])=>{
+      if(Number.isFinite(Number(value)) && document.getElementById(id)){
+        document.getElementById(id).value = String(value);
+      }
+    });
+  }
   updateConnectorPreview();
 }
 
@@ -2129,6 +2186,24 @@ async def bilingual_ui_adapter_js() -> HTMLResponse:
         return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
 
 
+@app.get("/ui/adapters/rl_evidence_console.js", response_class=HTMLResponse, tags=["ui"])
+async def rl_evidence_console_adapter_js() -> HTMLResponse:
+    try:
+        if _RL_EVIDENCE_CONSOLE_JS.exists():
+            return HTMLResponse(
+                _RL_EVIDENCE_CONSOLE_JS.read_text(encoding="utf-8"),
+                media_type="application/javascript",
+                status_code=200,
+            )
+        return HTMLResponse(
+            "// RL evidence console adapter not found",
+            media_type="application/javascript",
+            status_code=404,
+        )
+    except Exception as e:
+        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+
+
 def _read_exec_pending_snapshot(limit: int = 20) -> Dict[str, Any]:
     """聚合执行闭环的待审批与最近工单摘要，给首页规则口径使用。"""
     try:
@@ -2285,7 +2360,12 @@ async def home_brief_adapter_js() -> HTMLResponse:
 # 独立页：RL 策略面板
 @app.get("/rl-panel", response_class=HTMLResponse, tags=["ui"])
 async def rl_panel_page(request: Request) -> HTMLResponse:
-    return HTMLResponse(_inject_xiaoyi_sprite(_inject_bilingual_ui(_RL_PANEL_HTML)), status_code=200)
+    return HTMLResponse(
+        _inject_rl_evidence_console(
+            _inject_xiaoyi_sprite(_inject_bilingual_ui(_RL_PANEL_HTML))
+        ),
+        status_code=200,
+    )
 
 
 @app.get("/ops-copilot", response_class=HTMLResponse, tags=["ui"])
@@ -2409,7 +2489,7 @@ async def telemetry_clean(
         if end_ts <= start_ts:
             raise HTTPException(status_code=400, detail="end 必须大于 start")
 
-        # 1) 优先用 DI 的标准接口（如果你们已实现）
+        # Prefer the dependency-injection telemetry interface.
         raw = None
         source = None
         if hasattr(di, "telemetry") and hasattr(di.telemetry, "get_series"):
@@ -2424,7 +2504,7 @@ async def telemetry_clean(
             raw = di.telemetry.get_recent_power(asset_id) or []
             source = "di.telemetry.get_recent_power(fallback)"
 
-        # 3) 仍然取不到就报错（提示你实现 DI 接口或打通 TSDB）
+        # Missing telemetry is an integration error; it is not synthesized here.
         if raw is None:
             raise HTTPException(status_code=501, detail="缺少数据源：请实现 di.telemetry.get_series 或保证 get_recent_power 可用")
 
@@ -2492,7 +2572,7 @@ async def telemetry_recent(asset_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"telemetry.recent 失败: {e}")
 
-# [新增开始 @ 约 L514 之后 —— 监测与运维（Monitoring）接口组]
+# Monitoring and operations API group
 # -------------------------------------------------
 # 监测与运维（Monitoring）：异常检测 + 漂移检测（PSI）
 # -------------------------------------------------
@@ -2677,7 +2757,7 @@ async def monitoring_anomaly_scan(
             step_sec=step_sec,
             method=method,
             sensitivity=sensitivity,
-            residual=False  # 如果你要用“残差异常”，我下一步给你把参数开放到接口
+            residual=False  # Residual anomaly mode is intentionally disabled for this endpoint.
         )
         return JSONResponse(res)
     except HTTPException:
@@ -2770,7 +2850,6 @@ async def monitoring_drift_psi(
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"monitoring.drift.psi 失败: {e}")
 
-# [新增结束 —— Monitoring]
 
 # -------------------------------------------------
 # 预测（Forecast）—— 支持 use_drivers=1 叠加外部驱动
@@ -2997,7 +3076,7 @@ async def external_vessels(
                          "en_name"],
                         "—"
                     ),
-                    "vessel_name": _pick(  # <— 新增这一行
+                    "vessel_name": _pick(
                         ["vessel_name", "name", "vessel", "ship_name", "vesselName", "VesselName", "vsl_name",
                          "cn_name", "en_name"],
                         "—"
@@ -3524,7 +3603,7 @@ async def curves_asset(
                         step_min=step_min, scenario=scenario, use_drivers=bool(use_drivers))
     return JSONResponse(data)
 
-# 指挥盘 KPI 聚合（保持你的原实现）
+# Command-center KPI aggregation
 # -------------------------------------------------
 @app.get("/api/energy/today", tags=["dashboard"])
 async def energy_today(
@@ -4019,6 +4098,20 @@ _RL_TRAIN_BASELINES: List[Dict[str, Any]] = [
         "type": "RL",
         "description": "Deep Q-Network baseline over the documented discrete port-control lattice.",
         "port_scope": "discrete dispatch and equipment mode selection",
+    },
+    {
+        "id": "a2c",
+        "name": "A2C",
+        "type": "RL",
+        "description": "Synchronous advantage actor-critic baseline for low-overhead on-policy optimization.",
+        "port_scope": "continuous multi-objective operating setpoints",
+    },
+    {
+        "id": "tqc",
+        "name": "TQC",
+        "type": "RL",
+        "description": "Truncated Quantile Critics baseline for distributional continuous control.",
+        "port_scope": "risk-aware continuous dispatch setpoints",
     },
     {
         "id": "mpc",
@@ -4972,7 +5065,7 @@ if _ENABLE_LEGACY_CLOSEDLOOP:
     app.add_api_route("/api/legacy/exec/model/{strategy_id}", exec_model, methods=["GET"], tags=["legacy-closedloop-simulator"])
 
 # =================================================
-# ⭐⭐ 管理驾驶舱（Exec Cockpit）汇总接口 —— 新增
+# Executive cockpit summary API
 # =================================================
 @app.get("/api/exec_cockpit/summary", tags=["exec_cockpit"])
 async def exec_cockpit_summary() -> JSONResponse:
@@ -4991,7 +5084,7 @@ async def exec_cockpit_summary() -> JSONResponse:
       - status_detail: 状态详情（小字说明）
     """
     try:
-        # 延迟导入：后面你会在 app/services/exec_cockpit/service.py 里实现 get_summary(di)
+        # Lazy import keeps the optional executive-cockpit module isolated.
         from app.services.exec_cockpit.service import get_summary  # type: ignore
 
         data = get_summary(di)
@@ -5011,7 +5104,7 @@ async def exec_cockpit_summary() -> JSONResponse:
 
 
 # =================================================
-# ⭐⭐ 平台地图（Platform Map）接口组 —— 新增
+# Platform map API group
 # =================================================
 @app.get("/api/platform_map/graph", tags=["platform_map"])
 async def platform_map_graph() -> JSONResponse:
@@ -5021,7 +5114,7 @@ async def platform_map_graph() -> JSONResponse:
     主要用于首页“平台地图”板块，也可以给后续可视化或文档工具复用。
     """
     try:
-        # 延迟导入：后面你可以在 app.services.platform_map.service 里实现 get_graph(di)
+        # Lazy import keeps the optional platform-map module isolated.
         from app.services.platform_map.service import get_graph  # type: ignore
 
         data = get_graph(di)
@@ -5034,7 +5127,7 @@ async def platform_map_graph() -> JSONResponse:
         }
     return JSONResponse(data)
 # =================================================
-# ⭐⭐ Dev / 生态视角：开放 API & App Center 接口组 —— 新增
+# Developer ecosystem and App Center API group
 # =================================================
 @app.get("/api/app_center/overview", tags=["app_center"])
 async def app_center_overview() -> JSONResponse:
@@ -5065,7 +5158,7 @@ async def app_center_overview() -> JSONResponse:
     })
 
 # =================================================
-# ⭐⭐ ESG / 合规模块：电碳 & 合规驾驶舱 —— 新增（严格后端版）
+# ESG, energy-carbon, and compliance cockpit API
 # =================================================
 @app.get("/api/esg/summary", tags=["esg"])
 async def esg_summary() -> JSONResponse:
@@ -5076,7 +5169,7 @@ async def esg_summary() -> JSONResponse:
     - 如果 service 未实现或发生异常，直接返回 500，便于线上暴露真实问题
     """
     try:
-        # 你在 app/services/esg/service.py 里实现的真实/模拟数据汇总逻辑
+        # The ESG service owns measured-versus-simulated provenance aggregation.
         from app.services.esg.service import get_summary  # type: ignore
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
@@ -5143,7 +5236,7 @@ async def compliance_breakdown(
         raise HTTPException(status_code=500, detail=f"compliance.breakdown 失败: {e}")
 
 # =================================================
-# ⭐⭐ 可信 AI 等级（Trust Badge）接口 —— 新增
+# Trust-badge API
 # =================================================
 @app.get("/api/ai/trust_badge", tags=["ai_trust"])
 async def ai_trust_badge() -> JSONResponse:
@@ -5162,7 +5255,7 @@ async def ai_trust_badge() -> JSONResponse:
     }
     """
     try:
-        # 你下一步会实现：app/services/ai_trust/service.py -> get_badge(di)
+        # Trust evidence is resolved by the optional ai_trust service.
         from app.services.ai_trust.service import get_badge  # type: ignore
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"ai_trust.service 导入失败: {e}")
@@ -5174,7 +5267,7 @@ async def ai_trust_badge() -> JSONResponse:
 
     return JSONResponse(data)
 # =================================================
-# ⭐⭐ 案例回放（Story Mode）接口 —— 新增（严格后端）
+# Story-mode replay API
 # =================================================
 from fastapi import Query
 
@@ -5516,7 +5609,7 @@ def yl_snapshot():
         except Exception:
             j = None
     if j is None and p_jsonl.exists():
-        recs = _read_jsonl(p_jsonl)  # 复用你已有的解析
+        recs = _read_jsonl(p_jsonl)
         if recs:
             j = recs[-1]
 
@@ -5691,7 +5784,7 @@ try:
             )
         # 兼容旧路径
         app.mount("/api/rl/model/agv_charge/artifacts", StaticFiles(directory=str(_ART_DIR), html=False), name="rl_artifacts_legacy")
-    # --- [E & D 模块静态 artifacts 挂载 · 新增] ---
+    # E and D module static-artifact mounts
     # E · bess_energy：注意该模块的 JSONL 位于模块根目录（无 artifacts 子目录）
     _BE_DIR = _BASE / "services" / "rl_model" / "bess_energy"
     if _ENABLE_LEGACY_RL and _BE_DIR.exists():
@@ -5915,7 +6008,6 @@ try:
         )
 
 
-    # --- [end新增] ---
 
 except NameError:
     # 如果当前文件里还没有 app（极少数自定义结构），创建最小 FastAPI 实例

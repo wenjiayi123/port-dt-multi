@@ -1,0 +1,50 @@
+{
+  "profile_id": "sgsin_public_replay_v2",
+  "name": "Singapore public-data replay profile v2",
+  "port_code": "SGSIN",
+  "timezone": "Asia/Singapore",
+  "currency": "SGD",
+  "calibration_status": "public_replay_engineering_parameters_not_terminal_calibrated",
+  "environment_version": "port_ops_v2",
+  "control_authority": "recommendation_only",
+  "assets": {
+    "bess_capacity_kwh": 2500.0,
+    "bess_power_kw": 900.0,
+    "demand_cap_kw": 3500.0
+  },
+  "control_limits": {
+    "soc_min": 0.12,
+    "soc_max": 0.88,
+    "service_factor_min": 0.75,
+    "service_factor_max": 1.25,
+    "flexible_load_fraction": 0.6,
+    "berth_priority_limit": 1.0,
+    "yard_flow_limit": 1.0
+  },
+  "objectives": {
+    "cost": 0.25,
+    "carbon": 0.2,
+    "peak": 0.2,
+    "safety": 0.2,
+    "delay": 0.15
+  },
+  "factor_requirements": {
+    "required_for_training": [],
+    "required_for_site_claim": [
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "wind_speed_mps",
+      "visibility_km",
+      "pilot_tug_availability_ratio"
+    ]
+  },
+  "weather_limits": {
+    "wind_stop_mps": null,
+    "visibility_stop_km": null,
+    "wave_stop_m": null
+  },
+  "source_boundary": "The port code and public aggregate anchors identify Singapore. Asset limits and weather thresholds remain engineering placeholders until an operator-approved site profile is supplied."
+}

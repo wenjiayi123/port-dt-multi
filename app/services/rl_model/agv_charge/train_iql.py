@@ -48,7 +48,7 @@ import datetime as _dt
 # Where to place artifacts so that frontend can fetch /api/rl/artifacts/*
 # You can override via env RL_ARTIFACT_DIR
 # === [ARTIFACT PATHS · MAIN + MIRROR] ===
-# 主目录：你要的 services 路径；镜像：前端正在读取的 static 路径
+# Primary artifact directory with a static mirror for frontend reads
 ART_DIR = _Path(os.getenv(
     "RL_ARTIFACT_DIR",
     "app/services/rl_model/agv_charge/artifacts"
@@ -1042,7 +1042,7 @@ def train_iql_np(S: np.ndarray, A: np.ndarray, R: np.ndarray, S2: np.ndarray, Dn
                 reward_mean_raw = float(r_b.mean().item())
                 p_on = float(np.clip(a_rl.mean(), 1e-9, 1.0 - 1e-9))
                 entropy_standard = float(-(p_on * np.log(p_on) + (1.0 - p_on) * np.log(1.0 - p_on)))
-                # 你要的是“整体倒过来”，不是仅仅变成负值。
+                # Reverse the full sequence rather than only negating values.
                 # 所以这里改成：在标准熵前整体做负向平移，让曲线保持原来的时间趋势，
                 # 但整体落在 0 以下，视觉上就是原曲线翻到负值区间。
                 entropy_display_shift = 1.0

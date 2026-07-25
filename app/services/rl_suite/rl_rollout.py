@@ -33,7 +33,7 @@ class RolloutThresholds:
     # 成本/效果（越大越好，若为 None 则不强制）
     peak_reduction_kw_min: Optional[float] = None
     carbon_reduction_kg_min: Optional[float] = None
-    # 决策所需最小窗口（分钟或批次数，按你的 batch 粒度定义）
+    # Minimum decision window in minutes or configured batch units
     min_batches_for_decision: int = 10
 
 

@@ -13,13 +13,22 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from .datasets import DEFAULT_DATA_ROOT, PortDataset, file_sha256, list_datasets, load_port_dataset
-from .environment import PortOperationsEnv
+from .datasets import (
+    DEFAULT_DATA_ROOT,
+    FACTOR_COLUMNS,
+    NUMERIC_COLUMNS,
+    PortDataset,
+    file_sha256,
+    list_datasets,
+    load_port_dataset,
+)
+from .environment import PortOperationsEnv, dataset_quality_cadence
 from .mpc import MPCPolicy
 from .model_registry import ModelRegistry
 from .identifiers import resolve_child_dir, validate_identifier
 from .safety import assess_recommendation
 from .statistics import bootstrap_summary, summarize_metric_rows
+from .profiles import DEFAULT_PROFILE_ID, list_profiles, load_profile
 
 
 RUN_ROOT = Path("data/rl/runs")
@@ -43,6 +52,8 @@ ALGORITHMS: Dict[str, AlgorithmSpec] = {
     "ppo": AlgorithmSpec("ppo", "PPO", "RL", "continuous", True, "stable_baselines3.PPO", "Clipped on-policy optimization for stable constrained control."),
     "td3": AlgorithmSpec("td3", "TD3", "RL", "continuous", True, "stable_baselines3.TD3", "Twin critics and delayed actor updates for continuous dispatch."),
     "dqn": AlgorithmSpec("dqn", "DQN", "RL", "discrete", True, "stable_baselines3.DQN", "Replay-buffer Q-learning on an explicit finite port-control lattice."),
+    "a2c": AlgorithmSpec("a2c", "A2C", "RL", "continuous", True, "stable_baselines3.A2C", "Synchronous advantage actor-critic baseline for low-overhead on-policy optimization."),
+    "tqc": AlgorithmSpec("tqc", "TQC", "RL", "continuous", True, "sb3_contrib.TQC", "Distributional off-policy actor-critic with truncated quantile critics."),
     "mpc": AlgorithmSpec("mpc", "MPC", "Control", "continuous", False, "scipy.optimize.minimize", "Receding-horizon model predictive control baseline."),
 }
 
@@ -196,15 +207,18 @@ class TrainingManager:
     def capabilities(self) -> Dict[str, Any]:
         try:
             import gymnasium
+            import sb3_contrib
             import stable_baselines3
             import torch
 
             runtime = {
                 "available": True,
                 "stable_baselines3": stable_baselines3.__version__,
+                "sb3_contrib": sb3_contrib.__version__,
                 "gymnasium": gymnasium.__version__,
                 "torch": torch.__version__,
-                "device": "mps" if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available() else "cpu",
+                "training_device": "cpu",
+                "available_accelerator": "mps" if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available() else None,
             }
         except Exception as exc:
             runtime = {"available": False, "error": str(exc)}
@@ -213,6 +227,33 @@ class TrainingManager:
             "runtime": runtime,
             "algorithms": [asdict(spec) for spec in ALGORITHMS.values()],
             "datasets": list_datasets(self.data_root),
+            "port_profiles": list_profiles(),
+            "contracts": {
+                "port_ops_v1": {
+                    "observation_dimensions": 13,
+                    "observation_fields": [
+                        "hour_sin", "hour_cos", *NUMERIC_COLUMNS,
+                        "soc", "queue_pressure", "last_bess_power", "episode_progress",
+                    ],
+                    "continuous_action_dimensions": 3,
+                    "actions": ["bess_power", "service_factor", "flexible_load"],
+                },
+                "port_ops_v2": {
+                    "observation_dimensions": 13 + 2 * len(FACTOR_COLUMNS),
+                    "observation_fields": [
+                        "hour_sin", "hour_cos", *NUMERIC_COLUMNS,
+                        *FACTOR_COLUMNS,
+                        *[f"{name}_available" for name in FACTOR_COLUMNS],
+                        "soc", "queue_pressure", "last_bess_power", "episode_progress",
+                    ],
+                    "continuous_action_dimensions": 5,
+                    "actions": [
+                        "bess_power", "service_factor", "flexible_load",
+                        "berth_priority", "yard_flow",
+                    ],
+                    "missing_factor_policy": "neutral_value_plus_explicit_availability_mask",
+                },
+            },
             "training_rendering": "disabled",
             "evaluation_rendering": "trajectory_json_only",
             "python": platform.python_version(),
@@ -229,25 +270,64 @@ class TrainingManager:
             raise ValueError(f"algorithm must be one of: {', '.join(ALGORITHMS)}")
         dataset_id = str(raw.get("dataset_id") or "public_port_ops_v1")
         dataset = load_port_dataset(dataset_id, self.data_root)
+        profile_id = str(
+            raw.get("port_profile_id")
+            or dataset.metadata.get("port_profile_id")
+            or DEFAULT_PROFILE_ID
+        )
+        profile = load_profile(profile_id)
         quality = dataset.describe().get("quality") or {}
         if quality.get("training_eligible") is not True:
             raise ValueError("dataset failed the quality gate: " + "; ".join(quality.get("errors") or ["unknown error"]))
         total_steps = 0 if algorithm == "mpc" else int(raw.get("total_steps") or 10000)
         if algorithm != "mpc" and not 64 <= total_steps <= self.max_training_steps:
             raise ValueError(f"total_steps must be between 64 and {self.max_training_steps:,}")
-        episode_steps = int(raw.get("episode_steps") or min(48, max(12, dataset.rows // 10)))
+        environment_version = str(
+            raw.get("environment_version")
+            or dataset.metadata.get("environment_version")
+            or profile.get("environment_version")
+            or "port_ops_v1"
+        )
+        if environment_version not in {"port_ops_v1", "port_ops_v2"}:
+            raise ValueError("environment_version must be port_ops_v1 or port_ops_v2")
+        required_factors = list(profile["factor_requirements"].get("required_for_training") or [])
+        factor_coverage = quality.get("factor_coverage") or {}
+        unavailable_required = [
+            name for name in required_factors
+            if float(factor_coverage.get(name) or 0.0) <= 0.0
+        ]
+        if unavailable_required:
+            raise ValueError(
+                "dataset lacks factors required by port profile: "
+                + ", ".join(unavailable_required)
+            )
+        cadence_hours = dataset_quality_cadence(dataset) / 3600.0
+        episode_hours = max(1.0, float(raw.get("episode_hours") or 48.0))
+        default_episode_steps = min(
+            max(4, dataset.rows // 10),
+            max(4, round(episode_hours / cadence_hours)),
+        )
+        episode_steps = int(raw.get("episode_steps") or default_episode_steps)
         test_ratio = float(raw.get("test_ratio") or 0.2)
         reward_weights = dict(raw.get("reward_weights") or {})
-        if "safety" not in reward_weights:
-            reward_weights["safety"] = float(raw.get("safety_weight") or 0.20)
+        if "safety" not in reward_weights and raw.get("safety_weight") is not None:
+            reward_weights["safety"] = float(raw["safety_weight"])
         return {
             **raw,
             "algorithm": algorithm,
             "dataset_id": dataset.dataset_id,
             "dataset_fingerprint": dataset.fingerprint,
             "dataset_quality_status": quality.get("status"),
+            "dataset_evidence": quality.get("evidence"),
+            "port_profile_id": profile["profile_id"],
+            "port_profile": profile,
+            "environment_version": environment_version,
+            "observation_dimensions": 13 if environment_version == "port_ops_v1" else 13 + 2 * len(FACTOR_COLUMNS),
+            "action_dimensions": 3 if environment_version == "port_ops_v1" else 5,
             "total_steps": total_steps,
             "episode_steps": max(4, episode_steps),
+            "episode_hours": episode_hours,
+            "step_hours": cadence_hours,
             "test_ratio": min(0.4, max(0.1, test_ratio)),
             "batch_size": max(16, min(2048, int(raw.get("batch_size") or 256))),
             "learning_rate": min(0.01, max(1e-6, float(raw.get("learning_rate") or 3e-4))),
@@ -255,7 +335,10 @@ class TrainingManager:
             "tau": min(1.0, max(1e-4, float(raw.get("tau") or 0.005))),
             "replay_buffer": max(1000, min(5_000_000, int(raw.get("replay_buffer") or 100000))),
             "seed": int(raw.get("seed") or 42),
-            "demand_cap_kw": max(100.0, float(raw.get("demand_cap_kw") or 3500.0)),
+            "demand_cap_kw": max(
+                100.0,
+                float(raw.get("demand_cap_kw") or profile["assets"]["demand_cap_kw"]),
+            ),
             "reward_weights": reward_weights,
             "training_split": "chronological_train_only",
             "render_during_training": False,
@@ -279,11 +362,18 @@ class TrainingManager:
                 "algorithm": "mpc",
                 "implementation": ALGORITHMS["mpc"].implementation,
                 "controller_only": True,
-                "controller_parameters": {"horizon": MPCPolicy().horizon},
+                "controller_parameters": {
+                    "horizon": MPCPolicy().horizon,
+                    "action_dimensions": config["action_dimensions"],
+                },
                 "dataset_id": dataset.dataset_id,
                 "dataset_sha256": dataset.fingerprint,
                 "split": dataset.describe(config["test_ratio"]),
                 "seed": config["seed"],
+                "port_profile_id": config["port_profile_id"],
+                "environment_version": config["environment_version"],
+                "observation_dimensions": config["observation_dimensions"],
+                "action_dimensions": config["action_dimensions"],
                 "render_calls_during_training": 0,
                 "completed_at": utc_now(),
             }
@@ -305,6 +395,9 @@ class TrainingManager:
             seed=config["seed"],
             demand_cap_kw=config["demand_cap_kw"],
             reward_weights=config["reward_weights"],
+            environment_version=config.get("environment_version", "port_ops_v1"),
+            port_profile=config.get("port_profile"),
+            normalization_slice=train_slice,
             training=training,
             record_trace=record_trace,
         )
@@ -312,7 +405,8 @@ class TrainingManager:
     def _run_training(self, job: TrainingJob) -> None:
         env: Optional[PortOperationsEnv] = None
         try:
-            from stable_baselines3 import DQN, PPO, SAC, TD3
+            from sb3_contrib import TQC
+            from stable_baselines3 import A2C, DQN, PPO, SAC, TD3
             from stable_baselines3.common.callbacks import BaseCallback
             from stable_baselines3.common.monitor import Monitor
 
@@ -391,8 +485,13 @@ class TrainingManager:
                 while n_steps % batch:
                     batch -= 1
                 model = PPO(**common, n_steps=n_steps, batch_size=max(8, batch), ent_coef=float(config.get("entropy_coef") or 0.0))
+            elif algo == "a2c":
+                n_steps = min(512, max(32, config["episode_steps"]))
+                model = A2C(**common, n_steps=n_steps, ent_coef=float(config.get("entropy_coef") or 0.0))
             elif algo == "sac":
                 model = SAC(**common, buffer_size=config["replay_buffer"], batch_size=config["batch_size"], learning_starts=min(1000, max(32, config["total_steps"] // 10)), tau=config["tau"])
+            elif algo == "tqc":
+                model = TQC(**common, buffer_size=config["replay_buffer"], batch_size=config["batch_size"], learning_starts=min(1000, max(32, config["total_steps"] // 10)), tau=config["tau"])
             elif algo == "td3":
                 model = TD3(**common, buffer_size=config["replay_buffer"], batch_size=config["batch_size"], learning_starts=min(1000, max(32, config["total_steps"] // 10)), tau=config["tau"])
             elif algo == "dqn":
@@ -415,8 +514,13 @@ class TrainingManager:
                 "seed": config["seed"],
                 "total_steps_requested": config["total_steps"],
                 "total_steps_observed": int(model.num_timesteps),
+                "training_device": str(model.device),
                 "model_sha256": file_sha256(model_path),
                 "runtime": self.capabilities().get("runtime"),
+                "port_profile_id": config["port_profile_id"],
+                "environment_version": config["environment_version"],
+                "observation_dimensions": config["observation_dimensions"],
+                "action_dimensions": config["action_dimensions"],
                 "render_calls_during_training": env.render_calls,
                 "completed_at": utc_now(),
             }
@@ -476,6 +580,8 @@ class TrainingManager:
                 for name in (
                     "job_id", "algorithm", "implementation", "controller_only", "dataset_id",
                     "dataset_sha256", "seed", "total_steps_requested", "total_steps_observed",
+                    "port_profile_id", "environment_version", "observation_dimensions",
+                    "action_dimensions",
                     "model_sha256", "render_calls_during_training", "completed_at",
                 )
                 if manifest.get(name) is not None
@@ -497,6 +603,8 @@ class TrainingManager:
                 name: evaluation.get(name)
                 for name in (
                     "job_id", "algorithm", "implementation", "dataset_id", "dataset_sha256",
+                    "port_profile_id", "environment_version", "observation_dimensions",
+                    "action_dimensions",
                     "split", "episodes", "metrics", "uncertainty", "evaluation_protocol", "evaluated_at",
                 )
                 if evaluation.get(name) is not None
@@ -557,10 +665,12 @@ class TrainingManager:
     def _load_policy(self, config: Dict[str, Any], run_dir: Path, env: PortOperationsEnv):
         algo = config["algorithm"]
         if algo == "mpc":
-            return MPCPolicy()
-        from stable_baselines3 import DQN, PPO, SAC, TD3
+            action_dim = int(np.prod(env.action_space.shape)) if getattr(env.action_space, "shape", None) else int(config.get("action_dimensions") or 3)
+            return MPCPolicy(action_dim=action_dim)
+        from sb3_contrib import TQC
+        from stable_baselines3 import A2C, DQN, PPO, SAC, TD3
 
-        classes = {"sac": SAC, "ppo": PPO, "td3": TD3, "dqn": DQN}
+        classes = {"sac": SAC, "ppo": PPO, "td3": TD3, "dqn": DQN, "a2c": A2C, "tqc": TQC}
         return classes[algo].load(str(run_dir / "model"), env=env, device="cpu")
 
     def evaluate(self, job_id: str, episodes: int = 10) -> Dict[str, Any]:
@@ -607,6 +717,10 @@ class TrainingManager:
             "implementation": ALGORITHMS[config["algorithm"]].implementation,
             "dataset_id": dataset.dataset_id,
             "dataset_sha256": dataset.fingerprint,
+            "port_profile_id": config.get("port_profile_id"),
+            "environment_version": config.get("environment_version", "port_ops_v1"),
+            "observation_dimensions": config.get("observation_dimensions"),
+            "action_dimensions": config.get("action_dimensions"),
             "split": "chronological_test_holdout_only",
             "episodes": len(episode_metrics),
             "metrics": metrics,
@@ -677,6 +791,10 @@ class TrainingManager:
                 "implementation": ALGORITHMS[config["algorithm"]].implementation,
                 "dataset_id": dataset.dataset_id,
                 "dataset_sha256": dataset.fingerprint,
+                "port_profile_id": config.get("port_profile_id"),
+                "environment_version": config.get("environment_version", "port_ops_v1"),
+                "observation_dimensions": config.get("observation_dimensions"),
+                "action_dimensions": config.get("action_dimensions"),
                 "input_kind": input_kind,
                 "deterministic": True,
                 "action": np.asarray(raw_action).tolist(),
@@ -688,6 +806,7 @@ class TrainingManager:
                     dataset=dataset,
                     demand_cap_kw=config["demand_cap_kw"],
                     bess_power_kw=env.bess_power_kw,
+                    port_profile=config.get("port_profile"),
                 ),
                 "rendered": False,
                 "predicted_at": utc_now(),
@@ -713,12 +832,18 @@ class TrainingManager:
             "job_id": result["job_id"],
             "seed": config.get("seed"),
             "total_steps": total_steps,
+            "environment_version": config.get("environment_version", "port_ops_v1"),
+            "port_profile_id": config.get("port_profile_id"),
+            "observation_dimensions": config.get("observation_dimensions"),
+            "action_dimensions": config.get("action_dimensions"),
             "evidence_label": (
                 "RL_SMOKE_WIRING_ONLY"
                 if trainable and total_steps < 10_000
                 else "RL_HELD_OUT_EVALUATION"
                 if trainable
                 else "DETERMINISTIC_CONTROLLER_BASELINE"
+                if int(result.get("episodes") or 0) >= 10
+                else "CONTROL_SMOKE_WIRING_ONLY"
             ),
             "evaluated_at": result["evaluated_at"],
         }
@@ -751,49 +876,99 @@ class TrainingManager:
                 run
                 for run in selected
                 if (
-                    not spec.trainable
+                    (
+                        not spec.trainable
+                        and run.get("evidence_label")
+                        == "DETERMINISTIC_CONTROLLER_BASELINE"
+                        and int(run.get("episodes") or 0) >= 10
+                    )
                     or (
+                        spec.trainable
+                        and
                         int(run.get("total_steps") or 0) >= 10_000
                         and run.get("evidence_label")
                         == "RL_HELD_OUT_EVALUATION"
                     )
                 )
             ]
-            metric_names = sorted({name for run in selected for name in (run.get("metrics") or {})})
-            summaries = {
+            comparable_runs = claim_eligible if dataset_id else []
+            formal_metric_names = sorted(
+                {
+                    name
+                    for run in comparable_runs
+                    for name in (run.get("metrics") or {})
+                }
+            )
+            formal_summaries = {
                 name: bootstrap_summary(
-                    [float(run["metrics"][name]) for run in selected if isinstance((run.get("metrics") or {}).get(name), (int, float))],
+                    [
+                        float(run["metrics"][name])
+                        for run in comparable_runs
+                        if isinstance((run.get("metrics") or {}).get(name), (int, float))
+                    ],
                     seed=20260720,
                 )
-                for name in metric_names
+                for name in formal_metric_names
+            }
+            diagnostic_runs = [
+                run
+                for run in selected
+                if run.get("evidence_label") == "RL_SMOKE_WIRING_ONLY"
+            ]
+            diagnostic_metric_names = sorted(
+                {
+                    name
+                    for run in diagnostic_runs
+                    for name in (run.get("metrics") or {})
+                }
+            )
+            diagnostic_summaries = {
+                name: bootstrap_summary(
+                    [
+                        float(run["metrics"][name])
+                        for run in diagnostic_runs
+                        if isinstance((run.get("metrics") or {}).get(name), (int, float))
+                    ],
+                    seed=20260720,
+                )
+                for name in diagnostic_metric_names
             }
             seeds = sorted(
                 {
                     int(run["seed"])
-                    for run in claim_eligible
+                    for run in comparable_runs
                     if isinstance(run.get("seed"), int)
                 }
             )
             groups.append({
                 **asdict(spec),
                 "runs": len(selected),
+                "claim_eligible_runs": len(comparable_runs),
                 "distinct_seeds": seeds,
                 "multi_seed_ready": (
                     len(seeds) >= 3
                     if spec.trainable
-                    else len(claim_eligible) >= 1
+                    else len(comparable_runs) >= 1
                 ),
                 "smoke_runs": sum(
-                    run.get("evidence_label") == "RL_SMOKE_WIRING_ONLY"
+                    run.get("evidence_label")
+                    in {"RL_SMOKE_WIRING_ONLY", "CONTROL_SMOKE_WIRING_ONLY"}
                     for run in selected
                 ),
-                "metrics": summaries,
+                "metrics": formal_summaries,
+                "diagnostic_metrics": diagnostic_summaries,
+                "metric_evidence_scope": (
+                    "formal_claim_eligible_runs_only"
+                    if dataset_id
+                    else "dataset_filter_required_for_comparison"
+                ),
                 "job_ids": [run.get("job_id") for run in selected],
             })
         return {
             "dataset_id": dataset_id,
             "algorithms": groups,
             "minimum_distinct_seeds_for_claim": 3,
+            "comparison_requires_dataset_filter": True,
             "deterministic_controller_exception": "MPC requires one fixed-window run because it has no learned stochastic initialization",
             "source": "persisted_chronological_holdout_evaluations",
             "updated_at": registry.get("updated_at") or utc_now(),

@@ -33,7 +33,8 @@ python-dateutil==2.9.0.post0  # 解析 ISO 时间、相对时间计算
 # -------------------------
 torch==2.13.0              # 神经网络运行时；避免 2.2.x 已知安全通告
 gymnasium==0.29.1          # 港口运营环境标准接口
-stable-baselines3==2.9.0   # SAC / PPO / TD3 / DQN 实现
+stable-baselines3==2.9.0   # SAC / PPO / TD3 / DQN / A2C 实现
+sb3-contrib==2.9.0         # TQC 分布式连续控制实现
 
 # -------------------------
 #（可选）前端静态构建/内容压缩（当前未使用）

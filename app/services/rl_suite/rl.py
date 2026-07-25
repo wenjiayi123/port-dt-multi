@@ -63,8 +63,8 @@ class RLService:
           {"asset":"ps-01","cmd":"discharge","kW":25,"duration_min":20,"note":"高价放电"}
         ],
         "explain": "基于 SoC / 电价 / 预测负荷的启发式/混合策略。",
-        "policy_version": "policy-cql-1699999999",          # 新增：当前生效的策略参数版本（若有）
-        "policy_params_applied": true                        # 新增：是否应用了参数化策略
+        "policy_version": "policy-cql-1699999999",          # Active policy parameter version
+        "policy_params_applied": true                        # Whether parameterized policy values are active
       }
     """
 

@@ -16,7 +16,7 @@
 # 落地真实港口时推荐做法：
 #   1) 在本目录下放置一个港口布局数据文件（JSON），例如 port_sgsin_demo.json：
 #        - world / lanes / yards / berth / qcs / ycs / agv_n / truck_n / hotspots / vessels ...
-#        - 你只需要复制这份模板，按真实港口替换几何和参数即可。
+#        - Copy this template and replace geometry and parameters for a target port.
 #   2) 运行时可以：
 #        - 显式设置 PORTVIZ_CONFIG=/path/to/your_port.json
 #        - 或者在未设置 PORTVIZ_CONFIG 时，自动加载本目录下的 port_sgsin_demo.json（如果存在）。

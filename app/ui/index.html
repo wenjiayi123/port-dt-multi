@@ -4366,7 +4366,7 @@ border-left:3px solid rgba(148,163,184,.22);
 
             <!-- 右列：排行榜 + 动作强度直方图 -->
             <div>
-              <div class="small" style="color:#8aa6d8;">五算法真实评测登记</div>
+              <div class="small" style="color:#8aa6d8;">七算法真实评测登记</div>
               <table class="plat-table" id="plt-ope-table">
                 <thead>
                   <tr><th>算法</th><th>电能成本</th><th>峰值(kW)</th><th>越限率</th><th>数据集</th></tr>
@@ -6887,7 +6887,7 @@ border-left:3px solid rgba(148,163,184,.22);
       const el = document.getElementById('chart-eb'); if (!el) return;
       if (!ebChart) ebChart = echarts.init(el);
 
-      // 经济收益用于策略对比，优先走 sim；你也可用 VIEW_MODE 同步：mode=${VIEW_MODE}
+      // 经济收益用于策略对比，优先使用 sim；也可与 VIEW_MODE 同步：mode=${VIEW_MODE}
       const url = `/api/curves/economic_benefit?mode=${VIEW_MODE}&horizon_min=360&step_min=1&limit=200&scenario_base=baseline&scenario_opt=strategy`;
       const j = await fetchJsonOrNull(url);
       let total = normalizePointList(j?.series?.total || [], 'total');
@@ -8383,7 +8383,7 @@ border-left:3px solid rgba(148,163,184,.22);
       return null;
     }
 
-    // 覆盖旧的 loadExternal：直接对接 /external/* （我之前后端适配器提供的只读接口）
+    // 覆盖旧版 loadExternal，直接对接 /external/* 只读适配器接口
     window.loadExternal = async function(){
       const port = (document.getElementById('ext-port')?.value || 'CNYTN').trim();
       const featureFlags = await (window.__portDtFeatureFlagsPromise || Promise.resolve({}));
@@ -12675,7 +12675,7 @@ async function pullOverview(){
 
     } catch (e) {
       console.error('Platform map 加载失败：', e);
-      // 如果失败了，不再动 DOM，让你之前的静态版当作兜底
+  // 请求失败时保持当前 DOM，静态内容作为降级展示
     }
   }
 
@@ -13032,7 +13032,7 @@ async function pullOverview(){
   (function(){
     const $ = (id)=>document.getElementById(id);
 
-    // —— 原 loadStory：保持你的实现不变 ——
+    // 保留原有 loadStory 实现
     async function loadStory(h){
       // 读取下拉（若不存在则给默认值）
       const port = (document.getElementById('story-port')?.value || 'shanghai');
@@ -13094,7 +13094,7 @@ async function pullOverview(){
     // 可选：对外暴露，方便其他脚本调用
     window.loadStory = loadStory;
 
-    // —— 保留你的后端触发函数（先告知后端启动剧情） ——
+  // 保留后端剧情启动触发函数
     async function postPlay(){
       try{
         await fetch('/api/story/play', {

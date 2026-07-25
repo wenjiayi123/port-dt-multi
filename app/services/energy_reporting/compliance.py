@@ -18,7 +18,7 @@
 #
 #   2) 柴油口径（Scope 1）：
 #       - 默认 diesel_model = "rule_of_thumb"：演示中保守置 0（无真实油表数据）
-#         你可以根据现场：如“AGV/拖车”设备再叠加经验油耗模型 -> liters × diesel_kg_per_liter
+#         Site-specific AGV and tractor models may add liters × diesel_kg_per_liter.
 #       - 若 diesel_model = "none"：明确禁用油耗估算（与默认效果相同）
 #
 #   3) 分摊（allocations）：
@@ -353,7 +353,7 @@ class ComplianceService:
         site_kwh = float(elec.get("kWh", elec.get("kWh_est", 0.0)))
         by_asset = []
         for a in elec.get("by_asset", []):
-            # energy.build_today_summary 的 by_asset 中我们在 di.py 里保证有 kWh_est
+            # The DI energy summary guarantees kWh_est for each asset.
             by_asset.append({
                 "id": a.get("id"),
                 "kWh_est": float(a.get("kWh_est", 0.0)),

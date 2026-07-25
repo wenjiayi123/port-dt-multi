@@ -17,7 +17,7 @@ import math
 
 # ============== 内部可变状态（用于让画像“平滑抖动”，避免跳变） ==============
 _STATE = {
-    # 原始KPI（示例），真实接入时这些应来自你们的指标库 / 日志聚合
+    # Example KPIs; measured deployments must use the site metric store.
     "raw": {
         "action_amplitude": 0.65,   # 动作强度（0~1，越大越激进）
         "guard_block_rate": 0.010,  # 守护拦截率（0~1，越小越好）
@@ -45,7 +45,7 @@ def _inv(x: float) -> float:
     """反向指标映射（例如风险率越小越好 -> 分数越高）"""
     return _clamp01(1.0 - x)
 
-# ============== 真接入时：在这里读你的“原始 KPI”并覆盖 _STATE["raw"] ==============
+# Measured integrations replace _STATE["raw"] from the site metric store.
 def _pull_real_kpi() -> Dict[str, float]:
     """
     TODO 真接入(读)：
@@ -83,7 +83,7 @@ def get_profile() -> Dict[str, Any]:
     # 3) 稳定性：直接使用（或结合动作切换频率/方差做映射）
     stability = _clamp01(raw["stability_score"])
 
-    # 4) 收益：直接使用（你也可以用 ΔkWh/ΔUSD 的归一化）
+    # 4) Benefit score; deployments may normalize by delta-kWh or delta-cost.
     economics = _clamp01(raw["economics_gain"])
 
     # 5) 风险(反向)：根据风险率做反向映射（0风险=1分；≥40%风险≈0分）
@@ -108,7 +108,7 @@ def get_profile() -> Dict[str, Any]:
         # 前端雷达用的主字段（顺序固定）
         "values": [round(v, 4) for v in smooth],
 
-        # 额外：方便你后续做提示/解释
+        # Explanatory context for downstream UI messages
         "labels": ["动作强度", "守护命中", "稳定性", "收益", "风险(反向)"],
         "raw": raw,  # 原始KPI，便于溯源或做二次映射
         "updated_at": _STATE["updated_at"],

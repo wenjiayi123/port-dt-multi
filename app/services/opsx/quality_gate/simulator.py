@@ -15,7 +15,7 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, List
 import random
 
-# ======== 配置：窗口/阈值（你后续可以改为从 DB/配置中心读取） ========
+# Window and threshold configuration; production values belong in managed configuration.
 WINDOW_MIN = 15   # 统计窗口（分钟）
 THRESHOLDS = {
     "mape_energy_max": 0.05,            # 预测能耗 MAPE 最多 5%
@@ -82,7 +82,7 @@ def _module_detail() -> Dict[str, Any]:
             "mape": round(_mape(actual, pred), 5),
             "guard_block_rate": round(_guard_block_rate(checks, blocked), 5),
             "sla_violation_rate": round(_sla_violation_rate(jobs, violations), 5),
-            # 附带缩略趋势，便于后续画小火焰/迷你图
+            # Compact trend values support sparklines and status glyphs.
             "spark": {
                 "mape": [round(v, 4) for v in _fake_series(12, base=3.0, noise=0.7)],   # 伪装成百分数的 *100 之前值
                 "guard": [round(abs(random.gauss(1.2, 0.4)), 3) for _ in range(12)],    # 千分比近似
@@ -119,7 +119,7 @@ def get_gates() -> Dict[str, Any]:
             "sla": round(float(sla), 5),
         },
         "thresholds": dict(THRESHOLDS),
-        # 额外信息（目前前端未用，但保留便于你后续图表增强）
+        # Additional fields are retained for future chart extensions.
         "by_module": detail,
         "explain": {
             "mape": "能耗/负荷预测相对误差的平均值（绝对值），越低越好",

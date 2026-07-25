@@ -31,7 +31,7 @@ class MultiportService:  # [6]
     """  # [22]
 
     def __init__(self) -> None:  # [24]
-        # 未来的数据文件路径（下一步我会创建）
+        # Optional external multi-port data path
         # app/services/multiport/data/summary_snapshot.json
         default_path = Path(__file__).with_name("data") / "summary_snapshot.json"  # [27]
         env_path = os.getenv("PORT_MULTI_PORT_SNAPSHOT", "").strip()
@@ -44,7 +44,7 @@ class MultiportService:  # [6]
         """  # [33]
         data = None  # [34]
 
-        # 1) 优先尝试外部文件（下一步我会提供该文件）
+        # Prefer the external data file when configured.
         try:  # [37]
             if self._data_file.exists():  # [38]
                 with self._data_file.open("r", encoding="utf-8") as f:  # [39]

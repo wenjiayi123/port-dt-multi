@@ -202,6 +202,7 @@ class RuntimeHardeningTests(unittest.TestCase):
         client = TestClient(production_app)
         for endpoint in (
             "/api/twin-models", "/api/rl/datasets", "/api/rl/train/status", "/api/rl/models",
+            "/api/rl/port-profiles", "/api/rl/engine/capabilities",
             "/api/rl/integration/config", "/api/rl/integration/health", "/api/system/provenance",
             "/api/portviz/bootstrap", "/api/rl/business-benchmark",
         ):
@@ -211,6 +212,13 @@ class RuntimeHardeningTests(unittest.TestCase):
             self.assertNotIn('"path":', response.text)
         self.assertEqual(client.get("/api/rl/model/agv_charge/kpi_cards.json").status_code, 404)
         self.assertEqual(client.get("/api/rl/artifacts/policy_evaluate_history.jsonl").status_code, 404)
+        panel = client.get("/rl-panel")
+        self.assertEqual(panel.status_code, 200)
+        self.assertIn("/ui/adapters/rl_evidence_console.js", panel.text)
+        self.assertIn('episode_hours: Math.max(1, horizon / 60)', panel.text)
+        self.assertIn('select.value = "public_us_la_6min_v1"', panel.text)
+        self.assertIn("syncSelectedDatasetContract", panel.text)
+        self.assertEqual(client.get("/ui/adapters/rl_evidence_console.js").status_code, 200)
         strategies = client.get("/api/rl/strategies").json()
         self.assertEqual(strategies["source"], "verified_model_registry")
         self.assertFalse(strategies["generated_values"])
@@ -299,6 +307,73 @@ class RuntimeHardeningTests(unittest.TestCase):
             for malicious in ("..", "../outside", "/tmp/outside", "run/child"):
                 with self.subTest(job_id=malicious), self.assertRaises(ValueError):
                     manager.run_dir(malicious)
+
+    def test_training_config_derives_v2_contract_from_dataset_profile(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            data_root = root / "datasets"
+            write_canonical_rows(
+                "profiled",
+                canonical_rows(),
+                {
+                    **GOVERNANCE,
+                    "port_profile_id": "sgsin_public_replay_v2",
+                    "environment_version": "port_ops_v2",
+                },
+                data_root,
+            )
+            manager = TrainingManager(
+                data_root, root / "runs", root / "benchmarks.json"
+            )
+            config = manager.validate_config(
+                {
+                    "algorithm": "sac",
+                    "dataset_id": "profiled",
+                    "total_steps": 64,
+                    "episode_hours": 12,
+                }
+            )
+            self.assertEqual(config["port_profile_id"], "sgsin_public_replay_v2")
+            self.assertEqual(config["environment_version"], "port_ops_v2")
+            self.assertEqual(config["observation_dimensions"], 37)
+            self.assertEqual(config["action_dimensions"], 5)
+            self.assertEqual(config["episode_steps"], 9)
+
+    def test_benchmark_comparison_requires_one_dataset_scope(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            benchmark_path = root / "benchmarks.json"
+            runs = []
+            for dataset_id in ("left", "right"):
+                for seed in (42, 142, 242):
+                    runs.append(
+                        {
+                            "algorithm": "sac",
+                            "dataset_id": dataset_id,
+                            "seed": seed,
+                            "total_steps": 10_000,
+                            "evidence_label": "RL_HELD_OUT_EVALUATION",
+                            "metrics": {"reward": float(seed)},
+                        }
+                    )
+            benchmark_path.write_text(
+                json.dumps({"runs": runs}), encoding="utf-8"
+            )
+            manager = TrainingManager(
+                root / "datasets", root / "runs", benchmark_path
+            )
+            unscoped = manager.benchmark_summary()
+            sac_unscoped = next(
+                item for item in unscoped["algorithms"] if item["id"] == "sac"
+            )
+            self.assertFalse(sac_unscoped["multi_seed_ready"])
+            self.assertEqual(sac_unscoped["metrics"], {})
+            scoped = manager.benchmark_summary("left")
+            sac_scoped = next(
+                item for item in scoped["algorithms"] if item["id"] == "sac"
+            )
+            self.assertTrue(sac_scoped["multi_seed_ready"])
+            self.assertEqual(sac_scoped["claim_eligible_runs"], 3)
 
 
 class ActuatorGatewayTests(unittest.TestCase):

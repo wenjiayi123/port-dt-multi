@@ -2,7 +2,7 @@
 # app/services/rl_train.py
 # --------------------------------------------
 # 离线训练壳 + 策略产物落盘 + 自动发起影子评估
-# 新增算法：CEM（Cross-Entropy Method）策略搜索
+# CEM (Cross-Entropy Method) policy search
 #
 # 大白话：
 #   - 不依赖深度学习大库；CEM 是黑盒策略优化方法，比随机搜索更稳定、更快收敛；
@@ -184,7 +184,7 @@ class OfflineRLTrainer:
             done = False
             ep_ret = 0.0
             while not done:
-                base_acts = self.env._default_policy_step()   # 行为策略（可替换为你们的现网策略）
+                base_acts = self.env._default_policy_step()   # Replaceable behavior-policy baseline
                 acts = params.apply(base_acts)                # 应用训练参数
                 obs, rew, done, info = self.env.step(acts)
                 ep_ret += float(rew)
@@ -290,7 +290,7 @@ class OfflineRLTrainer:
 
     # ---- CQL/BCQ 占位：默认委托 CEM（或随机搜索），保留兼容接口 ----
     def train_cql(self, dataset_dir: Optional[str], iters: int = 25, episodes_per_eval: int = 3) -> Dict[str, Any]:
-        # 你们后续可将此函数替换为真实 CQL：读取 dataset_dir，拟合 Q/π，然后评估。
+        # A full CQL implementation must fit Q and policy models from dataset_dir before evaluation.
         return self.train_cem(iters=iters, episodes_per_eval=episodes_per_eval)
 
     def train_bcq(self, dataset_dir: Optional[str], iters: int = 25, episodes_per_eval: int = 3) -> Dict[str, Any]:

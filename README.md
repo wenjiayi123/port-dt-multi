@@ -7,7 +7,7 @@
   <a href="LICENSE"><img alt="MIT License" src="https://img.shields.io/badge/license-MIT-22c55e.svg" /></a>
   <img alt="Python 3.12+" src="https://img.shields.io/badge/Python-3.12%2B-3776ab?logo=python&logoColor=white" />
   <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.139-009688?logo=fastapi&logoColor=white" />
-  <img alt="Five controllers" src="https://img.shields.io/badge/controllers-5-8b5cf6" />
+  <img alt="Seven controllers" src="https://img.shields.io/badge/controllers-7-8b5cf6" />
   <img alt="Status" src="https://img.shields.io/badge/status-research%20%26%20integration-0ea5e9" />
 </p>
 
@@ -62,7 +62,7 @@ The hard part of port AI is not another dashboard. It is making data origin, alg
 |---|---|---|
 | 数据与来源 / Data & provenance | 规范字段映射、质量门禁、单位/时区/许可元数据、SHA-256<br><sub>Canonical mapping, quality gates, unit/time-zone/licence metadata, and SHA-256</sub> | 数据卡、质量报告、数据集指纹<br><sub>Dataset card, quality report, and fingerprint</sub> |
 | 港区孪生 / Port twin | 数据集确定性投影；可切换严格 JSONL 实体轨迹<br><sub>Deterministic dataset projection with switchable strict JSONL entity traces</sub> | 来源等级、帧序号、时间戳、适配器状态<br><sub>Provenance level, frame sequence, timestamp, and adapter status</sub> |
-| 策略实验 / Policy lab | SAC、PPO、TD3、DQN + 滚动时域 MPC<br><sub>SAC, PPO, TD3, DQN plus receding-horizon MPC</sub> | 真实库版本、随机种子、配置、监控日志<br><sub>Runtime library, seed, configuration, and monitored logs</sub> |
+| 策略实验 / Policy lab | SAC、PPO、TD3、DQN、A2C、TQC + 滚动时域 MPC<br><sub>Six RL methods plus receding-horizon MPC</sub> | 真实库版本、随机种子、配置、监控日志<br><sub>Runtime library, seed, configuration, and monitored logs</sub> |
 | 独立评测 / Independent evaluation | 时间顺序留出集、多窗口评测、95% 自助法区间<br><sub>Chronological holdout, multi-window evaluation, and 95% bootstrap intervals</sub> | 每轮指标、窗口索引、轨迹回放、评测协议<br><sub>Per-run metrics, window indices, replay, and protocol</sub> |
 | 模型治理 / Model governance | 模型卡、产物哈希、candidate/champion/rollback/archive | 门禁阻断项、审批人、理由、审计日志<br><sub>Blocking gates, approver, rationale, and audit log</sub> |
 | 运行治理 / Operational governance | OpsX、漂移/异常、来源总览、故障响应流程<br><sub>OpsX, drift/anomaly checks, provenance overview, and incident workflow</sub> | 请求 ID、健康检查、Prometheus 指标、事件证据<br><sub>Request ID, health checks, Prometheus metrics, and incident evidence</sub> |
@@ -89,7 +89,7 @@ flowchart LR
   subgraph T["Twin & Experiment Plane / 孪生与实验平面"]
     V["PortViz + DTDL graph\n港区态势与语义图"]
     E["Chronological environment\n时间顺序实验环境"]
-    C["SAC · PPO · TD3 · DQN · MPC"]
+    C["SAC · PPO · TD3 · DQN · A2C · TQC · MPC"]
     Q --> V
     Q --> E --> C
   end
@@ -116,17 +116,28 @@ This is not a monolithic “AI that does everything.” Provenance levels, envir
 ## 🖥️ 产品界面 / Product surfaces
 
 <p align="center">
-  <img src="docs/assets/platform-overview.jpg" alt="Port DT Multi bilingual operations cockpit" width="96%" />
+  <img src="docs/assets/training-center-algorithm-matrix-xiaoyi.png" alt="Training center with seven-controller matrix, objectives, observations, actions, public-data evidence, and Xiaoyi advisor" width="96%" />
 </p>
 
+<table>
+  <tr>
+    <td width="50%"><img src="docs/assets/xiaoyi-system-assistant-button-linkage.png" alt="Xiaoyi system assistant opened from the training-center linkage button" /></td>
+    <td width="50%"><img src="docs/assets/seven-controller-backend-results.png" alt="Seven backend-evaluated controller cards and algorithm adapter" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>小懿训练顾问 → 全系统助手按钮联动</sub></td>
+    <td align="center"><sub>6 RL + 1 MPC 后端评测登记</sub></td>
+  </tr>
+</table>
+
 <p align="center">
-  <img src="docs/assets/rl-governance.jpg" alt="Port DT Multi RL governance panel" width="96%" />
+  <img src="docs/assets/rl-training-console-real-backend.png" alt="Real backend training console with public dataset, profile-bound weights, and training controls" width="96%" />
 </p>
 
 - <strong>运营总览 / Operations cockpit</strong>：港区态势、数据来源、KPI、ESG/合规、策略链与审计入口。缺少正式证据时显示“未接入/未评定”，不补造优秀指标。<br>
   *Port situation, provenance, KPI, ESG/compliance, policy chain, and audit entry points. Missing formal evidence is shown as “not connected / not assessed,” never replaced with flattering metrics.*
-- <strong>强化学习面板 / RL panel</strong>：选择规范数据集和五类控制器，读取后端真实进度，训练完成后再启动留出集评测与轨迹回放。<br>
-  *Select a canonical dataset and one of five controllers, read backend-owned progress, and start holdout evaluation and replay only after training completes.*
+- <strong>强化学习面板 / RL panel</strong>：选择规范数据集和七类控制器，读取后端真实进度，训练完成后再启动留出集评测与轨迹回放。<br>
+  *Select a canonical dataset and one of seven controllers, read backend-owned progress, and start holdout evaluation and replay only after training completes.*
 - <strong>运营助手 / Ops copilot</strong>：把自然语言意图映射为受支持的只读查询或白名单候选动作；不扩大调用者权限。<br>
   *Maps natural-language intent to supported read-only queries or allowlisted candidate actions without expanding caller authority.*
 - <strong>集成中枢 / Integration hub</strong>：展示现场连接、功能开关和安全门；验证链运行在 dry-run，不能冒充生产下发。<br>
@@ -136,9 +147,13 @@ This is not a monolithic “AI that does everything.” Provenance levels, envir
 
 ## 🧠 真实训练与评测 / Real training & evaluation
 
-五个基线使用相同规范数据契约和评测口径，但并不伪装成相同类型：SAC、PPO、TD3、DQN 由 Stable-Baselines3 实际优化；MPC 使用 SciPy 约束优化，是非学习控制基线。
+七个基线使用相同规范数据契约和评测口径，但并不伪装成相同类型：SAC、PPO、TD3、DQN、A2C 由 Stable-Baselines3 实际优化，TQC 由 SB3-Contrib 实际优化；MPC 使用 SciPy 约束优化，是非学习控制基线。
 
-All five baselines share one canonical data contract and evaluation protocol without pretending to be the same kind of method: SAC, PPO, TD3, and DQN are genuinely optimized by Stable-Baselines3; MPC is a non-learning constrained controller implemented with SciPy.
+All seven baselines share one canonical data contract and evaluation protocol without pretending to be the same kind of method: SAC, PPO, TD3, DQN, and A2C are optimized by Stable-Baselines3, TQC by SB3-Contrib, and MPC is a non-learning constrained controller implemented with SciPy.
+
+面向换港的 `port_ops_v2` 提供37维观测（基础状态、12类国际港口因素和逐因素可用性掩码）与5维建议动作（BESS、服务、柔性负荷、泊位优先级、堆场流量）。既有 `port_ops_v1` 模型和指标保持可读，避免升级时丢失历史证据。港口资产容量、目标权重、安全边界和因素要求由 `config/ports/*.json` 场景包管理。
+
+For port replacement, `port_ops_v2` exposes 37 observations (base state, twelve international-port factors, and per-factor availability masks) and five advisory actions (BESS, service intensity, flexible load, berth priority, and yard flow). Existing `port_ops_v1` models and metrics remain readable. Port assets, objectives, safety bounds, and factor requirements live in replaceable `config/ports/*.json` profiles.
 
 | 控制器 / Controller | 类型 / Type | 动作空间 / Action space | 实现 / Implementation |
 |---|---|---|---|
@@ -146,7 +161,11 @@ All five baselines share one canonical data contract and evaluation protocol wit
 | PPO | on-policy policy gradient | 连续 / continuous | `stable_baselines3.PPO` |
 | TD3 | off-policy actor–critic | 连续 / continuous | `stable_baselines3.TD3` |
 | DQN | value-based | 离散 / discrete | `stable_baselines3.DQN` |
+| A2C | on-policy actor–critic | 连续 / continuous | `stable_baselines3.A2C` |
+| TQC | distributional off-policy actor–critic | 连续 / continuous | `sb3_contrib.TQC` |
 | MPC | rolling-horizon control | 连续约束 / constrained continuous | `scipy.optimize.minimize` |
+
+上游实现说明： [Stable-Baselines3 A2C](https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html) · [SB3-Contrib TQC](https://sb3-contrib.readthedocs.io/en/master/modules/tqc.html)。
 
 实验隔离契约 / Experiment-isolation contract:
 
@@ -161,6 +180,10 @@ All five baselines share one canonical data contract and evaluation protocol wit
 3. A separate evaluation call reads the holdout segment only after training, using ten deterministic windows by default.
 4. Artifacts record dataset hash, configuration, seed, implementation, model hash, and training render-call count.
 5. Comparative RL claims require at least three distinct seeds; deterministic MPC is registered on the same windows as a controller baseline.
+
+可移植评测摘要保存在 [`evidence/rl`](evidence/rl/README.md)：短步数结果固定标记为 `RL_SMOKE_WIRING_ONLY`，正式RL结果必须标记为 `RL_HELD_OUT_EVALUATION`，并同时保存数据指纹、模型哈希、训练步数、随机种子、留出窗口和95%区间。模型二进制不提交到Git，可用相同脚本复现。
+
+Portable evaluation summaries live in [`evidence/rl`](evidence/rl/README.md). Short runs remain labelled `RL_SMOKE_WIRING_ONLY`; formal RL evidence requires `RL_HELD_OUT_EVALUATION` plus the dataset fingerprint, model hash, optimizer steps, seed, holdout windows, and 95% intervals. Model binaries stay out of Git and are reproducible with the documented command.
 
 ## 📊 固定业务KPI对照 / Fixed business KPI evidence
 
@@ -267,7 +290,7 @@ curl -X POST 'http://127.0.0.1:8000/api/rl/train/<job_id>/predict' \
 ```bash
 python -m scripts.rl_benchmark \
   --dataset public_port_ops_v1 \
-  --algorithms sac,ppo,td3,dqn,mpc \
+  --algorithms sac,ppo,td3,dqn,a2c,tqc,mpc \
   --seeds 42,142,242 \
   --steps 20000 --episodes 10
 ```
@@ -281,6 +304,8 @@ timestamp,base_load_kw,throughput_teu,vessel_arrivals,tide_m,price_per_kwh,carbo
 ```
 
 `public_port_ops_v1` 是为了复现接口、环境和测试构造的集成数据集：公开输入为新加坡海事及港务管理局 2020–2025 月度集装箱吞吐量与集装箱船到港量，官方输入的港口地理口径一致；小时负荷、小时吞吐/到港分配、分时电价、碳因子、气温和潮位压力项是有记录的确定性工程派生量，潮位项不参与三项业务 KPI。因此该数据集<strong>不是</strong>港口小时实测时序，不能用于现场绩效归因。
+
+更高频的 `public_us_la_6min_v1` 对照包使用美国交通部BTS洛杉矶港月度TEU和NOAA六分钟水位、气温、风速，共87,459个时步、262,347条独立原始公共观测；42条短缺口插值另行登记。未公开的码头字段仍逐项标为工程派生或不可用；数据量更大不自动等于生产可信度更高。两套数据均保留，便于比较长时间聚合锚点与高频实测环境因素。
 
 `public_port_ops_v1` is an integration dataset for reproducible adapters, environments, and tests. Its public inputs are MPA Singapore monthly container throughput and container-vessel arrivals for 2020–2025. Hourly load, throughput/arrival allocation, tariff, carbon, temperature and tide-stress fields are documented deterministic derivatives; tide is excluded from the three business KPIs. It is <strong>not</strong> measured hourly terminal telemetry and must not be used for site-performance attribution.
 
@@ -363,9 +388,9 @@ python -m unittest discover -s tests -v
 python -m scripts.rl_smoke_test --steps 64
 ```
 
-当前发布门禁覆盖 44 项单元测试，并用 64 步烟雾实验真实执行 SAC、PPO、TD3、DQN 与 MPC。CI 还执行依赖漏洞审计；公开后启用 CodeQL、Dependency Review、OpenSSF Scorecard、SBOM 与源码证明。
+当前发布门禁执行完整单元测试，并用 64 步烟雾实验真实执行 SAC、PPO、TD3、DQN、A2C、TQC 与 MPC；正式比较证据另要求每种RL至少3个随机种子和每次10,000步。CI 还执行依赖漏洞审计；公开后启用 CodeQL、Dependency Review、OpenSSF Scorecard、SBOM 与源码证明。
 
-The current gate contains 44 unit tests and a 64-step smoke experiment that genuinely executes SAC, PPO, TD3, DQN, and MPC. CI also audits installed dependencies; public-only workflows add CodeQL, Dependency Review, OpenSSF Scorecard, SBOM generation, and source attestations.
+The current gate runs the complete unit-test suite and a 64-step smoke experiment that genuinely executes SAC, PPO, TD3, DQN, A2C, TQC, and MPC. Formal comparisons separately require at least three seeds and 10,000 steps per RL method. CI also audits installed dependencies; public-only workflows add CodeQL, Dependency Review, OpenSSF Scorecard, SBOM generation, and source attestations.
 
 ## 🤝 参与项目 / Contributing
 

@@ -523,7 +523,7 @@ def demo_self_test() -> None:
     snap = cli.snapshot()
     path = cli.save_audit(snap)
 
-    # 控制台输出（方便你目测）
+    # Human-readable command-line output
     vc = len(snap.get("vessel_calls", []))
     mo = len(snap.get("move_orders", []))
     yi = len(snap.get("yard_inventory", []))

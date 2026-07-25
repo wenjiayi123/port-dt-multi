@@ -229,7 +229,7 @@ class PyTimeIndex(list):
     - get_loc(ts): 返回等于 ts 的位置索引（找不到时报 ValueError）
     """
     def get_loc(self, ts):
-        # ts 为 datetime；确保完全匹配（时间轴我们自己构造的，精度一致）
+        # Datetime values match the internally constructed timeline exactly.
         return self.index(ts)
 
 
@@ -669,7 +669,7 @@ class AGVChargeAdapter:
             action = self._project_to_feasible(t, action)
             reward, info = self._calc_reward_at(t, action_power_map=action)
             # ===== 计算前端需要的三个额外字段 =====
-            # 1) 延迟（分钟）：我们已有 delay_penalty（小时），换算成分钟即可
+            # 1) Convert the hourly delay penalty to minutes.
             latency_min = float(info.get("delay_penalty", 0.0)) * 60.0
 
             # 2) 削峰能力（kW）：给一个直观口径——距需量上限的“剩余余量”
@@ -816,7 +816,7 @@ class AGVChargeAdapter:
             self._index = idx
 
         # pandas 版本的时间轴（兼容原接口）
-        # pandas 的 DatetimeIndex 在你的 numpy/pandas 组合下可能直接崩，
+        # Some NumPy/Pandas combinations can fail while constructing DatetimeIndex.
         # 这里兜底为纯 Python 索引，保证后续逻辑正常跑。
         try:
             self._time_index = pd.DatetimeIndex(self._index)

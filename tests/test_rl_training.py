@@ -9,8 +9,17 @@ from pathlib import Path
 
 import numpy as np
 
-from app.services.rl_training.datasets import CANONICAL_COLUMNS, import_dataset, load_port_dataset, write_canonical_rows
+from app.services.rl_training.datasets import (
+    CANONICAL_COLUMNS,
+    FACTOR_COLUMNS,
+    import_dataset,
+    load_port_dataset,
+    write_canonical_rows,
+    write_extended_rows,
+)
 from app.services.rl_training.environment import PortOperationsEnv
+from app.services.rl_training.profiles import load_profile
+from app.services.rl_training.trainer import ALGORITHMS
 
 
 def rows(count: int = 96):
@@ -29,6 +38,11 @@ def rows(count: int = 96):
 
 
 class DatasetTests(unittest.TestCase):
+    def test_seven_controller_contract(self):
+        self.assertEqual(list(ALGORITHMS), ["sac", "ppo", "td3", "dqn", "a2c", "tqc", "mpc"])
+        self.assertEqual(sum(spec.trainable for spec in ALGORITHMS.values()), 6)
+        self.assertEqual(ALGORITHMS["mpc"].family, "Control")
+
     def test_chronological_split_and_fingerprint(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -94,6 +108,73 @@ class EnvironmentTests(unittest.TestCase):
             self.assertLessEqual(projected["bess_kw"], env.bess_power_kw)
             self.assertEqual(projected["flexible_load_command"], 0.6)
             self.assertTrue(projected["projection_applied"])
+
+    def test_v2_factor_masks_and_five_action_contract(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            enriched_rows = []
+            for row in rows():
+                enriched_rows.append(
+                    {
+                        **row,
+                        "wind_speed_mps": 4.2,
+                        "berth_occupancy_ratio": 0.72,
+                        "yard_occupancy_ratio": 0.68,
+                        "channel_congestion_ratio": 0.44,
+                    }
+                )
+            write_extended_rows(
+                "port_v2",
+                enriched_rows,
+                {
+                    "provenance_type": "verified_test",
+                    "license": "test",
+                    "owner": "test",
+                    "timezone": "UTC",
+                    "intended_use": "test",
+                    "environment_version": "port_ops_v2",
+                },
+                root,
+            )
+            dataset = load_port_dataset("port_v2", root)
+            train, _ = dataset.split()
+            env = PortOperationsEnv(
+                dataset,
+                train,
+                training=True,
+                episode_steps=12,
+                environment_version="port_ops_v2",
+                port_profile=load_profile("sgsin_public_replay_v2"),
+            )
+            observation, _ = env.reset(seed=3)
+            self.assertEqual(observation.shape, (13 + 2 * len(FACTOR_COLUMNS),))
+            self.assertEqual(env.action_space.shape, (5,))
+            _, _, _, _, info = env.step(np.zeros(5, dtype=np.float32))
+            self.assertTrue(info["factor_availability"]["wind_speed_mps"])
+            self.assertFalse(info["factor_availability"]["visibility_km"])
+            self.assertIn("berth_priority", info)
+
+    def test_time_features_follow_timestamp_cadence(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            start = datetime(2026, 1, 1, tzinfo=timezone.utc)
+            frequent_rows = []
+            for index, row in enumerate(rows(400)):
+                frequent_rows.append(
+                    {
+                        **row,
+                        "timestamp": (
+                            start + timedelta(minutes=6 * index)
+                        ).isoformat().replace("+00:00", "Z"),
+                    }
+                )
+            write_canonical_rows("six_minute", frequent_rows, {"license": "test"}, root)
+            dataset = load_port_dataset("six_minute", root)
+            train, _ = dataset.split()
+            env = PortOperationsEnv(dataset, train, training=True, episode_steps=4)
+            first, _ = env.reset(options={"start_index": 0})
+            next_day, _ = env.reset(options={"start_index": 240})
+            np.testing.assert_allclose(first[:2], next_day[:2], atol=1e-6)
 
 
 if __name__ == "__main__":

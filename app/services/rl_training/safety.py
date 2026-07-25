@@ -6,6 +6,7 @@ from typing import Any, Dict, Mapping, Optional
 import numpy as np
 
 from .datasets import NUMERIC_COLUMNS, PortDataset
+from .profiles import DEFAULT_PROFILE, validate_profile
 
 
 def assess_recommendation(
@@ -15,6 +16,7 @@ def assess_recommendation(
     dataset: PortDataset,
     demand_cap_kw: float,
     bess_power_kw: float,
+    port_profile: Optional[Mapping[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Assess a policy recommendation without mutating or dispatching it.
 
@@ -35,6 +37,7 @@ def assess_recommendation(
 
     violations: list[Dict[str, Any]] = []
     warnings: list[Dict[str, Any]] = []
+    profile = validate_profile(port_profile or DEFAULT_PROFILE)
     values: Dict[str, float] = {}
     for index, column in enumerate(NUMERIC_COLUMNS):
         try:
@@ -81,9 +84,12 @@ def assess_recommendation(
     bess_kw = float(decoded_control.get("bess_kw", 0.0))
     service_factor = float(decoded_control.get("service_factor", 1.0))
     flexible = float(decoded_control.get("flexible_load_command", 0.0))
+    berth_priority = float(decoded_control.get("berth_priority", 0.0))
+    yard_flow = float(decoded_control.get("yard_flow_command", 0.0))
+    limits = profile["control_limits"]
 
-    if not 0.10 <= soc <= 0.90:
-        violations.append({"code": "SOC_LIMIT", "field": "soc", "value": soc, "allowed": [0.10, 0.90]})
+    if not float(limits["soc_min"]) <= soc <= float(limits["soc_max"]):
+        violations.append({"code": "SOC_LIMIT", "field": "soc", "value": soc, "allowed": [limits["soc_min"], limits["soc_max"]]})
     if abs(bess_kw) > bess_power_kw + 1e-6:
         violations.append({"code": "BESS_POWER_LIMIT", "field": "bess_kw", "value": bess_kw, "allowed": [-bess_power_kw, bess_power_kw]})
     # The environment advances in one-hour intervals and permits a full
@@ -92,10 +98,14 @@ def assess_recommendation(
     ramp_limit = bess_power_kw
     if abs(bess_kw - last_bess_kw) > ramp_limit + 1e-6:
         violations.append({"code": "BESS_RAMP_LIMIT", "field": "bess_kw", "value": bess_kw, "last": last_bess_kw, "max_delta": ramp_limit})
-    if not 0.75 <= service_factor <= 1.25:
-        violations.append({"code": "SERVICE_FACTOR_LIMIT", "field": "service_factor", "value": service_factor, "allowed": [0.75, 1.25]})
-    if not -0.60 <= flexible <= 0.60:
-        violations.append({"code": "FLEXIBLE_LOAD_LIMIT", "field": "flexible_load_command", "value": flexible, "allowed": [-0.60, 0.60]})
+    if not float(limits["service_factor_min"]) <= service_factor <= float(limits["service_factor_max"]):
+        violations.append({"code": "SERVICE_FACTOR_LIMIT", "field": "service_factor", "value": service_factor, "allowed": [limits["service_factor_min"], limits["service_factor_max"]]})
+    if abs(flexible) > float(limits["flexible_load_fraction"]) + 1e-6:
+        violations.append({"code": "FLEXIBLE_LOAD_LIMIT", "field": "flexible_load_command", "value": flexible, "allowed": [-limits["flexible_load_fraction"], limits["flexible_load_fraction"]]})
+    if abs(berth_priority) > float(limits["berth_priority_limit"]) + 1e-6:
+        violations.append({"code": "BERTH_PRIORITY_LIMIT", "field": "berth_priority", "value": berth_priority, "allowed": [-limits["berth_priority_limit"], limits["berth_priority_limit"]]})
+    if abs(yard_flow) > float(limits["yard_flow_limit"]) + 1e-6:
+        violations.append({"code": "YARD_FLOW_LIMIT", "field": "yard_flow_command", "value": yard_flow, "allowed": [-limits["yard_flow_limit"], limits["yard_flow_limit"]]})
 
     estimated_net_kw = None
     if "base_load_kw" in values:
@@ -110,14 +120,27 @@ def assess_recommendation(
             })
 
     within = not violations
+    site_required_factors = list(
+        profile["factor_requirements"].get("required_for_site_claim") or []
+    )
+    missing_site_factors = [
+        name for name in site_required_factors
+        if state.get(name) is None
+    ]
+    site_calibrated = str(profile.get("calibration_status")) == "site_calibrated_approved"
+    site_claim_eligible = within and site_calibrated and not missing_site_factors
     return {
         "status": "pass" if within else "blocked",
         "within_software_envelope": within,
         "dispatch_allowed": False,
         "human_review_eligible": within,
+        "site_claim_eligible": site_claim_eligible,
+        "port_profile_id": profile["profile_id"],
+        "profile_calibration_status": profile["calibration_status"],
+        "missing_site_claim_factors": missing_site_factors,
         "violations": violations,
         "warnings": warnings,
         "estimates": {"net_load_kw": estimated_net_kw, "bess_ramp_limit_kw": ramp_limit},
         "authority": "recommendation_only_no_actuator_authority",
-        "required_next_step": "site adapter, calibrated limits, operator approval, and independent hardware interlocks",
+        "required_next_step": "site adapter, operator-approved calibrated port profile, complete site factors, operator approval, and independent hardware interlocks",
     }

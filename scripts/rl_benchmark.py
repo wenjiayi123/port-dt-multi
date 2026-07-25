@@ -1,4 +1,4 @@
-"""Run persisted multi-seed holdout benchmarks for the five controllers."""
+"""Run persisted multi-seed holdout benchmarks for the seven controllers."""
 
 from __future__ import annotations
 
@@ -26,7 +26,8 @@ def main() -> None:
     parser.add_argument("--seeds", default="42,142,242", help="at least three distinct integers for comparative claims")
     parser.add_argument("--steps", type=int, default=20000)
     parser.add_argument("--episodes", type=int, default=10)
-    parser.add_argument("--episode-steps", type=int, default=48)
+    parser.add_argument("--episode-hours", type=float, default=48.0)
+    parser.add_argument("--episode-steps", type=int, default=0, help="explicit override; 0 derives steps from dataset cadence")
     parser.add_argument("--timeout", type=int, default=7200)
     args = parser.parse_args()
     algorithms = [item.strip().lower() for item in args.algorithms.split(",") if item.strip()]
@@ -48,14 +49,17 @@ def main() -> None:
     for algorithm in algorithms:
         run_seeds = seeds if ALGORITHMS[algorithm].trainable else seeds[:1]
         for seed in run_seeds:
-            started = TRAINING_MANAGER.start({
+            config = {
                 "algorithm": algorithm,
                 "dataset_id": args.dataset,
                 "total_steps": args.steps,
-                "episode_steps": args.episode_steps,
+                "episode_hours": args.episode_hours,
                 "seed": seed,
                 "test_ratio": 0.2,
-            })
+            }
+            if args.episode_steps > 0:
+                config["episode_steps"] = args.episode_steps
+            started = TRAINING_MANAGER.start(config)
             status = wait(started["job_id"], args.timeout)
             if status.get("status") != "COMPLETED":
                 raise RuntimeError(f"{algorithm} seed={seed} failed: {status.get('error') or status.get('stage')}")

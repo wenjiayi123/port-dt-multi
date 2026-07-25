@@ -13,7 +13,7 @@
 闭环。
 
 ▸ **亮点功能：** 实现 13 维港口运行观测、储能/服务资源/柔性负荷 3 维联合动作，
-支持 SAC/PPO/TD3/DQN 与六步滚动 MPC；训练阶段禁用渲染，留出评测独立生成轨迹，
+支持 SAC/PPO/TD3/DQN/A2C/TQC 与六步滚动 MPC；训练阶段禁用渲染，留出评测独立生成轨迹，
 动作屏蔽器约束电网容量、SOC 和期末 SOC；移动端采用幂等提交、冲突键阻断、
 异人审批、服务端回执和 SHA-256 前向审计链，南向执行默认 fail-closed。
 
@@ -26,7 +26,7 @@
 或因果效果；泊位缓冲未使用现场结果标定）
 
 ▸ **技术栈：** 原生 Web（HTML/CSS/JavaScript）+ FastAPI/Pydantic + Flutter/Dart +
-Gymnasium + Stable-Baselines3/PyTorch + SAC/PPO/TD3/DQN + SciPy MPC +
+Gymnasium + Stable-Baselines3/SB3-Contrib/PyTorch + SAC/PPO/TD3/DQN/A2C/TQC + SciPy MPC +
 NumPy/Pandas + Docker + GitHub Actions
 
 ## 面试边界

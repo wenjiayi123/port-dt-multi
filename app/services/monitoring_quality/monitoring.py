@@ -3,7 +3,7 @@
 # --------------------------------------------
 # 【大白话】监测与运维 · 异常检测 + 漂移检测（PSI）服务
 #
-# 你把“数据采集/TSDB/OPC/MQTT”等接入到 di.telemetry.get_series(...)，
+# Data acquisition, TSDB, OPC, and MQTT adapters implement di.telemetry.get_series(...).
 # 这个服务就能直接跑：先清洗->插补->做异常/漂移->写审计->总线广播。
 #
 # 能力：
@@ -26,7 +26,7 @@ import math
 import json
 import time
 
-# 依赖你已有的数据清洗模块（不引第三方）
+# Uses the local data-cleaning module without adding dependencies.
 from app.ops.data_quality import clean_and_impute
 # 统一对象存储与事件总线（repo 里已有）
 from app.infra.storage import ObjectStorage, StorageConfig

@@ -1,0 +1,2996 @@
+{
+  "schema": "port-dt-rl-benchmark-evidence.v1",
+  "generated_at": "2026-07-25T13:17:54.161170Z",
+  "dataset": {
+    "dataset_id": "public_port_ops_v1",
+    "title": "Public port operations driver example v1",
+    "created_at": "2026-07-24T09:40:18.792861Z",
+    "provenance_type": "public_official_inputs_plus_deterministic_engineering_derivatives",
+    "evidence_tier": "public_aggregate_derived",
+    "owner": "port-dt-multi maintainers",
+    "timezone": "UTC",
+    "intended_use": "integration testing, reproducible RL research, and port data-adapter validation",
+    "port_profile_id": "sgsin_public_replay_v2",
+    "environment_version": "port_ops_v1",
+    "independent_source_observations": 144,
+    "measured_columns": [],
+    "license": "Singapore Open Data Licence; code MIT",
+    "geographically_coherent_single_port_series": false,
+    "official_input_geography_coherent": true,
+    "official_source_columns": [
+      "monthly_container_throughput",
+      "monthly_container_vessel_arrivals"
+    ],
+    "derived_columns": [
+      "base_load_kw",
+      "hourly_throughput_teu",
+      "hourly_vessel_arrivals",
+      "tide_m",
+      "price_per_kwh",
+      "carbon_kg_per_kwh",
+      "ambient_c"
+    ],
+    "sources": [
+      {
+        "publisher": "Maritime and Port Authority of Singapore",
+        "dataset_id": "d_da030f7028200d19ffcbe4a2d71af39c",
+        "role": "monthly_container_throughput_anchor",
+        "accessed_at": "2026-07-24",
+        "license_url": "https://data.gov.sg/open-data-licence",
+        "url": "https://data.gov.sg/api/action/datastore_search?resource_id=d_da030f7028200d19ffcbe4a2d71af39c&limit=500"
+      },
+      {
+        "publisher": "Maritime and Port Authority of Singapore",
+        "dataset_id": "d_8f264219109e61fffa87ac64dd5a9a65",
+        "role": "monthly_container_vessel_arrivals_anchor",
+        "accessed_at": "2026-07-24",
+        "license_url": "https://data.gov.sg/open-data-licence",
+        "url": "https://data.gov.sg/api/action/datastore_search?resource_id=d_8f264219109e61fffa87ac64dd5a9a65&limit=5000"
+      }
+    ],
+    "warning": "This is an integration/reproducibility dataset, not a production telemetry export. Replace it with a mapped port dataset for deployment.",
+    "sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+    "rows": 52608,
+    "start_at": "2020-01-01T00:00:00Z",
+    "end_at": "2025-12-31T23:00:00Z",
+    "artifact_id": "public_port_ops_v1.csv",
+    "columns": [
+      "timestamp",
+      "base_load_kw",
+      "throughput_teu",
+      "vessel_arrivals",
+      "tide_m",
+      "price_per_kwh",
+      "carbon_kg_per_kwh",
+      "ambient_c"
+    ],
+    "optional_factor_columns": [
+      "wind_speed_mps",
+      "visibility_km",
+      "wave_height_m",
+      "current_speed_mps",
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "reefer_load_kw",
+      "pilot_tug_availability_ratio",
+      "closure_flag"
+    ],
+    "train_rows": 42086,
+    "test_rows": 10522,
+    "split_method": "chronological_holdout_no_shuffle",
+    "test_ratio": 0.2,
+    "quality": {
+      "status": "pass",
+      "training_eligible": true,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+      "rows": 52608,
+      "time": {
+        "start_at": "2020-01-01T00:00:00Z",
+        "end_at": "2025-12-31T23:00:00Z",
+        "median_cadence_seconds": 3600.0,
+        "irregular_gap_count": 0,
+        "strictly_increasing": true
+      },
+      "missing_value_count": 0,
+      "non_finite_value_count": 0,
+      "physical_violation_count": 0,
+      "missing_governance_metadata": [],
+      "columns": {
+        "base_load_kw": {
+          "unit": "kW",
+          "min": 2153.39990234375,
+          "p25": 2570.31982421875,
+          "median": 2699.739013671875,
+          "p75": 2855.150146484375,
+          "max": 3316.60009765625,
+          "mean": 2725.133415941484,
+          "std": 223.88578569662116,
+          "outlier_count_iqr": 217,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "throughput_teu": {
+          "unit": "TEU/sampling_interval",
+          "min": 2616.341796875,
+          "p25": 3694.6387939453125,
+          "median": 4461.0498046875,
+          "p75": 5211.6064453125,
+          "max": 6794.83154296875,
+          "mean": 4497.487835297039,
+          "std": 919.6719083325258,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "vessel_arrivals": {
+          "unit": "vessel_calls/sampling_interval",
+          "min": 1.170483946800232,
+          "p25": 1.5088560581207275,
+          "median": 1.6958329677581787,
+          "p75": 1.9116779565811157,
+          "max": 2.2489778995513916,
+          "mean": 1.7067556305156246,
+          "std": 0.24896728540017124,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "tide_m": {
+          "unit": "m",
+          "min": -0.7928000092506409,
+          "p25": -0.5522249937057495,
+          "median": -0.0320500023663044,
+          "p75": 0.5769749879837036,
+          "max": 0.7989000082015991,
+          "mean": -0.0011333354438344638,
+          "std": 0.575584179409733,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": -20.0,
+            "max": 20.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "price_per_kwh": {
+          "unit": "currency/kWh",
+          "min": 0.7200000286102295,
+          "p25": 0.7200000286102295,
+          "median": 1.0199999809265137,
+          "p75": 1.0199999809265137,
+          "max": 1.340000033378601,
+          "mean": 0.999166672428449,
+          "std": 0.2171389077049998,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "carbon_kg_per_kwh": {
+          "unit": "kgCO2e/kWh",
+          "min": 0.4099999964237213,
+          "p25": 0.42464500665664673,
+          "median": 0.46000000834465027,
+          "p75": 0.4953550100326538,
+          "max": 0.5099999904632568,
+          "mean": 0.46000000710288685,
+          "std": 0.03535516910951856,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 5.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "ambient_c": {
+          "unit": "degreeCelsius",
+          "min": 24.799999237060547,
+          "p25": 25.737300872802734,
+          "median": 28.0,
+          "p75": 30.262699127197266,
+          "max": 31.200000762939453,
+          "mean": 28.0,
+          "std": 2.2627455273239208,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": -60.0,
+            "max": 70.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "wind_speed_mps": {
+          "unit": "m/s",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 100.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "visibility_km": {
+          "unit": "km",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1000.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "wave_height_m": {
+          "unit": "m",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 40.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "current_speed_mps": {
+          "unit": "m/s",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 15.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "berth_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "yard_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "crane_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "equipment_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "channel_congestion_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "reefer_load_kw": {
+          "unit": "kW",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "pilot_tug_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "closure_flag": {
+          "unit": "binary",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        }
+      },
+      "factor_coverage": {
+        "wind_speed_mps": 0.0,
+        "visibility_km": 0.0,
+        "wave_height_m": 0.0,
+        "current_speed_mps": 0.0,
+        "berth_occupancy_ratio": 0.0,
+        "yard_occupancy_ratio": 0.0,
+        "crane_availability_ratio": 0.0,
+        "equipment_availability_ratio": 0.0,
+        "channel_congestion_ratio": 0.0,
+        "reefer_load_kw": 0.0,
+        "pilot_tug_availability_ratio": 0.0,
+        "closure_flag": 0.0
+      },
+      "available_factor_count": 0,
+      "factor_count": 12,
+      "evidence": {
+        "tier": "public_aggregate_derived",
+        "measured_columns": [],
+        "derived_columns": [
+          "base_load_kw",
+          "hourly_throughput_teu",
+          "hourly_vessel_arrivals",
+          "tide_m",
+          "price_per_kwh",
+          "carbon_kg_per_kwh",
+          "ambient_c"
+        ],
+        "independent_source_observations": 144,
+        "row_count_is_not_independent_information_count": true
+      },
+      "errors": [],
+      "warnings": [],
+      "generated_at": "2026-07-25T13:17:54.231850Z"
+    }
+  },
+  "benchmark_summary": {
+    "dataset_id": "public_port_ops_v1",
+    "algorithms": [
+      {
+        "id": "sac",
+        "name": "SAC",
+        "family": "RL",
+        "action_space": "continuous",
+        "trainable": true,
+        "implementation": "stable_baselines3.SAC",
+        "description": "Maximum-entropy off-policy actor-critic for continuous port setpoints.",
+        "runs": 3,
+        "claim_eligible_runs": 0,
+        "distinct_seeds": [],
+        "multi_seed_ready": false,
+        "smoke_runs": 3,
+        "metrics": {},
+        "diagnostic_metrics": {
+          "carbon_kg": {
+            "n": 3,
+            "mean": 33269.50528927942,
+            "std": 48.684400821083365,
+            "median": 33287.32136175545,
+            "ci_low": 33214.42245954479,
+            "ci_high": 33306.772046538004,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 3,
+            "mean": 0.03658793050372645,
+            "std": 0.054045669430330436,
+            "median": 0.010079614687778387,
+            "ci_low": 0.0009144246760997204,
+            "ci_high": 0.09876975214730126,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 3,
+            "mean": 72430.67785184308,
+            "std": 24.56453075787397,
+            "median": 72440.11204244594,
+            "ci_low": 72402.79476407195,
+            "ci_high": 72449.12674901135,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 3,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 3,
+            "mean": 3119.6209586047876,
+            "std": 30.175773422675764,
+            "median": 3129.19385747648,
+            "ci_low": 3085.8199092742166,
+            "ci_high": 3143.8491090636653,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 3,
+            "mean": -7.220811792511125,
+            "std": 0.19975734448626922,
+            "median": -7.119904288461842,
+            "ci_low": -7.450893641993024,
+            "ci_high": -7.091637447078509,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 3,
+            "mean": 120702.3944702419,
+            "std": 534.799845788656,
+            "median": 120970.40015428595,
+            "ci_low": 120086.58192507387,
+            "ci_high": 121050.20133136585,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "metric_evidence_scope": "formal_claim_eligible_runs_only",
+        "job_ids": [
+          "rl-20260724T100154851Z",
+          "rl-20260724T100204233Z",
+          "rl-20260724T100207592Z"
+        ]
+      },
+      {
+        "id": "ppo",
+        "name": "PPO",
+        "family": "RL",
+        "action_space": "continuous",
+        "trainable": true,
+        "implementation": "stable_baselines3.PPO",
+        "description": "Clipped on-policy optimization for stable constrained control.",
+        "runs": 3,
+        "claim_eligible_runs": 0,
+        "distinct_seeds": [],
+        "multi_seed_ready": false,
+        "smoke_runs": 3,
+        "metrics": {},
+        "diagnostic_metrics": {
+          "carbon_kg": {
+            "n": 3,
+            "mean": 33286.941804243244,
+            "std": 32.02110271113455,
+            "median": 33303.0774461757,
+            "ci_low": 33250.062842837804,
+            "ci_high": 33307.68512371621,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 3,
+            "mean": 0.01490665067189266,
+            "std": 0.006064021829660452,
+            "median": 0.018358216645755016,
+            "ci_low": 0.007904753584920127,
+            "ci_high": 0.018456981785002838,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 3,
+            "mean": 72368.2151036752,
+            "std": 12.893336411656934,
+            "median": 72368.17398809665,
+            "ci_low": 72355.34237422048,
+            "ci_high": 72381.12894870846,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 3,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 3,
+            "mean": 3120.8203669753325,
+            "std": 13.632018672531128,
+            "median": 3120.2047538749716,
+            "ci_low": 3107.50658410022,
+            "ci_high": 3134.7497629508052,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 3,
+            "mean": -7.134826401845704,
+            "std": 0.019810529502265573,
+            "median": -7.142753425417062,
+            "ci_low": -7.149445914629088,
+            "ci_high": -7.112279865490959,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 3,
+            "mean": 120963.12740924834,
+            "std": 31.336715232430404,
+            "median": 120963.59993379831,
+            "ci_low": 120931.55710379391,
+            "ci_high": 120994.2251901528,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "metric_evidence_scope": "formal_claim_eligible_runs_only",
+        "job_ids": [
+          "rl-20260724T100211160Z",
+          "rl-20260724T100213947Z",
+          "rl-20260724T100216989Z"
+        ]
+      },
+      {
+        "id": "td3",
+        "name": "TD3",
+        "family": "RL",
+        "action_space": "continuous",
+        "trainable": true,
+        "implementation": "stable_baselines3.TD3",
+        "description": "Twin critics and delayed actor updates for continuous dispatch.",
+        "runs": 3,
+        "claim_eligible_runs": 0,
+        "distinct_seeds": [],
+        "multi_seed_ready": false,
+        "smoke_runs": 3,
+        "metrics": {},
+        "diagnostic_metrics": {
+          "carbon_kg": {
+            "n": 3,
+            "mean": 33198.92414679181,
+            "std": 175.0850050259055,
+            "median": 33210.474681295615,
+            "ci_low": 33018.349858234214,
+            "ci_high": 33367.947900845604,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 3,
+            "mean": 0.019122098591804616,
+            "std": 0.02596585624502964,
+            "median": 0.008683530400826762,
+            "ci_low": 0.0,
+            "ci_high": 0.04868276537458708,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 3,
+            "mean": 72285.25564949143,
+            "std": 379.988308109675,
+            "median": 72349.62158647914,
+            "ci_low": 71877.19519574897,
+            "ci_high": 72628.9501662462,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 3,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 3,
+            "mean": 3148.2902949937693,
+            "std": 12.112990115618821,
+            "median": 3149.1680557345835,
+            "ci_low": 3135.7623004456195,
+            "ci_high": 3159.9405288011044,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 3,
+            "mean": -7.149784068624751,
+            "std": 0.09519713257153889,
+            "median": -7.109304231932192,
+            "ci_low": -7.2585312249002,
+            "ci_high": -7.081516749041858,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 3,
+            "mean": 120872.43210602633,
+            "std": 229.81175294361063,
+            "median": 120943.48903578345,
+            "ci_low": 120615.48407032997,
+            "ci_high": 121058.32321196554,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "metric_evidence_scope": "formal_claim_eligible_runs_only",
+        "job_ids": [
+          "rl-20260724T100219912Z",
+          "rl-20260724T100223305Z",
+          "rl-20260724T100226358Z"
+        ]
+      },
+      {
+        "id": "dqn",
+        "name": "DQN",
+        "family": "RL",
+        "action_space": "discrete",
+        "trainable": true,
+        "implementation": "stable_baselines3.DQN",
+        "description": "Replay-buffer Q-learning on an explicit finite port-control lattice.",
+        "runs": 3,
+        "claim_eligible_runs": 0,
+        "distinct_seeds": [],
+        "multi_seed_ready": false,
+        "smoke_runs": 3,
+        "metrics": {},
+        "diagnostic_metrics": {
+          "carbon_kg": {
+            "n": 3,
+            "mean": 33077.57532847809,
+            "std": 250.86753815645002,
+            "median": 33207.853409401745,
+            "ci_low": 32788.37103429803,
+            "ci_high": 33236.501541734484,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 3,
+            "mean": 1.3778269679330084,
+            "std": 0.6334381112113815,
+            "median": 1.0576210510752453,
+            "ci_low": 0.9684170039079726,
+            "ci_high": 2.1074428488158077,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 3,
+            "mean": 72018.59268782118,
+            "std": 569.5252552204325,
+            "median": 72145.88197500531,
+            "ci_low": 71396.19309404073,
+            "ci_high": 72513.70299441749,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 3,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 3,
+            "mean": 3411.0561368030812,
+            "std": 91.32447198557655,
+            "median": 3439.1879322688483,
+            "ci_low": 3308.97540653415,
+            "ci_high": 3485.0050716062456,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 3,
+            "mean": -12.033693039976043,
+            "std": 2.216469819886782,
+            "median": -10.943179589429535,
+            "ci_low": -14.584148950642563,
+            "ci_high": -10.573750579856036,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 3,
+            "mean": 108923.11364797592,
+            "std": 6921.438153103092,
+            "median": 111191.65648814202,
+            "ci_low": 101152.08163676264,
+            "ci_high": 114425.60281902312,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "metric_evidence_scope": "formal_claim_eligible_runs_only",
+        "job_ids": [
+          "rl-20260724T100229470Z",
+          "rl-20260724T100232450Z",
+          "rl-20260724T100235438Z"
+        ]
+      },
+      {
+        "id": "a2c",
+        "name": "A2C",
+        "family": "RL",
+        "action_space": "continuous",
+        "trainable": true,
+        "implementation": "stable_baselines3.A2C",
+        "description": "Synchronous advantage actor-critic baseline for low-overhead on-policy optimization.",
+        "runs": 0,
+        "claim_eligible_runs": 0,
+        "distinct_seeds": [],
+        "multi_seed_ready": false,
+        "smoke_runs": 0,
+        "metrics": {},
+        "diagnostic_metrics": {},
+        "metric_evidence_scope": "formal_claim_eligible_runs_only",
+        "job_ids": []
+      },
+      {
+        "id": "tqc",
+        "name": "TQC",
+        "family": "RL",
+        "action_space": "continuous",
+        "trainable": true,
+        "implementation": "sb3_contrib.TQC",
+        "description": "Distributional off-policy actor-critic with truncated quantile critics.",
+        "runs": 0,
+        "claim_eligible_runs": 0,
+        "distinct_seeds": [],
+        "multi_seed_ready": false,
+        "smoke_runs": 0,
+        "metrics": {},
+        "diagnostic_metrics": {},
+        "metric_evidence_scope": "formal_claim_eligible_runs_only",
+        "job_ids": []
+      },
+      {
+        "id": "mpc",
+        "name": "MPC",
+        "family": "Control",
+        "action_space": "continuous",
+        "trainable": false,
+        "implementation": "scipy.optimize.minimize",
+        "description": "Receding-horizon model predictive control baseline.",
+        "runs": 1,
+        "claim_eligible_runs": 0,
+        "distinct_seeds": [],
+        "multi_seed_ready": false,
+        "smoke_runs": 0,
+        "metrics": {},
+        "diagnostic_metrics": {},
+        "metric_evidence_scope": "formal_claim_eligible_runs_only",
+        "job_ids": [
+          "rl-20260724T100238271Z"
+        ]
+      }
+    ],
+    "minimum_distinct_seeds_for_claim": 3,
+    "comparison_requires_dataset_filter": true,
+    "deterministic_controller_exception": "MPC requires one fixed-window run because it has no learned stochastic initialization",
+    "source": "persisted_chronological_holdout_evaluations",
+    "updated_at": "2026-07-25T13:15:26.474928Z"
+  },
+  "runs": [
+    {
+      "job_id": "rl-20260724T100154851Z",
+      "algorithm": "sac",
+      "implementation": "stable_baselines3.SAC",
+      "seed": 42,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:02.715457Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.091637447078509,
+          "energy_cost": 72449.12674901135,
+          "carbon_kg": 33287.32136175545,
+          "throughput_teu": 121050.20133136585,
+          "peak_kw": 3129.19385747648,
+          "delay_index_mean": 0.0009144246760997204,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33287.32136175545,
+            "std": 2093.572623957284,
+            "median": 34108.9204303767,
+            "ci_low": 31673.82897329439,
+            "ci_high": 34736.658004273006,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.0009144246760997204,
+            "std": 0.0006128150694712665,
+            "median": 0.000524008074031988,
+            "ci_low": 0.0004889714407810873,
+            "ci_high": 0.00144788871393254,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72449.12674901135,
+            "std": 4550.026093523713,
+            "median": 74261.6070618593,
+            "ci_low": 68895.52300513077,
+            "ci_high": 75581.53097714117,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3129.19385747648,
+            "std": 194.2948449057083,
+            "median": 3178.633802864174,
+            "ci_low": 2980.8163539488205,
+            "ci_high": 3269.6717333859283,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.091637447078509,
+            "std": 0.4448928527670119,
+            "median": -7.264393049398792,
+            "ci_low": -7.398251995496342,
+            "ci_high": -6.747039962204444,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 121050.20133136585,
+            "std": 9369.686599094126,
+            "median": 121754.80330808865,
+            "ci_low": 112963.65455925705,
+            "ci_high": 126918.40178627428,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:03.565641Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "dc22a3d06b6cb09d6fd13707b2ebf7ac1e20e672caaa4143d816f3cf4afa9d5f",
+        "bytes": 278574,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100204233Z",
+      "algorithm": "sac",
+      "implementation": "stable_baselines3.SAC",
+      "seed": 142,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:05.906613Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.119904288461842,
+          "energy_cost": 72440.11204244594,
+          "carbon_kg": 33214.42245954479,
+          "throughput_teu": 120970.40015428595,
+          "peak_kw": 3143.8491090636653,
+          "delay_index_mean": 0.010079614687778387,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33214.42245954479,
+            "std": 2116.6287803411396,
+            "median": 34030.90442597105,
+            "ci_low": 31432.838368700184,
+            "ci_high": 34790.37384121494,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.010079614687778387,
+            "std": 0.012914439152023944,
+            "median": 0.005849319351742924,
+            "ci_low": 0.003362556889166257,
+            "ci_high": 0.021588506196289936,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72440.11204244594,
+            "std": 4615.206531138088,
+            "median": 74260.56321316415,
+            "ci_low": 68534.3783070351,
+            "ci_high": 75863.61176642976,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3143.8491090636653,
+            "std": 190.71919615399153,
+            "median": 3233.9302798132253,
+            "ci_low": 2983.9253363810194,
+            "ci_high": 3285.6690249175517,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.119904288461842,
+            "std": 0.411380854714576,
+            "median": -7.28189382888862,
+            "ci_low": -7.429767095290641,
+            "ci_high": -6.7809145584947075,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 120970.40015428595,
+            "std": 9371.7494304398,
+            "median": 121759.4665710546,
+            "ci_low": 112980.84419772061,
+            "ci_high": 126926.14807478145,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:06.999974Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "1b09c508c0cc5bd9036e546c2425582593118cf21dfd31b01dc0834a1ee9d52e",
+        "bytes": 278575,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100207592Z",
+      "algorithm": "sac",
+      "implementation": "stable_baselines3.SAC",
+      "seed": 242,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:09.408279Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.450893641993024,
+          "energy_cost": 72402.79476407195,
+          "carbon_kg": 33306.772046538004,
+          "throughput_teu": 120086.58192507387,
+          "peak_kw": 3085.819909274217,
+          "delay_index_mean": 0.09876975214730124,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33306.772046538004,
+            "std": 2126.5985157065293,
+            "median": 34142.51842867489,
+            "ci_low": 31514.525238966606,
+            "ci_high": 34888.76944972947,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.09876975214730124,
+            "std": 0.04284998993418925,
+            "median": 0.08876656664386588,
+            "ci_low": 0.0662465389715683,
+            "ci_high": 0.13236206409950035,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72402.79476407195,
+            "std": 4602.143246229695,
+            "median": 74172.92714615018,
+            "ci_low": 68515.96866038484,
+            "ci_high": 75821.44718824743,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3085.819909274217,
+            "std": 189.89475003620626,
+            "median": 3183.866892549156,
+            "ci_low": 2915.8464067339382,
+            "ci_high": 3222.76862476801,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.450893641993024,
+            "std": 0.5480343472229432,
+            "median": -7.721884948746366,
+            "ci_low": -7.832637007152958,
+            "ci_high": -6.974915463763845,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 120086.58192507387,
+            "std": 9142.08156845087,
+            "median": 120861.61321934425,
+            "ci_low": 112179.90728746094,
+            "ci_high": 126267.58555540172,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:10.481801Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "2fe12bae2d6971d5d63670367e49ce7b3c3060de534b4b472f340f4a34abe08e",
+        "bytes": 278575,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100211160Z",
+      "algorithm": "ppo",
+      "implementation": "stable_baselines3.PPO",
+      "seed": 42,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:12.645972Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.149445914629089,
+          "energy_cost": 72368.17398809665,
+          "carbon_kg": 33303.0774461757,
+          "throughput_teu": 120963.59993379831,
+          "peak_kw": 3134.7497629508052,
+          "delay_index_mean": 0.018358216645755016,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33303.0774461757,
+            "std": 2114.7926383618324,
+            "median": 34131.18353580297,
+            "ci_low": 31676.70833414076,
+            "ci_high": 34768.08256787974,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.018358216645755016,
+            "std": 0.00542811692807089,
+            "median": 0.0196656972403363,
+            "ci_low": 0.013520546137127156,
+            "ci_high": 0.022057093628111223,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72368.17398809665,
+            "std": 4615.439729197124,
+            "median": 74155.30159325512,
+            "ci_low": 68805.59814053972,
+            "ci_high": 75552.94134264755,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3134.7497629508052,
+            "std": 192.57648421314573,
+            "median": 3202.6656258502653,
+            "ci_low": 2989.621947390808,
+            "ci_high": 3268.144323297435,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.149445914629089,
+            "std": 0.4402646495769873,
+            "median": -7.336102008453726,
+            "ci_low": -7.456933392866882,
+            "ci_high": -6.808411623102596,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 120963.59993379831,
+            "std": 9390.809394551457,
+            "median": 121654.97527086442,
+            "ci_low": 112851.74954166796,
+            "ci_high": 126823.43966875251,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:13.274846Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "a076d33c70d65290c7b1e360c91bc0872c5fd22237413e4ef40b88fc059af534",
+        "bytes": 154621,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100213947Z",
+      "algorithm": "ppo",
+      "implementation": "stable_baselines3.PPO",
+      "seed": 142,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:15.338649Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.112279865490959,
+          "energy_cost": 72381.12894870846,
+          "carbon_kg": 33307.68512371621,
+          "throughput_teu": 120994.22519015279,
+          "peak_kw": 3107.5065841002206,
+          "delay_index_mean": 0.007904753584920127,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33307.68512371621,
+            "std": 2114.0141128753344,
+            "median": 34138.09961159965,
+            "ci_low": 31523.410542228794,
+            "ci_high": 34878.77377026916,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.007904753584920127,
+            "std": 0.0013676462762582055,
+            "median": 0.008083753713748318,
+            "ci_low": 0.006887126551996957,
+            "ci_high": 0.00893408132840296,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72381.12894870846,
+            "std": 4609.412299925831,
+            "median": 74175.61727568197,
+            "ci_low": 68498.84819170185,
+            "ci_high": 75811.25044623778,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3107.5065841002206,
+            "std": 192.85392435701675,
+            "median": 3174.3402905133544,
+            "ci_low": 2948.0237557189866,
+            "ci_high": 3252.656473757106,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.112279865490959,
+            "std": 0.44544214201350496,
+            "median": -7.289761033698184,
+            "ci_low": -7.442459166660127,
+            "ci_high": -6.7349376253372855,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 120994.22519015279,
+            "std": 9364.556986823554,
+            "median": 121735.01623346795,
+            "ci_low": 112958.21321040869,
+            "ci_high": 126882.56585368732,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:16.390122Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "d7db5039d31533f92cc4f20f15502df3eb2166f1042439bf68a2e890ada0f659",
+        "bytes": 154622,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100216989Z",
+      "algorithm": "ppo",
+      "implementation": "stable_baselines3.PPO",
+      "seed": 242,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:18.398604Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.142753425417062,
+          "energy_cost": 72355.34237422048,
+          "carbon_kg": 33250.062842837804,
+          "throughput_teu": 120931.55710379392,
+          "peak_kw": 3120.2047538749716,
+          "delay_index_mean": 0.018456981785002838,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33250.062842837804,
+            "std": 2105.8855672106083,
+            "median": 34069.11215321373,
+            "ci_low": 31475.02169252875,
+            "ci_high": 34816.51071513574,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.018456981785002838,
+            "std": 0.009062783481971487,
+            "median": 0.019116774775786344,
+            "ci_low": 0.012262828920335835,
+            "ci_high": 0.025779754372980003,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72355.34237422048,
+            "std": 4561.125582640557,
+            "median": 74125.63032294356,
+            "ci_low": 68510.36750031129,
+            "ci_high": 75747.98951410959,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3120.2047538749716,
+            "std": 192.79023908439004,
+            "median": 3222.484931808623,
+            "ci_low": 2945.77208825666,
+            "ci_high": 3256.437413451432,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.142753425417062,
+            "std": 0.4585719384302098,
+            "median": -7.290502874515987,
+            "ci_low": -7.477645057234027,
+            "ci_high": -6.771855180012244,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 120931.55710379392,
+            "std": 9354.578875905203,
+            "median": 121662.0437561977,
+            "ci_low": 112867.29843297685,
+            "ci_high": 127263.76588952518,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:19.314487Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "8d30632920492d11757bb1f3e3a37549b12ff97db685ad2482a650b076831b0c",
+        "bytes": 154622,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100219912Z",
+      "algorithm": "td3",
+      "implementation": "stable_baselines3.TD3",
+      "seed": 42,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:21.464012Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.109304231932192,
+          "energy_cost": 72628.9501662462,
+          "carbon_kg": 33367.947900845604,
+          "throughput_teu": 121058.32321196554,
+          "peak_kw": 3135.7623004456195,
+          "delay_index_mean": 0.0,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33367.947900845604,
+            "std": 2099.554566371763,
+            "median": 34185.03667300432,
+            "ci_low": 31756.63591799595,
+            "ci_high": 34822.88016349462,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72628.9501662462,
+            "std": 4576.912843879288,
+            "median": 74489.39968468937,
+            "ci_low": 69036.53545130565,
+            "ci_high": 75780.27776444393,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3135.7623004456195,
+            "std": 197.78550603695854,
+            "median": 3187.13000403476,
+            "ci_low": 2982.386256431965,
+            "ci_high": 3280.958381243504,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.109304231932192,
+            "std": 0.4472416362939681,
+            "median": -7.286803452678058,
+            "ci_low": -7.417560082107973,
+            "ci_high": -6.760957575136459,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 121058.32321196554,
+            "std": 9368.550390009483,
+            "median": 121768.6420522213,
+            "ci_low": 112972.90331866266,
+            "ci_high": 126927.98317101478,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:22.632951Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "be1ad459d8e64ab13d95359371fc06f86af9fef3960d7c868966800c09777215",
+        "bytes": 294482,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100223305Z",
+      "algorithm": "td3",
+      "implementation": "stable_baselines3.TD3",
+      "seed": 142,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:24.825227Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.258531224900201,
+          "energy_cost": 72349.62158647914,
+          "carbon_kg": 33210.474681295615,
+          "throughput_teu": 120615.48407032997,
+          "peak_kw": 3159.9405288011044,
+          "delay_index_mean": 0.048682765374587086,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33210.474681295615,
+            "std": 2110.5369478161456,
+            "median": 34010.42423382053,
+            "ci_low": 31441.26776062933,
+            "ci_high": 34786.0743430878,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.048682765374587086,
+            "std": 0.019998577940035813,
+            "median": 0.04051638804174387,
+            "ci_low": 0.03357178372905693,
+            "ci_high": 0.0648892016506121,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72349.62158647914,
+            "std": 4586.94290389808,
+            "median": 74264.3818181577,
+            "ci_low": 68430.3081252219,
+            "ci_high": 75727.34651494384,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3159.9405288011044,
+            "std": 200.76522076203895,
+            "median": 3241.969681088576,
+            "ci_low": 2986.468628710058,
+            "ci_high": 3305.9794693651756,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.258531224900201,
+            "std": 0.4205158997551105,
+            "median": -7.379252955221677,
+            "ci_low": -7.570404216855705,
+            "ci_high": -6.932291414478951,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 120615.48407032997,
+            "std": 9379.95688301743,
+            "median": 121479.58851217352,
+            "ci_low": 112728.38174732469,
+            "ci_high": 126658.92626934883,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:25.673505Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "9db9c25f7fee59e779a923b1a26520e4ff46fa948b033fb60ff2e5809a9c502b",
+        "bytes": 294483,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100226358Z",
+      "algorithm": "td3",
+      "implementation": "stable_baselines3.TD3",
+      "seed": 242,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:27.875088Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -7.081516749041858,
+          "energy_cost": 71877.19519574897,
+          "carbon_kg": 33018.349858234214,
+          "throughput_teu": 120943.48903578345,
+          "peak_kw": 3149.1680557345835,
+          "delay_index_mean": 0.008683530400826762,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33018.349858234214,
+            "std": 2097.44596338088,
+            "median": 33898.01219276556,
+            "ci_low": 31226.984778551985,
+            "ci_high": 34563.61953070053,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.008683530400826762,
+            "std": 0.007552327402872695,
+            "median": 0.011611805114936756,
+            "ci_low": 0.0029286750537325236,
+            "ci_high": 0.01453310977680164,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 71877.19519574897,
+            "std": 4563.634237628726,
+            "median": 73487.67225776055,
+            "ci_low": 68101.12048731392,
+            "ci_high": 75309.53349274883,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3149.1680557345835,
+            "std": 189.7714687154637,
+            "median": 3226.789887473108,
+            "ci_low": 2987.7576617013483,
+            "ci_high": 3289.441588649154,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -7.081516749041858,
+            "std": 0.45684298049385846,
+            "median": -7.221580261509243,
+            "ci_low": -7.4290310783494835,
+            "ci_high": -6.711403142261024,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 120943.48903578345,
+            "std": 9322.414563134655,
+            "median": 121736.6647688378,
+            "ci_low": 112900.8634816648,
+            "ci_high": 127217.61870021264,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:28.876400Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "17758c870e20e38d72178653c8acdaa7e9ef03955dbbbf6b37248702b39549b4",
+        "bytes": 294483,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100229470Z",
+      "algorithm": "dqn",
+      "implementation": "stable_baselines3.DQN",
+      "seed": 42,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:30.842026Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -10.573750579856036,
+          "energy_cost": 72145.88197500531,
+          "carbon_kg": 33207.853409401745,
+          "throughput_teu": 111191.65648814202,
+          "peak_kw": 3308.97540653415,
+          "delay_index_mean": 0.9684170039079725,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33207.853409401745,
+            "std": 1952.5086162357056,
+            "median": 34032.54905444346,
+            "ci_low": 31529.630873729096,
+            "ci_high": 34624.910521792044,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.9684170039079725,
+            "std": 0.32320400275124184,
+            "median": 0.9431437119598146,
+            "ci_low": 0.7158124549422171,
+            "ci_high": 1.2365825583577645,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72145.88197500531,
+            "std": 4431.683372343016,
+            "median": 73622.56615341229,
+            "ci_low": 68485.38478795823,
+            "ci_high": 75459.057317735,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3308.97540653415,
+            "std": 198.96938220930224,
+            "median": 3390.3457361010896,
+            "ci_low": 3150.7620606126447,
+            "ci_high": 3444.9558304917146,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -10.573750579856036,
+            "std": 1.1884882915064354,
+            "median": -10.231991519349883,
+            "ci_low": -11.678160470619622,
+            "ci_high": -9.769903054992124,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 111191.65648814202,
+            "std": 12094.84791108509,
+            "median": 113926.19067382812,
+            "ci_low": 101090.0744764328,
+            "ci_high": 119913.2790747738,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:31.864969Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "dd462bb76ea49620a4dc2d619ad02bf1091a2666f5b52e73f1af8449d51efc83",
+        "bytes": 150906,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100232450Z",
+      "algorithm": "dqn",
+      "implementation": "stable_baselines3.DQN",
+      "seed": 142,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:33.892975Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -10.943179589429535,
+          "energy_cost": 72513.70299441749,
+          "carbon_kg": 33236.501541734484,
+          "throughput_teu": 114425.60281902312,
+          "peak_kw": 3485.0050716062456,
+          "delay_index_mean": 1.0576210510752453,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 33236.501541734484,
+            "std": 2284.486693469845,
+            "median": 34326.21738330234,
+            "ci_low": 31235.355283338944,
+            "ci_high": 34883.38763730207,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 1.0576210510752453,
+            "std": 0.6328829049303452,
+            "median": 1.0114238723883937,
+            "ci_low": 0.5441232145976101,
+            "ci_high": 1.5701297429447227,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 72513.70299441749,
+            "std": 5116.785747307304,
+            "median": 74793.48886915523,
+            "ci_low": 68126.05907163117,
+            "ci_high": 76271.03585141845,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3485.0050716062456,
+            "std": 33.529679795500265,
+            "median": 3500.000000421875,
+            "ci_low": 3455.0152142251764,
+            "ci_high": 3500.0000004560607,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -10.943179589429535,
+            "std": 2.5997865311252033,
+            "median": -11.266717607412197,
+            "ci_low": -12.966195667699996,
+            "ci_high": -8.70839010042248,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 114425.60281902312,
+            "std": 7035.694891341783,
+            "median": 117469.99796094894,
+            "ci_low": 108586.29342580796,
+            "ci_high": 118967.2544919777,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:34.744429Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "ac89a50adbe1465587e92384d77ef8cf160dbc06442d76942bc42d6773076012",
+        "bytes": 150907,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100235438Z",
+      "algorithm": "dqn",
+      "implementation": "stable_baselines3.DQN",
+      "seed": 242,
+      "total_steps": 64,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "RL_SMOKE_WIRING_ONLY",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": 64,
+        "training_device": "cpu",
+        "runtime": {
+          "available": true,
+          "stable_baselines3": "2.3.2",
+          "gymnasium": "0.29.1",
+          "torch": "2.2.2",
+          "device": "mps"
+        },
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:36.838807Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -14.584148950642561,
+          "energy_cost": 71396.19309404073,
+          "carbon_kg": 32788.37103429803,
+          "throughput_teu": 101152.08163676262,
+          "peak_kw": 3439.1879322688483,
+          "delay_index_mean": 2.1074428488158077,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 32788.37103429803,
+            "std": 2186.878752383891,
+            "median": 33623.86272881471,
+            "ci_low": 30941.107297862793,
+            "ci_high": 34411.990093082095,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 2.1074428488158077,
+            "std": 0.5022762866143377,
+            "median": 1.8688903974018505,
+            "ci_low": 1.7231957455818923,
+            "ci_high": 2.491689952049723,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 71396.19309404073,
+            "std": 4775.08362301746,
+            "median": 73356.45463863562,
+            "ci_low": 67302.5714431612,
+            "ci_high": 74901.16219430495,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3439.1879322688483,
+            "std": 83.28661800293155,
+            "median": 3499.9999997613063,
+            "ci_low": 3377.444799863727,
+            "ci_high": 3500.0000001460985,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -14.584148950642561,
+            "std": 2.1233634770490317,
+            "median": -14.187763644688111,
+            "ci_low": -16.19283015564728,
+            "ci_high": -12.91381732887183,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 101152.08163676262,
+            "std": 6887.918127035959,
+            "median": 103249.27258300781,
+            "ci_low": 95174.2708624363,
+            "ci_high": 105708.44526367188,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:37.579870Z"
+      },
+      "model_integrity": {
+        "artifact_id": "model.zip",
+        "sha256": "1e0d1c5b1a7bfcdc498a6c665295fc0bf4b9570c5ec9eb49dbbbef97a39da5fb",
+        "bytes": 150907,
+        "verified": true
+      }
+    },
+    {
+      "job_id": "rl-20260724T100238271Z",
+      "algorithm": "mpc",
+      "implementation": "scipy.optimize.minimize",
+      "seed": 42,
+      "total_steps": 0,
+      "episode_steps": 24,
+      "episode_hours": null,
+      "environment_version": "port_ops_v1",
+      "port_profile_id": null,
+      "port_profile": {
+        "port_code": null,
+        "calibration_status": null,
+        "control_authority": null,
+        "objectives": null
+      },
+      "observation_dimensions": null,
+      "action_dimensions": null,
+      "dataset_id": "public_port_ops_v1",
+      "dataset_sha256": "14ad4422ecea6fae33cb8d715c5e7cbff0ff7863b9d0d24d3c5459e8df4f65b6",
+      "dataset_integrity": {
+        "current_artifact_id": "public_port_ops_v1.csv",
+        "current_artifact_sha256": "926cc138af1859b6d525e24fd4b8594b2d8573b16fe1e8ed1875b6f7854eb71e",
+        "current_artifact_matches_training": false,
+        "historical_training_artifact_available": false
+      },
+      "evidence_label": "DETERMINISTIC_CONTROLLER_BASELINE",
+      "training": {
+        "render_calls": 0,
+        "total_steps_observed": null,
+        "training_device": "cpu",
+        "runtime": null,
+        "split": {
+          "train_rows": 42086,
+          "test_rows": 10522,
+          "split_method": "chronological_holdout_no_shuffle",
+          "test_ratio": 0.2
+        },
+        "completed_at": "2026-07-24T10:02:38.916390Z"
+      },
+      "evaluation": {
+        "split": "chronological_test_holdout_only",
+        "episodes": 5,
+        "metrics": {
+          "reward": -6.78923010382245,
+          "energy_cost": 69098.52444914039,
+          "carbon_kg": 31725.500368957728,
+          "throughput_teu": 121055.58752041815,
+          "peak_kw": 3023.0032136573486,
+          "delay_index_mean": 0.0003572125580897867,
+          "guardrail_violation_rate": 0.0
+        },
+        "uncertainty": {
+          "carbon_kg": {
+            "n": 5,
+            "mean": 31725.500368957728,
+            "std": 2017.098428428171,
+            "median": 32545.143577839983,
+            "ci_low": 30165.93182916096,
+            "ci_high": 33126.714972509755,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "delay_index_mean": {
+            "n": 5,
+            "mean": 0.0003572125580897867,
+            "std": 2.918671916472186e-05,
+            "median": 0.0003511504247066028,
+            "ci_low": 0.00033918268153596714,
+            "ci_high": 0.00038280340621916337,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "energy_cost": {
+            "n": 5,
+            "mean": 69098.52444914039,
+            "std": 4467.165853588133,
+            "median": 70730.16417941662,
+            "ci_low": 65654.72235591467,
+            "ci_high": 72170.93792268433,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "guardrail_violation_rate": {
+            "n": 5,
+            "mean": 0.0,
+            "std": 0.0,
+            "median": 0.0,
+            "ci_low": 0.0,
+            "ci_high": 0.0,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "peak_kw": {
+            "n": 5,
+            "mean": 3023.0032136573486,
+            "std": 186.0941655447673,
+            "median": 3093.9780393989104,
+            "ci_low": 2880.493323214761,
+            "ci_high": 3151.7119856864824,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "reward": {
+            "n": 5,
+            "mean": -6.78923010382245,
+            "std": 0.43422865493564833,
+            "median": -6.952532359235012,
+            "ci_low": -7.087571329474406,
+            "ci_high": -6.454134572727284,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          },
+          "throughput_teu": {
+            "n": 5,
+            "mean": 121055.58752041815,
+            "std": 9368.703859312074,
+            "median": 121768.6420522213,
+            "ci_low": 112969.30551993373,
+            "ci_high": 126925.12446225167,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 2000
+          }
+        },
+        "evaluation_protocol": {
+          "deterministic_policy": true,
+          "render_during_policy_execution": false,
+          "holdout": "chronological_test_only",
+          "window_start_indices": [
+            0,
+            2624,
+            5248,
+            7872,
+            10497
+          ],
+          "confidence_interval": "95% percentile bootstrap of episode means"
+        },
+        "evaluated_at": "2026-07-24T10:02:41.503215Z"
+      },
+      "model_integrity": {
+        "artifact_id": null,
+        "controller_parameters": {
+          "horizon": 6
+        },
+        "verified": true
+      }
+    }
+  ],
+  "evidence_boundary": {
+    "training_status_source": "stable_baselines3_callback_or_deterministic_mpc",
+    "training_rendering": false,
+    "evaluation_split": "chronological_test_holdout_only",
+    "production_kpi_claim": false,
+    "site_dispatch_claim": false,
+    "smoke_runs_are_not_performance_evidence": true
+  }
+}

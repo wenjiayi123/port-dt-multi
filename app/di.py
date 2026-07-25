@@ -8,11 +8,11 @@
 #   2) 保持：energy（指挥盘口径中心）/ alerts（统一预警）
 #   3) 保持：rlpanel（策略列表+仿真）/ dispatch（策略下发·演示）
 #   4) 保持：explain（策略可解释特征，SHAP-like）/ closedloop（执行与闭环）
-#   5) ⭐ 新增：compliance（合规报表：月度/季度/通用） + factors(...)（排放因子构造器）
+#   5) compliance reports and emission-factor construction
 #
 # 说明：
 #  - 适配器缺失时保持接口可诊断，但默认失败关闭，不生成展示性业务结果。
-#  - 你仍然可以保留旧版 twin.py，不影响本文件与其它服务的工作。
+#  - The legacy twin module can coexist with this dependency graph.
 # ============================================
 
 from __future__ import annotations
@@ -21,7 +21,7 @@ import os
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
-# （新增导入：消息总线 / 对象存储 / 碳因子服务）
+# Message bus, object storage, and carbon-factor services
 from app.infra.message_bus import MessageBus
 from app.infra.storage import ObjectStorage, StorageConfig
 from app.adapters.carbon_factors import CarbonFactors
@@ -82,7 +82,7 @@ def _init_forecast(telemetry) -> Any:
       - 避免你已经替换了 app/services/forecast.py，但运行时仍被 forecast_twin 覆盖
       - 便于单文件迭代预测逻辑，减少“改了没生效”的困惑
     """
-    # A. 优先走你当前直接替换的本地 forecast.py
+    # Prefer the local forecast service implementation.
     try:
         import app.services.forecast as mod  # type: ignore
 
@@ -254,7 +254,7 @@ def _init_schedule_sources() -> Any:
     否则回退到 _ScheduleFallback（返回空列表/空字典，不阻塞其它功能）。
     """
     try:
-        # 如果下一步你把 schedule_sources.py 放到了 app/adapters/ 下，这里会自动加载
+        # Load the optional external schedule-source adapter when available.
         from app.adapters.schedule_sources import ScheduleSources  # type: ignore
         return ScheduleSources()
     except Exception:
@@ -404,7 +404,7 @@ def _init_dispatch(telemetry, rlpanel, twin=None, rlsafety=None) -> Any:
                 return {"ok": False, "available": False, "reason": "dispatch estimator unavailable", "summary": {}}
 
             def dispatch(self, strategy: Dict[str, Any], operator="system", dry_run=True, **kwargs) -> Dict[str, Any]:
-                # —— 新增守护：若传入 enforce_guardrails=True，就调用 rlsafety
+                # Apply RL safety checks when guardrail enforcement is requested.
                 enforce = bool(kwargs.get("enforce_guardrails", True))
                 if enforce:
                     try:
@@ -435,7 +435,7 @@ def _init_dispatch(telemetry, rlpanel, twin=None, rlsafety=None) -> Any:
                     "status": "DRY_RUN_RECORDED",
                     "strategy_id": strategy.get("id", ""),
                     "strategy": strategy,
-                    "guardrails": guardrails_info,  # 保留这一处即可（删除原先那个占位的 guardrails）
+                    "guardrails": guardrails_info,
                     "estimate": {"delta_kWh": 0.0, "delta_carbon_kg": 0.0, "peak_reduction_kW": 0.0},
                     "notes": "dispatch fallback",
                 }
@@ -590,7 +590,7 @@ class Container:
         self.telemetry = _init_telemetry()
         # 统一消息总线 / 对象存储 / 碳因子服务
         # 大白话：这是平台“脊梁骨”三件套，服务/接口都从 DI 取它们，后续换后端只改这一处
-        # 外部数据源（TOS/AIS/天气/电价/碳价），无文件时走兜底空实现
+        # External sources use an empty fail-closed implementation when unconfigured.
         self.schedule = _init_schedule_sources()
 
         try:

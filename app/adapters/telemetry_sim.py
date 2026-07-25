@@ -13,7 +13,7 @@
 #       * 支持大小写/中文 label；id 统一小写无空格，便于 URL 路径传参
 #   - 备注：
 #       * 这是“拉式”的简化模拟：每次 get_recent_power() 都返回当前缓存的 60 点。
-#         若需要“实时增长”，可在你的 Server 里按秒新增一条（或改为 SSE push）。
+#         Streaming growth can append samples or publish them through SSE.
 # =========================================
 
 from __future__ import annotations
@@ -38,14 +38,14 @@ class TelemetrySim:
     """
     def __init__(self, seed: int | None = None) -> None:
         self._rng = random.Random(seed)
-        # ===== 资产清单（你可以按需更改名字/数量）=====
+        # Configurable simulator asset inventory
         # id 建议小写无空格；label 可包含中文，显示更友好
         self._assets: List[Dict[str, str]] = [
             {"id": "qc-01",   "label": "岸桥 QC-01"},
             {"id": "yc-01",   "label": "场桥 YC-01"},
             {"id": "agv-01",  "label": "AGV-01（无人集卡）"},
             {"id": "wh-01",   "label": "仓库 01"},
-            # 你可以继续添加：
+            # Additional simulator assets may be registered here.
             # {"id": "cs-01", "label": "充电桩 01"},
             # {"id": "ps-01", "label": "配电房 01"},
         ]

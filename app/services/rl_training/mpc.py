@@ -9,16 +9,18 @@ from scipy.optimize import minimize
 class MPCPolicy:
     """Receding-horizon control baseline over the same environment controls."""
 
-    def __init__(self, horizon: int = 6) -> None:
+    def __init__(self, horizon: int = 6, action_dim: int = 3) -> None:
         self.horizon = max(2, int(horizon))
+        self.action_dim = 5 if int(action_dim) >= 5 else 3
 
     def predict(self, observation: np.ndarray, deterministic: bool = True) -> tuple[np.ndarray, None]:
         obs = np.asarray(observation, dtype=float)
         demand_signal = float(obs[2])
         price_signal = float(obs[6])
         carbon_signal = float(obs[7])
-        soc = float((obs[9] + 1.0) / 2.0)
-        queue = float(obs[10])
+        state_offset = max(0, obs.size - 13)
+        soc = float((obs[9 + state_offset] + 1.0) / 2.0)
+        queue = float(obs[10 + state_offset])
 
         def objective(vector: np.ndarray) -> float:
             controls = vector.reshape(self.horizon, 3)
@@ -38,4 +40,6 @@ class MPCPolicy:
         bounds = [(-1.0, 1.0), (-1.0, 1.0), (-1.0, 1.0)] * self.horizon
         result = minimize(objective, np.zeros(self.horizon * 3), method="L-BFGS-B", bounds=bounds)
         action = np.asarray(result.x[:3] if result.success else np.zeros(3), dtype=np.float32)
+        if self.action_dim == 5:
+            action = np.concatenate([action, np.zeros(2, dtype=np.float32)])
         return action, None

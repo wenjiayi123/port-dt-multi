@@ -32,7 +32,7 @@ POLICY_META      = MOD_DIR / "policy_meta.json"       # 标准化统计/算法/�
 RESIDUAL_BIN     = MOD_DIR / "residual_policy.bin"    # 在线 residual 策略
 
 OFFLINE_LOG_JSONL = ART_DIR / "offline_train.jsonl"   # 历史日志（逐行追加）
-OFFLINE_SNAPSHOT  = ART_DIR / "offline_train.json"    # 最新快照（覆盖写入）  ← 新增
+OFFLINE_SNAPSHOT  = ART_DIR / "offline_train.json"    # Latest snapshot, overwritten atomically
 
 ONLINE_LOG_JSONL  = ART_DIR / "online_train.jsonl"
 DEVICE      = "cpu"
@@ -374,7 +374,7 @@ def evaluate_offline(ds: LightingDataset, policy: Policy) -> Dict[str,float]:
         "switches": int(switches)
     }
 
-# -------------------- 经济 + 奖励分解（离线策略相对规则基线） ← 新增 --------------------
+# -------------------- Offline-policy economics and reward decomposition --------------------
 @torch.no_grad()
 def economics_and_rewards_offline(ds: LightingDataset, policy: Policy) -> Dict[str,Any]:
     """
@@ -581,7 +581,7 @@ class Replay:
                 torch.tensor(d,dtype=torch.float32))
     def __len__(self): return len(self.buf)
 
-# -------------------- 离线训练（含 sleep & 写 offline_train.json） ← 关键修改 --------------------
+# -------------------- Offline training and snapshot persistence --------------------
 def _save_offline_policy(weights: Dict[str,Any], ds: LightingDataset, algo:str, step:int, score:float):
     torch.save(weights, POLICY_BIN)
     meta={
@@ -656,7 +656,7 @@ def train_offline(algo:str="iql", steps:int=30000, batch_size:int=512, seed:int=
             if it%log_every==0 or it==1:
                 pi.eval()
                 ev=evaluate_offline(ds,pi)  # 轻量 ΔkWh/峰值/违规/切换
-                econ = economics_and_rewards_offline(ds, pi)  # ← 新增：经济与奖励分解
+                econ = economics_and_rewards_offline(ds, pi)  # Economics and reward decomposition
                 # 便于快速比较的综合分数（仅用于保存最优）
                 # 以“奖励增益”为主，不再对 under_lux 做二次放大；更贴近最终目标
                 score = (econ["policy"]["rewards"]["reward_total"] - econ["baseline"]["rewards"]["reward_total"])
@@ -847,8 +847,8 @@ def main():
     ap.add_argument("--lr", type=float, default=3e-4)
     ap.add_argument("--log-every", type=int, default=500)
     ap.add_argument("--seed", type=int, default=42)
-    ap.add_argument("--sleep-every", type=int, default=0, help="每多少步休息一次（0=不休息）")    # ← 新增
-    ap.add_argument("--sleep-sec", type=int, default=0, help="每次休息秒数")                    # ← 新增
+    ap.add_argument("--sleep-every", type=int, default=0, help="每多少步休息一次（0=不休息）")
+    ap.add_argument("--sleep-sec", type=int, default=0, help="每次休息秒数")
 
     # 在线
     ap.add_argument("--train-online", action="store_true")

@@ -2,19 +2,21 @@
 
 ## 目标与边界
 
-引擎优化同一个港口运营环境中的储能功率、服务强度和柔性负荷。当前环境用于离线研究与接港前集成，不直接下发生产设备。
+引擎优化同一个港口运营环境中的储能功率、服务强度、柔性负荷、泊位优先级和堆场流量。当前环境用于离线研究与接港前集成，不直接下发生产设备。
 
-## 五个基线
+## 七个基线
 
-| ID | 类型 | 实现 | 动作空间 |
+| ID | 类型 | 实现 | v1 / v2 动作空间 |
 |---|---|---|---|
-| `sac` | RL | `stable_baselines3.SAC` | 连续 3 维 |
-| `ppo` | RL | `stable_baselines3.PPO` | 连续 3 维 |
-| `td3` | RL | `stable_baselines3.TD3` | 连续 3 维 |
-| `dqn` | RL | `stable_baselines3.DQN` | 45 个显式离散动作 |
-| `mpc` | 控制 | `scipy.optimize.minimize` | 连续 3 维 |
+| `sac` | RL | `stable_baselines3.SAC` | 连续 3 维 / 5 维 |
+| `ppo` | RL | `stable_baselines3.PPO` | 连续 3 维 / 5 维 |
+| `td3` | RL | `stable_baselines3.TD3` | 连续 3 维 / 5 维 |
+| `dqn` | RL | `stable_baselines3.DQN` | 45 / 405 个显式离散动作 |
+| `a2c` | RL | `stable_baselines3.A2C` | 连续 3 维 / 5 维 |
+| `tqc` | RL | `sb3_contrib.TQC` | 连续 3 维 / 5 维 |
+| `mpc` | 控制 | `scipy.optimize.minimize` | 3 维约束控制 / 5 维输出且新增调度量保持中性 |
 
-DQN 使用储能、服务强度和柔性负荷的有限动作格点；其余 RL 算法使用相同控制量的连续版本。MPC 使用六步滚动时域近似模型，并由与环境相同的动作屏蔽器执行 SOC、电网余量与期末 SOC 可达性投影，不训练神经网络。
+DQN 使用储能、服务强度和柔性负荷的有限动作格点；其余 RL 算法使用相同控制量的连续版本。A2C 提供同步 on-policy actor-critic 对照，TQC 提供截断分位数 critic 的分布式 off-policy 对照。MPC 使用六步滚动时域近似模型，并由与环境相同的动作屏蔽器执行 SOC、电网余量与期末 SOC 可达性投影，不训练神经网络。
 
 ## 防止数据泄漏
 
@@ -32,6 +34,12 @@ DQN 使用储能、服务强度和柔性负荷的有限动作格点；其余 RL 
 - 训练环境 `render()` 总是抛错并记录调用次数。
 - 训练产物清单记录 `render_calls_during_training`，正常值必须是 0。
 - 测试环境才允许 `record_trace=True`，第一条测试 episode 的轨迹写入 `evaluation_trajectory.json`。
+
+## 环境版本、观测与动作
+
+`port_ops_v1` 保留13维观测和3维动作，用于读取既有模型与证据。`port_ops_v2` 使用37维观测：13个基础状态、12个国际港口因素以及12个因素可用性掩码；动作扩展为BESS功率、服务强度、柔性负荷、泊位优先级和堆场流量5维建议量。
+
+缺失因素以中性值和零掩码进入网络，避免把“缺数据”混同为“观测值为零”。DQN的v2动作空间是显式有限格点，连续算法使用相同控制量的连续版本。场景包中的校准状态不是 `site_calibrated_approved` 时，安全评估不会给出现场声明资格。
 
 ## 奖励与约束
 
@@ -61,7 +69,7 @@ DQN 使用储能、服务强度和柔性负荷的有限动作格点；其余 RL 
 - `evaluation.json`：留出集聚合指标；
 - `evaluation_trajectory.json`：测试回放轨迹。
 
-`data/rl/runs` 是运行时目录，默认不提交 Git。
+`data/rl/runs` 是运行时目录，默认不提交 Git。经模型哈希和数据哈希校验的安全摘要由 `scripts.export_rl_evidence` 写入 `evidence/rl`，供全新 clone 复核；模型二进制仍需本地重跑生成。
 
 ## 主要接口
 
@@ -69,6 +77,7 @@ DQN 使用储能、服务强度和柔性负荷的有限动作格点；其余 RL 
 |---|---|---|
 | GET | `/api/rl/engine/capabilities` | 运行时、算法和数据集 |
 | GET | `/api/rl/datasets` | 可训练数据集 |
+| GET | `/api/rl/port-profiles` | 可换港场景包、目标权重和校准状态 |
 | POST | `/api/rl/datasets/upload` | CSV + 字段映射导入 |
 | POST | `/api/rl/train/start` | 启动真实训练/创建 MPC 基线 |
 | GET | `/api/rl/train/status` | 后端拥有的当前状态 |
@@ -76,7 +85,8 @@ DQN 使用储能、服务强度和柔性负荷的有限动作格点；其余 RL 
 | POST | `/api/rl/train/{job_id}/control` | pause/resume/cancel |
 | POST | `/api/rl/train/{job_id}/evaluate` | 留出集测试与轨迹生成 |
 | POST | `/api/rl/train/{job_id}/predict` | 已训练策略/MPC 的确定性控制推理，不渲染、不下发 |
-| GET | `/api/rl/train/baselines` | 五算法已评测结果登记 |
+| GET | `/api/rl/train/baselines` | 七算法已评测结果登记 |
+| GET | `/api/rl/benchmarks/summary?dataset_id=...` | 同一数据集范围内的多种子比较门禁 |
 
 ## 接港前验收
 

@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import math
+from datetime import datetime, timezone
 from typing import Any, Dict, Optional
 
 import gymnasium as gym
 import numpy as np
 from gymnasium import spaces
 
-from .datasets import NUMERIC_COLUMNS, PortDataset
+from .datasets import FACTOR_COLUMNS, NUMERIC_COLUMNS, PortDataset
+from .profiles import DEFAULT_PROFILE, validate_profile
 
 
 class PortOperationsEnv(gym.Env):
@@ -31,6 +33,9 @@ class PortOperationsEnv(gym.Env):
         seed: int = 42,
         demand_cap_kw: float = 3500.0,
         reward_weights: Optional[Dict[str, float]] = None,
+        environment_version: str = "port_ops_v1",
+        port_profile: Optional[Dict[str, Any]] = None,
+        normalization_slice: Optional[slice] = None,
         training: bool = True,
         record_trace: bool = False,
     ) -> None:
@@ -38,43 +43,84 @@ class PortOperationsEnv(gym.Env):
         self.dataset = dataset
         self.segment = dataset.values[data_slice].astype(np.float32, copy=True)
         self.segment_timestamps = list(dataset.timestamps[data_slice])
+        self.segment_factor_values = dataset.factor_values[data_slice].astype(np.float32, copy=True)
+        self.segment_factor_availability = dataset.factor_availability[data_slice].astype(np.float32, copy=True)
         if len(self.segment) < 4:
             raise ValueError("dataset slice is too short")
         self.action_mode = action_mode
+        self.environment_version = str(environment_version)
+        if self.environment_version not in {"port_ops_v1", "port_ops_v2"}:
+            raise ValueError(f"unsupported environment_version: {self.environment_version}")
+        self.port_profile = validate_profile(port_profile or DEFAULT_PROFILE)
         self.episode_steps = max(4, min(int(episode_steps), len(self.segment) - 1))
         self.training = bool(training)
         self.record_trace = bool(record_trace)
         if self.training and self.record_trace:
             raise ValueError("training environments must not collect render traces")
         self.demand_cap_kw = max(float(demand_cap_kw), 1.0)
-        base_weights = {"cost": 0.25, "carbon": 0.20, "peak": 0.20, "safety": 0.20, "delay": 0.15}
+        base_weights = dict(self.port_profile["objectives"])
         base_weights.update({k: float(v) for k, v in (reward_weights or {}).items() if k in base_weights})
         total = sum(max(0.0, v) for v in base_weights.values()) or 1.0
         self.weights = {k: max(0.0, v) / total for k, v in base_weights.items()}
-        self.bess_capacity_kwh = 2500.0
-        self.bess_power_kw = min(900.0, self.demand_cap_kw * 0.30)
-        self.step_hours = 1.0
+        assets = self.port_profile["assets"]
+        limits = self.port_profile["control_limits"]
+        self.bess_capacity_kwh = float(assets["bess_capacity_kwh"])
+        self.bess_power_kw = min(float(assets["bess_power_kw"]), self.demand_cap_kw * 0.50)
+        self.soc_min = float(limits["soc_min"])
+        self.soc_max = float(limits["soc_max"])
+        self.service_min = float(limits["service_factor_min"])
+        self.service_max = float(limits["service_factor_max"])
+        self.flexible_limit = float(limits["flexible_load_fraction"])
+        self.berth_priority_limit = float(limits["berth_priority_limit"])
+        self.yard_flow_limit = float(limits["yard_flow_limit"])
+        cadence_seconds = float(dataset_quality_cadence(dataset))
+        self.step_hours = cadence_seconds / 3600.0
         self._rng = np.random.default_rng(seed)
         self._seed = int(seed)
         # Observation scaling is fitted on the chronological training slice
         # only. Evaluation must not use held-out extrema to normalize itself.
-        normalization_train, _ = dataset.split()
+        normalization_train = normalization_slice or dataset.split()[0]
         normalization_reference = dataset.values[normalization_train].astype(
             np.float32, copy=False
         )
         self._mins = np.nanmin(normalization_reference, axis=0)
         self._maxs = np.nanmax(normalization_reference, axis=0)
         self._spans = np.maximum(self._maxs - self._mins, 1e-6)
-        self.observation_space = spaces.Box(low=-1.5, high=1.5, shape=(13,), dtype=np.float32)
+        factor_reference = dataset.factor_values[normalization_train].astype(np.float32, copy=False)
+        factor_mask_reference = dataset.factor_availability[normalization_train].astype(np.float32, copy=False)
+        self._factor_mins = np.zeros(len(FACTOR_COLUMNS), dtype=np.float32)
+        self._factor_spans = np.ones(len(FACTOR_COLUMNS), dtype=np.float32)
+        for index in range(len(FACTOR_COLUMNS)):
+            available = factor_mask_reference[:, index] > 0.5
+            if np.any(available):
+                observed = factor_reference[available, index]
+                self._factor_mins[index] = float(np.min(observed))
+                self._factor_spans[index] = max(float(np.max(observed) - np.min(observed)), 1e-6)
+        observation_size = 13 if self.environment_version == "port_ops_v1" else 13 + 2 * len(FACTOR_COLUMNS)
+        self.observation_space = spaces.Box(low=-1.5, high=1.5, shape=(observation_size,), dtype=np.float32)
         if action_mode == "discrete":
-            self._discrete_actions = np.asarray(
-                [(b, s, f) for b in (-1.0, -0.5, 0.0, 0.5, 1.0) for s in (0.75, 1.0, 1.25) for f in (-0.6, 0.0, 0.6)],
-                dtype=np.float32,
-            )
+            if self.environment_version == "port_ops_v1":
+                lattice = [
+                    (b, s, f)
+                    for b in (-1.0, -0.5, 0.0, 0.5, 1.0)
+                    for s in (self.service_min, 1.0, self.service_max)
+                    for f in (-self.flexible_limit, 0.0, self.flexible_limit)
+                ]
+            else:
+                lattice = [
+                    (b, s, f, berth, yard)
+                    for b in (-1.0, -0.5, 0.0, 0.5, 1.0)
+                    for s in (self.service_min, 1.0, self.service_max)
+                    for f in (-self.flexible_limit, 0.0, self.flexible_limit)
+                    for berth in (-self.berth_priority_limit, 0.0, self.berth_priority_limit)
+                    for yard in (-self.yard_flow_limit, 0.0, self.yard_flow_limit)
+                ]
+            self._discrete_actions = np.asarray(lattice, dtype=np.float32)
             self.action_space = spaces.Discrete(len(self._discrete_actions))
         elif action_mode == "continuous":
             self._discrete_actions = None
-            self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(3,), dtype=np.float32)
+            action_size = 3 if self.environment_version == "port_ops_v1" else 5
+            self.action_space = spaces.Box(low=-1.0, high=1.0, shape=(action_size,), dtype=np.float32)
         else:
             raise ValueError(f"unsupported action_mode: {action_mode}")
         self.trace: list[Dict[str, Any]] = []
@@ -114,11 +160,24 @@ class PortOperationsEnv(gym.Env):
     def _decode_action(self, action: Any) -> np.ndarray:
         if self.action_mode == "discrete":
             return self._discrete_actions[int(action)].copy()
-        continuous = np.asarray(action, dtype=np.float32).reshape(3)
+        action_size = 3 if self.environment_version == "port_ops_v1" else 5
+        continuous = np.asarray(action, dtype=np.float32).reshape(action_size)
         continuous = np.clip(continuous, -1.0, 1.0)
-        continuous[1] = 1.0 + 0.25 * continuous[1]
-        continuous[2] = 0.60 * continuous[2]
+        continuous[1] = (
+            1.0 + (self.service_max - 1.0) * continuous[1]
+            if continuous[1] >= 0
+            else 1.0 + (1.0 - self.service_min) * continuous[1]
+        )
+        continuous[2] = self.flexible_limit * continuous[2]
+        if action_size == 5:
+            continuous[3] *= self.berth_priority_limit
+            continuous[4] *= self.yard_flow_limit
         return continuous
+
+    def _factor_observation(self, values: np.ndarray, mask: np.ndarray) -> list[float]:
+        normalized = 2.0 * (values - self._factor_mins) / self._factor_spans - 1.0
+        normalized = np.where(mask > 0.5, normalized, 0.0)
+        return [*normalized.astype(np.float32).tolist(), *mask.astype(np.float32).tolist()]
 
     def observation_from_state(self, state: Dict[str, Any]) -> np.ndarray:
         """Encode one canonical port state using this dataset's train/test scale."""
@@ -137,11 +196,23 @@ class PortOperationsEnv(gym.Env):
         queue = max(0.0, float(state.get("queue", 0.0)))
         last_bess_kw = float(state.get("last_bess_kw", 0.0))
         progress = min(1.0, max(0.0, float(state.get("episode_progress", 0.0))))
+        factor_values = np.zeros(len(FACTOR_COLUMNS), dtype=np.float32)
+        factor_mask = np.zeros(len(FACTOR_COLUMNS), dtype=np.float32)
+        for index, column in enumerate(FACTOR_COLUMNS):
+            if state.get(column) is None:
+                continue
+            factor_values[index] = float(state[column])
+            factor_mask[index] = 1.0
         return np.asarray(
             [
                 math.sin(2 * math.pi * hour / 24),
                 math.cos(2 * math.pi * hour / 24),
                 *normalized.tolist(),
+                *(
+                    self._factor_observation(factor_values, factor_mask)
+                    if self.environment_version == "port_ops_v2"
+                    else []
+                ),
                 2.0 * soc - 1.0,
                 np.clip(queue / max(1.0, row[1] * 4.0), 0.0, 1.5),
                 last_bess_kw / self.bess_power_kw,
@@ -151,12 +222,18 @@ class PortOperationsEnv(gym.Env):
         )
 
     def describe_action(self, action: Any) -> Dict[str, float]:
-        bess, service, flexible = self._decode_action(action)
-        return {
-            "bess_kw": round(float(bess) * self.bess_power_kw, 6),
-            "service_factor": round(float(service), 6),
-            "flexible_load_command": round(float(flexible), 6),
+        control = self._decode_action(action)
+        result = {
+            "bess_kw": round(float(control[0]) * self.bess_power_kw, 6),
+            "service_factor": round(float(control[1]), 6),
+            "flexible_load_command": round(float(control[2]), 6),
         }
+        if self.environment_version == "port_ops_v2":
+            result.update(
+                berth_priority=round(float(control[3]), 6),
+                yard_flow_command=round(float(control[4]), 6),
+            )
+        return result
 
     def project_control(
         self,
@@ -187,17 +264,17 @@ class PortOperationsEnv(gym.Env):
         )
         projected_soc = float(soc)
         if bess_kw >= 0:
-            max_charge = (0.88 - projected_soc) * self.bess_capacity_kwh / (0.96 * self.step_hours)
+            max_charge = (self.soc_max - projected_soc) * self.bess_capacity_kwh / (0.96 * self.step_hours)
             bess_kw = min(bess_kw, max(0.0, max_charge))
             projected_soc += bess_kw * self.step_hours * 0.96 / self.bess_capacity_kwh
         else:
-            max_discharge = (projected_soc - 0.12) * self.bess_capacity_kwh * 0.96 / self.step_hours
+            max_discharge = (projected_soc - self.soc_min) * self.bess_capacity_kwh * 0.96 / self.step_hours
             bess_kw = -min(abs(bess_kw), max(0.0, max_discharge))
             projected_soc -= abs(bess_kw) * self.step_hours / (0.96 * self.bess_capacity_kwh)
         if initial_soc is not None and remaining_steps is not None:
             remaining_fraction = max(0.0, min(1.0, remaining_steps / self.episode_steps))
-            reachable_low = initial_soc - (initial_soc - 0.12) * remaining_fraction
-            reachable_high = initial_soc + (0.88 - initial_soc) * remaining_fraction
+            reachable_low = initial_soc - (initial_soc - self.soc_min) * remaining_fraction
+            reachable_high = initial_soc + (self.soc_max - initial_soc) * remaining_fraction
             target_soc = float(
                 np.clip(projected_soc, reachable_low, reachable_high)
             )
@@ -228,7 +305,7 @@ class PortOperationsEnv(gym.Env):
                     * self.step_hours
                     / (0.96 * self.bess_capacity_kwh)
                 )
-        return {
+        result = {
             "bess_kw": round(float(bess_kw), 6),
             "service_factor": round(float(control[1]), 6),
             "flexible_load_command": round(float(control[2]), 6),
@@ -236,17 +313,38 @@ class PortOperationsEnv(gym.Env):
             "projection_applied": abs(bess_kw - requested_bess_kw) > 1e-6,
             "requested_bess_kw": round(float(requested_bess_kw), 6),
         }
+        if self.environment_version == "port_ops_v2":
+            result.update(
+                berth_priority=round(float(control[3]), 6),
+                yard_flow_command=round(float(control[4]), 6),
+            )
+        return result
 
     def _observation(self) -> np.ndarray:
         row = self._row()
         normalized = 2.0 * (row - self._mins) / self._spans - 1.0
         idx = self._start + self._local_step
-        hour = idx % 24
+        timestamp = datetime.fromisoformat(
+            self.segment_timestamps[idx].replace("Z", "+00:00")
+        )
+        hour = (
+            timestamp.hour
+            + timestamp.minute / 60.0
+            + timestamp.second / 3600.0
+        )
         return np.asarray(
             [
                 math.sin(2 * math.pi * hour / 24),
                 math.cos(2 * math.pi * hour / 24),
                 *normalized.tolist(),
+                *(
+                    self._factor_observation(
+                        self.segment_factor_values[idx],
+                        self.segment_factor_availability[idx],
+                    )
+                    if self.environment_version == "port_ops_v2"
+                    else []
+                ),
                 2.0 * self._soc - 1.0,
                 np.clip(self._queue / max(1.0, row[1] * 4.0), 0.0, 1.5),
                 self._last_bess_kw / self.bess_power_kw,
@@ -259,6 +357,8 @@ class PortOperationsEnv(gym.Env):
         row = self._row()
         control = self._decode_action(action)
         flex_command = float(control[2])
+        berth_priority = float(control[3]) if self.environment_version == "port_ops_v2" else 0.0
+        yard_flow = float(control[4]) if self.environment_version == "port_ops_v2" else 0.0
         flex_kw = flex_command * min(250.0, 0.08 * max(row[0], 1.0))
         projected = self.project_control(
             action,
@@ -274,7 +374,50 @@ class PortOperationsEnv(gym.Env):
         # Positive BESS power charges; negative discharges. Projection enforces
         # the same SoC and conservative ramp limits used by inference.
         ramp = self.bess_power_kw
-        service_capacity = max(1.0, row[1]) * service_factor
+        factor_index = self._start + self._local_step
+        factor_values = self.segment_factor_values[factor_index]
+        factor_mask = self.segment_factor_availability[factor_index]
+        factors = {
+            name: (
+                float(factor_values[index])
+                if factor_mask[index] > 0.5
+                else None
+            )
+            for index, name in enumerate(FACTOR_COLUMNS)
+        }
+        availability = [
+            factors[name]
+            for name in (
+                "crane_availability_ratio",
+                "equipment_availability_ratio",
+                "pilot_tug_availability_ratio",
+            )
+            if factors[name] is not None
+        ]
+        resource_factor = float(np.prod(availability)) if availability else 1.0
+        congestion = factors["channel_congestion_ratio"]
+        if congestion is not None:
+            resource_factor *= max(0.2, 1.0 - 0.35 * congestion)
+        if factors["closure_flag"] is not None and factors["closure_flag"] >= 0.5:
+            resource_factor = 0.0
+        weather_limits = self.port_profile["weather_limits"]
+        weather_blocked = False
+        for factor_name, limit_name, comparison in (
+            ("wind_speed_mps", "wind_stop_mps", "high"),
+            ("visibility_km", "visibility_stop_km", "low"),
+            ("wave_height_m", "wave_stop_m", "high"),
+        ):
+            value = factors[factor_name]
+            limit = weather_limits.get(limit_name)
+            if value is None or limit is None:
+                continue
+            weather_blocked = weather_blocked or (
+                value >= float(limit) if comparison == "high" else value <= float(limit)
+            )
+        if weather_blocked:
+            resource_factor = 0.0
+        allocation_factor = max(0.6, 1.0 + 0.08 * berth_priority + 0.08 * yard_flow)
+        service_capacity = max(1.0, row[1]) * service_factor * resource_factor * allocation_factor
         incoming_work = max(0.0, row[1] + 2.0 * row[2])
         served = min(self._queue + incoming_work, service_capacity)
         self._queue = max(0.0, self._queue + incoming_work - served)
@@ -286,7 +429,7 @@ class PortOperationsEnv(gym.Env):
         # Ignore sub-mill watt floating-point residue created by the action
         # projection; engineering violations are evaluated at 1 W resolution.
         exceed_kw = max(0.0, net_kw - self.demand_cap_kw - 0.001)
-        unsafe_soc = max(0.0, 0.12 - self._soc) + max(0.0, self._soc - 0.88)
+        unsafe_soc = max(0.0, self.soc_min - self._soc) + max(0.0, self._soc - self.soc_max)
         ramp_violation = max(0.0, abs(bess_kw - self._last_bess_kw) - ramp)
         terminal_soc_error = (
             abs(self._soc - self._initial_soc)
@@ -295,6 +438,8 @@ class PortOperationsEnv(gym.Env):
         )
         safety_penalty = 50.0 * unsafe_soc + ramp_violation / max(1.0, ramp)
         safety_penalty += 50.0 * terminal_soc_error
+        if weather_blocked and service_factor > self.service_min + 1e-6:
+            safety_penalty += 1.0
         delay_index = self._queue / max(1.0, incoming_work)
         degradation = abs(bess_kw) * self.step_hours * 0.02
         # Scales are explicit engineering normalizers, not random score shaping.
@@ -329,6 +474,15 @@ class PortOperationsEnv(gym.Env):
             "guardrail_violation": violation,
             "terminal_soc_error": terminal_soc_error,
             "action_projection_applied": bool(projected["projection_applied"]),
+            "environment_version": self.environment_version,
+            "berth_priority": berth_priority,
+            "yard_flow_command": yard_flow,
+            "operational_resource_factor": resource_factor,
+            "weather_blocked": weather_blocked,
+            "factor_availability": {
+                name: bool(factor_mask[index] > 0.5)
+                for index, name in enumerate(FACTOR_COLUMNS)
+            },
             "reward_components": components,
         }
         if self.record_trace:
@@ -351,3 +505,16 @@ class PortOperationsEnv(gym.Env):
     @property
     def totals(self) -> Dict[str, float]:
         return dict(self._totals)
+
+
+def dataset_quality_cadence(dataset: PortDataset) -> float:
+    if len(dataset.timestamps) < 2:
+        return 3600.0
+    start = datetime.fromisoformat(dataset.timestamps[0].replace("Z", "+00:00"))
+    end = datetime.fromisoformat(dataset.timestamps[1].replace("Z", "+00:00"))
+    if start.tzinfo is None:
+        start = start.replace(tzinfo=timezone.utc)
+    if end.tzinfo is None:
+        end = end.replace(tzinfo=timezone.utc)
+    seconds = float((end - start).total_seconds())
+    return max(1.0, seconds)

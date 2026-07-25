@@ -6,10 +6,10 @@
 # - 这是所有服务的“共同语言”，让前后端对齐数据结构。
 # ========================
 
-from dataclasses import dataclass           # dataclass 让我们快速定义“只有字段的类”，省掉__init__/__repr__等样板
+from dataclasses import dataclass           # Compact value objects with generated init and repr methods
 from typing import List, Dict, Optional     # 类型标注工具：List/Dict/Optional 让阅读更清晰（不用也能跑）
 
-# ↓↓↓ 说明：当前示例暂未用到 Optional，你可以在扩展字段时用它（如 kW: Optional[float] = None 表示可能缺测）
+# Optional is reserved for fields that explicitly permit missing measurements.
 
 @dataclass
 class ForecastPoint:

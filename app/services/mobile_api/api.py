@@ -242,7 +242,7 @@ async def mobile_status() -> JSONResponse:
             "backend_id": "port-dt-multi",
             "frontends": ["web", "flutter_mobile"],
             "shared_backend_verified": True,
-            "algorithms": ["sac", "ppo", "td3", "dqn", "mpc"],
+            "algorithms": ["sac", "ppo", "td3", "dqn", "a2c", "tqc", "mpc"],
             "business_benchmark": {
                 "benchmark_id": business["benchmark_id"],
                 "dataset_id": business["dataset"]["dataset_id"],

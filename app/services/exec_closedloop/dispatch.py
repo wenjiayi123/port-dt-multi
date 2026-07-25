@@ -15,7 +15,7 @@
 #    - top_contributors
 #    - evidence
 # 3) 历史记录更像“上线前控制层”的审计记录，而不是只有 job_id/status。
-# 4) 新增“数据源适配口径”：
+# 4) Data-source adaptation contract:
 #    - 不急着新建很多散落 mock 文件
 #    - 先让每个执行工单都携带 source_profile / data_contract_ready
 #    - 未来真实落地时，只需要把 source_mode 从 mock 切到 real，
@@ -91,7 +91,7 @@ class DispatchService:
             self._assets = {}
 
     # -----------------------------
-    # 0) 数据源适配口径（新增）
+    # 0) Data-source adaptation contract
     # -----------------------------
     def _infer_source_profile(self, strategy: Dict[str, Any], estimate: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
         """

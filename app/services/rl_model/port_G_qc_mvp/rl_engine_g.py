@@ -353,7 +353,7 @@ def rollout_online(episodes:int=1, horizon:int=144, dt_min:int=5, seed:int=42,
 
         # 拉格朗日乘子更新（投影 >=0）
         lambdas["mask_rate"] = max(0.0, lambdas["mask_rate"] + lam_lr*(mask_rate - targets["mask_rate"]))
-        # offline 情景我们没有直接统计 thermal/sla 的数值，这里用 returns 尾部改善作为 proxy：
+        # Offline thermal and SLA values use lower-tail return improvement as an explicit proxy.
         # 如果 cvar 很差（更负），提高约束强度
         lambdas["sla_pen"]  = max(0.0, lambdas["sla_pen"]  + lam_lr*( -cvar - 0.0 ))
         # 简化 thermal：若策略 std 偏大且出现 safety_guard 次数多，则提高

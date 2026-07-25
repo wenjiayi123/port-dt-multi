@@ -15,6 +15,21 @@
 
 至少 48 行，全部数值必须有限。导入不会编造缺失列；来源字段名不一致时必须显式提交 `mapping_json`。
 
+### 可选现实因素（`port_ops_v2`）
+
+`wind_speed_mps`、`visibility_km`、`wave_height_m`、`current_speed_mps`、
+`berth_occupancy_ratio`、`yard_occupancy_ratio`、`crane_availability_ratio`、
+`equipment_availability_ratio`、`channel_congestion_ratio`、`reefer_load_kw`、
+`pilot_tug_availability_ratio` 和 `closure_flag` 可以随规范CSV导入。
+
+缺失因素不会被补造成优秀观测。v2环境为每个因素同时编码一个可用性掩码；港口场景包可把指定因素设为训练必需项或现场声明必需项。
+
+## 港口场景包
+
+`config/ports/*.json` 把换港所需的非时序参数与训练数据分离，包括港口代码、时区、货币、BESS容量、需量上限、SOC/服务/调度动作边界、目标权重、天气阈值、因素要求和校准状态。
+
+开源场景固定为 `recommendation_only`。样例中的设备参数和停工阈值不是港口批准值；真实接入必须新增一个经现场所有者批准的场景包，不能直接修改公开基准来伪装校准。
+
 ## 自带公开实例
 
 `public_port_ops_v1` 使用两类同地理口径的公开官方输入：
@@ -27,10 +42,13 @@
 三项业务 KPI。元数据将官方锚点和派生列分开记录，因此该文件只能作为
 集成/复现实例，不能称为港口生产遥测。
 
+`public_us_la_6min_v1` 使用美国交通部BTS的洛杉矶港月度TEU以及NOAA CO-OPS六分钟水位、气温和风速，形成87,459步的高频公开对照。其基础负荷、时步吞吐/到港、电价、碳因子、泊位/堆场占用和航道拥堵仍是明确派生列。原始观测与短缺口插值分别计数，详见 [数据卡](DATASET_CARD_public_us_la_6min_v1.md)。
+
 刷新固定公开数据窗口：
 
 ```bash
 python -m scripts.fetch_public_port_dataset
+python -m scripts.fetch_public_la_benchmark
 ```
 
 ## 导入港口数据

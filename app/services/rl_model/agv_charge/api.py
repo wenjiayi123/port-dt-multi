@@ -21,7 +21,7 @@ app/
  └─ services/
     └─ rl_model/
        └─ agv_charge/
-          ├─ data/                   # 你已经提供的数据样本
+          ├─ data/                   # Input data samples
           │   ├─ grid_meter.csv
           │   ├─ market_price.csv
           │   ├─ grid_ef.csv
@@ -30,9 +30,9 @@ app/
           ├─ artifacts/              # 输出/状态落地（本文件会写入）
           │   ├─ dispatch_history.jsonl
           │   └─ exec_jobs.jsonl
-          ├─ policy.bin              # 你已有的策略二进制（此处不直接用，可留作后续真实推理）
+          ├─ policy.bin              # Optional policy binary for measured inference
           ├─ policy_meta.json        # 可选：策略元信息（如无则由本文件默认生成）
-          └─ api.py                  # 本文件（新增）
+          └─ api.py                  # Module API
 """
 from __future__ import annotations
 

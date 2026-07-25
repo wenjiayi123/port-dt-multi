@@ -339,7 +339,7 @@
         <section class="advanced-section">
           <div class="advanced-section-head"><h3>基础训练参数</h3><span>Core Training</span></div>
           <div class="advanced-grid">
-            <div class="advanced-field"><label for="trainAlgorithm">算法 / Algorithm</label><select id="trainAlgorithm"><option value="sac">SAC</option><option value="ppo">PPO</option><option value="td3">TD3</option><option value="dqn">DQN</option></select><small>切换后自动显示对应算法专属参数。</small></div>
+            <div class="advanced-field"><label for="trainAlgorithm">算法 / Algorithm</label><select id="trainAlgorithm"><option value="sac">SAC</option><option value="ppo">PPO</option><option value="td3">TD3</option><option value="dqn">DQN</option><option value="a2c">A2C</option><option value="tqc">TQC</option></select><small>切换后自动显示对应算法专属参数。</small></div>
             <div class="advanced-field"><label for="trainScenario">训练场景 / Scenario</label><select id="trainScenario"><option value="mapped_dataset">当前映射数据集</option><option value="noon_peak">午间作业高峰</option><option value="night_low_carbon">夜间低碳窗口</option><option value="storm_disruption">台风扰动</option><option value="shore_power_peak">岸电接入高峰</option></select></div>
             <div class="advanced-field"><label for="trainSteps">训练步数 / Total Steps</label><input id="trainSteps" type="number" min="20000" max="5000000" step="10000" value="260000"></div>
             <div class="advanced-field"><label for="trainBatch">批次 / Batch Size</label><select id="trainBatch"><option value="64">64</option><option value="128">128</option><option value="256" selected>256</option><option value="512">512</option><option value="1024">1024</option></select></div>
@@ -413,6 +413,16 @@
             <div class="advanced-field"><label for="dqnExplorationFinal">最终探索率 / Final ε</label><input id="dqnExplorationFinal" type="number" min="0" max="1" step="0.01" value="0.05"></div>
             <div class="advanced-field"><label for="dqnExplorationFraction">探索阶段 / Exploration Fraction</label><input id="dqnExplorationFraction" type="number" min="0.01" max="1" step="0.01" value="0.15"></div>
             <div class="advanced-field"><label for="dqnTargetUpdate">目标网络更新 / Target Update</label><input id="dqnTargetUpdate" type="number" min="1" max="100000" step="1" value="1000"></div>
+          </div>
+          <div class="advanced-grid algo-panel" data-algo-panel="a2c">
+            <div class="advanced-field"><label for="a2cRolloutSteps">Rollout Steps</label><input id="a2cRolloutSteps" type="number" min="32" max="32768" step="32" value="512"></div>
+            <div class="advanced-field"><label for="a2cGaeLambda">GAE λ</label><input id="a2cGaeLambda" type="number" min="0.5" max="1" step="0.001" value="0.95"></div>
+            <div class="advanced-field"><label for="a2cValueCoef">价值损失系数 / Value Coef</label><input id="a2cValueCoef" type="number" min="0" max="5" step="0.01" value="0.5"></div>
+          </div>
+          <div class="advanced-grid algo-panel" data-algo-panel="tqc">
+            <div class="advanced-field"><label for="tqcCritics">Critic 数量 / Critics</label><input id="tqcCritics" type="number" min="1" max="10" step="1" value="2"></div>
+            <div class="advanced-field"><label for="tqcQuantiles">每 Critic 分位数 / Quantiles</label><input id="tqcQuantiles" type="number" min="5" max="100" step="1" value="25"></div>
+            <div class="advanced-field"><label for="tqcDropQuantiles">截断上部分快照 / Drop Top Quantiles</label><input id="tqcDropQuantiles" type="number" min="0" max="20" step="1" value="2"></div>
           </div>
         </section>
 
@@ -516,7 +526,9 @@
         sac:{auto_alpha:true, initial_alpha:.2, target_entropy:-4, policy_delay:1},
         ppo:{rollout_steps:2048, epochs:10, clip_range:.2, gae_lambda:.95, value_coef:.5},
         td3:{policy_noise:.2, noise_clip:.5, policy_delay:2, exploration_noise:.1},
-        dqn:{exploration_initial_eps:1.0, exploration_final_eps:.05, exploration_fraction:.15, target_update_interval:1000}
+        dqn:{exploration_initial_eps:1.0, exploration_final_eps:.05, exploration_fraction:.15, target_update_interval:1000},
+        a2c:{rollout_steps:512, gae_lambda:.95, value_coef:.5},
+        tqc:{n_critics:2, n_quantiles:25, top_quantiles_to_drop_per_net:2}
       }
     };
     let parameterSnapshot = null;
@@ -615,6 +627,8 @@
       const ppo = {...ADVANCED_DEFAULTS.algorithm_profiles.ppo, ...(merged.ppo || {})};
       const td3 = {...ADVANCED_DEFAULTS.algorithm_profiles.td3, ...(merged.td3 || {})};
       const dqn = {...ADVANCED_DEFAULTS.algorithm_profiles.dqn, ...(merged.dqn || {})};
+      const a2c = {...ADVANCED_DEFAULTS.algorithm_profiles.a2c, ...(merged.a2c || {})};
+      const tqc = {...ADVANCED_DEFAULTS.algorithm_profiles.tqc, ...(merged.tqc || {})};
       setControlValue("#sacAutoAlpha", sac.auto_alpha);
       setControlValue("#sacInitialAlpha", sac.initial_alpha);
       setControlValue("#sacTargetEntropy", sac.target_entropy);
@@ -632,6 +646,12 @@
       setControlValue("#dqnExplorationFinal", dqn.exploration_final_eps);
       setControlValue("#dqnExplorationFraction", dqn.exploration_fraction);
       setControlValue("#dqnTargetUpdate", dqn.target_update_interval);
+      setControlValue("#a2cRolloutSteps", a2c.rollout_steps);
+      setControlValue("#a2cGaeLambda", a2c.gae_lambda);
+      setControlValue("#a2cValueCoef", a2c.value_coef);
+      setControlValue("#tqcCritics", tqc.n_critics);
+      setControlValue("#tqcQuantiles", tqc.n_quantiles);
+      setControlValue("#tqcDropQuantiles", tqc.top_quantiles_to_drop_per_net);
     }
     function applyTrainingConfig(config={}){
       const merged = {...ADVANCED_DEFAULTS, ...config};
@@ -695,7 +715,9 @@
         sac:{auto_alpha:boolValue("#sacAutoAlpha"),initial_alpha:numberValue("#sacInitialAlpha",.2),target_entropy:numberValue("#sacTargetEntropy",-4),policy_delay:numberValue("#sacPolicyDelay",1)},
         ppo:{rollout_steps:numberValue("#ppoRolloutSteps",2048),epochs:numberValue("#ppoEpochs",10),clip_range:numberValue("#ppoClipRange",.2),gae_lambda:numberValue("#ppoGaeLambda",.95),value_coef:numberValue("#ppoValueCoef",.5)},
         td3:{policy_noise:numberValue("#td3PolicyNoise",.2),noise_clip:numberValue("#td3NoiseClip",.5),policy_delay:numberValue("#td3PolicyDelay",2),exploration_noise:numberValue("#td3ExplorationNoise",.1)},
-        dqn:{exploration_initial_eps:numberValue("#dqnExplorationInitial",1),exploration_final_eps:numberValue("#dqnExplorationFinal",.05),exploration_fraction:numberValue("#dqnExplorationFraction",.15),target_update_interval:numberValue("#dqnTargetUpdate",1000)}
+        dqn:{exploration_initial_eps:numberValue("#dqnExplorationInitial",1),exploration_final_eps:numberValue("#dqnExplorationFinal",.05),exploration_fraction:numberValue("#dqnExplorationFraction",.15),target_update_interval:numberValue("#dqnTargetUpdate",1000)},
+        a2c:{rollout_steps:numberValue("#a2cRolloutSteps",512),gae_lambda:numberValue("#a2cGaeLambda",.95),value_coef:numberValue("#a2cValueCoef",.5)},
+        tqc:{n_critics:numberValue("#tqcCritics",2),n_quantiles:numberValue("#tqcQuantiles",25),top_quantiles_to_drop_per_net:numberValue("#tqcDropQuantiles",2)}
       };
       const optimizerConfig = {
         name:$("#trainOptimizer").value, lr_schedule:$("#trainLrSchedule").value,

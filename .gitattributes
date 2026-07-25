@@ -4,3 +4,4 @@
 *.jpeg binary
 *.zip binary
 *.csv text eol=lf
+data/rl/datasets/public_us_la_6min_v1.csv binary -eol

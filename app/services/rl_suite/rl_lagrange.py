@@ -4,7 +4,7 @@
 # 约束 RL（CMDP）与拉格朗日乘子管理 + 目标函数打分器
 #
 # 大白话：
-#   - 把你的“目标”（电费+碳费/碳强度/能耗）和“约束”（越峰/SLA/碳强度/温度等）
+#   - Combines economic and carbon objectives with peak, SLA, intensity, and thermal constraints.
 #     在一个地方统一管理。给每条策略一个“总目标分数”，用于排序/选优。
 #   - 用拉格朗日乘子（lambda）把“约束违规”转化为惩罚项，训练/在线微调时滚动更新 lambda。
 #   - 结果可持久化到 data/objects/rl/lagrange.json，支持影子/灰度/全量切换时回滚。
@@ -112,7 +112,7 @@ class LagrangeManager:
         self.lambda_map: Dict[str, float] = {}
         self.specs: Dict[str, ConstraintSpec] = {}
 
-        # 默认约束（你可按项目覆盖）
+        # Default constraints may be overridden by the deployment profile.
         default_specs = [
             ConstraintSpec(name="feeder_peak_kw", limit= self._grid_limit_kw(), desc="馈线峰值不得超过并网限额（含N-1裕度）", deadband=5.0),
             ConstraintSpec(name="sla_delay_min", limit= 10.0, desc="作业延迟不超过10分钟（示例）", deadband=1.0),

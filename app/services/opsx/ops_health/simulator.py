@@ -154,7 +154,7 @@ def get_health() -> Dict[str, Any]:
     return {
         "score": score,                  # 前端当前使用
         "top_drifts": top3,              # 前端当前使用
-        "all": items,                    # 预留：你要做更多图表/弹层时可用
+        "all": items,                    # Complete collection for extended charts and dialogs
         "baseline_window_min": BASELINE_MIN,
         "current_window_min": CURRENT_MIN,
         "updated_at": _STATE["updated_at"],

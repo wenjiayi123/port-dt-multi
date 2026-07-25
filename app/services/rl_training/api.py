@@ -11,6 +11,7 @@ from fastapi import APIRouter, Body, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 
 from .datasets import dataset_quality_report, import_dataset, list_datasets, load_port_dataset
+from .profiles import list_profiles, load_profile
 from .trainer import TRAINING_MANAGER
 
 
@@ -26,6 +27,20 @@ async def capabilities() -> JSONResponse:
 async def datasets() -> JSONResponse:
     items = list_datasets(TRAINING_MANAGER.data_root)
     return JSONResponse({"datasets": items, "count": len(items)})
+
+
+@router.get("/port-profiles")
+async def port_profiles() -> JSONResponse:
+    items = list_profiles()
+    return JSONResponse({"profiles": items, "count": len(items)})
+
+
+@router.get("/port-profiles/{profile_id}")
+async def port_profile(profile_id: str) -> JSONResponse:
+    try:
+        return JSONResponse(load_profile(profile_id))
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @router.get("/datasets/{dataset_id}/quality")

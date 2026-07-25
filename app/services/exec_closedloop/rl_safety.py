@@ -10,7 +10,7 @@
 #
 # 真实对接：
 #   - 它读取（或生成）资产能力上限表：data/objects/config/asset_caps.json
-#   - 没有真实数据时，会根据你 Telemetry 的功率序列推导“电流/温度/SOC”的合理近似（可替换为真实点位）。
+#   - Without measured points, current, temperature, and SOC remain telemetry-derived proxies.
 #   - 将证据包写入：data/objects/audit/guard-*.json
 # ============================================
 
@@ -113,7 +113,7 @@ class RLSafetyGuard:
             try:
                 # ObjectStorage 的约定路径风格：file://./data/objects/... 已在 di 里配置
                 p = self.caps_path
-                obj = self.storage.read_json(p)  # 你现有 storage 若不支持 read_json，就走 except 写本地
+                obj = self.storage.read_json(p)  # Local-file fallback handles storage implementations without read_json.
                 if isinstance(obj, dict) and obj.get("assets"):
                     return obj
             except Exception:
@@ -345,7 +345,7 @@ class RLSafetyGuard:
         act2 = dict(act)
         act2["kW"] = round(math.copysign(kw_clipped, kw), 3)
         if pct:
-            # 百分比类动作（如照明分区调光），这里默认只做记录，不做裁剪；你可按需扩展
+            # Percentage actions are logged without clipping unless a site bound is configured.
             pass
 
         # 没有触发的规则也记一条通过项，便于前端展示“通过”率
@@ -384,8 +384,8 @@ class RLSafetyGuard:
         delta = 0.0
         for a in actions:
             kw = _safe_float(a.get("kW"), 0.0)
-            # reduce/idle 等动作：约定 reduce 的 kW 为负（降负荷），charge 为正（升负荷），视你的策略结构而定
-            # 如果前端传来的 reduce 是正数，亦可在此统一转负数（按你实际定义来）
+            # Power convention: reduction is negative and charging is positive.
+            # Frontend values are normalized to the backend power-sign convention.
             if str(a.get("cmd","")) == "reduce":
                 delta += -abs(kw)
             else:

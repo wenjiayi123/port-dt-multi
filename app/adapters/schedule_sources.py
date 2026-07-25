@@ -16,14 +16,14 @@
 #    - 若设置 PORTDT_REAL=1 且配置了 PORTDT_BASE_URL/PORTDT_API_KEY 等，即调用真实接口
 #
 # 3) 现场上线只需要：
-#    - 把 BASE_URL、API KEY 换成你们的（或电力公司/气象/海事局/AIS 服务）
+#    - Configure provider base URLs and credentials outside source control.
 #    - 如果字段名不同，仅在 _map_* 函数做一次字段映射即可
 #
 # 4) 与本项目其它模块的关系：
-#    - server.py 的 /external/* 直连本类（你上轮已添加）
+#    - The `/external/*` API delegates to this adapter.
 #    - /api/forecast/*?use_drivers=1 会把本类生成的 drivers 传给 ForecastService
 #      目前 ForecastService 只消费 "workload_boost" 规则（start,end,ratio）
-#      （未来你也可以扩展更多字段，ForecastService 那边加个小钩子即可）
+#      Additional fields require an explicit ForecastService mapping.
 # ============================================
 
 from __future__ import annotations
@@ -84,7 +84,7 @@ class ScheduleSources:
         self.simulation_enabled = os.getenv(
             "PORT_DT_ENABLE_ENGINEERING_SIMULATORS", ""
         ).strip().lower() in {"1", "true", "yes", "on"}
-        # 真实接口基础配置（按你们现场改即可；默认不生效）
+        # Live-provider configuration remains disabled until explicitly supplied.
         self.base_url = os.getenv("PORTDT_BASE_URL", "https://api.your-port.example/")
         self.api_key  = os.getenv("PORTDT_API_KEY", "")
         # 电力公司/碳价等（如需）
@@ -401,9 +401,9 @@ class ScheduleSources:
                 continue
 
         # 3) 夜间/低温/台风等也可影响（此处给示例：夜间按少量抑制，天气示例留接口）
-        # 你也可以在此叠加 weather/tide/tou 的影响
+        # Weather, tide, and time-of-use adjustments are applied at this boundary.
         #   - 夜间 00:00-06:00，非靠泊窗口：ratio ~ 0.93
-        #   - 价格峰段（若你愿意让负荷“自抑制”）：ratio ~ 0.97
+        #   - Peak-price self-curtailment reference ratio: approximately 0.97
         try:
             tou = self.tou_tariff(start.split("T")[0], port_code)
         except Exception:

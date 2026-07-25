@@ -26,7 +26,7 @@ def _try_include(modpath: str, attr: str = "router") -> None:
 # —— 在这里按名称“尝试挂载”各个插件 —— #
 _try_include("app.services.dashlets.event_bands")        # /event_bands
 
-# 预留的（以后你建好对应目录再自动挂载，不用改这里）
+# Optional modules are mounted automatically when their packages are present.
 _try_include("app.services.dashlets.action_markers")     # /action_markers
 _try_include("app.services.dashlets.calibration")        # /calibration
 _try_include("app.services.dashlets.residual_heatmap")   # /residual_heatmap

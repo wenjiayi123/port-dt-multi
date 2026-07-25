@@ -1,4 +1,4 @@
-"""Run all four RL algorithms and the MPC baseline on a disposable dataset."""
+"""Run all six RL algorithms and the MPC baseline on a disposable dataset."""
 
 from __future__ import annotations
 

@@ -24,7 +24,7 @@ from dataclasses import dataclass, asdict
 from typing import Dict, List, Tuple, Optional, Iterable, Literal
 import time
 
-# 这里调用“地基层”的时序库门面（上一版我们已新增 app/infra/tsdb.py）
+# Time-series access is delegated to the infrastructure repository facade.
 from app.infra.tsdb import TimeSeriesDB
 
 AggType = Literal["raw", "avg", "min", "max", "sum"]
@@ -176,7 +176,7 @@ class FactorRepo:
         return None
 
 
-# ========= 帮你快速自测的“烟雾测试” =========
+# Repository smoke test
 
 def _demo_smoke_test() -> dict:
     """
@@ -216,6 +216,6 @@ def _demo_smoke_test() -> dict:
 
 
 if __name__ == "__main__":
-    # 允许你直接命令行运行：python -m app.core.repositories
+    # Supports direct execution with: python -m app.core.repositories
     import json
     print(json.dumps(_demo_smoke_test(), ensure_ascii=False, indent=2))

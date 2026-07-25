@@ -23,7 +23,7 @@ _STATE: Dict[str, Any] = {
     # 发布阶段：canary（灰度中）/ stable（全量稳定）/ rollback（刚回滚）/ freeze（冻结）
     "phase": "canary",
 
-    # 版本：按模块粒度举例（你可换成统一版本号）
+    # Simulator versions are tracked at module granularity.
     "candidate": {
         "agv_charge": "v2.1",
         "yard_crane": "v1.8",
@@ -41,7 +41,7 @@ _STATE: Dict[str, Any] = {
     # 最近一次状态更新时间
     "updated_at": datetime.utcnow().isoformat(),
 
-    # ---- 港口上下文（示例：方便你后面直接接入真实数据）----
+    # Port context contract for later measured-data integration
     "port_ctx": {
         "port_id": "PORT_G",
         "terminal": "QC-YARD-A",
@@ -54,7 +54,7 @@ _STATE: Dict[str, Any] = {
         "dr_event_next": "17:00-18:00 reserve up",  # 下一次需求响应窗口
     },
 
-    # ---- 指标摘要（供你前端/作战报告使用；此组件前端暂不展示）----
+    # Metric summary for UI and operations reports
     "metrics": {
         "uptime_24h": 0.998,
         "abtest_delta_kwh": -1320.5,    # 相对基线的节电（正负均可能）
@@ -109,7 +109,7 @@ def get_status() -> Dict[str, Any]:
         "stable":    "|".join([f"{k}@{v}" for k, v in _STATE["stable"].items()]),
         "traffic_pct": _STATE["traffic_pct"],
         "updated_at": _STATE["updated_at"],
-        # 附带现场上下文（前端目前不展示，但你后续可以用）
+        # Site context is retained even when the current UI does not render it.
         "port": _STATE["port_ctx"],
         "metrics": _STATE["metrics"]
     }
@@ -144,7 +144,7 @@ def do_rollback() -> None:
     - 把 candidate 直接等于 stable，并清零流量；phase=rollback
     - 真实环境里，你可以在这里触发 CI/CD 回滚动作或写入事件总线
     """
-    # TODO 真接入(写)：触发你们的回滚管道/写事件
+    # Production integration must delegate to an approved rollback pipeline.
     _STATE["candidate"] = dict(_STATE["stable"])
     _STATE["traffic_pct"] = 0.0
     _STATE["phase"] = "rollback"

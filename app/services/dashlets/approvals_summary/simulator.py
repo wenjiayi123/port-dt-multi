@@ -7,7 +7,7 @@ def _rng(seed: Optional[int]) -> random.Random:
     return random.Random(seed if seed is not None else 662607)
 
 def _make_job_id(rng: random.Random, now: datetime) -> str:
-    # JOB-YYYYMMDD-HHMMSS-xxxx（便于你后面接真实系统）
+    # Stable job identifier compatible with external approval systems.
     ts = now.strftime("%Y%m%d-%H%M%S")
     tail = "".join(rng.choice("0123456789ABCDEF") for _ in range(6))
     return f"JOB-{ts}-{tail}"

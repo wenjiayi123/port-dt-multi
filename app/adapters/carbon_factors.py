@@ -249,6 +249,6 @@ def _smoke() -> dict:
 
 
 if __name__ == "__main__":
-    # 允许你执行：python -m app.adapters.carbon_factors
+    # Supports direct execution with: python -m app.adapters.carbon_factors
     import json
     print(json.dumps(_smoke(), ensure_ascii=False, indent=2))

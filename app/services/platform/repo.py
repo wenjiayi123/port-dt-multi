@@ -9,7 +9,7 @@ from .rl.eval_ope import cvar95, mape_from_deltas
 DATA_DIR = Path(__file__).resolve().parent / "data"
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
-# 为了可复现，固定随机种子；你可改为随时间滚动
+# A fixed seed keeps simulator output reproducible.
 _RNG = random.Random(20251105)
 
 def _read_json(path: Path, default):

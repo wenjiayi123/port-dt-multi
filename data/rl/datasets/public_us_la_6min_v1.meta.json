@@ -1,0 +1,85 @@
+{
+  "dataset_id": "public_us_la_6min_v1",
+  "title": "Los Angeles public six-minute benchmark 2021",
+  "created_at": "2026-07-25T12:49:12.392936Z",
+  "provenance_type": "public_official_measurements_plus_declared_engineering_derivatives",
+  "evidence_tier": "public_measured_enriched",
+  "owner": "port-dt-multi maintainers",
+  "timezone": "UTC",
+  "intended_use": "reproducible offline RL benchmark and port-adapter validation",
+  "license": "U.S. public domain source data; code MIT",
+  "port_profile_id": "us_la_public_benchmark_v2",
+  "environment_version": "port_ops_v2",
+  "measured_columns": [
+    "tide_m",
+    "ambient_c",
+    "wind_speed_mps"
+  ],
+  "column_treatments": {
+    "tide_m": "NOAA measured with declared short-gap linear interpolation",
+    "ambient_c": "NOAA measured with declared short-gap linear interpolation",
+    "wind_speed_mps": "NOAA measured with declared short-gap linear interpolation",
+    "throughput_teu": "BTS monthly aggregate with deterministic six-minute allocation"
+  },
+  "official_aggregate_columns": [
+    "throughput_teu"
+  ],
+  "derived_columns": [
+    "base_load_kw",
+    "throughput_teu_six_minute_distribution",
+    "vessel_arrivals",
+    "price_per_kwh",
+    "carbon_kg_per_kwh",
+    "berth_occupancy_ratio",
+    "yard_occupancy_ratio",
+    "channel_congestion_ratio",
+    "reefer_load_kw"
+  ],
+  "unavailable_factors": [
+    "visibility_km",
+    "wave_height_m",
+    "current_speed_mps",
+    "crane_availability_ratio",
+    "equipment_availability_ratio",
+    "pilot_tug_availability_ratio",
+    "closure_flag"
+  ],
+  "independent_source_observations": 262347,
+  "source_observation_counts": {
+    "water_level": 87459,
+    "air_temperature": 87438,
+    "wind": 87438,
+    "monthly_teu": 12
+  },
+  "short_gap_interpolation_counts": {
+    "water_level": 0,
+    "air_temperature": 21,
+    "wind": 21
+  },
+  "short_gap_interpolation_max_steps": 10,
+  "sources": [
+    {
+      "publisher": "U.S. Department of Transportation, Bureau of Transportation Statistics",
+      "dataset_id": "rd72-aq8r",
+      "role": "monthly_port_of_los_angeles_teu",
+      "url": "https://data.bts.gov/resource/rd72-aq8r.json?$limit=500",
+      "license_url": "https://www.usa.gov/publicdomain/label/1.0/",
+      "accessed_at": "2026-07-25"
+    },
+    {
+      "publisher": "NOAA Center for Operational Oceanographic Products and Services",
+      "station_id": "9410660",
+      "role": "verified_six_minute_water_level",
+      "url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter",
+      "accessed_at": "2026-07-25"
+    },
+    {
+      "publisher": "NOAA Center for Operational Oceanographic Products and Services",
+      "station_id": "9410840",
+      "role": "six_minute_air_temperature_and_wind",
+      "url": "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter",
+      "accessed_at": "2026-07-25"
+    }
+  ],
+  "warning": "This is a public benchmark, not terminal telemetry. Site equipment, berth, yard, tariff, carbon, call and control-limit fields require operator-approved replacement before field use."
+}

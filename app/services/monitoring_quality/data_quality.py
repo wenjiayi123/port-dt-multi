@@ -32,7 +32,7 @@ Series = List[Tuple[EpochSec, Number]]
 # 真实港口数据：默认边界
 # =========================
 # 说明：以下是“工程合理范围”示例，请按现场点表/设备标定调整。
-# key = (asset_type, point)；你也可以按具体 asset_id 做更细粒度覆盖。
+# Keyed by (asset_type, point); deployments may add asset-specific overrides.
 DEFAULT_BOUNDS: Dict[Tuple[str, str], Tuple[Optional[float], Optional[float]]] = {
     # 岸桥（Quay Crane）
     ("quay_crane", "active_power_kw"): (50.0, 2000.0),
@@ -81,7 +81,7 @@ def score_quality(
     if n == 0:
         return {"completeness": 0.0, "timeliness": 0.0, "validity": 0.0}
 
-    # Completeness：这里用“有值的数量 / 总数量”。如果你在插补前打分，也可以传未插补序列。
+    # Completeness is the finite-value count divided by the total count.
     have_values = sum(1 for _, v in resampled if isinstance(v, (int, float)) and not math.isnan(v))
     completeness = have_values / n
 
@@ -283,7 +283,7 @@ def impute_missing(
     out = [first_val if v is None else v for v in out]
 
     if method == "linear":
-        # 对连续缺口做线性插值（这时 out 中已经没有 None，但我们生成一个工作副本用于“原缺口识别”）
+        # A working mask preserves original gaps during linear interpolation.
         # 为了简单，跳过，因为上面已经 ffill；生产中可额外实现双向填充再线性融合
         pass
 

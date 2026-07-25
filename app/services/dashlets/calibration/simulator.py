@@ -17,7 +17,7 @@ def simulate_calibration(asset: str, start: datetime, end: datetime,
     备注：完全独立的模拟器，将来替换为真实源时保持字段名即可。
     """
     rng = _rng(seed)
-    # 点数：按分钟步长，最多 360 个（与你前端 6h/1min 的窗口契合）
+    # Up to 360 minute-resolution points match the six-hour UI window.
     n = max(60, min(360, int((end - start).total_seconds() // 60)))
     base = rng.uniform(40, 90)                          # 起始功率
     slope = rng.uniform(0.05, 0.25)                     # 斜率 kW/min

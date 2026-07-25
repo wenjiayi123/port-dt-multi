@@ -1,0 +1,115 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/wenjiayi123/port-dt-multi/blob/main/config/ports/port-profile.schema.json",
+  "title": "Port DT Multi port profile v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "profile_id",
+    "name",
+    "port_code",
+    "timezone",
+    "currency",
+    "calibration_status",
+    "environment_version",
+    "control_authority",
+    "assets",
+    "control_limits",
+    "objectives",
+    "factor_requirements",
+    "weather_limits",
+    "source_boundary"
+  ],
+  "properties": {
+    "profile_id": {"type": "string", "pattern": "^[A-Za-z0-9_-]{1,64}$"},
+    "name": {"type": "string", "minLength": 3},
+    "port_code": {"type": "string", "minLength": 1, "maxLength": 16},
+    "timezone": {"type": "string", "minLength": 1},
+    "currency": {"type": "string", "pattern": "^[A-Za-z]{3}$"},
+    "environment_version": {"enum": ["port_ops_v1", "port_ops_v2"]},
+    "control_authority": {"const": "recommendation_only"},
+    "calibration_status": {"type": "string", "minLength": 8},
+    "assets": {
+      "type": "object",
+      "required": ["bess_capacity_kwh", "bess_power_kw", "demand_cap_kw"],
+      "additionalProperties": false,
+      "properties": {
+        "bess_capacity_kwh": {"type": "number", "exclusiveMinimum": 0},
+        "bess_power_kw": {"type": "number", "exclusiveMinimum": 0},
+        "demand_cap_kw": {"type": "number", "exclusiveMinimum": 0}
+      }
+    },
+    "control_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "soc_min",
+        "soc_max",
+        "service_factor_min",
+        "service_factor_max",
+        "flexible_load_fraction",
+        "berth_priority_limit",
+        "yard_flow_limit"
+      ],
+      "properties": {
+        "soc_min": {"type": "number", "minimum": 0, "maximum": 1},
+        "soc_max": {"type": "number", "minimum": 0, "maximum": 1},
+        "service_factor_min": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "service_factor_max": {"type": "number", "minimum": 1},
+        "flexible_load_fraction": {"type": "number", "minimum": 0, "maximum": 1},
+        "berth_priority_limit": {"type": "number", "minimum": 0, "maximum": 1},
+        "yard_flow_limit": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "objectives": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cost", "carbon", "peak", "safety", "delay"],
+      "properties": {
+        "cost": {"type": "number", "minimum": 0},
+        "carbon": {"type": "number", "minimum": 0},
+        "peak": {"type": "number", "minimum": 0},
+        "safety": {"type": "number", "minimum": 0},
+        "delay": {"type": "number", "minimum": 0}
+      }
+    },
+    "factor_requirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_for_training", "required_for_site_claim"],
+      "properties": {
+        "required_for_training": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/factor"}},
+        "required_for_site_claim": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/factor"}}
+      }
+    },
+    "weather_limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["wind_stop_mps", "visibility_stop_km", "wave_stop_m"],
+      "properties": {
+        "wind_stop_mps": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "visibility_stop_km": {"type": ["number", "null"], "exclusiveMinimum": 0},
+        "wave_stop_m": {"type": ["number", "null"], "exclusiveMinimum": 0}
+      }
+    },
+    "source_boundary": {"type": "string", "minLength": 20}
+  },
+  "$defs": {
+    "factor": {
+      "enum": [
+        "wind_speed_mps",
+        "visibility_km",
+        "wave_height_m",
+        "current_speed_mps",
+        "berth_occupancy_ratio",
+        "yard_occupancy_ratio",
+        "crane_availability_ratio",
+        "equipment_availability_ratio",
+        "channel_congestion_ratio",
+        "reefer_load_kw",
+        "pilot_tug_availability_ratio",
+        "closure_flag"
+      ]
+    }
+  }
+}

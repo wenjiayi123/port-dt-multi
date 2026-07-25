@@ -1,0 +1,52 @@
+{
+  "profile_id": "us_la_public_benchmark_v2",
+  "name": "Los Angeles public benchmark profile v2",
+  "port_code": "USLAX",
+  "timezone": "America/Los_Angeles",
+  "currency": "USD",
+  "calibration_status": "public_benchmark_engineering_parameters_not_terminal_calibrated",
+  "environment_version": "port_ops_v2",
+  "control_authority": "recommendation_only",
+  "assets": {
+    "bess_capacity_kwh": 2500.0,
+    "bess_power_kw": 900.0,
+    "demand_cap_kw": 3500.0
+  },
+  "control_limits": {
+    "soc_min": 0.12,
+    "soc_max": 0.88,
+    "service_factor_min": 0.75,
+    "service_factor_max": 1.25,
+    "flexible_load_fraction": 0.6,
+    "berth_priority_limit": 1.0,
+    "yard_flow_limit": 1.0
+  },
+  "objectives": {
+    "cost": 0.22,
+    "carbon": 0.18,
+    "peak": 0.18,
+    "safety": 0.25,
+    "delay": 0.17
+  },
+  "factor_requirements": {
+    "required_for_training": [
+      "wind_speed_mps"
+    ],
+    "required_for_site_claim": [
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "wind_speed_mps",
+      "visibility_km",
+      "pilot_tug_availability_ratio"
+    ]
+  },
+  "weather_limits": {
+    "wind_stop_mps": null,
+    "visibility_stop_km": null,
+    "wave_stop_m": null
+  },
+  "source_boundary": "NOAA and U.S. DOT public measurements can drive the benchmark dataset. Site equipment ratings, operating limits, berth rules and weather stop thresholds must be replaced with operator-approved values before any field claim."
+}
