@@ -2,9 +2,11 @@
   if (window.__xiaoyiSpriteInstalled) return;
   window.__xiaoyiSpriteInstalled = true;
 
-  const SPRITE_VERSION = "2026-07-12-maritime-speech-v2";
-  const STORAGE_KEY = "xiaoyi_sprite_position_v1";
-  const defaultMessage = "我在这里。输入“开始训练碳排最低目标”这类指令，我会先说明参数，再带你进入 RL 面板确认。";
+  const SPRITE_VERSION = "2026-08-13-mission-control-v3";
+  // V3 resets legacy drag coordinates that may place the assistant over the
+  // realtime control rail after the dashboard layout upgrade.
+  const STORAGE_KEY = "xiaoyi_sprite_position_v3";
+  const defaultMessage = "我会先读取孪生、预测、模型和漂移证据，再帮你研判态势、解释策略、分诊告警或准备交接。";
 
   function isRlTrainingCommand(text){
     const q = String(text || "").replace(/\s+/g, "");
@@ -42,6 +44,32 @@
     return Math.max(min, Math.min(max, value));
   }
 
+  function overlapsProtectedNavigation(root){
+    const nav = document.querySelector(".nav-shell");
+    if(!nav) return false;
+    const a = root.getBoundingClientRect();
+    const b = nav.getBoundingClientRect();
+    const padding = 8;
+    return a.left < b.right + padding
+      && a.right > b.left - padding
+      && a.top < b.bottom + padding
+      && a.bottom > b.top - padding;
+  }
+
+  function restoreSafeDock(root){
+    root.style.removeProperty("left");
+    root.style.removeProperty("top");
+    root.style.removeProperty("right");
+    root.style.removeProperty("bottom");
+    localStorage.removeItem(STORAGE_KEY);
+  }
+
+  function protectNavigationFromStoredPosition(root){
+    window.requestAnimationFrame(()=>{
+      if(overlapsProtectedNavigation(root)) restoreSafeDock(root);
+    });
+  }
+
   function createStyle(){
     const style = document.createElement("style");
     style.id = "xiaoyi-sprite-style";
@@ -68,6 +96,8 @@
       .xiaoyi-sprite-sub{font-size:12px;color:#94b8dd;line-height:1.55;margin-top:3px}
       .xiaoyi-sprite-close{width:28px;height:28px;border-radius:9px;border:1px solid rgba(148,163,184,.22);background:#0b1426;color:#cfe0ff;cursor:pointer;font-weight:900}
       .xiaoyi-sprite-log{margin-top:10px;padding:10px;border-radius:12px;border:1px solid rgba(148,163,184,.16);background:rgba(9,20,38,.76);font-size:12px;line-height:1.6;color:#cfe0ff;min-height:54px;white-space:pre-line}
+      .xiaoyi-sprite-engine{display:flex;gap:6px;align-items:center;margin-top:9px;color:#86efac;font-size:10px;font-weight:850}.xiaoyi-sprite-engine::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 9px currentColor}.xiaoyi-sprite-engine.warn{color:#fbbf24}
+      .xiaoyi-sprite-missions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}.xiaoyi-sprite-mission{min-height:34px;border:1px solid rgba(96,165,250,.24);border-radius:9px;background:#0b1a30;color:#cfe8ff;font-size:11px;font-weight:800;cursor:pointer}.xiaoyi-sprite-mission:hover{border-color:#22d3ee;color:#fff}
       .xiaoyi-sprite-form{display:grid;gap:8px;margin-top:10px}
       .xiaoyi-sprite-input{width:100%;min-height:72px;resize:vertical;border:1px solid rgba(96,165,250,.30);border-radius:12px;background:#07111f;color:#eaf2ff;padding:10px;outline:none;font:inherit;font-size:13px;line-height:1.45}
       .xiaoyi-sprite-input:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.16)}
@@ -79,7 +109,7 @@
       @keyframes xiaoyiCharacterIdle{0%,100%{transform:translateY(0) rotate(-.4deg) scale(1)}50%{transform:translateY(-6px) rotate(.6deg) scale(1.015)}}
       @keyframes xiaoyiSpeechGlow{0%,100%{box-shadow:0 16px 38px rgba(0,0,0,.34),inset 0 1px 0 rgba(143,225,255,.12),0 0 14px rgba(14,165,233,.10)}50%{box-shadow:0 18px 42px rgba(0,0,0,.38),inset 0 1px 0 rgba(143,225,255,.16),0 0 23px rgba(14,165,233,.22)}}
       @keyframes xiaoyiSpeechWave{0%,100%{transform:scaleY(.55);opacity:.55}50%{transform:scaleY(1);opacity:1}}
-      @media(max-width:720px){.xiaoyi-sprite-root{right:16px;bottom:16px}.xiaoyi-sprite-orb{width:82px;height:118px}.xiaoyi-sprite-speech{right:60px;top:-25px;width:190px;min-height:82px;padding:12px 14px}.xiaoyi-sprite-speech strong{font-size:14px}.xiaoyi-sprite-speech small{font-size:11px}.xiaoyi-sprite-panel{bottom:128px}}
+      @media(max-width:720px){.xiaoyi-sprite-root{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}.xiaoyi-sprite-orb{width:76px;height:108px}.xiaoyi-sprite-speech{display:none}.xiaoyi-sprite-panel{position:fixed;left:12px;right:12px;bottom:calc(126px + env(safe-area-inset-bottom));width:auto;max-height:calc(100dvh - 154px - env(safe-area-inset-top));overflow:auto;overscroll-behavior:contain}.xiaoyi-sprite-actions{display:grid;grid-template-columns:1fr 1fr}.xiaoyi-sprite-btn{min-height:42px}.xiaoyi-sprite-input{font-size:16px}}
       @media(prefers-reduced-motion:reduce){.xiaoyi-sprite-character,.xiaoyi-sprite-speech,.xiaoyi-sprite-wave i{animation:none}}
     `;
     document.head.appendChild(style);
@@ -95,18 +125,27 @@
         <div class="xiaoyi-sprite-head">
           <div>
             <div class="xiaoyi-sprite-title">小懿AI · 随身助手</div>
-            <div class="xiaoyi-sprite-sub">可拖动，随时输入命令。</div>
+            <div class="xiaoyi-sprite-sub">可拖动 · 运行证据先于回答</div>
           </div>
           <button class="xiaoyi-sprite-close" type="button" aria-label="收起小懿AI">×</button>
         </div>
         <div class="xiaoyi-sprite-log">${defaultMessage}</div>
+        <div class="xiaoyi-sprite-engine warn">正在校验真实小懿调用链</div>
+        <div class="xiaoyi-sprite-missions">
+          <button type="button" class="xiaoyi-sprite-mission" data-mission="situation">当前态势</button>
+          <button type="button" class="xiaoyi-sprite-mission" data-mission="forecast">未来风险</button>
+          <button type="button" class="xiaoyi-sprite-mission" data-mission="strategy">策略解释</button>
+          <button type="button" class="xiaoyi-sprite-mission" data-mission="triage">告警分诊</button>
+          <button type="button" class="xiaoyi-sprite-mission" data-mission="handoff">交接班</button>
+          <button type="button" class="xiaoyi-sprite-mission" data-mission="dry_run">执行预演</button>
+        </div>
         <form class="xiaoyi-sprite-form">
-          <textarea class="xiaoyi-sprite-input" placeholder="例如：小懿，开始训练碳排最低目标"></textarea>
+          <textarea class="xiaoyi-sprite-input" placeholder="例如：小懿，为什么当前策略被漂移门阻断？"></textarea>
           <div class="xiaoyi-sprite-actions">
             <button class="xiaoyi-sprite-btn" type="submit">执行命令</button>
             <button class="xiaoyi-sprite-btn secondary" type="button" data-open-full>打开完整问答</button>
           </div>
-          <div class="xiaoyi-sprite-hint">RL 训练会先进入人工确认，不会直接生产执行。</div>
+          <div class="xiaoyi-sprite-hint">小懿只能解释、导航、预演和准备交接；无生产控制权。</div>
         </form>
       </div>
       <button class="xiaoyi-sprite-orb" type="button" aria-label="打开小懿海事助手">
@@ -178,7 +217,11 @@
       dragMode = "";
       if(moved){
         const box = root.getBoundingClientRect();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({x: box.left, y: box.top}));
+        if(overlapsProtectedNavigation(root)){
+          restoreSafeDock(root);
+        }else{
+          localStorage.setItem(STORAGE_KEY, JSON.stringify({x: box.left, y: box.top}));
+        }
         setTimeout(()=>{ moved = false; }, 0);
       }
     }
@@ -223,6 +266,32 @@
     window.location.assign(url.toString());
   }
 
+  function openMission(mission){
+    const url = new URL("/ops-copilot", window.location.origin);
+    url.searchParams.set("mission", mission || "situation");
+    url.searchParams.set("auto", "1");
+    url.searchParams.set("from", "xiaoyi_sprite");
+    window.location.assign(url.toString());
+  }
+
+  async function refreshEngineStatus(root){
+    const badge = root.querySelector(".xiaoyi-sprite-engine");
+    if(!badge) return;
+    try{
+      const response = await fetch("/api/copilot/llm/status", {cache:"no-store"});
+      if(!response.ok) throw new Error(String(response.status));
+      const data = await response.json();
+      const ready = !!data.online && !!data.chat_capable;
+      badge.classList.toggle("warn", !ready);
+      badge.textContent = ready
+        ? `真实小懿可调用 · ${data.base_url || "local"}`
+        : `小懿不可达 · 后端证据兜底`;
+    }catch(_){
+      badge.classList.add("warn");
+      badge.textContent = "调用链未校验 · 后端证据兜底";
+    }
+  }
+
   function isSailingAction(data){
     const id = data?.will_execute?.action_id || data?.action?.id || "";
     return data?.action?.linked_system === "sailing_simulator"
@@ -251,7 +320,7 @@
     const log = root.querySelector(".xiaoyi-sprite-log");
     const command = (input?.value || "").trim();
     if(!command){
-      log.textContent = "你可以直接说：小懿，开始训练碳排最低目标。";
+      log.textContent = "你可以直接点上方六类任务，或说：小懿，为什么当前策略不能进入生产？";
       return;
     }
     submit.disabled = true;
@@ -267,6 +336,11 @@
       }
       const data = await postAction(command);
       const openUrl = data?.will_execute?.open_url;
+      if(data?.action?.category === "xiaoyi_mission" && openUrl){
+        log.textContent = `已匹配：${data?.action?.label || "小懿运营任务"}。\n正在打开带孪生上下文和调用证明的任务工作台。`;
+        window.setTimeout(()=>window.location.assign(openUrl), 700);
+        return;
+      }
       if(isHubAction(data)){
         log.textContent = `已匹配动作：${data?.will_execute?.action_label || data?.action?.label || "项目联动动作"}。\n我会打开“项目联动中枢”，先展示接口、按钮和风险，再由你确认是否执行。`;
         window.setTimeout(()=>openIntegrationHub(command, data), 900);
@@ -294,12 +368,15 @@
     const orb = root.querySelector(".xiaoyi-sprite-orb");
     const form = root.querySelector(".xiaoyi-sprite-form");
     applyStoredPosition(root);
+    protectNavigationFromStoredPosition(root);
     installDrag(root, orb);
     root.querySelector(".xiaoyi-sprite-close")?.addEventListener("click", ()=>root.classList.remove("open"));
     root.querySelector("[data-open-full]")?.addEventListener("click", ()=>{
       const command = (root.querySelector(".xiaoyi-sprite-input")?.value || "").trim();
       openFullQuestion(command);
     });
+    root.querySelectorAll("[data-mission]").forEach(button => button.addEventListener("click", ()=>openMission(button.dataset.mission)));
+    refreshEngineStatus(root);
     form?.addEventListener("submit", (ev)=>{
       ev.preventDefault();
       handleCommand(root);
@@ -312,6 +389,7 @@
       root.style.top = `${y}px`;
       root.style.right = "auto";
       root.style.bottom = "auto";
+      if(overlapsProtectedNavigation(root)) restoreSafeDock(root);
     });
   }
 

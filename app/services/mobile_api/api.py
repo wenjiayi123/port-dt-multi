@@ -19,7 +19,7 @@ from app.services.mobile_api.workflow import (
     MobileWorkflowStore,
     utc_now,
 )
-from app.services.rl_training.trainer import TRAINING_MANAGER
+from app.services.rl_training.trainer import ALGORITHMS, TRAINING_MANAGER
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -242,7 +242,7 @@ async def mobile_status() -> JSONResponse:
             "backend_id": "port-dt-multi",
             "frontends": ["web", "flutter_mobile"],
             "shared_backend_verified": True,
-            "algorithms": ["sac", "ppo", "td3", "dqn", "a2c", "tqc", "mpc"],
+            "algorithms": list(ALGORITHMS),
             "business_benchmark": {
                 "benchmark_id": business["benchmark_id"],
                 "dataset_id": business["dataset"]["dataset_id"],

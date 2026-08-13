@@ -1,0 +1,10 @@
+{
+  "schema": "port-dt-yard-crane-latest-pointer.v1",
+  "run_id": "yard-crane-v3-safe-20260813T120000Z",
+  "status": "passed",
+  "report_path": "evidence/v3/yard_crane/runs/yard-crane-v3-safe-20260813T120000Z/report.json",
+  "report_sha256": "259f0872bae886214f5ff8d9787e33f52f0b5fdfe8dfd368820f51e9079b2ff4",
+  "model_path": "evidence/v3/yard_crane/runs/yard-crane-v3-safe-20260813T120000Z/seed_261/selected_model.json",
+  "model_sha256": "63f48c979129d7c2a509d318070f78eebf39e164682dbbcdf5741294252f5c6b",
+  "updated_at": "2026-08-13T03:37:41.012746Z"
+}

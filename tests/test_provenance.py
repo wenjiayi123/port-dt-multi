@@ -34,8 +34,11 @@ class AdapterProvenanceTests(unittest.TestCase):
     def test_demo_esg_and_unverified_compliance_are_blocked(self):
         summary = get_summary(None)
         compliance = get_compliance_timeseries("CNSHA", 2024)
-        self.assertFalse(summary["available"])
-        self.assertEqual(summary["_source"], "esg.unavailable")
+        self.assertTrue(summary["available"])
+        self.assertFalse(summary["audit_ready"])
+        self.assertEqual(summary["_source"], "esg.v3_public_offline_evidence")
+        self.assertGreater(summary["policy_avoided_co2_ton"], 0)
+        self.assertIsNone(summary["incidents_12m"])
         self.assertFalse(compliance["available"])
         self.assertEqual(compliance["items"], [])
 
@@ -51,9 +54,16 @@ class AdapterProvenanceTests(unittest.TestCase):
         self.assertFalse(service.drills()["available"])
         self.assertFalse(service.contracts()["available"])
 
-    def test_sample_trust_and_multiport_snapshots_are_blocked(self):
-        self.assertFalse(get_badge()["available"])
-        self.assertFalse(MultiportService().get_summary()["available"])
+    def test_sample_trust_is_replaced_by_hash_verified_v3_evidence_and_multiport_sample_is_blocked(self):
+        badge = get_badge()
+        self.assertTrue(badge["available"])
+        self.assertEqual(badge["evaluation_kind"], "chronological_blind_test_3_seeds")
+        self.assertFalse(badge["meta"]["production_authority"])
+        multiport = MultiportService().get_summary()
+        self.assertFalse(multiport["available"])
+        self.assertTrue(multiport["readiness_available"])
+        self.assertEqual(multiport["counts"]["public_benchmark_profiles"], 3)
+        self.assertIsNone(multiport["counts"]["production_deployments"])
 
     def test_rlops_uses_persisted_evaluations_and_labels_non_ope(self):
         service = RLOpsService()

@@ -1,0 +1,10 @@
+{
+  "schema": "port-dt-hvac-failed-run.v1",
+  "run_id": "hvac-v3-safe-20260813T090000Z",
+  "status": "failed_validation_gate",
+  "failed_seed": 53,
+  "observed_validation_cooling_satisfaction_rate_range": [0.9323, 0.9525],
+  "reason": "The service calculation coupled occupancy risk to the CHWS high-load threshold while the safety projector did not; boundary-valid actions were therefore classified inconsistently.",
+  "resolution": "The successor aligns CHWS risk with PLR/capacity and SAT risk with load/occupancy, without loosening any setpoint, ramp, humidity or service constraint.",
+  "promoted": false
+}

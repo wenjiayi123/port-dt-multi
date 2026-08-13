@@ -1,0 +1,165 @@
+{
+  "schema": "port-dt-v32-value-improvement.v1",
+  "version": "V3.2",
+  "generated_at": "2026-08-13T08:56:00Z",
+  "policy": {
+    "historical_metrics_preserved": true,
+    "candidate_selection_uses_validation_only": true,
+    "forward_challenge_used_for_tuning": false,
+    "production_authority": false,
+    "rule": "A larger number is never promoted unless the persisted model, fixed evaluation window and safety gate support it. Failed candidates remain append-only evidence."
+  },
+  "forward_public_data": {
+    "dataset_id": "public_cn_sha_forward_2026m05_v1",
+    "rows": 3624,
+    "start_at": "2026-01-01T00:00:00Z",
+    "end_at": "2026-05-31T23:00:00Z",
+    "sha256": "616fe7cde24695f0d19118c64d1e5c534f9adee47a886b33b6003e7e372bb06a",
+    "independent_source_observations": 3628,
+    "official_reporting_periods": 4,
+    "public_reanalysis_hours": 3624,
+    "official_cumulative_teu_10000": [941, 1411, 1896, 2375],
+    "measured_terminal_columns": [],
+    "boundary": "MOT throughput is Shanghai-port aggregate; weather/marine values are public reanalysis/model output; terminal load, tariff, carbon and equipment fields are declared engineering derivatives."
+  },
+  "modules": {
+    "yard_lighting": {
+      "version": "V3.2",
+      "status": "retained_constraint_ceiling",
+      "status_cn": "保留V3.1·约束边界",
+      "decision": "不重新训练、不晋级。当前演员在固定验证集与安全教师的成本差仅0.000027个百分点；继续调暗会增加分区照度投影依赖，不能形成可信增益。",
+      "champion_run_id": "yard-lighting-v3-safe-20260813T130000Z",
+      "champion_metrics": {
+        "cost_reduction_percent": 1.7700533881862766,
+        "energy_reduction_percent": 2.1748056343136315,
+        "peak_reduction_percent": 1.2070646593711123,
+        "carbon_reduction_percent": 2.1746986993649315,
+        "minimum_lux_compliance_percent": 100.0,
+        "critical_lux_compliance_percent": 100.0,
+        "annualized_engineering_scenario_savings_cny": 55837.52567570038
+      },
+      "constraint_boundary_audit": {
+        "selected_actor_validation_cost_cny": 2734.0817430612065,
+        "safe_teacher_validation_cost_cny": 2734.080992597483,
+        "actor_gap_to_teacher_percent": 0.00002744848178743687,
+        "under_lux_zone_steps": 0.0,
+        "claim_eligible": false
+      },
+      "evidence_paths": [
+        "evidence/v3/yard_lighting/runs/yard-lighting-v3-safe-20260813T130000Z/report.json"
+      ]
+    },
+    "hvac": {
+      "version": "V3.2",
+      "status": "candidate_rejected_strict_peak_gate",
+      "status_cn": "候选未晋级·峰值门差0.027pp",
+      "decision": "650 Pa低负荷静压候选提高了成本、能耗和碳收益，但峰值改善1.9728%未达到预先设定的2.0%门槛；V3.1冠军保持不变。",
+      "candidate_run_id": "hvac-v32-value-20260813T083500Z",
+      "training": {
+        "algorithm": "constrained_model_predictive_teacher_actor_distillation",
+        "seeds": [59, 159, 259],
+        "samples_per_seed": 6912,
+        "optimizer_updates_per_seed": 2160,
+        "render_calls": 0,
+        "converged_seed_rate": 1.0
+      },
+      "champion_v31": {
+        "cost_reduction_percent": 2.698092728242669,
+        "energy_reduction_percent": 2.86228473765593,
+        "peak_reduction_percent": 1.9836497976088558,
+        "carbon_reduction_percent": 2.859589596767663,
+        "annualized_engineering_scenario_savings_cny": 105413.07345466787
+      },
+      "candidate_v32": {
+        "cost_reduction_percent": 3.262308142185102,
+        "energy_reduction_percent": 3.5527041459991313,
+        "peak_reduction_percent": 1.972786594650587,
+        "carbon_reduction_percent": 3.548804380690367,
+        "cooling_satisfaction_percent": 100.0,
+        "annualized_engineering_scenario_savings_cny": 127456.67494085823,
+        "guardrail_violation_rate": 0.0,
+        "claim_eligible": false
+      },
+      "delta_vs_champion_percentage_points": {
+        "cost": 0.5642154139424331,
+        "energy": 0.6904194083432014,
+        "peak": -0.010863202958268925,
+        "carbon": 0.689214783922704
+      },
+      "evidence_paths": [
+        "evidence/v3/hvac/runs/hvac-v32-value-20260813T083500Z/report.json",
+        "config/hvac_v32.json"
+      ]
+    },
+    "shore_bess": {
+      "version": "V3.2",
+      "status": "balanced_candidate_rejected",
+      "status_cn": "综合候选拒绝·保留经济冠军",
+      "decision": "三种子各30,000个真实PPO环境步均未同时满足成本、碳、峰值非劣门；不把碳回退包装成综合收益。",
+      "candidate_run_id": "shore-bess-v32-balanced-20260813T084500Z",
+      "training": {
+        "algorithm": "Constrained BC warm-start + PPO balanced safe policy improvement",
+        "seeds": [43, 143, 243],
+        "environment_steps_per_seed": 30000,
+        "total_environment_steps": 90000,
+        "render_calls": 0,
+        "validation_admitted_seeds": 0
+      },
+      "retained_champion_2026_forward_range": {
+        "cost_reduction_percent": [0.6812398575001132, 0.7023654918366811],
+        "peak_reduction_percent": [1.2591639660812344, 1.333953747974995],
+        "carbon_reduction_percent": [-0.2188027135878211, -0.21100990178449305],
+        "annualized_engineering_scenario_savings_cny": [1077170.8850747244, 1110574.5651230284],
+        "annualized_engineering_scenario_carbon_reduction_t": [-253.13147510912347, -244.11602043455213],
+        "claim_eligible": false
+      },
+      "landing_decision": "Only the economic/peak profile is admitted for public offline comparison. Carbon and balanced profiles remain blocked until authorized marginal-carbon, berth meter, BMS and settlement data are available.",
+      "evidence_paths": [
+        "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/report.json",
+        "config/shore_bess_v32_balanced.json"
+      ]
+    },
+    "bess_energy": {
+      "version": "V3.2",
+      "status": "grid_only_forward_pass",
+      "status_cn": "纯电网侧前向通过·3/3种子",
+      "decision": "新增无DR/备用收入的保守策略档案。验证选模和2026前向窗口均要求成本、碳、峰值同时非劣，3/3种子通过；作为更可信的落地基线，不覆盖历史工程事件场景。",
+      "run_id": "bess-energy-v32-grid-only-balanced-20260813T090000Z",
+      "training": {
+        "algorithm": "Constrained grid-only BC actor without market revenue",
+        "seeds": [71, 171, 271],
+        "samples_per_seed": 26880,
+        "total_optimizer_updates": 50400,
+        "render_calls": 0,
+        "validation_selected_seeds": 3,
+        "forward_admitted_seeds": 3
+      },
+      "forward_2026_per_seed": [
+        {"seed": 71, "cost_reduction_percent": 0.010870742867280157, "carbon_reduction_percent": 0.008995219969750862, "peak_reduction_percent": 0.49341538342319796, "annualized_engineering_scenario_savings_cny": 17191.018601641357, "annualized_engineering_scenario_carbon_reduction_t": 10.405303617601914},
+        {"seed": 171, "cost_reduction_percent": 0.03564937382171412, "carbon_reduction_percent": 0.005807188745956516, "peak_reduction_percent": 0.2794172364147628, "annualized_engineering_scenario_savings_cny": 56376.00447257086, "annualized_engineering_scenario_carbon_reduction_t": 6.717519112328284},
+        {"seed": 271, "cost_reduction_percent": 0.014572598608360547, "carbon_reduction_percent": 0.022461016155286437, "peak_reduction_percent": 0.03784299392419178, "annualized_engineering_scenario_savings_cny": 23045.14206702585, "annualized_engineering_scenario_carbon_reduction_t": 25.98198748241285}
+      ],
+      "forward_range": {
+        "cost_reduction_percent": [0.010870742867280157, 0.03564937382171412],
+        "carbon_reduction_percent": [0.005807188745956516, 0.022461016155286437],
+        "peak_reduction_percent": [0.03784299392419178, 0.49341538342319796],
+        "annualized_engineering_scenario_savings_cny": [17191.018601641357, 56376.00447257086],
+        "reserve_revenue_cny": 0.0,
+        "dr_revenue_cny": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "claim_eligible": false
+      },
+      "champion_model": {
+        "seed": 171,
+        "path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_171/selected_model.zip",
+        "sha256": "9f1c866ca9163313beefb7c979ea63e79aa2f0326d70798ffd7ae987d72b0d38"
+      },
+      "evidence_paths": [
+        "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/report.json",
+        "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/forward_challenge_2026.json",
+        "evidence/v3/bess_energy/latest_grid_only.json",
+        "config/bess_energy_v32_grid_only.json"
+      ]
+    }
+  }
+}

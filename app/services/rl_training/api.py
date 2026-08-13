@@ -117,8 +117,18 @@ async def evaluate_training(job_id: str, payload: Optional[Dict[str, Any]] = Bod
 
 
 @router.get("/benchmarks/summary")
-async def benchmark_summary(dataset_id: Optional[str] = None) -> JSONResponse:
-    return JSONResponse(TRAINING_MANAGER.benchmark_summary(dataset_id))
+async def benchmark_summary(
+    dataset_id: Optional[str] = None,
+    environment_version: Optional[str] = None,
+    business_profile_id: Optional[str] = None,
+) -> JSONResponse:
+    return JSONResponse(
+        TRAINING_MANAGER.benchmark_summary(
+            dataset_id,
+            environment_version=environment_version,
+            business_profile_id=business_profile_id,
+        )
+    )
 
 
 @router.get("/models")

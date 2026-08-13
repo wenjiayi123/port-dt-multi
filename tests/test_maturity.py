@@ -19,7 +19,7 @@ from app.services.rl_training.safety import assess_recommendation
 from app.services.rl_training.statistics import bootstrap_summary
 from app.services.rl_training.trainer import TrainingManager
 from app.services.twin_schema.service import TwinSchemaService
-from app.operations import configure_operations, cors_origins
+from app.operations import RATE_LIMITER, configure_operations, cors_origins, readiness_report
 from app.adapters import actuators as actuator_module
 from app.adapters.actuators import Command, IdempotencyStore, PortSouthboundGateway
 
@@ -193,6 +193,17 @@ class RuntimeHardeningTests(unittest.TestCase):
         self.assertIn("window.__markOptionalModuleUnavailable", html)
         self.assertIn("等待接入港口 · 旧版实验制品未启用", html)
         self.assertIn("现场曲线须等待港口适配器接入", html)
+        self.assertIn("max-height:min(520px, calc(100vh - 300px))", html)
+        self.assertIn("overflow-y:auto", html)
+        self.assertIn("TWIN_POWER_DEVICE_CACHE", html)
+        self.assertIn("TWIN_REFRESH_IN_FLIGHT", html)
+        for route in ("/ops-copilot", "/v3", "/rl-panel", "/integration-hub", "/rl_future/rl_future_panel.html", "/docs"):
+            self.assertIn(f'href="{route}" data-route="{route}"', html)
+        self.assertNotIn('<button class="nav-trigger is-route"', html)
+        sprite = Path("app/ui/adapters/xiaoyi_sprite.js").read_text(encoding="utf-8")
+        self.assertIn("overlapsProtectedNavigation", sprite)
+        self.assertIn("restoreSafeDock(root)", sprite)
+        self.assertIn('localStorage.removeItem(STORAGE_KEY)', sprite)
 
     def test_default_public_apis_hide_local_paths_and_legacy_artifacts(self):
         from app import server as server_module
@@ -247,6 +258,19 @@ class RuntimeHardeningTests(unittest.TestCase):
         for endpoint in ("/api/rl/future/history", "/api/mas/simulate", "/api/xiaoyi/status", "/api/sailing/status"):
             self.assertEqual(client.get(endpoint).status_code, 404, endpoint)
 
+    def test_asset_curve_endpoint_coalesces_dashboard_polling(self):
+        from app import server as server_module
+
+        server_module._ASSET_CURVE_CACHE.clear()
+        client = TestClient(server_module.app)
+        endpoint = "/api/curves/asset/qc-01?mode=now&horizon_min=360&step_min=1"
+        first = client.get(endpoint)
+        second = client.get(endpoint)
+        self.assertEqual(first.status_code, 200)
+        self.assertEqual(second.status_code, 200)
+        self.assertEqual(first.headers.get("X-Port-DT-Cache"), "miss")
+        self.assertEqual(second.headers.get("X-Port-DT-Cache"), "hit")
+
     def test_production_has_no_wildcard_or_implicit_cors(self):
         with patch.dict(os.environ, {"PORT_DT_ENV": "production", "PORT_DT_CORS_ORIGINS": ""}):
             self.assertEqual(cors_origins(), [])
@@ -254,6 +278,10 @@ class RuntimeHardeningTests(unittest.TestCase):
     def test_configured_cors_is_explicit(self):
         with patch.dict(os.environ, {"PORT_DT_ENV": "production", "PORT_DT_CORS_ORIGINS": "https://ops.example, https://audit.example"}):
             self.assertEqual(cors_origins(), ["https://ops.example", "https://audit.example"])
+
+    def test_production_cors_rejects_non_tls_origin(self):
+        with patch.dict(os.environ, {"PORT_DT_ENV": "production", "PORT_DT_CORS_ORIGINS": "http://ops.example"}):
+            self.assertEqual(cors_origins(), [])
 
     def test_production_api_requires_a_long_configured_key(self):
         application = FastAPI()
@@ -283,6 +311,118 @@ class RuntimeHardeningTests(unittest.TestCase):
             client = TestClient(application)
             self.assertEqual(client.post("/api/rl/models/sync", headers={"X-API-Key": operator}).status_code, 403)
             self.assertEqual(client.post("/api/rl/models/sync", headers={"X-API-Key": admin}).status_code, 200)
+
+    def test_production_api_enforces_body_limit_rate_limit_and_headers(self):
+        application = FastAPI()
+        configure_operations(application)
+
+        @application.api_route("/api/check", methods=["GET", "POST"])
+        async def check():
+            return {"ok": True}
+
+        key = "rate-limit-test-key-with-at-least-32-characters"
+        environment = {
+            "PORT_DT_ENV": "production",
+            "PORT_DT_API_KEYS": key,
+            "PORT_DT_RATE_LIMIT_RPM": "2",
+            "PORT_DT_MAX_REQUEST_BYTES": "1024",
+        }
+        with RATE_LIMITER.lock:
+            RATE_LIMITER.events.clear()
+        with patch.dict(os.environ, environment):
+            client = TestClient(application)
+            headers = {"X-API-Key": key}
+            first = client.get("/api/check", headers=headers)
+            self.assertEqual(first.status_code, 200)
+            self.assertEqual(first.headers["cache-control"], "no-store")
+            self.assertIn("max-age=31536000", first.headers["strict-transport-security"])
+            self.assertIn("frame-ancestors 'none'", first.headers["content-security-policy"])
+            self.assertEqual(first.headers["x-ratelimit-limit"], "2")
+            self.assertEqual(client.get("/api/check", headers=headers).status_code, 200)
+            limited = client.get("/api/check", headers=headers)
+            self.assertEqual(limited.status_code, 429)
+            self.assertEqual(limited.headers["retry-after"], "60")
+
+        body_key = "body-limit-test-key-with-at-least-32-characters"
+        with patch.dict(os.environ, {**environment, "PORT_DT_API_KEYS": body_key}):
+            oversized = TestClient(application).post(
+                "/api/check",
+                headers={"X-API-Key": body_key},
+                content=b"x" * 1025,
+            )
+            self.assertEqual(oversized.status_code, 413)
+
+    def test_readiness_rejects_unverified_site_file_placeholders(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            paths = {}
+            for name in ("graph", "calibration", "shadow"):
+                path = root / f"{name}.json"
+                path.write_text("{}", encoding="utf-8")
+                paths[name] = str(path)
+            environment = {
+                "PORT_DT_ENV": "production",
+                "PORT_DT_CORS_ORIGINS": "https://ops.example",
+                "PORT_DT_API_KEYS": "operator-readiness-key-with-32-characters",
+                "PORT_DT_ADMIN_API_KEYS": "admin-readiness-key-with-at-least-32-characters",
+                "PORT_DT_TLS_TERMINATION_ATTESTED": "true",
+                "PORT_DT_SECRET_MANAGER_ATTESTED": "true",
+                "PORT_DT_TWIN_GRAPH_PATH": paths["graph"],
+                "PORT_DT_TWIN_CALIBRATION_PATH": paths["calibration"],
+                "PORT_DT_SHADOW_ACCEPTANCE_PATH": paths["shadow"],
+            }
+            with patch.dict(os.environ, environment):
+                report = readiness_report()
+            self.assertFalse(report["production_site_ready"])
+            for name in ("twin_graph", "site_calibration", "shadow_acceptance"):
+                self.assertFalse(report["checks"][name]["ok"])
+                self.assertEqual(report["checks"][name]["status"], "evidence_incomplete")
+            self.assertFalse(report["checks"]["site_evidence_consistency"]["ok"])
+
+    def test_readiness_verifies_hashes_and_same_site_contract(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            payloads = {
+                "graph": {
+                    "site_id": "test-terminal-01", "approved": True,
+                    "approved_by": "site-twin-owner", "source_mode": "authorized_site",
+                    "entities": [{"id": "qc-01", "type": "quay_crane"}],
+                },
+                "calibration": {
+                    "site_id": "test-terminal-01", "approved": True,
+                    "approved_by": "site-model-risk", "measured_outcomes": True,
+                    "validation_status": "pass", "validation_rows": 2880,
+                },
+                "shadow": {
+                    "site_id": "test-terminal-01", "approved": True,
+                    "approved_by": "site-operations", "measured_incumbent_baseline": True,
+                    "acceptance_status": "pass", "shadow_cycles": 30,
+                    "guardrail_violation_rate": 0.0,
+                },
+            }
+            paths = {}
+            for name, payload in payloads.items():
+                path = root / f"{name}.json"
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                paths[name] = str(path)
+            environment = {
+                "PORT_DT_ENV": "production",
+                "PORT_DT_CORS_ORIGINS": "https://ops.example",
+                "PORT_DT_API_KEYS": "operator-readiness-key-with-32-characters",
+                "PORT_DT_ADMIN_API_KEYS": "admin-readiness-key-with-at-least-32-characters",
+                "PORT_DT_TLS_TERMINATION_ATTESTED": "true",
+                "PORT_DT_SECRET_MANAGER_ATTESTED": "true",
+                "PORT_DT_TWIN_GRAPH_PATH": paths["graph"],
+                "PORT_DT_TWIN_CALIBRATION_PATH": paths["calibration"],
+                "PORT_DT_SHADOW_ACCEPTANCE_PATH": paths["shadow"],
+            }
+            with patch.dict(os.environ, environment):
+                report = readiness_report()
+            for name in ("twin_graph", "site_calibration", "shadow_acceptance"):
+                self.assertTrue(report["checks"][name]["ok"])
+                self.assertEqual(len(report["checks"][name]["sha256"]), 64)
+            self.assertTrue(report["checks"]["site_evidence_consistency"]["ok"])
+            self.assertTrue(report["production_site_ready"])
 
     def test_training_and_evaluation_capacity_fail_fast(self):
         with tempfile.TemporaryDirectory() as tmp, patch.dict(os.environ, {"PORT_DT_MAX_CONCURRENT_TRAINING": "1", "PORT_DT_MAX_CONCURRENT_EVALUATION": "1"}):

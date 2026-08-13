@@ -60,3 +60,7 @@ soft_copyright_materials/
 *.docx
 *.pdf
 *.zip
+
+# Clone-safe V3 runtime policy selected by the checked-in runtime manifest.
+# Other training/model archives remain local-only.
+!evidence/v3/runtime/selected_sac_v3.zip

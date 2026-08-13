@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#071017">
+  <title>Port Twin AI · V3 决策中枢</title>
+  <link rel="stylesheet" href="/v3/assets/v3.css?v=3.2.0-readiness">
+</head>
+<body>
+  <div class="ambient ambient-a"></div><div class="ambient ambient-b"></div>
+  <header class="topbar">
+    <a class="brand" href="/v3" aria-label="V3 决策中枢">
+      <span class="brand-mark"><i></i><i></i><i></i></span>
+      <span><b>PORT TWIN AI</b><small>决策中枢 · V3.2</small></span>
+    </a>
+    <div class="top-status">
+      <span class="status-pill public"><i></i>公开数据离线验证</span>
+      <span class="status-pill no-authority">无生产控制权</span>
+      <time id="clock">--:--:--</time>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero frame" id="top">
+      <div class="hero-copy">
+        <div class="eyebrow"><span>V3 / MULTI-PORT INTELLIGENCE</span><b id="heroVersion">3.2.0</b></div>
+        <h1>让每个决策，<br><em>都有数据与证据。</em></h1>
+        <p>洛杉矶高频公开数据对照训练，上海公开锚点目标域训练，10 类强化学习与 2 类控制基线同口径盲测。权重未跨港继承，不冒充迁移学习；现场数据接入前保持建议态与失效安全。</p>
+        <div class="hero-actions">
+          <a href="#evidence" class="primary-action">查看优势证据 <span>↗</span></a>
+          <a href="#readiness" class="text-action">查看落地缺口 →</a>
+        </div>
+      </div>
+      <div class="hero-radar" aria-label="港区数字孪生示意图">
+        <div class="radar-head"><span>YANGSHAN / PUBLIC GRID</span><b id="liveState">正在连接公开源</b></div>
+        <svg viewBox="0 0 720 430" role="img" aria-label="港区态势示意，不代表现场实况">
+          <defs>
+            <linearGradient id="sea" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0a2730"/><stop offset="1" stop-color="#06141c"/></linearGradient>
+            <linearGradient id="dock" x1="0" x2="1"><stop stop-color="#17313a"/><stop offset="1" stop-color="#0f252e"/></linearGradient>
+            <filter id="glow"><feGaussianBlur stdDeviation="4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse"><path d="M36 0H0V36" fill="none" stroke="#80edda" stroke-opacity=".07"/></pattern>
+          </defs>
+          <rect width="720" height="430" rx="20" fill="url(#sea)"/><rect width="720" height="430" rx="20" fill="url(#grid)"/>
+          <path class="route" d="M-10 305C135 266 202 309 315 236S515 114 740 95"/>
+          <path class="shore" d="M345 432L376 330 458 309 465 249 570 227 578 170 720 138 720 432Z" fill="url(#dock)" stroke="#6b958f" stroke-opacity=".5"/>
+          <g class="yard-blocks" fill="#1d4d51" stroke="#66e0ca" stroke-opacity=".22">
+            <rect x="470" y="338" width="60" height="18"/><rect x="536" y="338" width="60" height="18"/><rect x="602" y="338" width="60" height="18"/>
+            <rect x="490" y="311" width="60" height="18"/><rect x="556" y="311" width="60" height="18"/><rect x="622" y="311" width="60" height="18"/>
+            <rect x="530" y="266" width="54" height="16"/><rect x="590" y="266" width="54" height="16"/>
+          </g>
+          <g class="cranes" stroke="#f3b45e" stroke-width="3" fill="none"><path d="M425 317v-63h32l-22 22v35"/><path d="M526 248v-57h32l-22 20v30"/><path d="M622 190v-49h28l-19 18v26"/></g>
+          <g class="ship ship-one" transform="translate(85 276) rotate(-10)"><path d="M0 22h106l-18 22H17z" fill="#173d49" stroke="#74e8d4"/><rect x="28" y="5" width="54" height="18" rx="3" fill="#ecb660"/><rect x="84" y="10" width="12" height="13" fill="#dbe9e8"/></g>
+          <g class="ship ship-two" transform="translate(285 195) scale(.58) rotate(-21)"><path d="M0 22h106l-18 22H17z" fill="#173d49" stroke="#74e8d4"/><rect x="28" y="5" width="54" height="18" rx="3" fill="#ecb660"/></g>
+          <g class="beacon" transform="translate(390 289)"><circle r="7" fill="#70f5da" filter="url(#glow)"/><circle r="18" fill="none" stroke="#70f5da" opacity=".35"/><circle r="32" fill="none" stroke="#70f5da" opacity=".14"/></g>
+          <g class="beacon amber" transform="translate(559 232)"><circle r="6" fill="#f4b75f" filter="url(#glow)"/><circle r="17" fill="none" stroke="#f4b75f" opacity=".3"/></g>
+          <text x="25" y="37" class="map-label">PUBLIC MODEL FEED / NOT SITE TELEMETRY</text>
+          <text x="475" y="400" class="map-label">TERMINAL CONTROL CONTRACT</text>
+        </svg>
+        <div class="sensor-strip">
+          <div><span>温度</span><b id="temperature">—</b><small id="temperatureUnit">°C</small></div>
+          <div><span>风速</span><b id="wind">—</b><small id="windUnit">m/s</small></div>
+          <div><span>浪高</span><b id="wave">—</b><small id="waveUnit">m</small></div>
+          <div><span>海流</span><b id="current">—</b><small id="currentUnit">km/h</small></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="metric-row frame" aria-label="核心事实指标">
+      <article><span>算法控制器</span><strong id="algorithmCount">—</strong><small>10 RL + 2 基线</small></article>
+      <article><span>上海时序样本</span><strong id="datasetRows">—</strong><small>连续小时 / 无乱序</small></article>
+      <article><span>公开独立观测</span><strong id="sourceObservations">—</strong><small>再分析小时 + 官方锚点</small></article>
+      <article class="accent"><span>对 FCFS 综合优势</span><strong id="advantageValue">待训练</strong><small id="advantageLabel">盲测证据门尚未完成</small></article>
+    </section>
+
+    <section class="section frame" id="evidence">
+      <div class="section-title"><div><span>01 / DECISION EVIDENCE</span><h2>优势，不靠演示曲线</h2></div><p>版本固定权重、数据哈希、时间切分、随机种子和安全门；验证集选算法，盲测集只报告最终结果。</p></div>
+      <div class="evidence-grid">
+        <article class="advantage-panel panel">
+          <div class="panel-kicker"><span>SELECTED POLICY</span><b id="claimStatus" class="pending">EVIDENCE PENDING</b></div>
+          <div class="winner"><div><small>当前候选</small><strong id="winnerName">训练中</strong><span id="winnerImpl">等待正式证据门</span></div><div class="score-ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="48"/><circle id="scoreArc" class="arc" cx="60" cy="60" r="48"/></svg><b id="winnerScore">—</b><small>综合优势</small></div></div>
+          <div id="advantageBars" class="advantage-bars"><div class="empty-state">正式训练完成后显示五项相对 FCFS 指标</div></div>
+          <div class="evidence-foot"><span>70% Train</span><i></i><span>10% Validation</span><i></i><span>20% Blind Test</span></div>
+        </article>
+        <article class="proof-panel panel">
+          <div class="panel-kicker"><span>EVIDENCE LEDGER</span><b class="verified">APPEND ONLY</b></div>
+          <div class="proof-number"><b id="formalRuns">—</b><span>历史累计正式评测记录（V1–V3）</span></div>
+          <div class="proof-list">
+            <div><i class="dot green"></i><span>训练期间渲染</span><b>强制关闭</b></div>
+            <div><i class="dot green"></i><span>盲测时间窗</span><b>训练不可见</b></div>
+            <div><i class="dot green"></i><span>历史 V1 / V2 指标</span><b>保留</b></div>
+            <div><i class="dot amber"></i><span>现场 KPI 声明</span><b>禁止</b></div>
+          </div>
+          <a class="artifact-link" href="/api/v3/overview" target="_blank">打开机器可读证据 API <span>↗</span></a>
+        </article>
+      </div>
+      <article class="impact-panel panel" aria-labelledby="impactTitle">
+        <div class="impact-head">
+          <div><span>POLICY VALUE WORKBENCH</span><h3 id="impactTitle">训练后业务指标</h3></div>
+          <div class="impact-tabs" role="tablist" aria-label="业务指标视图">
+            <button class="active" type="button" data-impact-view="rl">RL 效率提升</button>
+            <button type="button" data-impact-view="outcome">绝对业务结果</button>
+            <button type="button" data-impact-view="safety">安全稳健性</button>
+            <button type="button" data-impact-view="strong">强基线对照</button>
+            <button type="button" data-impact-view="twin">孪生可靠性</button>
+            <button type="button" data-impact-view="deployment">部署自检</button>
+            <button type="button" data-impact-view="unit">等量吞吐价值</button>
+            <button type="button" data-impact-view="mpc">MPC 稳健对照</button>
+            <button type="button" data-impact-view="protocol">证据协议</button>
+          </div>
+        </div>
+        <div class="impact-summary"><div><span id="impactStatus">正在读取证据</span><strong id="impactHeadline">—</strong></div><p id="impactDescription">页面只显示后台持久化的训练与盲测产物。</p></div>
+        <div id="impactMetrics" class="impact-metrics"><div class="skeleton wide"></div></div>
+        <div class="impact-footer"><p id="impactBoundary">公开数据离线验证，不代表集团已实现收益。</p><a href="/api/v3/overview" target="_blank">机器可读证据 ↗</a></div>
+      </article>
+    </section>
+
+    <section class="section frame" id="algorithms">
+      <div class="section-title"><div><span>02 / ALGORITHM COVERAGE</span><h2>四类方法，同一把尺子</h2></div><p>覆盖离策略、在策略、分布式价值、时序记忆、无梯度搜索与确定性控制；每个名称都对应可加载实现。</p></div>
+      <div id="algorithmGrid" class="algorithm-grid"><div class="skeleton wide"></div></div>
+    </section>
+
+    <section class="section frame" id="readiness">
+      <div class="section-title"><div><span>03 / DATA READINESS</span><h2>公开数据与现场数据，边界分明</h2></div><p>选择公开因子最密集的数据做高频对照训练，再以上海公开锚点做独立目标域训练；缺失的生产字段通过稳定契约替换。</p></div>
+      <div class="lineage panel">
+        <article><div class="port-code">USLAX</div><span class="role">高频对照训练</span><h3>Los Angeles</h3><strong>6 min</strong><p>公开实测潮位、温度、风速与官方吞吐锚点</p><div class="source-tag measured">PUBLIC MEASURED</div><button class="lineage-action" type="button" data-port="public_us_la_6min_v1">查看数据血缘 ↗</button></article>
+        <div class="lineage-arrow"><i></i><span>共享状态 / 动作契约</span></div>
+        <article><div class="port-code">SGSIN</div><span class="role">长周期稳健性</span><h3>Singapore</h3><strong>6 years</strong><p>官方月度吞吐和到港锚点构建长期场景</p><div class="source-tag aggregate">OFFICIAL AGGREGATE</div><button class="lineage-action" type="button" data-port="public_port_ops_v1">查看数据血缘 ↗</button></article>
+        <div class="lineage-arrow"><i></i><span>目标域适配</span></div>
+        <article class="target"><div class="port-code">CNSHA</div><span class="role">靶场 / 盲测</span><h3>Shanghai</h3><strong>17,544 h</strong><p>交通运输部吞吐锚点 + 洋山公开再分析</p><div class="source-tag enriched">PUBLIC REANALYSIS</div><button class="lineage-action" type="button" data-port="public_cn_sha_hourly_v3">查看数据血缘 ↗</button></article>
+      </div>
+      <div class="replacement panel">
+        <div><span>SITE DATA REPLACEMENT CONTRACT</span><h3>落地只换数据，不重写算法链</h3></div>
+        <div id="replacementList" class="replacement-list"><span>正在读取替换清单…</span></div>
+      </div>
+    </section>
+
+    <section class="section frame" id="business">
+      <div class="section-title"><div><span>04 / OPERATION COVERAGE</span><h2>从船到箱，从电到安全</h2></div><p>每个域逐项标明模型、仿真、监测或契约等级；“覆盖”不自动等于拥有独立优化器或生产控制权。</p></div>
+      <div class="coverage-legend"><span><i class="implemented"></i>已实现</span><span><i class="contract"></i>契约就绪</span><span><i class="required"></i>需现场适配</span></div>
+      <div id="domainCoverageSummary" class="coverage-legend"><span>正在核验业务执行深度…</span></div>
+      <div id="capabilityGrid" class="capability-grid"><div class="skeleton wide"></div></div>
+    </section>
+
+    <section class="section frame" id="gates">
+      <div class="section-title"><div><span>05 / DEPLOYMENT SAFETY</span><h2>能上线，不等于直接接管</h2></div><p>公开数据阶段仅产生建议。真实调度必须依次通过映射、质量、校准、影子运行和人工控制权审批。</p></div>
+      <div class="gate-flow panel" id="gateFlow"><div class="skeleton wide"></div></div>
+    </section>
+
+    <section class="closing frame">
+      <div><span>PORT TWIN AI / V3.2</span><h2>可训练、可审计、可替换、可失效安全。</h2><p>这不是上海港现场提效结论；这是可供现场数据接入与影子验证的工程基线。</p></div>
+      <a href="/docs" target="_blank">API DOCUMENTATION ↗</a>
+    </section>
+  </main>
+
+  <footer><span>PORT-DT-MULTI · OPEN SOURCE ENGINEERING</span><span id="generatedAt">DATA STATUS —</span></footer>
+  <div id="toast" class="toast" role="status"></div>
+  <div id="detailBackdrop" class="detail-backdrop" hidden>
+    <aside class="detail-drawer" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <button id="detailClose" class="detail-close" type="button" aria-label="关闭详情">×</button>
+      <span id="detailKicker" class="detail-kicker">EVIDENCE DETAIL</span>
+      <h2 id="detailTitle">详情</h2>
+      <p id="detailLead" class="detail-lead"></p>
+      <div id="detailBody"></div>
+    </aside>
+  </div>
+  <script src="/v3/assets/v3.js?v=3.2.0-readiness" defer></script>
+</body>
+</html>

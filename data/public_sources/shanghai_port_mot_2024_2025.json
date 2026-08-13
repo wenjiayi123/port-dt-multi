@@ -1,0 +1,150 @@
+{
+  "schema": "port-dt-public-port-anchors.v1",
+  "port_code": "CNSHA",
+  "port_name": "Shanghai Port",
+  "publisher": "Ministry of Transport of the People's Republic of China",
+  "unit": "10000_teu",
+  "coverage": "Shanghai coastal port aggregate container throughput",
+  "observations": [
+    {
+      "period": "2024-01/02",
+      "cumulative_teu_10000": 830,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202403/P020240528369534362302.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-03",
+      "cumulative_teu_10000": 1245,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202404/P020240528368732806335.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-04",
+      "cumulative_teu_10000": 1664,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202405/P020240528348031532627.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-05",
+      "cumulative_teu_10000": 2086,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202406/P020240628504193219950.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-06",
+      "cumulative_teu_10000": 2551,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202407/P020240726315056370661.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-07",
+      "cumulative_teu_10000": 3024,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202408/P020240830512415780926.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-08",
+      "cumulative_teu_10000": 3475,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202409/P020240929371784231670.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-09",
+      "cumulative_teu_10000": 3900,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202410/P020241031537369031657.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-10",
+      "cumulative_teu_10000": 4315,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202411/P020241127569785743903.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-11",
+      "cumulative_teu_10000": 4739,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202412/P020241224528010634131.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2024-12",
+      "cumulative_teu_10000": 5151,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202503/P020250326508512684765.pdf",
+      "source_kind": "official_annual_publication",
+      "precision_note": "The MOT table is rounded to 10000 TEU; Shanghai Municipality reports 51.5063 million TEU for 2024."
+    },
+    {
+      "period": "2025-01/02",
+      "cumulative_teu_10000": 890,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202503/P020250326523159037809.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-03",
+      "cumulative_teu_10000": 1321,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202504/P020250430342705534557.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-04",
+      "cumulative_teu_10000": 1771,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202505/P020250530444803811811.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-05",
+      "cumulative_teu_10000": 2236,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202506/P020250630541133602289.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-06",
+      "cumulative_teu_10000": 2706,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202507/P020250725557677106021.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-07",
+      "cumulative_teu_10000": 3168,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202508/P020250827544303907995.pdf",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-08",
+      "cumulative_teu_10000": 3670,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202509/P020250930551932136174.xlsx",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-09",
+      "cumulative_teu_10000": 4154,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202510/P020251031671201713119.xlsx",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-10",
+      "cumulative_teu_10000": 4607,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202511/P020251128543498309570.xlsx",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-11",
+      "cumulative_teu_10000": 5056,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202512/P020251226513609255904.xlsx",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2025-12",
+      "cumulative_teu_10000": 5506,
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202601/P020260130498887936897.pdf",
+      "source_kind": "official_annual_publication",
+      "precision_note": "The MOT table is rounded to 10000 TEU; Shanghai Municipality reports 55.063 million TEU for 2025."
+    }
+  ],
+  "derivation_boundary": {
+    "official_observations": 22,
+    "monthly_increments": "March-December values are differences between successive official cumulative publications.",
+    "first_two_months": "January-February remain one official two-month aggregate and are distributed over the complete period only; no individual January or February observation is invented.",
+    "hourly_values": "Hourly canonical throughput and vessel arrivals are deterministic allocations constrained to each official period total, not terminal telemetry."
+  }
+}

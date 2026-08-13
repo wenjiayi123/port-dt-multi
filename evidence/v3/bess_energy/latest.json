@@ -1,0 +1,8 @@
+{
+  "schema": "port-dt-bess-energy-latest-pointer.v1",
+  "run_id": "bess-energy-v3-safe-20260813T043000Z",
+  "report_path": "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/report.json",
+  "report_sha256": "e901111514668ce6446d71d888b2fbbec38b8b2201a38b4d2a31e47801b9a5a0",
+  "status": "FORMAL_PUBLIC_DATA_BALANCED_PROFILE_PASS",
+  "updated_at": "2026-08-13T02:31:19.828767Z"
+}

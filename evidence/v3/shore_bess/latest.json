@@ -1,0 +1,8 @@
+{
+  "schema": "port-dt-shore-bess-latest-pointer.v1",
+  "run_id": "shore-bess-v3-safe-20260813T015000Z",
+  "report_path": "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/report.json",
+  "report_sha256": "6e5aa99b6bff60b3802bba814876366ede44d5a49c50810f7e39b11535a25513",
+  "status": "FORMAL_PUBLIC_DATA_ECONOMIC_PROFILE_PASS_CARBON_BLOCKED",
+  "updated_at": "2026-08-13T01:52:19.426852Z"
+}

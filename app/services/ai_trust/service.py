@@ -1,11 +1,14 @@
 from __future__ import annotations
 import json
+import hashlib
 from pathlib import Path
 from typing import Any, Dict
 
 BASE_DIR = Path(__file__).resolve().parent
 DATA_DIR = BASE_DIR / "data"
 SNAPSHOT_PATH = DATA_DIR / "badge_snapshot.json"
+ROOT = Path(__file__).resolve().parents[3]
+V3_ADVANTAGE_PATH = ROOT / "evidence/v3/shanghai_public_advantage_v3.json"
 
 
 class SnapshotError(RuntimeError):
@@ -95,6 +98,42 @@ def _extract_summary(raw: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _v3_evidence_badge() -> Dict[str, Any]:
+    sidecar = V3_ADVANTAGE_PATH.with_suffix(".sha256")
+    if not V3_ADVANTAGE_PATH.is_file() or not sidecar.is_file():
+        return {}
+    expected = sidecar.read_text(encoding="utf-8").split()[0]
+    if hashlib.sha256(V3_ADVANTAGE_PATH.read_bytes()).hexdigest() != expected:
+        return {}
+    payload = json.loads(V3_ADVANTAGE_PATH.read_text(encoding="utf-8"))
+    selected = payload.get("selected") or {}
+    admission = selected.get("safety_admission") or {}
+    strict = bool(selected.get("strict_advantage"))
+    return {
+        "available": True,
+        "grade": "B+" if strict else "D",
+        "grade_label": "公开数据离线准入 / 现场待接",
+        "overall_status": "warn",
+        "ope_pass": strict,
+        "evaluation_kind": "chronological_blind_test_3_seeds",
+        "guardrail": {
+            "total": 3,
+            "pending": 0 if admission.get("passed") else 1,
+            "violation_rate_max": admission.get("guardrail_violation_rate_max_observed"),
+        },
+        "experiments": {"running": 0, "completed": 30},
+        "causal_effect": None,
+        "port": {"name": "上海港公开目标域（非现场遥测）"},
+        "meta": {
+            "is_sample": False,
+            "note": "验证集选模，3 随机种子与盲测时间窗；因果/A-B 与现场闭环仍待接入港口。",
+            "production_authority": False,
+        },
+        "scenes": [],
+        "_source": "ai_trust.v3_hash_verified_offline_evidence",
+    }
+
+
 def get_badge(di: Any | None = None) -> Dict[str, Any]:
     """主入口：供 FastAPI 路由调用。
 
@@ -109,7 +148,7 @@ def get_badge(di: Any | None = None) -> Dict[str, Any]:
         and bool(provenance.get("source_url"))
     )
     if meta.get("is_sample") or not verified:
-        return {
+        return _v3_evidence_badge() or {
             "available": False,
             "grade": "N/A",
             "grade_label": "未评定",

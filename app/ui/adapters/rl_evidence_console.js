@@ -47,7 +47,7 @@
         </div>
       </div>
       <div class="rl-proof-kpis">
-        <div class="rl-proof-kpi"><span>真实控制器矩阵</span><b data-proof-algo>—</b><em>6 RL + 1 MPC</em></div>
+        <div class="rl-proof-kpi"><span>真实控制器矩阵</span><b data-proof-algo>—</b><em data-proof-mix>读取算法族</em></div>
         <div class="rl-proof-kpi"><span>当前公开训练包</span><b data-proof-rows>—</b><em data-proof-tier>等待读取来源</em></div>
         <div class="rl-proof-kpi"><span>v2 观测 / 动作</span><b data-proof-contract>—</b><em>缺失因素使用显式可用性掩码</em></div>
         <div class="rl-proof-kpi"><span>可用于比较结论的算法</span><b data-proof-ready>—</b><em>RL 需 ≥ 3 独立种子且每次 ≥ 10k 步</em></div>
@@ -98,6 +98,8 @@
     const algorithms = capabilities.algorithms || [];
     const summaries = new Map((benchmark.algorithms || []).map(item => [item.id, item]));
     root.querySelector("[data-proof-algo]").textContent = `${algorithms.length} 类`;
+    const rlCount = algorithms.filter(item => item.trainable).length;
+    root.querySelector("[data-proof-mix]").textContent = `${rlCount} RL + ${algorithms.length - rlCount} 基线`;
     const contract = capabilities.contracts?.port_ops_v2 || {};
     root.querySelector("[data-proof-contract]").textContent = `${contract.observation_dimensions || "—"}D / ${contract.continuous_action_dimensions || "—"}D`;
     const readyCount = [...summaries.values()].filter(item => item.multi_seed_ready).length;
@@ -144,7 +146,7 @@
         : "高频洛杉矶公开包尚未构建，当前只可使用既有新加坡对照包。",
       missing.length
         ? `仍未通过多种子结论门禁：${missing.join("、")}。训练中心可运行，但不能把烟测写成性能结论。`
-        : "七类控制器的持久化评测门禁已满足；仍需检查同数据指纹、同窗口与业务约束后再做比较。",
+        : `${(benchmark.algorithms || []).length} 类控制器的持久化评测门禁已满足；仍需检查同数据指纹、同窗口与业务约束后再做比较。`,
       "生产执行保持关闭；真实港口接入还需场景包校准、现场字段来源、影子运行和独立硬件联锁。"
     ].join("\n");
     root.querySelector("[data-proof-advice-text]").textContent = message;

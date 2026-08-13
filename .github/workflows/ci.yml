@@ -34,3 +34,26 @@ jobs:
           python -m scripts.release_check
       - name: Five-controller smoke test
         run: python -m scripts.rl_smoke_test --steps 64
+
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build reproducible V3 research image
+        run: docker build --build-arg PORT_DT_VERSION=3.1.0 -t port-dt-multi:ci .
+      - name: Verify container runtime and portable V3 evidence
+        run: |
+          docker run --detach --name port-dt-multi-ci --publish 127.0.0.1:8000:8000 port-dt-multi:ci
+          trap 'docker logs port-dt-multi-ci || true; docker rm --force port-dt-multi-ci || true' EXIT
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:8000/health/ready >/tmp/port-dt-ready.json; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent http://127.0.0.1:8000/health/ready | python -m json.tool
+          curl --fail --silent http://127.0.0.1:8000/api/v3/overview | python -m json.tool >/dev/null
+          curl --fail --silent http://127.0.0.1:8000/api/v3/runtime/status | python -m json.tool >/dev/null
+          curl --fail --silent http://127.0.0.1:8000/api/v3/modules/hvac/evidence | python -m json.tool >/dev/null
+          test "$(docker inspect --format '{{.Config.User}}' port-dt-multi-ci)" = "portdt"

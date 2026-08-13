@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import json
 import os
 from pathlib import Path
 import subprocess
@@ -54,6 +55,59 @@ def _probe_http(url: str, timeout_sec: float = 0.55) -> Dict[str, Any]:
         return {"ok": False, "status_code": None, "error": str(exc)}
 
 
+def _probe_xiaoyi_service(
+    base_url: str,
+    health_path: str,
+    chat_path: str,
+    timeout_sec: float = 0.8,
+) -> Dict[str, Any]:
+    """Verify both liveness and the Xiaoyi chat contract.
+
+    A generic FastAPI service can expose ``/health``.  Treating that alone as
+    Xiaoyi produced false-positive "online" states when port-dt-multi itself
+    occupied the configured port, so identity now requires POST /api/chat in
+    the service OpenAPI document.
+    """
+    health_url = base_url.rstrip("/") + health_path
+    health = _probe_http(health_url, timeout_sec=timeout_sec)
+    schema_url = base_url.rstrip("/") + "/openapi.json"
+    schema_probe: Dict[str, Any] = {
+        "ok": False,
+        "status_code": None,
+        "error": "health check failed",
+        "chat_path_present": False,
+        "post_supported": False,
+    }
+    if health.get("ok"):
+        req = UrlRequest(schema_url, headers={"User-Agent": "port-dt-multi-xiaoyi-launcher/1.0"})
+        try:
+            with urlopen(req, timeout=timeout_sec) as resp:
+                status_code = int(getattr(resp, "status", 200))
+                document = json.loads(resp.read().decode("utf-8"))
+                methods = (document.get("paths") or {}).get(chat_path) or {}
+                post_supported = isinstance(methods, dict) and "post" in methods
+                schema_probe = {
+                    "ok": 200 <= status_code < 300 and post_supported,
+                    "status_code": status_code,
+                    "error": None if post_supported else f"POST {chat_path} missing from OpenAPI",
+                    "chat_path_present": bool(methods),
+                    "post_supported": post_supported,
+                }
+        except Exception as exc:
+            schema_probe["error"] = str(getattr(exc, "reason", exc))
+    chat_capable = bool(health.get("ok") and schema_probe.get("ok"))
+    return {
+        "ok": chat_capable,
+        "chat_capable": chat_capable,
+        "identity": "xiaoyi_chat_service" if chat_capable else "health_only_not_xiaoyi",
+        "reason": None if chat_capable else (schema_probe.get("error") or health.get("error")),
+        "health": health,
+        "schema": schema_probe,
+        "health_url": health_url,
+        "schema_url": schema_url,
+    }
+
+
 def _append_log(action_id: str, status: str, detail: Dict[str, Any]) -> None:
     _action_log.insert(0, {"ts": _utc_now(), "action_id": action_id, "status": status, "detail": detail})
     del _action_log[80:]
@@ -87,13 +141,21 @@ def xiaoyi_status() -> Dict[str, Any]:
     enabled = _desktop_enabled()
     base_url = str(cfg.get("base_url") or "").rstrip("/")
     health_path = str(cfg.get("health_path") or "/health")
+    chat_path = str(cfg.get("chat_path") or "/api/chat")
     health_url = base_url + health_path
-    probe = _probe_http(health_url) if enabled else {"ok": False, "status_code": None, "error": "desktop integrations disabled"}
+    probe = _probe_xiaoyi_service(base_url, health_path, chat_path) if enabled else {
+        "ok": False,
+        "chat_capable": False,
+        "identity": "disabled",
+        "reason": "desktop integrations disabled",
+        "health": {"ok": False, "status_code": None, "error": "desktop integrations disabled"},
+        "schema": {"ok": False, "status_code": None, "error": "desktop integrations disabled"},
+    }
     project_value = str(cfg.get("project_path") or "")
     project = _path_info(project_value)
     run_script = _path_info(Path(project_value) / "run.sh" if project_value else "")
     launchable = bool(enabled and project["exists"] and run_script["exists"] and cfg.get("start_command"))
-    online = bool(probe.get("ok"))
+    online = bool(probe.get("chat_capable"))
     return {
         "ok": online,
         "enabled": enabled,
@@ -104,7 +166,10 @@ def xiaoyi_status() -> Dict[str, Any]:
         "label": "小懿在线" if online else ("小懿可启动" if launchable else "小懿不可启动"),
         "base_url": base_url,
         "health_url": health_url,
-        "chat_url": base_url + str(cfg.get("chat_path") or "/api/chat"),
+        "chat_url": base_url + chat_path,
+        "chat_capable": online,
+        "identity_check": probe.get("identity"),
+        "reason": probe.get("reason"),
         "project": project,
         "run_script": run_script,
         "start_command_configured": bool(cfg.get("start_command")),

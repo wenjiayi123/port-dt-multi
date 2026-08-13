@@ -1,8 +1,8 @@
 {
   "meta": {
-    "version": "2025.11-demo",
-    "updated_at": "2025-11-20T08:00:00+08:00",
-    "description": "港口 AI 数字运营平台平台地图快照：设备 / 数据孪生 / RL 与协同 / 应用运营。"
+    "version": "V3.1-repository-map",
+    "updated_at": "2026-08-12T00:00:00+08:00",
+    "description": "港口 AI 数字运营平台仓库架构地图：设备 / 数据孪生 / RL 与协同 / 应用运营。"
   },
   "layers": [
     {

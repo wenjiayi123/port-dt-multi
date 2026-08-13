@@ -31,10 +31,15 @@ python-dateutil==2.9.0.post0  # 解析 ISO 时间、相对时间计算
 # -------------------------
 # 真实强化学习与控制基线
 # -------------------------
-torch==2.13.0              # 神经网络运行时；避免 2.2.x 已知安全通告
+# Intel macOS no longer receives every newest upstream wheel. Keep the locally
+# verified V3 runtime there; use the current production pin on supported hosts.
+torch==2.2.2; sys_platform == "darwin" and platform_machine == "x86_64"
+torch==2.13.0; sys_platform != "darwin" or platform_machine != "x86_64"
 gymnasium==0.29.1          # 港口运营环境标准接口
-stable-baselines3==2.9.0   # SAC / PPO / TD3 / DQN / A2C 实现
-sb3-contrib==2.9.0         # TQC 分布式连续控制实现
+stable-baselines3==2.3.2; sys_platform == "darwin" and platform_machine == "x86_64"
+stable-baselines3==2.9.0; sys_platform != "darwin" or platform_machine != "x86_64"
+sb3-contrib==2.3.0; sys_platform == "darwin" and platform_machine == "x86_64"
+sb3-contrib==2.9.0; sys_platform != "darwin" or platform_machine != "x86_64"
 
 # -------------------------
 #（可选）前端静态构建/内容压缩（当前未使用）

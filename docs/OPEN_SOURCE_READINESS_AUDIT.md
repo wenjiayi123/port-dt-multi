@@ -1,5 +1,7 @@
 # 开源与生产就绪审计
 
+> 历史 V2 审计快照：本文件保留 2026-07-25 当时证据。当前 V3.1 数据、算法和部署边界见 [`V3_TECHNICAL_EVIDENCE.md`](V3_TECHNICAL_EVIDENCE.md) 与 [`SITE_DATA_REPLACEMENT_CONTRACT_V3.md`](SITE_DATA_REPLACEMENT_CONTRACT_V3.md)。
+
 审计日期：2026-07-25。结论：项目已具备可信的开源研究/集成主链路；默认配置不应宣称为生产港口实时控制系统。
 
 | 模块 | 当前驱动 | 本次处理 | 生产前仍需 |

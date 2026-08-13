@@ -16,7 +16,10 @@ from app.services.rl_training.profiles import load_profile
 
 REQUIRED = (
     "README.md",
+    ".env.example",
     "LICENSE",
+    "Dockerfile",
+    ".dockerignore",
     "THIRD_PARTY_NOTICES.md",
     "MODEL_GOVERNANCE.md",
     "docs/BUSINESS_KPI_BENCHMARK.md",
@@ -36,6 +39,65 @@ REQUIRED = (
     "config/ports/sgsin_public_replay_v2.json",
     "config/ports/us_la_public_benchmark_v2.json",
     "docs/DATASET_CARD_public_us_la_6min_v1.md",
+    "docs/DATASET_CARD_public_cn_sha_hourly_v3.md",
+    "docs/DATASET_CARD_public_cn_sha_forward_2026m05_v1.md",
+    "docs/SITE_DATA_REPLACEMENT_CONTRACT_V3.md",
+    "docs/PRODUCTION_READINESS.md",
+    "docs/V3_TECHNICAL_EVIDENCE.md",
+    "docs/V3_HR_TECHNICAL_AUDIT.md",
+    "data/public_sources/shanghai_port_mot_2024_2025.json",
+    "data/public_sources/shanghai_yangshan_reanalysis_2024_2025.csv",
+    "data/public_sources/shanghai_port_mot_2026_forward.json",
+    "data/public_sources/shanghai_yangshan_reanalysis_2026_01_05.csv",
+    "data/rl/datasets/public_cn_sha_hourly_v3.csv",
+    "data/rl/datasets/public_cn_sha_hourly_v3.meta.json",
+    "data/rl/datasets/public_cn_sha_forward_2026m05_v1.csv",
+    "data/rl/datasets/public_cn_sha_forward_2026m05_v1.meta.json",
+    "config/ports/cn_sha_public_benchmark_v3.json",
+    "config/v3_advantage_benchmark.json",
+    "config/rl_business_profiles_v3.json",
+    "evidence/v3/shanghai_public_advantage_v3.json",
+    "evidence/v3/shanghai_public_advantage_v3.md",
+    "evidence/v3/shanghai_public_advantage_v3.sha256",
+    "evidence/v3/shanghai_public_business_impact_v3.json",
+    "evidence/v3/shanghai_public_business_impact_v3.md",
+    "evidence/v3/shanghai_public_business_impact_v3.sha256",
+    "evidence/v3/strong_baseline_evidence_v3.json",
+    "evidence/v3/strong_baseline_evidence_v3.md",
+    "evidence/v3/strong_baseline_evidence_v3.sha256",
+    "evidence/v3/public_cn_sha_hourly_v3_benchmark.json",
+    "evidence/v3/public_cn_sha_hourly_v3_benchmark.md",
+    "evidence/v3/public_cn_sha_hourly_v3_benchmark.sha256",
+    "scripts/fetch_shanghai_public_dataset.py",
+    "scripts/fetch_shanghai_forward_2026.py",
+    "scripts/export_v3_advantage.py",
+    "scripts/export_v3_strong_baselines.py",
+    "scripts/export_v3_business_impact.py",
+    "scripts/export_v3_runtime_model.py",
+    "app/adapters/telemetry_calibrated_replay.py",
+    "app/services/v3_runtime.py",
+    "app/services/copilot/mission_control.py",
+    "app/services/copilot/api.py",
+    "config/shore_bess_v3.json",
+    "config/bess_energy_v3.json",
+    "app/services/rl_model/shore_bess/v3_environment.py",
+    "app/services/rl_model/bess_energy/v3_environment.py",
+    "scripts/train_shore_bess_v3_safe.py",
+    "scripts/train_bess_energy_v3_safe.py",
+    "scripts/train_shore_bess_v32_value.py",
+    "scripts/evaluate_bess_grid_only_forward_v32.py",
+    "evidence/v3/shore_bess/latest.json",
+    "evidence/v3/bess_energy/latest.json",
+    "evidence/v3/bess_energy/latest_grid_only.json",
+    "evidence/v3/value_improvement_v32.json",
+    "evidence/v3/runtime/selected_sac_v3.zip",
+    "evidence/v3/runtime/selected_sac_v3.config.json",
+    "evidence/v3/runtime/runtime_model.json",
+    "evidence/v3/runtime/runtime_model.sha256",
+    "docs/V3_RUNTIME_DATA_CONTRACT.md",
+    "app/ui/v3/index.html",
+    "app/ui/v3/v3.css",
+    "app/ui/v3/v3.js",
     "docs/LANDING_ROADMAP_2026-07-25.md",
     "evidence/rl/public_port_ops_v1_benchmark.json",
     "evidence/rl/public_port_ops_v1_benchmark.md",
@@ -46,7 +108,11 @@ REQUIRED = (
     "scripts/fetch_public_la_benchmark.py",
     "scripts/export_rl_evidence.py",
     "app/ui/adapters/rl_evidence_console.js",
+    "app/ui/adapters/xiaoyi_sprite.js",
+    "app/ui/ops_copilot.html",
     "app/static/xiaoyi_maritime_officer.png",
+    "app/static/vendor/echarts/echarts.min.js",
+    "app/static/vendor/echarts/LICENSE",
     "docs/assets/system-overview-provenance-governance.png",
     "docs/assets/training-center-algorithm-matrix-xiaoyi.png",
     "docs/assets/xiaoyi-system-assistant-button-linkage.png",
@@ -56,8 +122,45 @@ REQUIRED = (
 )
 
 
-def verify_portable_evidence(dataset_id: str, errors: list[str]) -> None:
-    bundle_path = ROOT / "evidence" / "rl" / f"{dataset_id}_benchmark.json"
+def verify_container_contract(errors: list[str]) -> None:
+    dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
+    required_copies = (
+        "app ./app",
+        "data ./data",
+        "config ./config",
+        "evidence ./evidence",
+        "docs ./docs",
+        "scripts ./scripts",
+    )
+    for marker in required_copies:
+        if marker not in dockerfile:
+            errors.append(f"Docker image omits required release content: {marker}")
+    if "USER portdt" not in dockerfile:
+        errors.append("Docker image does not declare its non-root runtime user")
+    ignored = {
+        line.strip().rstrip("/")
+        for line in (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    }
+    if "evidence" in ignored or "evidence/v3" in ignored:
+        errors.append("Docker context excludes portable V3 evidence")
+
+    gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
+    runtime_model_allowlist = "!evidence/v3/runtime/selected_sac_v3.zip"
+    if runtime_model_allowlist not in {line.strip() for line in gitignore}:
+        errors.append(
+            "Git release excludes the selected V3 runtime policy archive: "
+            f"missing {runtime_model_allowlist}"
+        )
+
+
+def verify_portable_evidence(
+    dataset_id: str,
+    errors: list[str],
+    *,
+    evidence_folder: str = "evidence/rl",
+) -> None:
+    bundle_path = ROOT / evidence_folder / f"{dataset_id}_benchmark.json"
     sidecar_path = bundle_path.with_suffix(".sha256")
     encoded = bundle_path.read_bytes()
     observed = hashlib.sha256(encoded).hexdigest()
@@ -81,7 +184,12 @@ def verify_portable_evidence(dataset_id: str, errors: list[str]) -> None:
         ):
             errors.append("historical public_port_ops_v1 artifact boundary is missing")
         return
-    for algorithm in ("sac", "ppo", "td3", "dqn", "a2c", "tqc"):
+    expected_algorithms = (
+        ("sac", "ppo", "td3", "dqn", "a2c", "tqc", "qrdqn", "trpo", "recurrent_ppo", "ars")
+        if dataset_id == "public_cn_sha_hourly_v3"
+        else ("sac", "ppo", "td3", "dqn", "a2c", "tqc")
+    )
+    for algorithm in expected_algorithms:
         formal = [
             run
             for run in runs
@@ -104,6 +212,11 @@ def verify_portable_evidence(dataset_id: str, errors: list[str]) -> None:
                 errors.append(f"{algorithm} formal run dataset hash is stale")
             if run.get("model_integrity", {}).get("verified") is not True:
                 errors.append(f"{algorithm} formal model hash was not verified")
+            if dataset_id == "public_cn_sha_hourly_v3":
+                if not (run.get("training", {}).get("optimizer_history") or []):
+                    errors.append(f"{algorithm} portable evidence lacks optimizer history")
+                if (run.get("validation_evaluation") or {}).get("split") != "chronological_validation_only":
+                    errors.append(f"{algorithm} portable evidence lacks validation-only selection metrics")
     if not any(
         run.get("algorithm") == "mpc"
         and run.get("evidence_label") == "DETERMINISTIC_CONTROLLER_BASELINE"
@@ -111,6 +224,12 @@ def verify_portable_evidence(dataset_id: str, errors: list[str]) -> None:
         for run in runs
     ):
         errors.append("portable evidence lacks deterministic MPC baseline")
+    if dataset_id == "public_cn_sha_hourly_v3" and not any(
+        run.get("algorithm") == "fcfs"
+        and run.get("evidence_label") == "DETERMINISTIC_CONTROLLER_BASELINE"
+        for run in runs
+    ):
+        errors.append("Shanghai portable evidence lacks neutral FCFS baseline")
 
 
 def main() -> int:
@@ -120,6 +239,44 @@ def main() -> int:
     for relative in REQUIRED:
         if not (ROOT / relative).is_file():
             errors.append(f"missing release evidence: {relative}")
+    mission_api = (ROOT / "app/services/copilot/api.py").read_text(encoding="utf-8")
+    mission_ui = (ROOT / "app/ui/ops_copilot.html").read_text(encoding="utf-8")
+    for marker in (
+        '"/mission"',
+        '"/handoff"',
+        "true_xiaoyi_called",
+        "context_sha256",
+        "production_authority",
+    ):
+        if marker not in mission_api:
+            errors.append(f"Xiaoyi mission API marker missing: {marker}")
+    for marker in (
+        "/api/copilot/mission",
+        "missionRail",
+        "engineProof",
+        "confirmHandoff",
+        "xiaoyi_maritime_officer.png",
+    ):
+        if marker not in mission_ui:
+            errors.append(f"Xiaoyi mission UI marker missing: {marker}")
+    verify_container_contract(errors)
+    try:
+        runtime_root = ROOT / "evidence/v3/runtime"
+        runtime = json.loads((runtime_root / "runtime_model.json").read_text(encoding="utf-8"))
+        if runtime.get("schema") != "port-dt-v3-runtime-policy.v1":
+            errors.append("V3 runtime policy schema changed")
+        if runtime.get("production_authority") is not False:
+            errors.append("V3 runtime policy incorrectly grants production authority")
+        for line in (runtime_root / "runtime_model.sha256").read_text(encoding="utf-8").splitlines():
+            expected, name = line.split(maxsplit=1)
+            observed = hashlib.sha256((runtime_root / name.strip()).read_bytes()).hexdigest()
+            if observed != expected:
+                errors.append(f"V3 runtime artifact hash mismatch: {name.strip()}")
+        shanghai = load_port_dataset("public_cn_sha_hourly_v3")
+        if runtime.get("dataset_sha256") != shanghai.fingerprint:
+            errors.append("V3 runtime policy dataset hash is stale")
+    except Exception as exc:
+        errors.append(f"V3 runtime policy verification failed: {exc}")
     xiaoyi_asset = ROOT / "app/static/xiaoyi_maritime_officer.png"
     if xiaoyi_asset.is_file():
         observed_xiaoyi_sha256 = hashlib.sha256(xiaoyi_asset.read_bytes()).hexdigest()
@@ -216,17 +373,333 @@ def main() -> int:
         for profile_id in (
             "sgsin_public_replay_v2",
             "us_la_public_benchmark_v2",
+            "cn_sha_public_benchmark_v3",
         ):
             profile = load_profile(profile_id)
             if profile.get("control_authority") != "recommendation_only":
                 errors.append(f"port profile grants execution authority: {profile_id}")
-            if profile.get("environment_version") != "port_ops_v2":
+            expected_environment = (
+                "port_ops_v3" if profile_id == "cn_sha_public_benchmark_v3" else "port_ops_v2"
+            )
+            if profile.get("environment_version") != expected_environment:
                 errors.append(f"port profile environment changed: {profile_id}")
     except Exception as exc:
         errors.append(f"port-profile verification failed: {exc}")
     try:
+        shanghai = load_port_dataset("public_cn_sha_hourly_v3")
+        shanghai_quality = shanghai.describe(0.2, 0.1).get("quality") or {}
+        if shanghai.fingerprint != "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01":
+            errors.append("Shanghai V3 public benchmark fingerprint changed")
+        if shanghai.rows != 17_544:
+            errors.append("Shanghai V3 row count changed")
+        if shanghai_quality.get("training_eligible") is not True:
+            errors.append("Shanghai V3 dataset failed its quality gate")
+        if shanghai.metadata.get("measured_columns"):
+            errors.append("Shanghai V3 reanalysis was incorrectly labelled measured")
+        if shanghai.metadata.get("independent_source_observations") != 17_566:
+            errors.append("Shanghai V3 independent-observation count changed")
+        if shanghai.metadata.get("environment_version") != "port_ops_v3":
+            errors.append("Shanghai V3 dataset is not bound to port_ops_v3")
+        split = shanghai.describe(0.2, 0.1)
+        if (split.get("train_rows"), split.get("validation_rows"), split.get("test_rows")) != (12_280, 1_755, 3_509):
+            errors.append("Shanghai V3 three-way chronological split changed")
+    except Exception as exc:
+        errors.append(f"Shanghai V3 dataset verification failed: {exc}")
+    try:
+        forward = load_port_dataset("public_cn_sha_forward_2026m05_v1")
+        if forward.fingerprint != "616fe7cde24695f0d19118c64d1e5c534f9adee47a886b33b6003e7e372bb06a":
+            errors.append("Shanghai 2026 forward-challenge fingerprint changed")
+        if forward.rows != 3_624:
+            errors.append("Shanghai 2026 forward-challenge row count changed")
+        if forward.metadata.get("measured_columns"):
+            errors.append("Shanghai 2026 forward reanalysis was incorrectly labelled measured")
+        if forward.metadata.get("independent_source_observations") != 3_628:
+            errors.append("Shanghai 2026 forward independent-observation count changed")
+        split_policy = forward.metadata.get("split_policy") or {}
+        if split_policy.get("role") != "forward_challenge_only":
+            errors.append("Shanghai 2026 forward data is not isolated as challenge-only")
+        if split_policy.get("candidate_selection_allowed") is not False:
+            errors.append("Shanghai 2026 forward data may influence candidate selection")
+        anchors = json.loads(
+            (ROOT / "data/public_sources/shanghai_port_mot_2026_forward.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        if [row.get("cumulative_teu_10000") for row in anchors.get("observations") or []] != [
+            941,
+            1_411,
+            1_896,
+            2_375,
+        ]:
+            errors.append("Shanghai 2026 official cumulative throughput anchors changed")
+        if (anchors.get("derivation_boundary") or {}).get("official_observations") != 4:
+            errors.append("Shanghai 2026 official-observation boundary changed")
+    except Exception as exc:
+        errors.append(f"Shanghai 2026 forward-challenge verification failed: {exc}")
+    try:
+        value = json.loads(
+            (ROOT / "evidence/v3/value_improvement_v32.json").read_text(encoding="utf-8")
+        )
+        if value.get("schema") != "port-dt-v32-value-improvement.v1":
+            errors.append("V3.2 value-improvement registry schema changed")
+        policy = value.get("policy") or {}
+        if policy.get("historical_metrics_preserved") is not True:
+            errors.append("V3.2 value work did not preserve historical evidence")
+        if policy.get("forward_challenge_used_for_tuning") is not False:
+            errors.append("V3.2 forward challenge leaked into tuning")
+        if policy.get("production_authority") is not False:
+            errors.append("V3.2 value registry grants production authority")
+        modules = value.get("modules") or {}
+        expected_statuses = {
+            "yard_lighting": "retained_constraint_ceiling",
+            "hvac": "candidate_rejected_strict_peak_gate",
+            "shore_bess": "balanced_candidate_rejected",
+            "bess_energy": "grid_only_forward_pass",
+        }
+        if {key: (modules.get(key) or {}).get("status") for key in expected_statuses} != expected_statuses:
+            errors.append("V3.2 module admission decisions changed")
+        grid_latest = json.loads(
+            (ROOT / "evidence/v3/bess_energy/latest_grid_only.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        forward_path = ROOT / str(grid_latest.get("forward_evidence_path") or "")
+        if hashlib.sha256(forward_path.read_bytes()).hexdigest() != grid_latest.get(
+            "forward_evidence_sha256"
+        ):
+            errors.append("BESS grid-only forward evidence hash mismatch")
+        forward_evidence = json.loads(forward_path.read_text(encoding="utf-8"))
+        if forward_evidence.get("status") != "GRID_ONLY_PROFILE_FORWARD_PASS":
+            errors.append("BESS grid-only forward profile is not admitted")
+        if forward_evidence.get("admitted_public_offline_profile") is not True:
+            errors.append("BESS grid-only public-offline admission changed")
+        seeds = forward_evidence.get("per_seed") or []
+        if len(seeds) != 3 or not all(row.get("admitted") is True for row in seeds):
+            errors.append("BESS grid-only forward profile lacks three admitted seeds")
+        for row in seeds:
+            metrics = row.get("metrics") or {}
+            if metrics.get("reserve_revenue_cny") != 0.0 or metrics.get("dr_revenue_cny") != 0.0:
+                errors.append("BESS grid-only profile contains unsupported market revenue")
+            if metrics.get("claim_eligible") is not False:
+                errors.append("BESS grid-only profile fabricates a site claim")
+            model_path = ROOT / str(row.get("model_path") or "")
+            if hashlib.sha256(model_path.read_bytes()).hexdigest() != row.get("model_sha256"):
+                errors.append(f"BESS grid-only selected model hash mismatch: {row.get('seed')}")
+    except Exception as exc:
+        errors.append(f"V3.2 value-improvement verification failed: {exc}")
+    try:
+        for module_id, expected_schema, expected_states, expected_rewards, minimum_constraints in (
+            ("shore_bess", "port-dt-shore-bess-formal-evidence.v2", 34, 8, 12),
+            ("bess_energy", "port-dt-bess-energy-formal-evidence.v1", 40, 9, 15),
+        ):
+            evidence_root = ROOT / "evidence" / "v3" / module_id
+            latest = json.loads((evidence_root / "latest.json").read_text(encoding="utf-8"))
+            report_path = ROOT / str(latest.get("report_path") or "")
+            observed_report_hash = hashlib.sha256(report_path.read_bytes()).hexdigest()
+            if observed_report_hash != latest.get("report_sha256"):
+                errors.append(f"{module_id} latest report hash mismatch")
+                continue
+            specialized = json.loads(report_path.read_text(encoding="utf-8"))
+            if specialized.get("schema") != expected_schema:
+                errors.append(f"{module_id} formal evidence schema changed")
+            if specialized.get("production_authority") is not False:
+                errors.append(f"{module_id} evidence grants production authority")
+            if (specialized.get("training") or {}).get("training_render_calls") != 0:
+                errors.append(f"{module_id} formal training rendered frames")
+            contract = specialized.get("contract") or {}
+            if contract.get("state_dimensions") != expected_states:
+                errors.append(f"{module_id} state contract changed")
+            if len(contract.get("reward_components") or []) != expected_rewards:
+                errors.append(f"{module_id} reward contract changed")
+            if len(contract.get("hard_constraints") or []) < minimum_constraints:
+                errors.append(f"{module_id} hard-constraint coverage regressed")
+            gates = specialized.get("quality_gates") or {}
+            if gates.get("convergence_passed") is not True or gates.get("safety_passed") is not True:
+                errors.append(f"{module_id} latest formal run failed convergence or safety")
+            if gates.get("public_offline_admitted") is not True:
+                errors.append(f"{module_id} latest formal run is not public-offline admitted")
+            for model in (specialized.get("artifacts") or {}).get("models") or []:
+                model_path = ROOT / str(model.get("path") or "")
+                if hashlib.sha256(model_path.read_bytes()).hexdigest() != model.get("sha256"):
+                    errors.append(f"{module_id} selected model hash mismatch: {model.get('seed')}")
+        bess_report_path = ROOT / json.loads(
+            (ROOT / "evidence/v3/bess_energy/latest.json").read_text(encoding="utf-8")
+        )["report_path"]
+        bess_report = json.loads(bess_report_path.read_text(encoding="utf-8"))
+        supplement = bess_report.get("scenario_supplement") or {}
+        if supplement.get("observed_site_event_rows") != 0 or supplement.get("claim_as_real_market_settlement") is not False:
+            errors.append("BESS engineering events can be misread as observed settlement evidence")
+        if not (ROOT / "evidence/v3/bess_energy/history_index.jsonl").read_text(encoding="utf-8").count("\n") >= 2:
+            errors.append("BESS append-only failed/pass history is incomplete")
+    except Exception as exc:
+        errors.append(f"specialized BESS evidence verification failed: {exc}")
+    try:
+        v3_json = ROOT / "evidence/v3/shanghai_public_advantage_v3.json"
+        v3_md = ROOT / "evidence/v3/shanghai_public_advantage_v3.md"
+        sidecar_lines = (ROOT / "evidence/v3/shanghai_public_advantage_v3.sha256").read_text(encoding="utf-8").splitlines()
+        expected_hashes = {line.split()[1]: line.split()[0] for line in sidecar_lines if len(line.split()) == 2}
+        for evidence_path in (v3_json, v3_md):
+            if hashlib.sha256(evidence_path.read_bytes()).hexdigest() != expected_hashes.get(evidence_path.name):
+                errors.append(f"V3 advantage evidence hash mismatch: {evidence_path.name}")
+        advantage = json.loads(v3_json.read_text(encoding="utf-8"))
+        selected = advantage.get("selected") or {}
+        if advantage.get("schema") != "port-dt-v3-advantage-evidence.v1":
+            errors.append("V3 advantage evidence schema changed")
+        if advantage.get("production_authority") is not False:
+            errors.append("V3 advantage evidence grants production authority")
+        if advantage.get("historical_evidence_preserved") is not True:
+            errors.append("V3 evidence does not assert append-only history")
+        if (advantage.get("baseline") or {}).get("environment_version") != "port_ops_v3":
+            errors.append("V3 advantage is not bound to the causal port_ops_v3 environment")
+        selection_protocol = advantage.get("selection_protocol") or {}
+        if selection_protocol.get("algorithm_selection") != "chronological_validation_only":
+            errors.append("V3 algorithm selection is not isolated to validation rows")
+        if selection_protocol.get("final_advantage_report") != "chronological_blind_test_only":
+            errors.append("V3 final advantage is not reported on the blind test")
+        if selection_protocol.get("blind_test_used_for_selection") is not False:
+            errors.append("V3 blind test may have influenced algorithm selection")
+        if len(set(selected.get("seeds") or [])) < 3:
+            errors.append("V3 selected policy lacks three formal seeds")
+        portable_v3_bundle = json.loads(
+            (ROOT / "evidence/v3/public_cn_sha_hourly_v3_benchmark.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        portable_v3_runs = {
+            str(run.get("job_id")): run
+            for run in portable_v3_bundle.get("runs") or []
+            if run.get("job_id")
+        }
+        for job_id in selected.get("job_ids") or []:
+            validation_path = ROOT / "data/rl/runs" / str(job_id) / "validation_evaluation.json"
+            if validation_path.is_file():
+                validation = json.loads(validation_path.read_text(encoding="utf-8"))
+            else:
+                validation = (
+                    portable_v3_runs.get(str(job_id), {}).get("validation_evaluation")
+                    or {}
+                )
+            if not validation:
+                errors.append(f"V3 selected run lacks validation evidence: {job_id}")
+                continue
+            if validation.get("split") != "chronological_validation_only":
+                errors.append(f"V3 validation artifact has the wrong split: {job_id}")
+            if (validation.get("evaluation_protocol") or {}).get("render_during_policy_execution") is not False:
+                errors.append(f"V3 validation rendered policy execution: {job_id}")
+        required_business_metrics = {
+            "throughput_teu", "delay_index_mean", "energy_cost", "carbon_kg",
+            "peak_kw", "cost_per_teu", "carbon_kg_per_teu",
+            "service_completion_ratio", "queue_end_teu", "action_projection_rate",
+            "action_projection_correction_kw_mean", "action_projection_severity_mean",
+            "action_projection_terminal_reachability_rate", "terminal_soc_error",
+        }
+        if not required_business_metrics.issubset((selected.get("blind_test_metrics") or {}).keys()):
+            errors.append("V3 selected policy lacks the expanded blind-test business metrics")
+        safety_admission = selected.get("safety_admission") or {}
+        if float(safety_admission.get("guardrail_violation_rate_max_observed") or 0.0) > 0:
+            errors.append("V3 selected policy crossed a hard guardrail")
+        configured_projection_max = float(
+            (((advantage.get("benchmark_contract") or {}).get("eligibility") or {})
+             .get("action_projection_rate_max") or 0.0)
+        )
+        if configured_projection_max <= 0 or configured_projection_max > 0.6:
+            errors.append("V3 projection admission threshold is not hardened to 60% or lower")
+        if float(safety_admission.get("action_projection_rate_max_observed") or 1.0) > configured_projection_max:
+            errors.append("V3 selected policy relies excessively on safety projection")
+        hardening = advantage.get("projection_hardening") or {}
+        if hardening.get("historical_preserved") is not True:
+            errors.append("V3.1 projection evidence was not preserved")
+        if float(hardening.get("current_mean") or 1.0) >= float(hardening.get("historical_mean") or 0.0):
+            errors.append("V3.2 projection dependence did not improve over V3.1")
+        historical_report = ROOT / str(hardening.get("historical_report") or "")
+        if not historical_report.is_file():
+            errors.append("V3.1 archived advantage report is missing")
+        if float(safety_admission.get("terminal_soc_error_max_observed") or 0.0) > 0.000001:
+            errors.append("V3 selected policy does not restore terminal SOC")
+        if float((selected.get("weighted_relative_improvement") or {}).get("mean") or 0.0) <= 0:
+            errors.append("V3 selected policy has no positive version-pinned advantage")
+    except Exception as exc:
+        errors.append(f"V3 advantage verification failed: {exc}")
+    try:
+        impact_json = ROOT / "evidence/v3/shanghai_public_business_impact_v3.json"
+        impact_md = ROOT / "evidence/v3/shanghai_public_business_impact_v3.md"
+        impact_sidecar = (ROOT / "evidence/v3/shanghai_public_business_impact_v3.sha256").read_text(encoding="utf-8").splitlines()
+        impact_hashes = {line.split()[1]: line.split()[0] for line in impact_sidecar if len(line.split()) == 2}
+        for evidence_path in (impact_json, impact_md):
+            if hashlib.sha256(evidence_path.read_bytes()).hexdigest() != impact_hashes.get(evidence_path.name):
+                errors.append(f"V3 business-impact evidence hash mismatch: {evidence_path.name}")
+        impact = json.loads(impact_json.read_text(encoding="utf-8"))
+        if impact.get("schema") != "port-dt-v3-business-impact-scenario.v1":
+            errors.append("V3 business-impact schema changed")
+        if (impact.get("comparison") or {}).get("environment_version") != "port_ops_v3":
+            errors.append("V3 business impact is not bound to port_ops_v3")
+        if impact.get("production_authority") is not False:
+            errors.append("V3 business-impact evidence grants production authority")
+        if (impact.get("scenario_value") or {}).get("annualized_values_are_mechanical_extrapolations") is not True:
+            errors.append("V3 annualized value is missing the mechanical-extrapolation boundary")
+        if (impact.get("mpc_efficiency_value") or {}).get("not_absolute_bill_saving") is not True:
+            errors.append("V3 MPC equivalent-throughput value can be misread as absolute bill saving")
+        if float((impact.get("comparison") or {}).get("action_projection_rate") or 1.0) > 0.9:
+            errors.append("V3 MPC business comparison relies excessively on action projection")
+        if "not Shanghai International Port Group savings" not in str(impact.get("claim_boundary") or ""):
+            errors.append("V3 business-impact group-savings disclaimer is missing")
+    except Exception as exc:
+        errors.append(f"V3 business-impact verification failed: {exc}")
+    try:
+        strong_json = ROOT / "evidence/v3/strong_baseline_evidence_v3.json"
+        strong_md = ROOT / "evidence/v3/strong_baseline_evidence_v3.md"
+        strong_lines = (ROOT / "evidence/v3/strong_baseline_evidence_v3.sha256").read_text(encoding="utf-8").splitlines()
+        strong_hashes = {line.split()[1]: line.split()[0] for line in strong_lines if len(line.split()) == 2}
+        for evidence_path in (strong_json, strong_md):
+            if hashlib.sha256(evidence_path.read_bytes()).hexdigest() != strong_hashes.get(evidence_path.name):
+                errors.append(f"V3 strong-baseline evidence hash mismatch: {evidence_path.name}")
+        strong = json.loads(strong_json.read_text(encoding="utf-8"))
+        if strong.get("schema") != "port-dt-v3-strong-baseline-evidence.v1":
+            errors.append("V3 strong-baseline schema changed")
+        if (strong.get("protocol") or {}).get("split") != "chronological_blind_test_only":
+            errors.append("V3 strong-baseline comparison is not blind-test-only")
+        if (strong.get("protocol") or {}).get("paired_comparison") is not True:
+            errors.append("V3 strong-baseline windows are not paired")
+        comparisons = strong.get("comparisons") or {}
+        if set(comparisons) != {"fcfs_neutral", "engineering_ops_rule", "mpc"}:
+            errors.append("V3 strong-baseline comparator coverage changed")
+        gate = strong.get("strong_baseline_gate") or {}
+        if gate.get("fcfs_only_is_not_sufficient_for_production_claim") is not True:
+            errors.append("V3 allows FCFS-only production claims")
+        if gate.get("measured_current_operations_baseline_available") is not False:
+            errors.append("V3 fabricates a measured incumbent baseline")
+        if gate.get("production_claim_admitted") is not False:
+            errors.append("V3 strong-baseline gate grants production authority")
+        if (strong.get("site_replacement") or {}).get("required") is not True:
+            errors.append("V3 strong-baseline site replacement is not required")
+    except Exception as exc:
+        errors.append(f"V3 strong-baseline verification failed: {exc}")
+    try:
+        from app.services.v3_port_ai import BUSINESS_CAPABILITIES, _business_depth
+
+        depths = [_business_depth(row["id"]) for row in BUSINESS_CAPABILITIES]
+        if len(depths) != 12:
+            errors.append("V3 business-domain coverage changed")
+        if sum(bool(row.get("model_output_available")) for row in depths) != 9:
+            errors.append("V3 business execution-depth classification changed")
+        if any(row.get("production_ready") is not False for row in depths):
+            errors.append("V3 business domain grants production readiness")
+        for capability, depth in zip(BUSINESS_CAPABILITIES, depths):
+            if not depth.get("runtime_endpoints") or not depth.get("site_blockers"):
+                errors.append(f"V3 business domain lacks runtime/site contract: {capability['id']}")
+            for artifact in depth.get("code_artifacts") or []:
+                if artifact.get("exists") is not True or len(str(artifact.get("sha256") or "")) != 64:
+                    errors.append(f"V3 business code evidence failed: {capability['id']}")
+    except Exception as exc:
+        errors.append(f"V3 business execution-depth verification failed: {exc}")
+    try:
         verify_portable_evidence("public_port_ops_v1", errors)
         verify_portable_evidence("public_us_la_6min_v1", errors)
+        verify_portable_evidence(
+            "public_cn_sha_hourly_v3",
+            errors,
+            evidence_folder="evidence/v3",
+        )
     except Exception as exc:
         errors.append(f"portable RL evidence verification failed: {exc}")
     try:
@@ -256,9 +729,41 @@ def main() -> int:
         "businessWaitKpi",
         "businessCostKpi",
         "/ui/adapters/rl_evidence_console.js",
+        "v3_port_ai_router",
     ):
         if marker not in server:
             errors.append(f"Web evidence surface missing: {marker}")
+    v3_ui = (ROOT / "app/ui/v3/index.html").read_text(encoding="utf-8")
+    for marker in (
+        "公开数据离线验证",
+        "无生产控制权",
+        "SITE DATA REPLACEMENT CONTRACT",
+        "/api/v3/overview",
+        "查看训练指标",
+        "查看技术链路",
+        "绝对业务结果",
+        "安全稳健性",
+        "孪生可靠性",
+        "部署自检",
+        "/api/v3/twin/reliability?refresh=1",
+        "/health/ready",
+        "restoreHashTarget",
+        "查看数据血缘",
+        "验收规则",
+    ):
+        if marker not in v3_ui and marker not in (ROOT / "app/ui/v3/v3.js").read_text(encoding="utf-8"):
+            errors.append(f"V3 evidence UI marker missing: {marker}")
+    operations = (ROOT / "app/operations.py").read_text(encoding="utf-8")
+    for marker in (
+        "PORT_DT_RATE_LIMIT_RPM",
+        "PORT_DT_MAX_REQUEST_BYTES",
+        "PORT_DT_SHADOW_ACCEPTANCE_PATH",
+        "site_evidence_consistency",
+        "Strict-Transport-Security",
+        "Content-Security-Policy",
+    ):
+        if marker not in operations:
+            errors.append(f"Production readiness hardening marker missing: {marker}")
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     screenshot_paths = (
         "docs/assets/system-overview-provenance-governance.png",

@@ -1,0 +1,659 @@
+{
+  "schema": "port-dt-shore-bess-v32-value-report.v1",
+  "version": "3.2.0",
+  "run_id": "shore-bess-v32-balanced-20260813T084500Z",
+  "generated_at": "2026-08-13T08:46:49.911871Z",
+  "status": "REJECTED_BALANCED_GATE",
+  "warm_start_champion": {
+    "schema": "port-dt-shore-bess-latest-pointer.v1",
+    "run_id": "shore-bess-v3-safe-20260813T015000Z",
+    "report_path": "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/report.json",
+    "report_sha256": "6e5aa99b6bff60b3802bba814876366ede44d5a49c50810f7e39b11535a25513",
+    "status": "FORMAL_PUBLIC_DATA_ECONOMIC_PROFILE_PASS_CARBON_BLOCKED",
+    "updated_at": "2026-08-13T01:52:19.426852Z"
+  },
+  "historical_report_preserved": true,
+  "training": {
+    "algorithm": "Constrained BC warm-start + PPO balanced safe policy improvement",
+    "real_ppo_environment_steps_per_seed": 30000,
+    "seeds": [
+      43,
+      143,
+      243
+    ],
+    "render_calls": 0
+  },
+  "validation": {
+    "neutral": {
+      "episodes": [
+        {
+          "reward": 0.0,
+          "energy_cost_cny": 2756646.0104082096,
+          "carbon_kg": 2180032.4201200358,
+          "degradation_cost_cny": 0.0,
+          "bess_throughput_kwh": 0.0,
+          "aux_shift_kwh": 0.0,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 0.0,
+          "nonzero_bess_actions": 0.0,
+          "nonzero_flex_actions": 0.0,
+          "peak_kw": 25386.44140625,
+          "soc_min_observed": 0.58,
+          "soc_max_observed": 0.58,
+          "temperature_max_c": 27.600000381469727,
+          "demand_charge_cny": 221857.68916837784,
+          "total_cost_cny": 2978503.6995765874,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.0,
+          "nonzero_bess_action_rate": 0.0,
+          "nonzero_flex_action_rate": 0.0,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0
+        },
+        {
+          "reward": 0.0,
+          "energy_cost_cny": 2803404.6241998477,
+          "carbon_kg": 2217219.4960891507,
+          "degradation_cost_cny": 0.0,
+          "bess_throughput_kwh": 0.0,
+          "aux_shift_kwh": 0.0,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 0.0,
+          "nonzero_bess_actions": 0.0,
+          "nonzero_flex_actions": 0.0,
+          "peak_kw": 26070.6015625,
+          "soc_min_observed": 0.58,
+          "soc_max_observed": 0.58,
+          "temperature_max_c": 31.399999618530273,
+          "demand_charge_cny": 227836.71509240248,
+          "total_cost_cny": 3031241.33929225,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.0,
+          "nonzero_bess_action_rate": 0.0,
+          "nonzero_flex_action_rate": 0.0,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0
+        },
+        {
+          "reward": 0.0,
+          "energy_cost_cny": 2806664.532120212,
+          "carbon_kg": 2221330.4788587783,
+          "degradation_cost_cny": 0.0,
+          "bess_throughput_kwh": 0.0,
+          "aux_shift_kwh": 0.0,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 0.0,
+          "nonzero_bess_actions": 0.0,
+          "nonzero_flex_actions": 0.0,
+          "peak_kw": 25849.349609375,
+          "soc_min_observed": 0.58,
+          "soc_max_observed": 0.58,
+          "temperature_max_c": 32.0,
+          "demand_charge_cny": 225903.14566221766,
+          "total_cost_cny": 3032567.67778243,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.0,
+          "nonzero_bess_action_rate": 0.0,
+          "nonzero_flex_action_rate": 0.0,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0
+        },
+        {
+          "reward": 0.0,
+          "energy_cost_cny": 2839313.0766738467,
+          "carbon_kg": 2246572.921353255,
+          "degradation_cost_cny": 0.0,
+          "bess_throughput_kwh": 0.0,
+          "aux_shift_kwh": 0.0,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 0.0,
+          "nonzero_bess_actions": 0.0,
+          "nonzero_flex_actions": 0.0,
+          "peak_kw": 26309.56640625,
+          "soc_min_observed": 0.58,
+          "soc_max_observed": 0.58,
+          "temperature_max_c": 30.600000381469727,
+          "demand_charge_cny": 229925.08136550308,
+          "total_cost_cny": 3069238.1580393496,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.0,
+          "nonzero_bess_action_rate": 0.0,
+          "nonzero_flex_action_rate": 0.0,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0
+        },
+        {
+          "reward": 0.0,
+          "energy_cost_cny": 2788257.348336452,
+          "carbon_kg": 2206988.379234489,
+          "degradation_cost_cny": 0.0,
+          "bess_throughput_kwh": 0.0,
+          "aux_shift_kwh": 0.0,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 0.0,
+          "nonzero_bess_actions": 0.0,
+          "nonzero_flex_actions": 0.0,
+          "peak_kw": 25512.638671875,
+          "soc_min_observed": 0.58,
+          "soc_max_observed": 0.58,
+          "temperature_max_c": 32.0,
+          "demand_charge_cny": 222960.55479979466,
+          "total_cost_cny": 3011217.903136247,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.0,
+          "nonzero_bess_action_rate": 0.0,
+          "nonzero_flex_action_rate": 0.0,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0
+        },
+        {
+          "reward": 0.0,
+          "energy_cost_cny": 2815587.8371619433,
+          "carbon_kg": 2228140.9416010864,
+          "degradation_cost_cny": 0.0,
+          "bess_throughput_kwh": 0.0,
+          "aux_shift_kwh": 0.0,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 0.0,
+          "nonzero_bess_actions": 0.0,
+          "nonzero_flex_actions": 0.0,
+          "peak_kw": 26054.0078125,
+          "soc_min_observed": 0.58,
+          "soc_max_observed": 0.58,
+          "temperature_max_c": 32.0,
+          "demand_charge_cny": 227691.69866529774,
+          "total_cost_cny": 3043279.535827241,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.0,
+          "nonzero_bess_action_rate": 0.0,
+          "nonzero_flex_action_rate": 0.0,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0
+        },
+        {
+          "reward": 0.0,
+          "energy_cost_cny": 2783166.859805284,
+          "carbon_kg": 2201824.792941137,
+          "degradation_cost_cny": 0.0,
+          "bess_throughput_kwh": 0.0,
+          "aux_shift_kwh": 0.0,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 0.0,
+          "nonzero_bess_actions": 0.0,
+          "nonzero_flex_actions": 0.0,
+          "peak_kw": 25574.56640625,
+          "soc_min_observed": 0.58,
+          "soc_max_observed": 0.58,
+          "temperature_max_c": 32.0,
+          "demand_charge_cny": 223501.7548767967,
+          "total_cost_cny": 3006668.6146820807,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.0,
+          "nonzero_bess_action_rate": 0.0,
+          "nonzero_flex_action_rate": 0.0,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0
+        },
+        {
+          "reward": 0.0,
+          "energy_cost_cny": 2936547.989748367,
+          "carbon_kg": 2326533.269600872,
+          "degradation_cost_cny": 0.0,
+          "bess_throughput_kwh": 0.0,
+          "aux_shift_kwh": 0.0,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 0.0,
+          "nonzero_bess_actions": 0.0,
+          "nonzero_flex_actions": 0.0,
+          "peak_kw": 27278.880859375,
+          "soc_min_observed": 0.58,
+          "soc_max_observed": 0.58,
+          "temperature_max_c": 32.0,
+          "demand_charge_cny": 238396.13334188913,
+          "total_cost_cny": 3174944.123090256,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.0,
+          "nonzero_bess_action_rate": 0.0,
+          "nonzero_flex_action_rate": 0.0,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0
+        }
+      ],
+      "mean": {
+        "aux_shift_kwh": 0.0,
+        "bess_throughput_kwh": 0.0,
+        "carbon_kg": 2228580.3374748505,
+        "degradation_cost_cny": 0.0,
+        "demand_charge_cny": 227259.0966215349,
+        "energy_cost_cny": 2816198.5348067703,
+        "guardrail_violation_rate": 0.0,
+        "guardrail_violations": 0.0,
+        "nonzero_bess_action_rate": 0.0,
+        "nonzero_bess_actions": 0.0,
+        "nonzero_flex_action_rate": 0.0,
+        "nonzero_flex_actions": 0.0,
+        "peak_kw": 26004.506591796875,
+        "projection_count": 0.0,
+        "projection_rate": 0.0,
+        "reserve_shortfall_kwh": 0.0,
+        "reward": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "soc_max_observed": 0.58,
+        "soc_min_observed": 0.58,
+        "temperature_max_c": 31.200000047683716,
+        "terminal_flex_backlog_kwh": 0.0,
+        "terminal_soc_error": 0.0,
+        "total_cost_cny": 3043457.631428305
+      },
+      "std": {
+        "aux_shift_kwh": 0.0,
+        "bess_throughput_kwh": 0.0,
+        "carbon_kg": 41290.59264200394,
+        "degradation_cost_cny": 0.0,
+        "demand_charge_cny": 4940.530506064619,
+        "energy_cost_cny": 50857.06965965616,
+        "guardrail_violation_rate": 0.0,
+        "guardrail_violations": 0.0,
+        "nonzero_bess_action_rate": 0.0,
+        "nonzero_bess_actions": 0.0,
+        "nonzero_flex_action_rate": 0.0,
+        "nonzero_flex_actions": 0.0,
+        "peak_kw": 565.3285611967734,
+        "projection_count": 0.0,
+        "projection_rate": 0.0,
+        "reserve_shortfall_kwh": 0.0,
+        "reward": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "soc_max_observed": 0.0,
+        "soc_min_observed": 0.0,
+        "temperature_max_c": 1.438749311166943,
+        "terminal_flex_backlog_kwh": 0.0,
+        "terminal_soc_error": 0.0,
+        "total_cost_cny": 55714.71836554304
+      },
+      "sample_inference": {
+        "timestamp": "2025-05-26T16:00:00Z",
+        "state": {
+          "index": 0.0,
+          "base_load_kw": 24153.21484375,
+          "throughput_teu": 6982.62353515625,
+          "vessel_arrivals": 1.342812180519104,
+          "tide_m": 1.7400000095367432,
+          "price_cny_per_kwh": 0.7200000286102295,
+          "carbon_kg_per_kwh": 0.5408520102500916,
+          "ambient_c": 19.600000381469727,
+          "mandatory_shore_kw": 8778.64197046529,
+          "auxiliary_shore_kw": 482.825308375591,
+          "reserve_required_kw": 700.1679003238678,
+          "known_tariff_6h_mean": 1.0199999809265137,
+          "berth_occupancy_ratio": 0.8338930010795593,
+          "yard_occupancy_ratio": 0.8279539942741394,
+          "equipment_availability_ratio": 0.9545180201530457,
+          "channel_congestion_ratio": 0.7834320068359375,
+          "reefer_load_kw": 704.0443115234375,
+          "pilot_tug_availability_ratio": 0.9068440198898315,
+          "closure_flag": 0.0,
+          "wind_speed_mps": 5.210000038146973,
+          "wave_height_m": 0.3400000035762787,
+          "current_speed_mps": 0.2777779996395111,
+          "visibility_available": 0.0,
+          "timestamp_hour": 16.0,
+          "weekday": 0.0
+        },
+        "requested_action": {
+          "bess_kw": 0.0,
+          "flex_kw": 0.0
+        },
+        "final_action": {
+          "bess_kw": 0.0,
+          "flex_kw": 0.0
+        },
+        "projection": {
+          "applied": false,
+          "reasons": []
+        },
+        "model_output_derived_business": {
+          "energy_cost_cny": 17390.31537852902,
+          "carbon_kg": 13063.314802244538,
+          "degradation_cost_cny": 0.0,
+          "peak_excess_kw": 0.0
+        }
+      }
+    },
+    "per_seed": [
+      {
+        "seed": 43,
+        "curve": [
+          {
+            "timesteps": 5000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.11328953353161311,
+              "carbon_reduction_vs_no_bess_percent": -0.02221908410001101,
+              "peak_reduction_vs_no_bess_percent": -0.45481032430664986,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9456845238095238
+            },
+            "validation_reward_mean": -6.126016826646607,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_43/ppo_step_5000.zip"
+          },
+          {
+            "timesteps": 10000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.07404236625225627,
+              "carbon_reduction_vs_no_bess_percent": -0.018606346891309147,
+              "peak_reduction_vs_no_bess_percent": -0.2199947669807641,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 1.0
+            },
+            "validation_reward_mean": -7.163937747059815,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_43/ppo_step_10000.zip"
+          },
+          {
+            "timesteps": 15000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.07184766687213488,
+              "carbon_reduction_vs_no_bess_percent": -0.019432636144586637,
+              "peak_reduction_vs_no_bess_percent": -0.21587690715350064,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9888392857142858
+            },
+            "validation_reward_mean": -6.5463982269608145,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_43/ppo_step_15000.zip"
+          },
+          {
+            "timesteps": 20000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.05164975491910697,
+              "carbon_reduction_vs_no_bess_percent": -0.023735689821243047,
+              "peak_reduction_vs_no_bess_percent": -0.1435799232051944,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9501488095238095
+            },
+            "validation_reward_mean": -5.862690672858506,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_43/ppo_step_20000.zip"
+          },
+          {
+            "timesteps": 25000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.031686117440046624,
+              "carbon_reduction_vs_no_bess_percent": -0.026323950593226075,
+              "peak_reduction_vs_no_bess_percent": -0.09895404523298511,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9360119047619048
+            },
+            "validation_reward_mean": -5.133941940346537,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_43/ppo_step_25000.zip"
+          },
+          {
+            "timesteps": 30000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.055057017032708364,
+              "carbon_reduction_vs_no_bess_percent": -0.027654028312403378,
+              "peak_reduction_vs_no_bess_percent": -0.2085568602127134,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9263392857142857
+            },
+            "validation_reward_mean": -5.689244305813654,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_43/ppo_step_30000.zip"
+          }
+        ],
+        "validation_candidate": null,
+        "validation_admitted": false,
+        "render_calls_during_training": 0
+      },
+      {
+        "seed": 143,
+        "curve": [
+          {
+            "timesteps": 5000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.11950986184843648,
+              "carbon_reduction_vs_no_bess_percent": -0.020091652199755183,
+              "peak_reduction_vs_no_bess_percent": -0.4340833762236419,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9724702380952381
+            },
+            "validation_reward_mean": -6.145006317536677,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_143/ppo_step_5000.zip"
+          },
+          {
+            "timesteps": 10000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.09766235815939223,
+              "carbon_reduction_vs_no_bess_percent": -0.017810621887819532,
+              "peak_reduction_vs_no_bess_percent": -0.3506756676237371,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 1.0
+            },
+            "validation_reward_mean": -6.76350175550026,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_143/ppo_step_10000.zip"
+          },
+          {
+            "timesteps": 15000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.07162055480936434,
+              "carbon_reduction_vs_no_bess_percent": -0.019728710645228093,
+              "peak_reduction_vs_no_bess_percent": -0.21587690715350064,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9791666666666666
+            },
+            "validation_reward_mean": -5.985434838554659,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_143/ppo_step_15000.zip"
+          },
+          {
+            "timesteps": 20000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.04854393979606433,
+              "carbon_reduction_vs_no_bess_percent": -0.021677261955853604,
+              "peak_reduction_vs_no_bess_percent": -0.0554432645957115,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9925595238095238
+            },
+            "validation_reward_mean": -5.511723877750683,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_143/ppo_step_20000.zip"
+          },
+          {
+            "timesteps": 25000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.039519008926419234,
+              "carbon_reduction_vs_no_bess_percent": -0.02249944076737238,
+              "peak_reduction_vs_no_bess_percent": -0.012222880071367972,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9866071428571428
+            },
+            "validation_reward_mean": -5.740829869018226,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_143/ppo_step_25000.zip"
+          },
+          {
+            "timesteps": 30000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.029254541796451875,
+              "carbon_reduction_vs_no_bess_percent": -0.025315537231407958,
+              "peak_reduction_vs_no_bess_percent": -0.08854562302345549,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9590773809523809
+            },
+            "validation_reward_mean": -4.501622680359111,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_143/ppo_step_30000.zip"
+          }
+        ],
+        "validation_candidate": null,
+        "validation_admitted": false,
+        "render_calls_during_training": 0
+      },
+      {
+        "seed": 243,
+        "curve": [
+          {
+            "timesteps": 5000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.07293740609166705,
+              "carbon_reduction_vs_no_bess_percent": -0.07702653274709374,
+              "peak_reduction_vs_no_bess_percent": -0.42991524701834066,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.8519345238095238
+            },
+            "validation_reward_mean": -6.667428308251674,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_5000.zip"
+          },
+          {
+            "timesteps": 10000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.04510172921478542,
+              "carbon_reduction_vs_no_bess_percent": -0.04268914638439114,
+              "peak_reduction_vs_no_bess_percent": -0.1644418916264197,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.8846726190476191
+            },
+            "validation_reward_mean": -5.936738076806926,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_10000.zip"
+          },
+          {
+            "timesteps": 15000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.021648625574531007,
+              "carbon_reduction_vs_no_bess_percent": -0.02723791042398685,
+              "peak_reduction_vs_no_bess_percent": -0.17498989696990194,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9553571428571428
+            },
+            "validation_reward_mean": -5.593755602950704,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_15000.zip"
+          },
+          {
+            "timesteps": 20000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.07224021966964567,
+              "carbon_reduction_vs_no_bess_percent": -0.01884936980481844,
+              "peak_reduction_vs_no_bess_percent": -0.21587690715350064,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9955357142857143
+            },
+            "validation_reward_mean": -6.923452727131286,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_20000.zip"
+          },
+          {
+            "timesteps": 25000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.02358823279631593,
+              "carbon_reduction_vs_no_bess_percent": -0.02367018911653085,
+              "peak_reduction_vs_no_bess_percent": -0.22887944742110164,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9888392857142858
+            },
+            "validation_reward_mean": -5.943085268498985,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_25000.zip"
+          },
+          {
+            "timesteps": 30000,
+            "validation": {
+              "cost_reduction_vs_no_bess_percent": -0.020157004364735144,
+              "carbon_reduction_vs_no_bess_percent": -0.023089358075980077,
+              "peak_reduction_vs_no_bess_percent": -0.24446267424277626,
+              "guardrail_violation_rate": 0.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "projection_rate": 0.9836309523809523
+            },
+            "validation_reward_mean": -4.77045555327053,
+            "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_30000.zip"
+          }
+        ],
+        "validation_candidate": null,
+        "validation_admitted": false,
+        "render_calls_during_training": 0
+      }
+    ],
+    "selection_access_to_forward": false
+  },
+  "forward_challenge": {
+    "dataset_id": "public_cn_sha_forward_2026m05_v1",
+    "sha256": "616fe7cde24695f0d19118c64d1e5c534f9adee47a886b33b6003e7e372bb06a",
+    "candidate_selection_allowed": false,
+    "per_seed": [],
+    "seed_pass_rate": 0.0
+  },
+  "promotion_gate": {
+    "validation_cost_reduction_vs_no_bess_percent_min": 0.0,
+    "validation_peak_reduction_vs_no_bess_percent_min": 0.0,
+    "validation_carbon_reduction_vs_no_bess_percent_min": 0.0,
+    "forward_cost_reduction_vs_no_bess_percent_min": 0.0,
+    "forward_peak_reduction_vs_no_bess_percent_min": 0.0,
+    "forward_carbon_reduction_vs_no_bess_percent_min": 0.0,
+    "guardrail_violation_rate_max": 0.0,
+    "terminal_soc_error_max": 1e-06,
+    "terminal_flex_backlog_kwh_max": 1e-06
+  },
+  "promoted": false,
+  "production_admitted": false,
+  "claim_boundary": "V3.2候选先在2024-2025训练/验证段调优，再一次性打开2026年1-5月公开前向窗口。公开数据不含岸电表计、BMS、PCC结算或控制回执；任何候选均不得据此宣称上海港现场节省。",
+  "diagnosis_if_rejected": "The public benchmark's hourly carbon factor is a declared engineering derivative and tariff/carbon timing may make a balanced policy infeasible. Rejection is retained instead of fabricating a saving."
+}

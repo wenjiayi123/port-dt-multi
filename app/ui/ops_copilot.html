@@ -56,6 +56,15 @@
     @keyframes sweep{from{transform:rotate(-36deg)}to{transform:rotate(324deg)}}
     .floating-card{position:absolute;right:24px;bottom:22px;width:230px;border:1px solid rgba(148,163,184,.22);border-radius:14px;background:rgba(7,16,31,.78);padding:12px;box-shadow:0 18px 42px rgba(0,0,0,.25)}
     .floating-card b{display:block;color:#e8f1ff;margin-bottom:6px}.floating-card span{display:block;color:#8fb6d9;font-size:12px;line-height:1.6}
+    .xiaoyi-officer{position:absolute;left:50%;bottom:16px;width:214px;max-height:244px;object-fit:contain;transform:translateX(-50%);filter:drop-shadow(0 22px 28px rgba(0,0,0,.46)) drop-shadow(0 0 18px rgba(34,211,238,.2));z-index:2}
+    .mission-rail{display:grid;grid-template-columns:repeat(6,minmax(150px,1fr));gap:10px}
+    .mission-card{position:relative;text-align:left;border:1px solid rgba(96,165,250,.22);border-radius:14px;background:linear-gradient(160deg,#0e1d36,#091426);color:#e8f1ff;padding:13px;cursor:pointer;min-height:106px;overflow:hidden}
+    .mission-card::after{content:"";position:absolute;right:-22px;bottom:-34px;width:92px;height:92px;border:1px solid rgba(34,211,238,.11);border-radius:50%}
+    .mission-card:hover,.mission-card.active{border-color:rgba(34,211,238,.58);box-shadow:0 0 0 2px rgba(34,211,238,.08),0 16px 34px rgba(0,0,0,.2);transform:translateY(-1px)}
+    .mission-card b{display:block;font-size:13px;color:#eaf5ff}.mission-card span{display:block;margin-top:7px;color:#8fa7c8;font-size:11px;line-height:1.45}.mission-card em{display:inline-flex;margin-bottom:9px;font-style:normal;font-size:10px;color:#7dd3fc;font-weight:900;letter-spacing:.08em}
+    .runtime-rail{display:grid;grid-template-columns:1.25fr 1fr 1fr 1.35fr;gap:10px}
+    .runtime-cell{border:1px solid rgba(148,163,184,.18);border-radius:12px;background:rgba(9,20,38,.9);padding:10px 12px;min-width:0}
+    .runtime-cell small{display:block;color:#7089ad;font-weight:800;font-size:10px;text-transform:uppercase;letter-spacing:.06em}.runtime-cell b{display:block;color:#dbeafe;margin-top:4px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.runtime-cell.major b{color:#fda4af}.runtime-cell.ok b{color:#86efac}
     .workbench{display:grid;grid-template-columns:380px minmax(0,1fr) 360px;gap:16px;align-items:start}
     .panel{border:1px solid rgba(148,163,184,.20);border-radius:16px;background:linear-gradient(180deg,rgba(13,27,50,.92),rgba(8,18,34,.94));padding:15px;box-shadow:0 16px 34px rgba(0,0,0,.18)}
     .panel h3{margin:0 0 10px;font-size:15px;color:#e8f1ff}
@@ -98,6 +107,9 @@
     .action-list{display:grid;gap:8px;margin-top:10px}
     .action{border-left:3px solid var(--green);background:#091426;border-radius:10px;padding:9px;border-top:1px solid rgba(148,163,184,.14);border-right:1px solid rgba(148,163,184,.14);border-bottom:1px solid rgba(148,163,184,.14)}
     .action b{font-size:13px}.action span{display:block;margin-top:4px;color:#91a7c7;font-size:12px}
+    .action.blocked{border-left-color:var(--red);opacity:.78}.action-link{display:block}.action-link:hover{background:#0d1d35}
+    .engine-proof{margin:10px 0;border:1px solid rgba(34,211,238,.24);border-radius:12px;background:#071523;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.engine-proof div{min-width:0}.engine-proof small{display:block;color:#7089ad;font-size:10px}.engine-proof b{display:block;margin-top:4px;font-size:11px;color:#bfeeff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .handoff-panel{margin-top:14px;border:1px solid rgba(167,139,250,.25);border-radius:14px;background:linear-gradient(160deg,rgba(76,29,149,.15),rgba(9,20,38,.9));padding:12px}.handoff-panel[hidden]{display:none}.handoff-meta{color:#aebfe0;font-size:12px;line-height:1.6;word-break:break-all}
     .context-list,.evidence-list,.connector-list{display:grid;gap:8px}
     .context-item,.evidence,.connector{border:1px solid rgba(148,163,184,.16);border-radius:12px;background:#091426;padding:10px}
     .context-item{display:flex;justify-content:space-between;gap:10px}.context-item b{font-size:13px}.context-item span{font-size:12px;color:#91a7c7}
@@ -108,8 +120,8 @@
     .playbook{border:1px solid rgba(148,163,184,.18);border-radius:14px;background:linear-gradient(180deg,#0d1b32,#091426);padding:12px;cursor:pointer}
     .playbook:hover{border-color:rgba(96,165,250,.42);transform:translateY(-1px)}
     .playbook b{display:block}.playbook span{display:block;color:#91a7c7;font-size:12px;margin-top:5px;line-height:1.5}
-    @media(max-width:1220px){.hero,.workbench{grid-template-columns:1fr}.playbook-section{grid-template-columns:repeat(2,minmax(0,1fr))}.floating-card{position:relative;right:auto;bottom:auto;margin:180px 18px 18px auto}}
-    @media(max-width:720px){.topbar{align-items:flex-start;flex-direction:column}.hero h2{font-size:28px}.grid2,.metric-grid,.playbook-section{grid-template-columns:1fr}.workbench{gap:12px}.hero-copy{padding:18px}}
+    @media(max-width:1220px){.hero,.workbench{grid-template-columns:1fr}.mission-rail{grid-template-columns:repeat(3,minmax(0,1fr))}.playbook-section{grid-template-columns:repeat(2,minmax(0,1fr))}.floating-card{position:relative;right:auto;bottom:auto;margin:180px 18px 18px auto}}
+    @media(max-width:720px){.topbar{align-items:flex-start;flex-direction:column}.hero h2{font-size:28px}.grid2,.metric-grid,.playbook-section,.runtime-rail,.engine-proof{grid-template-columns:1fr}.mission-rail{grid-template-columns:repeat(2,minmax(0,1fr))}.workbench{gap:12px}.hero-copy{padding:18px}}
   </style>
 </head>
 <body>
@@ -118,7 +130,7 @@
       <div class="mark" aria-hidden="true"></div>
       <div>
         <h1>运营副驾 / Ops Copilot</h1>
-        <div class="brand-sub">SOP · Alert Explain · Human-in-loop</div>
+        <div class="brand-sub">Twin Context · Xiaoyi Reasoning · Human-in-loop</div>
       </div>
     </div>
     <div class="top-actions">
@@ -133,18 +145,19 @@
       <div class="hero-copy">
         <div class="eyebrow">Live Operations Assistant</div>
         <h2>把告警、SOP、证据和闭环动作<br><span>合成一个可交接的运营答案</span></h2>
-        <div class="hero-text">面向港口值班、能源、设备与审计角色：先读现场上下文，再召回知识库，生成解释、处置步骤、风险护栏和审计包。它只做解释与建议，生产动作仍进入人工确认和执行闭环。</div>
+        <div class="hero-text">面向港口值班、能源、设备与审计角色：先读数字孪生、预测、模型、漂移和准入门的后端事实，再真实调用小懿。调用状态、执行模型、耗时、上下文哈希和回答接地校验全部可见；生产动作仍必须人工确认。</div>
         <div class="hero-chips">
           <span class="chip ok" id="ctxStatus">Context READY</span>
           <span class="chip warn" id="ctxRisk">Risk WATCH</span>
-        <span class="chip" id="llmChip">小懿AI Checking</span>
-          <span class="chip hot">Human Confirm</span>
+          <span class="chip" id="llmChip">小懿AI Checking</span>
+          <span class="chip hot">No Production Authority</span>
         </div>
       </div>
       <div class="hero-visual">
         <div class="beacon-scene">
           <div class="radar-ring r1"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div>
           <div class="tower"><div class="signal"></div><div class="cap"></div><div class="mast"></div><div class="deck"></div><div class="base"></div></div>
+          <img class="xiaoyi-officer" src="/static/xiaoyi_maritime_officer.png" alt="小懿AI港航运营副驾"/>
         </div>
         <div class="floating-card">
           <b id="liveHeadline">等待上下文同步</b>
@@ -153,10 +166,26 @@
       </div>
     </section>
 
+    <section class="mission-rail" id="missionRail" aria-label="小懿六类一线任务"></section>
+
+    <section class="runtime-rail" aria-label="小懿运行证据状态">
+      <div class="runtime-cell" id="sourceCell"><small>Data source</small><b id="sourceRail">等待后端</b></div>
+      <div class="runtime-cell" id="policyCell"><small>Policy</small><b id="policyRail">等待模型</b></div>
+      <div class="runtime-cell" id="gateCell"><small>Admission gate</small><b id="gateRail">等待监控</b></div>
+      <div class="runtime-cell" id="hashCell"><small>Context SHA-256</small><b class="mono" id="hashRail">等待上下文</b></div>
+    </section>
+
     <section class="workbench">
       <aside class="panel">
         <h3>任务输入 / Mission Input</h3>
         <div class="panel-sub">选择场景、范围、风险等级，然后生成解释与 SOP。</div>
+        <div class="field">
+          <label for="mission">一线任务 / Mission</label>
+          <select id="mission">
+            <option value="situation">当前态势</option><option value="forecast">未来风险</option><option value="strategy">策略解释</option>
+            <option value="triage">告警分诊</option><option value="handoff">交接班</option><option value="dry_run">执行预演</option>
+          </select>
+        </div>
         <div class="field">
           <label for="query">问题 / Question</label>
           <textarea id="query"></textarea>
@@ -183,17 +212,23 @@
           </div>
         </div>
         <div class="grid2">
-          <div class="field"><label for="port">港口 / Port</label><input id="port" value="CNYTN"></div>
+          <div class="field"><label for="port">港口 / Port</label><input id="port" value="CNSHA"></div>
           <div class="field">
             <label for="asset">设备组 / Asset</label>
             <select id="asset">
-              <option value="all_port">全港设备</option>
-              <option value="hvac_cooling" selected>冷站 HVAC</option>
-              <option value="shore_power">岸电系统</option>
-              <option value="qc_crane">岸桥 / 场桥</option>
-              <option value="agv_charge">AGV 充电</option>
+              <option value="qc-01" selected>岸桥 qc-01 / 回放基准</option>
+              <option value="yard-01">场桥 YC-01</option>
+              <option value="hvac-01">港区冷站 HVAC-01</option>
+              <option value="shore-01">船舶岸电区</option>
+              <option value="bess-01">岸电储能 BESS-01</option>
+              <option value="agv-01">AGV / 集卡充换电</option>
+              <option value="lighting-01">堆场高杆照明</option>
             </select>
           </div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label for="operator">值班员 / Operator</label><input id="operator" placeholder="确认交接时填写"></div>
+          <div class="field"><label for="shift">班次 / Shift</label><input id="shift" value="当前班次"></div>
         </div>
         <div class="grid2">
           <div class="field">
@@ -247,6 +282,11 @@
           <div class="metric"><div class="k">Human Gate</div><div class="v">ON</div></div>
           <div class="metric"><div class="k">Mode</div><div class="v" id="modeMetric">—</div></div>
         </div>
+        <div class="engine-proof" id="engineProof">
+          <div><small>Invocation</small><b id="invokeProof">尚未调用</b></div>
+          <div><small>Execution</small><b id="executionProof">—</b></div>
+          <div><small>Grounding</small><b id="groundingProof">—</b></div>
+        </div>
         <h3>建议动作 / Recommended Actions</h3>
         <div class="action-list" id="actions"></div>
         <h3 style="margin-top:14px">SOP 步骤 / SOP Timeline</h3>
@@ -254,6 +294,11 @@
         <h3 style="margin-top:14px">审计包 / Audit Packet</h3>
         <div class="row" style="margin-bottom:8px"><button class="btn ghost" id="copyAudit">复制审计包</button></div>
         <pre class="audit-box" id="auditBox">—</pre>
+        <div class="handoff-panel" id="handoffPanel" hidden>
+          <h3>交接班证据包 / Shift Handoff</h3>
+          <div class="handoff-meta" id="handoffMeta"></div>
+          <div class="row" style="margin-top:10px"><button class="btn secondary" id="previewHandoff">刷新预览</button><button class="btn" id="confirmHandoff">人工确认并留痕</button></div>
+        </div>
       </section>
 
       <aside class="panel">
@@ -273,18 +318,28 @@
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => Array.from(document.querySelectorAll(sel));
     let lastAudit = null;
+    let lastHandoff = null;
+    let currentContext = null;
     let generationCount = 0;
     let answerRunId = 0;
     const THINKING_TEXT = "思考中......\nThinking......";
     const RETRIEVING_TEXT = "正在检索港航知识库并组织回答...\nRetrieving port knowledge and composing the answer...";
     const THINKING_DELAY_MS = 2000;
     const stages = [
-      "加载现场上下文 / Loading live context",
-      "召回 SOP 与告警知识 / Retrieving knowledge",
-      "装配解释与处置步骤 / Assembling playbook",
-      "校验安全护栏 / Checking guardrails",
-      "生成审计包 / Building audit packet"
+      "读取孪生、预测与模型上下文 / Loading twin context",
+      "真实调用小懿 / Calling Xiaoyi",
+      "校验回答是否引用当前运行态 / Checking grounding",
+      "应用漂移和准入护栏 / Applying safety gates",
+      "生成带哈希的审计与交接包 / Building audit packet"
     ];
+    const missionQuestions = {
+      situation: "小懿，请基于当前数字孪生后端状态给本班一个简明态势判断。",
+      forecast: "小懿，请解释当前预测峰值、区间和工程阈值风险，并指出缺失的现场证据。",
+      strategy: "小懿，请解释当前策略为什么这样决策、相对基线改善什么、风险和边界是什么。",
+      triage: "小懿，请根据当前异常、漂移和策略准入门给出一线分诊与回退顺序。",
+      handoff: "小懿，请把当前态势、模型版本、未决风险和下一班检查项整理成交接摘要。",
+      dry_run: "小懿，请判断当前是否适合进入策略预演；只给dry-run与人工审批步骤。"
+    };
 
     async function getJSON(url, fallback){
       try{ const r = await fetch(url, {cache:"no-store"}); if(!r.ok) throw new Error(await r.text()); return await r.json(); }
@@ -322,13 +377,28 @@
       if(v === "ok" || v === "ready") return "level ok";
       return "level";
     }
+    function renderMissionRail(modes){
+      const active = $("#mission").value;
+      $("#missionRail").innerHTML = (modes || []).map((m,i) => `<button class="mission-card ${m.id===active?"active":""}" data-mission="${escapeHTML(m.id)}"><em>0${i+1} · XIAOYI MISSION</em><b>${escapeHTML(m.label)}</b><span>${escapeHTML(m.description)}</span></button>`).join("");
+      $$('[data-mission]').forEach(btn => btn.addEventListener("click", () => selectMission(btn.dataset.mission, true)));
+    }
     function renderContext(data){
+      currentContext = data;
       const signals = data.signals || [];
-      $("#contextList").innerHTML = signals.map(s => `<div class="context-item"><div><b>${s.name}</b><br><span>${s.source}</span></div><div><b>${s.value}</b><br><span class="${levelClass(s.level)}">${s.level}</span></div></div>`).join("");
-      $("#connectorList").innerHTML = (data.connectors||[]).map(c => `<div class="connector"><b>${c.name}</b><br><span class="note">${c.endpoint}</span><br><span class="${levelClass(c.status)}">${c.status}</span></div>`).join("");
+      $("#contextList").innerHTML = signals.map(s => `<div class="context-item"><div><b>${escapeHTML(s.name)}</b><br><span>${escapeHTML(s.source)}</span></div><div><b>${escapeHTML(s.value)}</b><br><span class="${levelClass(s.level)}">${escapeHTML(s.level)}</span></div></div>`).join("");
+      $("#connectorList").innerHTML = (data.connectors||[]).map(c => `<div class="connector"><b>${escapeHTML(c.name)}</b><br><span class="note">${escapeHTML(c.endpoint)}</span><br><span class="${levelClass(c.status)}">${escapeHTML(c.status)}</span></div>`).join("");
       $("#ctxStatus").textContent = `Context ${String(data.status||"ready").toUpperCase()}`;
       $("#liveHeadline").textContent = `${data.port || "PORT"} · 运营副驾已接入`;
-      $("#liveSub").textContent = `信号 ${signals.length} 个，接入口 ${(data.connectors||[]).length} 个，等待生成处置答案。`;
+      $("#liveSub").textContent = `信号 ${signals.length} 个，接入口 ${(data.connectors||[]).length} 个，上下文已按哈希留痕。`;
+      renderMissionRail(data.mission_modes || []);
+      const ctx = data.context || {};
+      $("#sourceRail").textContent = ctx.source?.mode || "待接入港口";
+      $("#policyRail").textContent = `${String(ctx.policy?.algorithm || "unavailable").toUpperCase()} · ${ctx.policy?.dataset_id || "no-dataset"}`;
+      $("#gateRail").textContent = ctx.monitoring?.admission_decision || "unavailable";
+      $("#hashRail").textContent = data.context_sha256 || "unavailable";
+      $("#sourceCell").className = `runtime-cell ${ctx.source?.production ? "ok" : "major"}`;
+      $("#policyCell").className = `runtime-cell ${ctx.policy?.available ? "ok" : "major"}`;
+      $("#gateCell").className = `runtime-cell ${ctx.monitoring?.new_policy_suggestions_allowed ? "ok" : "major"}`;
     }
     function renderLLMStatus(data){
       const configured = !!data.configured;
@@ -356,16 +426,31 @@
       $("#progressFill").style.width = `${Math.max(0, Math.min(100, p))}%`;
       $("#stageLog").textContent = text;
     }
+    function selectMission(mission, setQuestion=false){
+      if(!missionQuestions[mission]) mission = "situation";
+      $("#mission").value = mission;
+      if(setQuestion || !$("#query").value.trim()) $("#query").value = missionQuestions[mission];
+      if(mission === "triage") { $("#scope").value = "alert"; $("#mode").value = "alert_triage"; }
+      else if(mission === "handoff") { $("#scope").value = "all"; $("#mode").value = "handoff"; }
+      else if(mission === "strategy" || mission === "dry_run") { $("#scope").value = "device"; $("#mode").value = "explain_sop"; }
+      else { $("#scope").value = "all"; $("#mode").value = "explain_sop"; }
+      renderMissionRail(currentContext?.mission_modes || []);
+    }
     function payload(){
       return {
         query: $("#query").value.trim(),
+        mission: $("#mission").value,
         scope: $("#scope").value,
         severity: $("#severity").value,
-        port: $("#port").value.trim() || "CNYTN",
+        port: $("#port").value.trim() || "CNSHA",
         asset_group: $("#asset").value,
+        asset_id: $("#asset").value,
         engine: $("#engine").value,
         mode: $("#mode").value,
-        top_k: Number($("#topK").value || 8)
+        top_k: Number($("#topK").value || 8),
+        horizon_min: $("#mission").value === "forecast" ? 360 : 60,
+        operator: $("#operator").value.trim(),
+        shift: $("#shift").value.trim()
       };
     }
     function isRlTrainingCommand(text){
@@ -470,37 +555,56 @@
       window.location.assign(url);
       return true;
     }
+    function updateHandoffPanel(packet){
+      lastHandoff = packet || null;
+      const visible = !!lastHandoff && $("#mission").value === "handoff";
+      $("#handoffPanel").hidden = !visible;
+      if(!visible) return;
+      $("#handoffMeta").textContent = `上下文 ${lastHandoff.context_sha256 || "—"}\n交接包 ${lastHandoff.handoff_sha256 || "—"}\n状态 ${lastHandoff.overall_state || "—"} · 未确认时不留痕`;
+    }
     async function renderBrief(data, runId){
       const s = data.summary || {};
+      const llm = data.llm || {};
+      const generation = llm.generation || {};
+      const grounding = llm.context_grounding || {};
       $("#headline").textContent = s.headline || "已生成运营副驾答案。";
       $("#operatorNote").textContent = "";
       $("#riskBadge").textContent = `Risk ${s.risk_level || "—"}`;
       $("#intentMetric").textContent = s.intent || "—";
       $("#evidenceMetric").textContent = String((data.evidence || []).length);
-      const llm = data.llm || {};
-      $("#llmMetric").textContent = llm.ok ? "小懿AI" : "Fallback";
-      $("#modeMetric").textContent = $("#mode").selectedOptions[0]?.textContent || "—";
-      $("#actions").innerHTML = (data.actions || []).map(a => `<div class="action"><b>${a.priority} · ${a.action}</b><span>${a.owner} · ${a.guardrail} · handoff=${a.handoff}</span></div>`).join("");
-      $("#sopSteps").innerHTML = (data.sop_steps || []).map((x,i) => `<div class="step"><div class="step-num">${i+1}</div><div><b>${x.step}</b><p>${x.detail}</p><p>${x.owner}</p></div><div class="eta">${x.eta_min} min</div></div>`).join("");
-      $("#evidenceList").innerHTML = (data.evidence || []).map(e => `<div class="evidence"><span class="type">${String(e.type||"item").toUpperCase()}</span><b>${e.title}</b><p>${e.snippet}</p></div>`).join("") || `<div class="evidence"><b>暂无命中</b><p>建议补充真实港口知识库。</p></div>`;
+      $("#llmMetric").textContent = llm.true_xiaoyi_called ? "小懿已调用" : "证据兜底";
+      $("#modeMetric").textContent = $("#mission").selectedOptions[0]?.textContent || "—";
+      $("#invokeProof").textContent = llm.true_xiaoyi_called ? `TRUE · ${Number(llm.latency_ms||0).toFixed(0)} ms` : "FALSE · 本地证据模式";
+      $("#executionProof").textContent = `${generation.provider || llm.engine_execution || "local"} / ${generation.model || "evidence-guardrail"}`;
+      $("#groundingProof").textContent = grounding.passed ? `PASS · ${(grounding.matched_anchors||[]).length} anchors` : `GUARDED · ${llm.answer_source || "fallback"}`;
+      $("#actions").innerHTML = (data.actions || []).map(a => {
+        const blocked = String(a.execution || "").startsWith("blocked") || a.priority === "BLOCKED";
+        const body = `<b>${escapeHTML(a.priority)} · ${escapeHTML(a.action || a.label)}</b><span>${escapeHTML(a.owner)} · ${escapeHTML(a.guardrail)}<br>${escapeHTML(a.reason || "")}</span>`;
+        return blocked
+          ? `<div class="action blocked">${body}</div>`
+          : `<a class="action action-link" href="${escapeHTML(a.handoff || a.href || "#")}">${body}</a>`;
+      }).join("");
+      $("#sopSteps").innerHTML = (data.sop_steps || []).map((x,i) => `<div class="step"><div class="step-num">${i+1}</div><div><b>${escapeHTML(x.step)}</b><p>${escapeHTML(x.detail)}</p><p>${escapeHTML(x.owner)}</p></div><div class="eta">${escapeHTML(x.status || `${x.eta_min} min`)}</div></div>`).join("");
+      $("#evidenceList").innerHTML = (data.evidence || []).map(e => `<div class="evidence"><span class="type">${escapeHTML(String(e.type||"item").toUpperCase())}</span><b>${escapeHTML(e.title)}</b><p>${escapeHTML(e.snippet)}</p></div>`).join("") || `<div class="evidence"><b>待接入港口</b><p>当前任务未返回可用证据。</p></div>`;
       lastAudit = data.audit_packet || null;
       $("#auditBox").textContent = JSON.stringify(lastAudit || {}, null, 2);
+      updateHandoffPanel(data.handoff_preview);
       const stamp = lastAudit
-        ? `第 ${generationCount} 次生成 · ${lastAudit.query_id || "local"} · ${llm.status || "local"} · ${new Date(lastAudit.generated_at || Date.now()).toLocaleTimeString("zh-CN",{hour12:false})}`
+        ? `第 ${generationCount} 次 · ${lastAudit.invocation_id || "local"} · ${data.status || "local"} · ${new Date(lastAudit.generated_at || Date.now()).toLocaleTimeString("zh-CN",{hour12:false})}`
         : `第 ${generationCount} 次生成`;
       $("#answerStamp").textContent = stamp;
-      if(llm.reason && !llm.ok){
-        $("#llmStatusBox").textContent = llm.reason;
+      if(llm.true_xiaoyi_called){
+        $("#llmStatusBox").textContent = `小懿真实调用 · ${generation.provider || "provider-unreported"}/${generation.model || "model-unreported"} · ${Number(llm.latency_ms||0).toFixed(0)} ms · 答案源=${llm.answer_source}`;
+        $("#llmChip").textContent = grounding.passed ? "小懿 Grounded" : "小懿 Called · Guarded";
+        $("#llmChip").className = grounding.passed ? "chip ok" : "chip warn";
+      }else{
+        $("#llmStatusBox").textContent = llm.reason || "小懿未调用，已使用后端证据兜底。";
         $("#llmChip").textContent = "小懿AI Fallback";
         $("#llmChip").className = "chip warn";
-      }else if(llm.ok){
-        $("#llmStatusBox").textContent = `小懿AI 已生成 · model=${llm.model || "XiaoyiAI"}`;
-        $("#llmChip").textContent = "小懿AI Online";
-        $("#llmChip").className = "chip ok";
       }
       $("#ctxRisk").textContent = `Risk ${s.risk_level || "WATCH"}`;
-      $("#liveHeadline").textContent = s.primary_reference || "Copilot 答案已生成";
-      $("#liveSub").textContent = s.headline || "";
+      $("#liveHeadline").textContent = `Context ${String(data.context_sha256 || "").slice(0,12)} · ${data.status || "ready"}`;
+      $("#liveSub").textContent = `小懿调用=${!!llm.true_xiaoyi_called} · 接地校验=${!!grounding.passed} · 生产权限=false`;
       $("#askBtn").textContent = "逐字输出中...";
       return await typeText("#operatorNote", s.operator_note || "已生成运营副驾答案。", runId);
     }
@@ -508,11 +612,13 @@
       const params = new URLSearchParams(window.location.search);
       const q = params.get("q");
       const scope = params.get("scope");
+      const mission = params.get("mission");
+      if(mission && missionQuestions[mission]) selectMission(mission, true);
       if(q && params.get("prefill") === "1") $("#query").value = q;
       if(scope && Array.from($("#scope").options).some(opt => opt.value === scope)) $("#scope").value = scope;
     }
     function shouldAutoRun(){
-      return false;
+      return new URLSearchParams(window.location.search).get("auto") === "1";
     }
     function clearAnswerState(){
       lastAudit = null;
@@ -525,10 +631,15 @@
       $("#evidenceMetric").textContent = "—";
       $("#llmMetric").textContent = "—";
       $("#modeMetric").textContent = "—";
+      $("#invokeProof").textContent = "尚未调用";
+      $("#executionProof").textContent = "—";
+      $("#groundingProof").textContent = "—";
       $("#actions").innerHTML = "";
       $("#sopSteps").innerHTML = "";
       $("#evidenceList").innerHTML = "";
       $("#auditBox").textContent = "";
+      $("#handoffPanel").hidden = true;
+      lastHandoff = null;
       $("#askBtn").disabled = false;
       $("#askBtn").textContent = "生成 Copilot 答案";
     }
@@ -565,7 +676,7 @@
         if(runId !== answerRunId) return;
         $("#operatorNote").textContent = p.engine === "xiaoyi_ai" ? RETRIEVING_TEXT : "正在检索本地知识库并组织回答...\nRetrieving local knowledge and composing the answer...";
         setProgress(32, stages[1]);
-        const data = await postJSON("/api/copilot/brief", p);
+        const data = await postJSON("/api/copilot/mission", p);
         if(runId !== answerRunId) return;
         window.clearInterval(timer);
         const doneAt = new Date().toLocaleTimeString("zh-CN",{hour12:false});
@@ -590,7 +701,9 @@
     }
     async function init(){
       applyQueryParams();
-      const ctx = await getJSON("/api/copilot/context?port=CNYTN", {signals:[], connectors:[], status:"offline"});
+      if(!$("#query").value.trim()) selectMission($("#mission").value, true);
+      const ctxUrl = `/api/copilot/context?port=${encodeURIComponent($("#port").value || "CNSHA")}&asset_id=${encodeURIComponent($("#asset").value)}&mission=${encodeURIComponent($("#mission").value)}`;
+      const ctx = await getJSON(ctxUrl, {signals:[], connectors:[], mission_modes:[], status:"offline"});
       renderContext(ctx);
       const llmStatus = await getJSON("/api/copilot/llm/status", {configured:false, fallback:"Ops Copilot local fallback"});
       renderLLMStatus(llmStatus);
@@ -605,9 +718,25 @@
     $("#resetBtn").addEventListener("click", () => {
       answerRunId += 1;
       $("#query").value = "";
-      $("#scope").value = "all"; $("#severity").value = "major"; $("#asset").value = "hvac_cooling"; $("#engine").value = "xiaoyi_ai"; $("#mode").value = "explain_sop"; $("#topK").value = 8;
+      $("#scope").value = "all"; $("#severity").value = "major"; $("#asset").value = "qc-01"; $("#engine").value = "xiaoyi_ai"; $("#mode").value = "explain_sop"; $("#mission").value = "situation"; $("#topK").value = 8;
+      selectMission("situation", true);
       clearAnswerState();
       setProgress(0, "等待任务输入。");
+    });
+    $("#mission").addEventListener("change", () => selectMission($("#mission").value, true));
+    async function persistHandoff(confirm){
+      const p = payload();
+      const data = await postJSON("/api/copilot/handoff", {...p, answer: $("#operatorNote").textContent, confirm});
+      const packet = data.packet || lastHandoff;
+      if(packet) updateHandoffPanel(packet);
+      $("#handoffMeta").textContent = data.persisted
+        ? `已留痕 · ${data.handoff_sha256} · 无生产动作`
+        : `预览已刷新 · ${(packet||{}).handoff_sha256 || "—"} · 尚未留痕`;
+    }
+    $("#previewHandoff").addEventListener("click", () => persistHandoff(false).catch(e => $("#handoffMeta").textContent = String(e)));
+    $("#confirmHandoff").addEventListener("click", async () => {
+      if(!window.confirm("确认将当前交接包写入本地审计留痕？该动作不会执行生产指令。")) return;
+      try{ await persistHandoff(true); }catch(e){ $("#handoffMeta").textContent = String(e); }
     });
     $("#copyAudit").addEventListener("click", async () => {
       if(!lastAudit) return;

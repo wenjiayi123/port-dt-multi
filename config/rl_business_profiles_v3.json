@@ -1,0 +1,37 @@
+{
+  "schema": "port-dt-v3-rl-business-profiles.v1",
+  "profiles": {
+    "eco_value_v3": {
+      "name": "成本减碳优先",
+      "reward_weights": {
+        "cost": 0.32,
+        "carbon": 0.28,
+        "peak": 0.12,
+        "safety": 0.18,
+        "delay": 0.10
+      },
+      "admission_constraints": {
+        "throughput_relative_to_fcfs_min": 0.0,
+        "delay_relative_to_fcfs_min": 0.0,
+        "guardrail_violation_rate_max": 0.0
+      },
+      "claim_boundary": "Candidate for public-data offline policy comparison only. Site value requires authorized tariffs, carbon factors, load telemetry and shadow-operation acceptance."
+    },
+    "balanced_value_v3": {
+      "name": "综合价值均衡",
+      "reward_weights": {
+        "cost": 0.22,
+        "carbon": 0.18,
+        "peak": 0.14,
+        "safety": 0.24,
+        "delay": 0.22
+      },
+      "admission_constraints": {
+        "throughput_relative_to_fcfs_min": 0.0,
+        "delay_relative_to_fcfs_min": 0.0,
+        "guardrail_violation_rate_max": 0.0
+      },
+      "claim_boundary": "Candidate for public-data offline policy comparison only. Site value requires authorized operating and settlement data plus shadow-operation acceptance."
+    }
+  }
+}

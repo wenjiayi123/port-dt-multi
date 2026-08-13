@@ -12,8 +12,9 @@
 回执和审计回放，通过统一 FastAPI 形成“建模推演—人工决策—结果回传—审计追踪”
 闭环。
 
-▸ **亮点功能：** 实现 13 维港口运行观测、储能/服务资源/柔性负荷 3 维联合动作，
-支持 SAC/PPO/TD3/DQN/A2C/TQC 与六步滚动 MPC；训练阶段禁用渲染，留出评测独立生成轨迹，
+▸ **亮点功能：** 实现 37 维港口运行观测（12 类国际港口因素及逐项可用性掩码）、
+储能/服务资源/柔性负荷/泊位优先级/堆场流量 5 维联合建议动作；支持
+SAC/PPO/TD3/DQN/A2C/TQC/QR-DQN/TRPO/Recurrent PPO/ARS 与 MPC、FCFS；训练阶段禁用渲染，三段时序隔离后的盲测独立生成轨迹，
 动作屏蔽器约束电网容量、SOC 和期末 SOC；移动端采用幂等提交、冲突键阻断、
 异人审批、服务端回执和 SHA-256 前向审计链，南向执行默认 fail-closed。
 
@@ -26,7 +27,7 @@
 或因果效果；泊位缓冲未使用现场结果标定）
 
 ▸ **技术栈：** 原生 Web（HTML/CSS/JavaScript）+ FastAPI/Pydantic + Flutter/Dart +
-Gymnasium + Stable-Baselines3/SB3-Contrib/PyTorch + SAC/PPO/TD3/DQN/A2C/TQC + SciPy MPC +
+Gymnasium + Stable-Baselines3/SB3-Contrib/PyTorch + 10 类 RL + SciPy MPC + FCFS +
 NumPy/Pandas + Docker + GitHub Actions
 
 ## 面试边界

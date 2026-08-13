@@ -82,10 +82,44 @@ class RLOpsService:
         }
 
     # ---------- 可观测性 ----------
-    def signals(self) -> Dict[str, Any]:
-        status = TRAINING_MANAGER.status()
-        history = TRAINING_MANAGER.history(str(status["job_id"]), limit=200) if status.get("job_id") else {"items": []}
-        return {"available": bool(status.get("job_id")), "job": status, "history": history.get("records", []), "_source": "training_callback_metrics"}
+    def signals(self, algorithm: Optional[str] = None) -> Dict[str, Any]:
+        selected_status: Dict[str, Any] = {}
+        selected_history: List[Dict[str, Any]] = []
+        registry_rows = TRAINING_MANAGER.model_registry().list().get("models", [])
+        available_algorithms = [
+            row.get("id")
+            for row in TRAINING_MANAGER.benchmark_summary(
+                dataset_id="public_cn_sha_hourly_v3"
+            ).get("algorithms", [])
+            if row.get("trainable") and int(row.get("claim_eligible_runs") or 0) > 0
+        ]
+        for record in registry_rows:
+            if record.get("algorithm") in {"mpc", "fcfs"}:
+                continue
+            if algorithm and record.get("algorithm") != algorithm:
+                continue
+            job_id = str(record.get("job_id") or "")
+            history = TRAINING_MANAGER.history(job_id, limit=200).get("records", []) if job_id else []
+            if history:
+                selected_status = TRAINING_MANAGER.status(job_id)
+                selected_history = history
+                break
+        if not selected_status and not algorithm:
+            selected_status = TRAINING_MANAGER.status()
+        return {
+            "available": bool(selected_status.get("job_id")),
+            "optimizer_history_available": bool(selected_history),
+            "job": selected_status,
+            "history": selected_history,
+            "requested_algorithm": algorithm,
+            "available_algorithms": available_algorithms,
+            "selection_basis": (
+                "latest_registered_run_with_persisted_optimizer_history_for_requested_algorithm"
+                if algorithm
+                else "latest_registered_trainable_run_with_persisted_optimizer_history"
+            ),
+            "_source": "persisted_training_callback_metrics",
+        }
 
     # ---------- 实验 ----------
     def experiments(self) -> Dict[str, Any]:
@@ -93,7 +127,13 @@ class RLOpsService:
         return {"items": benchmark.get("baselines", []), "updated_at": benchmark.get("updated_at"), "_source": benchmark.get("source")}
 
     def rollback(self, id_: str) -> Dict[str, Any]:
-        return {"ok": False, "executed": False, "id": id_, "reason": "No production model registry/deployment adapter is configured"}
+        return {
+            "ok": False,
+            "executed": False,
+            "id": id_,
+            "status": "pending_port_connection",
+            "reason": "待接入港口：未配置生产模型注册表或部署适配器；本次未执行回滚。",
+        }
 
     # ---------- 因果 ----------
     def causal_estimate(self, metric: str, segment: Optional[str]) -> Dict[str, Any]:
@@ -101,5 +141,6 @@ class RLOpsService:
             "available": False,
             "metric": metric,
             "segment": segment,
-            "reason": "Causal estimation requires a treatment/outcome dataset and overlap diagnostics; none is configured.",
+            "status": "pending_port_connection",
+            "reason": "待接入港口：因果估计需要处理组/对照组、结果回流、倾向重叠与干扰诊断；当前不会生成替代 ATE/CATE。",
         }

@@ -12,9 +12,10 @@ from __future__ import annotations
 from datetime import datetime, timezone
 import os
 from pathlib import Path
+import time
 from typing import Any, Dict, Iterable, List
 
-from fastapi import APIRouter, Body, Query
+from fastapi import APIRouter, Body, Query, Request
 from fastapi.responses import JSONResponse
 import json
 
@@ -238,13 +239,44 @@ def _probe_xiaoyi_status() -> Dict[str, Any]:
     if httpx is None:
         return {**cfg, "configured": False, "online": False, "status": "missing_httpx", "reason": "httpx 不可用，无法连接小懿AI。"}
     try:
-        with httpx.Client(timeout=1.2) as client:
-            resp = client.get(cfg["health_url"])
-            resp.raise_for_status()
-            data = resp.json()
-        return {**cfg, "configured": True, "online": True, "status": "ready", "health": data}
+        with httpx.Client(timeout=2.0) as client:
+            health_response = client.get(cfg["health_url"])
+            health_response.raise_for_status()
+            health = health_response.json()
+            openapi_response = client.get(cfg["base_url"] + "/openapi.json")
+            openapi_response.raise_for_status()
+            openapi = openapi_response.json()
+        paths = openapi.get("paths") if isinstance(openapi, dict) else {}
+        chat_route = paths.get("/api/chat") if isinstance(paths, dict) else None
+        chat_capable = isinstance(chat_route, dict) and "post" in chat_route
+        if not chat_capable:
+            return {
+                **cfg,
+                "configured": True,
+                "online": False,
+                "chat_capable": False,
+                "status": "health_only_not_xiaoyi",
+                "health": health,
+                "reason": "目标地址健康检查可达，但没有POST /api/chat；不得标记为小懿在线。",
+            }
+        return {
+            **cfg,
+            "configured": True,
+            "online": True,
+            "chat_capable": True,
+            "status": "ready",
+            "health": health,
+            "identity_check": "health_plus_openapi_chat_route",
+        }
     except Exception as exc:
-        return {**cfg, "configured": True, "online": False, "status": "offline", "reason": f"小懿AI 未在线或不可达：{str(exc)[:180]}"}
+        return {
+            **cfg,
+            "configured": True,
+            "online": False,
+            "chat_capable": False,
+            "status": "offline",
+            "reason": f"小懿AI 未在线或不可达：{str(exc)[:180]}",
+        }
 
 
 def _call_xiaoyi(
@@ -263,19 +295,44 @@ def _call_xiaoyi(
         "mode": _xiaoyi_mode(scope=scope, mode=mode, query=query),
         "top_k": max(1, min(int(top_k or 5), 10)),
     }
+    started = time.perf_counter()
+    timeout_seconds = max(5.0, min(180.0, float(os.getenv("XIAOYI_AI_TIMEOUT_SECONDS") or 65.0)))
     try:
-        with httpx.Client(timeout=10.0) as client:
+        with httpx.Client(timeout=timeout_seconds) as client:
             resp = client.post(cfg["chat_url"], json=body)
             resp.raise_for_status()
             data = resp.json()
-        return {"ok": True, "status": "xiaoyi", "config": cfg, "request": body, "parsed": data}
+        answer = str(data.get("answer") or "") if isinstance(data, dict) else ""
+        if not answer.strip():
+            raise ValueError("小懿响应缺少完整answer字段")
+        return {
+            "ok": True,
+            "status": "xiaoyi",
+            "engine_execution": "external_xiaoyi_chat_api",
+            "config": cfg,
+            "request": body,
+            "parsed": data,
+            "usage": data.get("usage") if isinstance(data, dict) else {},
+            "generation": {
+                "provider": data.get("generation_provider"),
+                "model": data.get("generation_model"),
+                "fallback": data.get("generation_fallback"),
+                "grounded": data.get("grounded"),
+                "completion_status": data.get("completion_status"),
+            } if isinstance(data, dict) else {},
+            "latency_ms": round((time.perf_counter() - started) * 1000, 1),
+            "response_validated": True,
+        }
     except Exception as exc:
         return {
             "ok": False,
             "status": "fallback",
+            "engine_execution": "local_evidence_fallback",
             "reason": f"小懿AI 调用失败，已退回本地 Copilot：{str(exc)[:220]}",
             "config": cfg,
             "request": body,
+            "latency_ms": round((time.perf_counter() - started) * 1000, 1),
+            "response_validated": False,
         }
 
 
@@ -352,6 +409,93 @@ def _actions_from_xiaoyi(primary_title: str) -> List[Dict[str, Any]]:
     ]
 
 
+def _mission_prompt(query: str, context: Dict[str, Any], mission_id: str) -> str:
+    source = context.get("source") or {}
+    forecast = context.get("forecast") or {}
+    monitoring = context.get("monitoring") or {}
+    policy = context.get("policy") or {}
+    business = context.get("business_value") or {}
+    compact = {
+        "context_sha256": context.get("context_sha256"),
+        "state": context.get("overall_state"),
+        "source": {
+            "mode": source.get("mode"),
+            "artifact": source.get("artifact_id"),
+            "sha256": source.get("sha256"),
+            "samples": source.get("sample_count"),
+            "measured": source.get("measured"),
+            "production": source.get("production"),
+        },
+        "data_quality": context.get("data_quality"),
+        "forecast": {
+            "model": forecast.get("model"),
+            "horizon_min": forecast.get("horizon_min"),
+            "p10_kw": forecast.get("peak_p10_kw"),
+            "p50_kw": forecast.get("peak_p50_kw"),
+            "p90_kw": forecast.get("peak_p90_kw"),
+            "cap_kw": forecast.get("engineering_cap_kw"),
+            "exceedance_probability": forecast.get("peak_probability"),
+            "site_calibrated": forecast.get("site_calibration_available"),
+        },
+        "monitoring": monitoring,
+        "policy": {
+            "algorithm": policy.get("algorithm"),
+            "implementation": policy.get("implementation"),
+            "model_sha256": policy.get("model_sha256"),
+            "dataset_id": policy.get("dataset_id"),
+            "dataset_sha256": policy.get("dataset_sha256"),
+            "hard_guardrail_passed": policy.get("hard_guardrail_passed"),
+            "production_authority": policy.get("production_authority"),
+        },
+        "business_projection": {
+            "avoided_energy_cost_cny": business.get("avoided_energy_cost_cny"),
+            "avoided_carbon_kg": business.get("avoided_carbon_kg"),
+            "financial_audit_ready": business.get("financial_audit_ready"),
+        },
+        "missing_site_factors": context.get("missing_site_factors"),
+    }
+    prompt = (
+        "你是小懿AI港口一线副驾。仅根据下列后端上下文；不得补造现场数据、事故、工单、收益或执行结果。"
+        "明确区分公开回放、预测投影和现场实测。准入门阻断时先保持上一稳定策略或FCFS/MPC基线。"
+        "回答：结论、依据、检查项、dry-run、人工确认。"
+        f"\n任务:{mission_id}\n问题:{query[:240]}\n上下文:"
+        + json.dumps(compact, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    )
+    # Xiaoyi's public request contract caps the question at 2,000 chars.  The
+    # packet is intentionally compact, but never send an invalid oversized
+    # request if a future backend adds fields.
+    return prompt if len(prompt) <= 1980 else prompt[:1978] + "…"
+
+
+def _context_grounding(answer: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    """Check whether Xiaoyi actually used the supplied runtime packet.
+
+    A successful HTTP response proves invocation, not grounding.  We only use
+    the generated answer as the frontline answer if at least two independent
+    runtime anchors are repeated; otherwise the deterministic evidence-bound
+    composer takes over while the raw call remains visible in the audit packet.
+    """
+    monitoring = context.get("monitoring") or {}
+    policy = context.get("policy") or {}
+    forecast = context.get("forecast") or {}
+    anchors = [
+        str(context.get("context_sha256") or "")[:12],
+        str(monitoring.get("admission_decision") or ""),
+        str(policy.get("algorithm") or "").upper(),
+        f"{float(monitoring.get('drift_psi')):.3f}" if monitoring.get("drift_psi") is not None else "",
+        f"{float(forecast.get('peak_p50_kw')):,.0f}" if forecast.get("peak_p50_kw") is not None else "",
+    ]
+    answer_upper = answer.upper()
+    matched = [anchor for anchor in anchors if anchor and anchor.upper() in answer_upper]
+    prompt_echo_detected = "上下文:{" in answer or "上下文：{" in answer
+    return {
+        "passed": len(matched) >= 2 and not prompt_echo_detected,
+        "matched_anchors": matched,
+        "required_anchor_count": 2,
+        "prompt_echo_detected": prompt_echo_detected,
+    }
+
+
 @router.get(
     "/ask",
     summary="Ops Copilot：小懿知识检索",
@@ -399,33 +543,71 @@ def copilot_ask(
     summary="Ops Copilot：运行上下文",
     description="给独立 Ops Copilot 工作台提供演示级上下文、连接器和待处置摘要。",
 )
-def copilot_context(port: str = Query("CNYTN", description="港口代码")) -> JSONResponse:
+def copilot_context(
+    request: Request,
+    port: str = Query("CNSHA", description="港口代码"),
+    asset_id: str = Query("qc-01", description="当前资产"),
+    mission: str = Query("situation", description="小懿任务模式"),
+) -> JSONResponse:
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     xiaoyi_status = _probe_xiaoyi_status()
     assistant_status = "ready" if xiaoyi_status.get("online") else "fallback"
+    mission_control = getattr(request.app.state, "xiaoyi_mission_control", None)
+    if mission_control is None:
+        return JSONResponse(
+            {
+                "port": port,
+                "status": "unavailable",
+                "updated_at": now,
+                "signals": [],
+                "connectors": [],
+                "mission_modes": [],
+                "reason": "xiaoyi mission context service is not registered",
+                "production_authority": False,
+            }
+        )
+    context = mission_control.build_context(
+        asset_id=asset_id,
+        mission_id=mission,
+    )
+    overall = str(context.get("overall_state") or "unavailable")
+    if overall in {"data_unavailable", "unavailable"}:
+        status = "unavailable"
+    elif "review" in overall or "risk" in overall:
+        status = "review"
+    else:
+        status = "ready"
     return JSONResponse(
         {
             "port": port,
-            "status": "watch",
+            "asset_id": asset_id,
+            "mission": mission,
+            "status": status,
             "updated_at": now,
-            "signals": [
-                {"name": "未来 15min 需量风险", "value": "72%", "level": "major", "source": "Peak Risk"},
-                {"name": "待审批执行工单", "value": "3", "level": "watch", "source": "Execution"},
-                {"name": "小懿AI 状态", "value": "online" if xiaoyi_status.get("online") else "offline", "level": "ok" if xiaoyi_status.get("online") else "watch", "source": "Xiaoyi AI"},
-                {"name": "安全护栏", "value": "人工确认", "level": "ok", "source": "OpsX"},
-            ],
+            "overall_state": overall,
+            "context_sha256": context.get("context_sha256"),
+            "signals": context.get("signals") or [],
             "connectors": [
-                {"name": "小懿AI", "endpoint": xiaoyi_status.get("chat_url"), "status": assistant_status},
-                {"name": "小懿知识库", "endpoint": "/api/copilot/ask", "status": assistant_status},
-                {"name": "Ops Brief", "endpoint": "/api/copilot/brief", "status": "ready"},
-                {"name": "Execution Handoff", "endpoint": "/api/rl/dispatch", "status": "dry-run"},
-                {"name": "Audit Trace", "endpoint": "/api/opsx/*", "status": "ready"},
+                {
+                    "name": "小懿AI生成服务",
+                    "endpoint": xiaoyi_status.get("chat_url"),
+                    "status": assistant_status,
+                    "chat_capable": bool(xiaoyi_status.get("chat_capable")),
+                    "reason": xiaoyi_status.get("reason"),
+                },
+                {"name": "孪生态势上下文", "endpoint": "/api/copilot/context", "status": "ready"},
+                {"name": "小懿任务推理", "endpoint": "/api/copilot/mission", "status": "ready"},
+                {"name": "交接班留痕", "endpoint": "/api/copilot/handoff", "status": "confirm-required"},
+                {"name": "OpsX审计", "endpoint": "/api/opsx/*", "status": "ready"},
             ],
+            "mission_modes": mission_control.mission_modes(),
+            "context": context,
             "handoff_links": [
                 {"label": "策略执行", "href": "/#strategy-exec-module"},
                 {"label": "OpsX 审计", "href": "/#opsx-section"},
                 {"label": "实时孪生", "href": "/#twin3d-section"},
             ],
+            "production_authority": False,
         }
     )
 
@@ -452,6 +634,230 @@ def copilot_llm_status() -> JSONResponse:
                 "base_url": "XIAOYI_AI_BASE_URL，默认 http://127.0.0.1:8010",
                 "run": "设置 PORT_DT_ENABLE_DESKTOP_INTEGRATIONS=1、XIAOYI_AI_PROJECT 和 XIAOYI_AI_START_COMMAND",
             },
+        }
+    )
+
+
+_MISSION_DEFAULT_QUESTIONS = {
+    "situation": "小懿，请基于当前数字孪生后端状态给本班一个简明态势判断。",
+    "forecast": "小懿，请解释当前预测峰值、区间和工程阈值风险，并指出缺失的现场证据。",
+    "strategy": "小懿，请解释当前策略为什么这样决策、相对基线改善什么、风险和边界是什么。",
+    "triage": "小懿，请根据当前异常、漂移和策略准入门给出一线分诊与回退顺序。",
+    "handoff": "小懿，请把当前态势、模型版本、未决风险和下一班检查项整理成交接摘要。",
+    "dry_run": "小懿，请判断当前是否适合进入策略预演；只给dry-run与人工审批步骤。",
+}
+
+
+@router.post(
+    "/mission",
+    summary="小懿数字孪生任务推理",
+    description="先读取后端孪生/预测/监控/策略上下文，再真实调用小懿；不可达时使用同一上下文做本地证据兜底。",
+)
+def copilot_mission(
+    request: Request,
+    payload: Dict[str, Any] = Body(default={}),
+) -> JSONResponse:
+    mission_control = getattr(request.app.state, "xiaoyi_mission_control", None)
+    if mission_control is None:
+        return JSONResponse(
+            {
+                "ok": False,
+                "status": "mission_context_unavailable",
+                "production_authority": False,
+            },
+            status_code=503,
+        )
+
+    mission_id = str(payload.get("mission") or "situation").strip().lower()
+    allowed = {row["id"] for row in mission_control.mission_modes()}
+    if mission_id not in allowed:
+        mission_id = "situation"
+    query = str(payload.get("query") or "").strip() or _MISSION_DEFAULT_QUESTIONS[mission_id]
+    asset_id = str(payload.get("asset_id") or payload.get("asset_group") or "qc-01")
+    if asset_id in {"all_port", "all", "port"}:
+        asset_id = "qc-01"
+    cap_kw = float(payload.get("cap_kw") or 36_000.0)
+    horizon_min = max(15, min(360, int(payload.get("horizon_min") or 60)))
+    context = mission_control.build_context(
+        asset_id=asset_id,
+        mission_id=mission_id,
+        cap_kw=cap_kw,
+        horizon_min=horizon_min,
+        step_min=5,
+    )
+
+    engine = str(payload.get("engine") or "xiaoyi_ai")
+    uses_xiaoyi = engine in {"xiaoyi_ai", "auto", "external_llm"}
+    llm_result: Dict[str, Any] = {
+        "ok": False,
+        "status": "local_evidence_fallback",
+        "engine_execution": "local_evidence_fallback",
+        "reason": "调用方选择本地证据模式。",
+        "config": _xiaoyi_config(),
+        "latency_ms": 0.0,
+    }
+    if uses_xiaoyi:
+        llm_result = _call_xiaoyi(
+            query=_mission_prompt(query, context, mission_id),
+            scope="alert" if mission_id == "triage" else "all",
+            mode="handoff" if mission_id == "handoff" else "ops",
+            top_k=max(1, min(10, int(payload.get("top_k") or 6))),
+        )
+    parsed = llm_result.get("parsed") if llm_result.get("ok") else {}
+    generated_answer = str((parsed or {}).get("answer") or "").strip()
+    grounding = _context_grounding(generated_answer, context) if generated_answer else {
+        "passed": False,
+        "matched_anchors": [],
+        "required_anchor_count": 2,
+    }
+    answer = generated_answer if grounding.get("passed") else ""
+    if not answer:
+        answer = mission_control.local_fallback_answer(context, query)
+    answer_source = "xiaoyi_context_grounded" if grounding.get("passed") else "backend_evidence_guardrail"
+
+    actions = mission_control.recommended_actions(context, mission_id)
+    action_cards = [
+        {
+            **row,
+            "action": row.get("label"),
+            "owner": "值班调度 / 专业工程师",
+            "guardrail": "人工确认" if row.get("human_confirmation") else "只读导航",
+            "handoff": row.get("href"),
+        }
+        for row in actions
+    ]
+    sop_steps = [
+        {
+            "step": str(row.get("label")),
+            "owner": "值班调度" if index == 0 else "专业工程师",
+            "eta_min": 2 + index * 3,
+            "detail": str(row.get("reason") or ""),
+            "status": "blocked" if str(row.get("execution") or "").startswith("blocked") else "ready",
+        }
+        for index, row in enumerate(actions[:5])
+    ]
+    system_evidence = [
+        {
+            "id": str(row.get("id") or "runtime"),
+            "type": "runtime",
+            "title": str(row.get("name") or "运行上下文"),
+            "snippet": f"{row.get('value')} · {row.get('source')}",
+            "link": "#",
+            "score": 1.0,
+            "source": row.get("source"),
+        }
+        for row in context.get("signals") or []
+    ]
+    xiaoyi_evidence = _xiaoyi_evidence_items(parsed or {}, limit=6) if llm_result.get("ok") else []
+    evidence = system_evidence + xiaoyi_evidence
+    risk = "高" if (context.get("monitoring") or {}).get("new_policy_suggestions_allowed") is False else "中低"
+    headline = _first_answer_line(answer)
+    invocation_id = "xy-mission-" + datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
+    handoff_preview = mission_control.handoff_preview(
+        context,
+        answer=answer,
+        operator=str(payload.get("operator") or ""),
+        shift=str(payload.get("shift") or ""),
+    )
+    audit_packet = {
+        "invocation_id": invocation_id,
+        "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "mission": mission_id,
+        "query": query,
+        "context_sha256": context.get("context_sha256"),
+        "engine_requested": engine,
+        "engine_executed": llm_result.get("engine_execution"),
+        "generation": llm_result.get("generation") or {},
+        "xiaoyi_called": bool(llm_result.get("ok")),
+        "answer_source": answer_source,
+        "context_grounding": grounding,
+        "latency_ms": llm_result.get("latency_ms"),
+        "evidence_count": len(evidence),
+        "production_authority": False,
+        "human_in_loop": True,
+    }
+    return JSONResponse(
+        {
+            "ok": True,
+            "status": (
+                "xiaoyi_answer"
+                if grounding.get("passed")
+                else ("xiaoyi_called_guarded_fallback" if llm_result.get("ok") else "local_evidence_fallback")
+            ),
+            "summary": {
+                "headline": headline,
+                "risk_level": risk,
+                "intent": mission_id,
+                "primary_reference": "hash-addressed runtime context",
+                "operator_note": answer,
+            },
+            "actions": action_cards,
+            "sop_steps": sop_steps,
+            "evidence": evidence,
+            "llm": {
+                "engine": "小懿AI" if grounding.get("passed") else "小懿调用 + 后端证据护栏",
+                "status": llm_result.get("status"),
+                "ok": bool(llm_result.get("ok")),
+                "true_xiaoyi_called": bool(llm_result.get("ok")),
+                "engine_execution": llm_result.get("engine_execution"),
+                "reason": llm_result.get("reason"),
+                "latency_ms": llm_result.get("latency_ms"),
+                "response_validated": bool(llm_result.get("response_validated")),
+                "answer_source": answer_source,
+                "context_grounding": grounding,
+                "chat_url": (llm_result.get("config") or {}).get("chat_url"),
+                "usage": llm_result.get("usage") or {},
+                "generation": llm_result.get("generation") or {},
+            },
+            "xiaoyi": {
+                "ok": bool(llm_result.get("ok")),
+                "answer": generated_answer if llm_result.get("ok") else "",
+                "used_as_frontline_answer": bool(grounding.get("passed")),
+                "confidence": (parsed or {}).get("confidence"),
+                "next_questions": (parsed or {}).get("next_questions") or [],
+            },
+            "context": context,
+            "context_sha256": context.get("context_sha256"),
+            "mission_modes": mission_control.mission_modes(),
+            "handoff_preview": handoff_preview,
+            "audit_packet": audit_packet,
+            "production_authority": False,
+        }
+    )
+
+
+@router.post(
+    "/handoff",
+    summary="小懿交接班预览与确认留痕",
+    description="默认只返回预览；confirm=true才追加写入运行时审计日志，始终不执行生产动作。",
+)
+def copilot_handoff(
+    request: Request,
+    payload: Dict[str, Any] = Body(default={}),
+) -> JSONResponse:
+    mission_control = getattr(request.app.state, "xiaoyi_mission_control", None)
+    if mission_control is None:
+        return JSONResponse({"ok": False, "status": "mission_context_unavailable"}, status_code=503)
+    context = mission_control.build_context(
+        asset_id=str(payload.get("asset_id") or "qc-01"),
+        mission_id="handoff",
+    )
+    answer = str(payload.get("answer") or "").strip()
+    if not answer:
+        answer = mission_control.local_fallback_answer(context, _MISSION_DEFAULT_QUESTIONS["handoff"])
+    packet = mission_control.handoff_preview(
+        context,
+        answer=answer,
+        operator=str(payload.get("operator") or ""),
+        shift=str(payload.get("shift") or ""),
+    )
+    result = mission_control.persist_handoff(packet, confirm=bool(payload.get("confirm")))
+    return JSONResponse(
+        {
+            "ok": True,
+            **result,
+            "human_confirmation_required": True,
+            "production_action_executed": False,
         }
     )
 

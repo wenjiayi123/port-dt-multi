@@ -1,11 +1,15 @@
 from __future__ import annotations
 
 import hmac
+import hashlib
+import json
+import copy
 import os
 import threading
 import time
 import uuid
-from collections import Counter, defaultdict
+from collections import Counter, defaultdict, deque
+from pathlib import Path
 from typing import Any, Dict, Iterable
 
 from fastapi import FastAPI, Request
@@ -20,7 +24,7 @@ def is_production() -> bool:
 def cors_origins() -> list[str]:
     configured = [item.strip() for item in os.getenv("PORT_DT_CORS_ORIGINS", "").split(",") if item.strip()]
     if configured:
-        if is_production() and any(item == "*" or not item.startswith(("https://", "http://")) for item in configured):
+        if is_production() and any(item == "*" or not item.startswith("https://") for item in configured):
             return []
         return configured
     return [] if is_production() else ["http://127.0.0.1:8000", "http://localhost:8000"]
@@ -70,6 +74,46 @@ class RuntimeMetrics:
 RUNTIME_METRICS = RuntimeMetrics()
 
 
+class SlidingWindowRateLimiter:
+    def __init__(self) -> None:
+        self.lock = threading.Lock()
+        self.events: Dict[str, deque[float]] = defaultdict(deque)
+
+    def allow(self, identity: str, *, limit: int, now: float | None = None) -> tuple[bool, int]:
+        timestamp = time.monotonic() if now is None else float(now)
+        cutoff = timestamp - 60.0
+        with self.lock:
+            bucket = self.events[identity]
+            while bucket and bucket[0] <= cutoff:
+                bucket.popleft()
+            remaining = max(0, int(limit) - len(bucket))
+            if len(bucket) >= int(limit):
+                return False, 0
+            bucket.append(timestamp)
+            return True, max(0, remaining - 1)
+
+
+RATE_LIMITER = SlidingWindowRateLimiter()
+READINESS_BASE_CACHE: Dict[str, Any] = {"at": 0.0, "checks": None}
+READINESS_BASE_LOCK = threading.Lock()
+
+
+def rate_limit_per_minute() -> int:
+    try:
+        value = int(os.getenv("PORT_DT_RATE_LIMIT_RPM", "600"))
+    except ValueError:
+        value = 600
+    return max(1, min(60_000, value))
+
+
+def max_request_bytes() -> int:
+    try:
+        value = int(os.getenv("PORT_DT_MAX_REQUEST_BYTES", str(10 * 1024 * 1024)))
+    except ValueError:
+        value = 10 * 1024 * 1024
+    return max(1024, min(1024 * 1024 * 1024, value))
+
+
 def api_keys() -> list[str]:
     """Return only keys with enough entropy-bearing length for production use."""
     return [item.strip() for item in os.getenv("PORT_DT_API_KEYS", "").split(",") if len(item.strip()) >= 32]
@@ -102,18 +146,30 @@ class OperationsMiddleware(BaseHTTPMiddleware):
             keys = api_keys()
             admins = admin_api_keys()
             supplied = request.headers.get("X-API-Key", "")
-            if not keys and not admins:
+            content_length = request.headers.get("content-length")
+            if content_length and content_length.isdigit() and int(content_length) > max_request_bytes():
+                response = JSONResponse({"detail": "request body exceeds production limit", "request_id": request_id}, status_code=413)
+            elif not keys and not admins:
                 response: Response = JSONResponse({"detail": "production API authentication is not configured", "request_id": request_id}, status_code=503)
-            elif any(hmac.compare_digest(supplied, expected) for expected in admins):
-                request.state.auth_role = "admin"
-                response = await call_next(request)
-            elif not any(hmac.compare_digest(supplied, expected) for expected in keys):
+            elif not any(hmac.compare_digest(supplied, expected) for expected in [*admins, *keys]):
                 response = JSONResponse({"detail": "invalid or missing API key", "request_id": request_id}, status_code=401)
-            elif requires_admin(request):
-                response = JSONResponse({"detail": "administrator API key required", "request_id": request_id}, status_code=403)
             else:
-                request.state.auth_role = "operator"
-                response = await call_next(request)
+                is_admin = any(hmac.compare_digest(supplied, expected) for expected in admins)
+                request.state.auth_role = "admin" if is_admin else "operator"
+                identity = hashlib.sha256(supplied.encode("utf-8")).hexdigest()[:24]
+                allowed, remaining = RATE_LIMITER.allow(
+                    identity,
+                    limit=rate_limit_per_minute(),
+                )
+                if not allowed:
+                    response = JSONResponse({"detail": "production API rate limit exceeded", "request_id": request_id}, status_code=429)
+                    response.headers["Retry-After"] = "60"
+                elif requires_admin(request) and not is_admin:
+                    response = JSONResponse({"detail": "administrator API key required", "request_id": request_id}, status_code=403)
+                else:
+                    response = await call_next(request)
+                response.headers["X-RateLimit-Limit"] = str(rate_limit_per_minute())
+                response.headers["X-RateLimit-Remaining"] = str(remaining)
         else:
             response = await call_next(request)
         duration = time.perf_counter() - started
@@ -125,13 +181,75 @@ class OperationsMiddleware(BaseHTTPMiddleware):
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Referrer-Policy"] = "no-referrer"
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+        if protected:
+            response.headers["Cache-Control"] = "no-store"
+        if is_production():
+            response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        if is_production() and protected:
+            response.headers["Content-Security-Policy"] = "default-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'"
         return response
 
 
-def readiness_report() -> Dict[str, Any]:
+def _verified_site_json(env_name: str, *, kind: str) -> Dict[str, Any]:
+    configured = os.getenv(env_name, "").strip()
+    if not configured:
+        return {"ok": False, "status": "not_configured", "env": env_name}
+    path = Path(configured).expanduser()
+    if not path.is_file():
+        return {"ok": False, "status": "file_missing", "env": env_name, "path": str(path)}
+    try:
+        payload = json.loads(path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        return {"ok": False, "status": "invalid_json", "env": env_name, "path": str(path), "error": str(exc)}
+    if not isinstance(payload, dict):
+        return {"ok": False, "status": "invalid_payload", "env": env_name, "path": str(path)}
+    common = bool(payload.get("site_id") and payload.get("approved") is True)
+    try:
+        if kind == "graph":
+            kind_ok = bool(
+                payload.get("source_mode") == "authorized_site"
+                and (payload.get("entities") or payload.get("nodes"))
+                and payload.get("approved_by")
+            )
+        elif kind == "calibration":
+            kind_ok = bool(
+                payload.get("measured_outcomes") is True
+                and payload.get("validation_status") == "pass"
+                and int(payload.get("validation_rows") or 0) > 0
+                and payload.get("approved_by")
+            )
+        elif kind == "shadow":
+            kind_ok = bool(
+                payload.get("measured_incumbent_baseline") is True
+                and payload.get("acceptance_status") == "pass"
+                and int(payload.get("shadow_cycles") or 0) > 0
+                and float(payload.get("guardrail_violation_rate") or 0.0) == 0.0
+                and payload.get("approved_by")
+            )
+        else:
+            kind_ok = False
+    except (TypeError, ValueError):
+        kind_ok = False
+    return {
+        "ok": bool(common and kind_ok),
+        "status": "verified" if common and kind_ok else "evidence_incomplete",
+        "env": env_name,
+        "path": str(path),
+        "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+        "site_id": payload.get("site_id"),
+        "kind": kind,
+    }
+
+
+def _open_source_readiness_checks() -> Dict[str, Dict[str, Any]]:
     from app.services.rl_training.datasets import dataset_quality_report, load_port_dataset
     from app.services.rl_training.trainer import TRAINING_MANAGER
 
+    now = time.monotonic()
+    with READINESS_BASE_LOCK:
+        cached = READINESS_BASE_CACHE.get("checks")
+        if cached is not None and now - float(READINESS_BASE_CACHE.get("at") or 0.0) < 30.0:
+            return copy.deepcopy(cached)
     checks: Dict[str, Dict[str, Any]] = {}
     try:
         quality = dataset_quality_report(load_port_dataset("public_port_ops_v1", TRAINING_MANAGER.data_root))
@@ -140,22 +258,56 @@ def readiness_report() -> Dict[str, Any]:
         checks["canonical_dataset"] = {"ok": False, "error": str(exc)}
     runtime = TRAINING_MANAGER.capabilities().get("runtime") or {}
     checks["rl_runtime"] = {"ok": bool(runtime.get("available")), **runtime}
+    with READINESS_BASE_LOCK:
+        READINESS_BASE_CACHE.update(at=now, checks=copy.deepcopy(checks))
+    return checks
+
+
+def readiness_report() -> Dict[str, Any]:
+    checks = _open_source_readiness_checks()
     origins = cors_origins()
     keys = api_keys()
     admins = admin_api_keys()
-    checks["cors"] = {"ok": bool(origins), "origins": origins}
+    checks["cors"] = {"ok": bool(origins), "origins": origins, "status": "https_allowlist_configured" if is_production() and origins else "development_same_origin_defaults" if origins else "not_configured"}
     checks["api_authentication"] = {"ok": (not is_production()) or bool(keys or admins), "mode": "role_separated_api_key" if is_production() else "development_open"}
-    checks["privileged_api_key"] = {"ok": (not is_production()) or bool(admins), "required_for_research_api": False}
-    checks["twin_graph"] = {"ok": bool(os.getenv("PORT_DT_TWIN_GRAPH_PATH", "").strip()), "required_for_research_api": False}
-    checks["site_calibration"] = {"ok": bool(os.getenv("PORT_DT_TWIN_CALIBRATION_PATH", "").strip()), "required_for_research_api": False}
+    checks["privileged_api_key"] = {"ok": (not is_production()) or bool(admins), "status": "separate_admin_key_configured" if admins else "not_required_in_development", "required_for_research_api": False}
+    checks["api_rate_limit"] = {"ok": rate_limit_per_minute() > 0, "status": "per_key_sliding_window", "requests_per_minute_per_key": rate_limit_per_minute()}
+    checks["request_body_limit"] = {"ok": max_request_bytes() > 0, "status": "declared_body_limit_enabled", "max_bytes": max_request_bytes(), "basis": "Content-Length rejected before route execution"}
+    checks["security_headers"] = {"ok": True, "status": "application_middleware_enabled", "headers": ["X-Request-ID", "X-Content-Type-Options", "X-Frame-Options", "Referrer-Policy", "Permissions-Policy", "Cache-Control", "HSTS", "CSP"]}
+    checks["production_mode"] = {"ok": is_production(), "mode": "production" if is_production() else "development"}
+    checks["tls_termination"] = {"ok": os.getenv("PORT_DT_TLS_TERMINATION_ATTESTED", "").strip().lower() == "true", "attestation": "operator_configured"}
+    checks["secret_manager"] = {"ok": os.getenv("PORT_DT_SECRET_MANAGER_ATTESTED", "").strip().lower() == "true", "attestation": "operator_configured"}
+    checks["twin_graph"] = {**_verified_site_json("PORT_DT_TWIN_GRAPH_PATH", kind="graph"), "required_for_research_api": False}
+    checks["site_calibration"] = {**_verified_site_json("PORT_DT_TWIN_CALIBRATION_PATH", kind="calibration"), "required_for_research_api": False}
+    checks["shadow_acceptance"] = {**_verified_site_json("PORT_DT_SHADOW_ACCEPTANCE_PATH", kind="shadow"), "required_for_research_api": False}
+    evidence_site_ids = {
+        checks[name].get("site_id")
+        for name in ("twin_graph", "site_calibration", "shadow_acceptance")
+        if checks[name].get("ok")
+    }
+    checks["site_evidence_consistency"] = {
+        "ok": len(evidence_site_ids) == 1 and all(
+            checks[name].get("ok")
+            for name in ("twin_graph", "site_calibration", "shadow_acceptance")
+        ),
+        "site_ids": sorted(str(item) for item in evidence_site_ids),
+        "requirement": "graph, calibration and shadow acceptance must bind to the same site_id",
+    }
     open_source_ready = all(checks[name]["ok"] for name in ("canonical_dataset", "rl_runtime"))
-    production_ready = open_source_ready and all(checks[name]["ok"] for name in ("cors", "api_authentication", "privileged_api_key", "twin_graph", "site_calibration"))
+    production_ready = open_source_ready and all(
+        checks[name]["ok"]
+        for name in (
+            "production_mode", "cors", "api_authentication", "privileged_api_key",
+            "tls_termination", "secret_manager", "twin_graph", "site_calibration",
+            "shadow_acceptance", "site_evidence_consistency",
+        )
+    )
     return {
         "status": "ready" if open_source_ready else "not_ready",
         "open_source_runtime_ready": open_source_ready,
         "production_site_ready": production_ready,
         "checks": checks,
-        "boundary": "production_site_ready requires site-specific graph, calibration, authentication and CORS configuration",
+        "boundary": "production_site_ready requires verified site graph, measured calibration, accepted shadow evidence, production auth/CORS, TLS and secret-manager attestations",
     }
 
 

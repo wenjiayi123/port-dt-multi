@@ -43,6 +43,14 @@ def _init_telemetry():
             return TelemetrySim()
         except Exception:
             pass
+    configured_dataset = os.getenv("PORT_DT_TELEMETRY_DATASET", "").strip()
+    if not configured_dataset:
+        try:
+            from app.adapters.telemetry_calibrated_replay import CalibratedReplayTelemetry
+
+            return CalibratedReplayTelemetry()
+        except Exception:
+            pass
     try:
         from app.adapters.telemetry_dataset import DatasetTelemetry
         return DatasetTelemetry()

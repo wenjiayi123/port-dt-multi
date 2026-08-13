@@ -26,9 +26,9 @@ def _default_snapshot() -> Dict[str, Any]:
     """当 graph_snapshot.json 缺失或损坏时的兜底平台地图。"""
     return {
         "meta": {
-            "version": "2025.11-demo",
-            "updated_at": "2025-11-20T08:00:00+08:00",
-            "description": "港口 AI 数字运营平台平台地图快照：设备 / 数据孪生 / RL 与协同 / 应用运营。",
+            "version": "V3.1-repository-map",
+            "updated_at": "2026-08-12T00:00:00+08:00",
+            "description": "港口 AI 数字运营平台仓库架构地图：设备 / 数据孪生 / RL 与协同 / 应用运营。",
         },
         "layers": [
             {
@@ -265,5 +265,16 @@ def get_graph(di: Any) -> Dict[str, Any]:
         "_source": snapshot_source,
         "data_class": "repository_architecture_configuration_not_runtime_topology",
         "stats": stats,
+        "deployment": {
+            "runtime_topology_connected": False,
+            "target_domain": "上海港公开数据标定与离线盲测",
+            "production_instances": None,
+            "required_adapters": [
+                "CMDB/资产台账",
+                "服务发现与健康检查",
+                "TOS/ECS/EMS 实例绑定",
+                "现场网络与设备拓扑",
+            ],
+        },
     }
     return result

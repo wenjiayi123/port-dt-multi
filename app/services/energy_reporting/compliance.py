@@ -185,6 +185,10 @@ class ComplianceService:
         }
 
         return {
+            "available": True,
+            "audit_ready": False,
+            "data_class": "engineering_sample_day_extrapolation_not_compliance_report",
+            "production_authority": False,
             "range": {"start": rng_start, "end": rng_end, "days": days_in_month},
             "factors": ef.as_dict(),
             "totals": totals,
@@ -266,6 +270,10 @@ class ComplianceService:
         }
 
         return {
+            "available": True,
+            "audit_ready": False,
+            "data_class": "engineering_sample_day_extrapolation_not_compliance_report",
+            "production_authority": False,
             "range": {"start": s1, "end": e3, "months": 3, "days_each": [d1, d2, d3]},
             "factors": ef.as_dict(),
             "totals": totals,

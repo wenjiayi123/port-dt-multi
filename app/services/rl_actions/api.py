@@ -1,9 +1,9 @@
-"""Action registry for Xiaoyi-to-RL-panel commands.
+"""Allow-listed action registry for Xiaoyi-to-port-operations commands.
 
-The registry is scoped to the top-menu RL panel linkage.  It converts Xiaoyi's
-recognized intent or a raw user instruction into a small executable command
-packet: which panel to open, which button to click, and which backend endpoint
-can be called when server-side execution is appropriate.
+The registry converts Xiaoyi's recognized intent or a raw user instruction
+into a bounded command packet.  Mission actions are read-only navigation into
+the evidence-bound copilot; training, desktop launch and policy actions keep
+their existing confirmation and dry-run gates.
 """
 
 from __future__ import annotations
@@ -47,6 +47,118 @@ DEFAULT_TRAIN_CONFIG: Dict[str, Any] = {
 
 
 RL_ACTIONS: List[Dict[str, Any]] = [
+    {
+        "id": "open_ops_copilot",
+        "label": "打开小懿运营副驾",
+        "category": "xiaoyi_mission",
+        "description": "打开小懿任务工作台；默认读取当前孪生态势，不执行生产动作。",
+        "intent_aliases": ["open_ops_copilot", "open_xiaoyi_copilot", "打开运营副驾", "打开小懿工作台"],
+        "keywords": ["小懿运营副驾", "小懿工作台", "运营副驾", "智能副驾"],
+        "route": "/ops-copilot?mission=situation&from=xiaoyi",
+        "button_selector": None,
+        "button_label": None,
+        "button_sequence": [],
+        "backend_request": None,
+        "execution": {"type": "open_route", "dry_run_default": False},
+        "requires_panel": False,
+        "requires_human_confirm": False,
+    },
+    {
+        "id": "summarize_current_situation",
+        "label": "小懿研判当前态势",
+        "category": "xiaoyi_mission",
+        "description": "读取回放、数据质量、预测、模型和安全门，形成带哈希的当班态势。",
+        "intent_aliases": ["summarize_current_situation", "current_situation", "研判当前态势", "总结当前态势"],
+        "keywords": ["当前态势", "现在情况", "当班情况", "态势研判", "系统现状"],
+        "route": "/ops-copilot?mission=situation&auto=1&from=xiaoyi",
+        "button_selector": None,
+        "button_label": None,
+        "button_sequence": [],
+        "backend_request": None,
+        "execution": {"type": "open_route", "dry_run_default": False},
+        "requires_panel": False,
+        "requires_human_confirm": False,
+    },
+    {
+        "id": "review_twin_forecast",
+        "label": "小懿解释未来风险",
+        "category": "xiaoyi_mission",
+        "description": "解释后端预测区间、工程阈值风险及尚未接入的现场校准证据。",
+        "intent_aliases": ["review_twin_forecast", "forecast_risk", "解释未来风险", "查看未来预测"],
+        "keywords": ["未来风险", "预测风险", "预测峰值", "未来六小时", "p10", "p50", "p90"],
+        "route": "/ops-copilot?mission=forecast&auto=1&from=xiaoyi",
+        "button_selector": None,
+        "button_label": None,
+        "button_sequence": [],
+        "backend_request": None,
+        "execution": {"type": "open_route", "dry_run_default": False},
+        "requires_panel": False,
+        "requires_human_confirm": False,
+    },
+    {
+        "id": "explain_current_strategy",
+        "label": "小懿解释当前策略",
+        "category": "xiaoyi_mission",
+        "description": "解释当前模型、相对基线变化、硬约束、安全投影和声明边界。",
+        "intent_aliases": ["explain_current_strategy", "strategy_explain", "解释当前策略", "为什么这样调度"],
+        "keywords": ["策略解释", "当前策略", "为什么这样调度", "模型决策", "策略依据"],
+        "route": "/ops-copilot?mission=strategy&auto=1&from=xiaoyi",
+        "button_selector": None,
+        "button_label": None,
+        "button_sequence": [],
+        "backend_request": None,
+        "execution": {"type": "open_route", "dry_run_default": False},
+        "requires_panel": False,
+        "requires_human_confirm": False,
+    },
+    {
+        "id": "triage_monitoring",
+        "label": "小懿执行告警分诊",
+        "category": "xiaoyi_mission",
+        "description": "联动异常、漂移和准入门，生成检查与安全回退顺序。",
+        "intent_aliases": ["triage_monitoring", "alert_triage", "告警分诊", "异常分诊"],
+        "keywords": ["告警分诊", "异常分诊", "漂移处理", "怎么处理告警", "安全回退"],
+        "route": "/ops-copilot?mission=triage&auto=1&from=xiaoyi",
+        "button_selector": None,
+        "button_label": None,
+        "button_sequence": [],
+        "backend_request": None,
+        "execution": {"type": "open_route", "dry_run_default": False},
+        "requires_panel": False,
+        "requires_human_confirm": False,
+    },
+    {
+        "id": "prepare_shift_handoff",
+        "label": "小懿准备交接班",
+        "category": "xiaoyi_mission",
+        "description": "生成包含上下文哈希、模型/数据版本、风险和缺失字段的交接预览。",
+        "intent_aliases": ["prepare_shift_handoff", "shift_handoff", "准备交接班", "生成交接摘要"],
+        "keywords": ["交接班", "交班摘要", "下一班", "班次交接", "交接留痕"],
+        "route": "/ops-copilot?mission=handoff&auto=1&from=xiaoyi",
+        "button_selector": None,
+        "button_label": None,
+        "button_sequence": [],
+        "backend_request": None,
+        "execution": {"type": "open_route", "dry_run_default": False},
+        "requires_panel": False,
+        "requires_human_confirm": False,
+    },
+    {
+        "id": "prepare_strategy_dry_run",
+        "label": "小懿准备策略预演",
+        "category": "xiaoyi_mission",
+        "description": "只进入策略dry-run准备；监控门阻断时保持安全基线，不下发设备指令。",
+        "intent_aliases": ["prepare_strategy_dry_run", "strategy_dry_run", "准备策略预演", "策略演练"],
+        "keywords": ["策略预演", "策略演练", "dryrun", "dry-run", "预演一下", "仿真执行"],
+        "route": "/ops-copilot?mission=dry_run&auto=1&from=xiaoyi",
+        "button_selector": None,
+        "button_label": None,
+        "button_sequence": [],
+        "backend_request": None,
+        "execution": {"type": "open_route", "dry_run_default": False},
+        "requires_panel": False,
+        "requires_human_confirm": False,
+    },
     {
         "id": "start_rl_training",
         "label": "启动强化学习训练",
@@ -403,8 +515,15 @@ def _execute_backend_action(request: Request, action: Dict[str, Any], payload: D
     if action_id in {"open_sailing_simulator", "start_navigation_demo", "switch_ship_view", "run_sailing_rl_smoke_test"}:
         return execute_sailing_action(action_id, payload, dry_run=dry_run)
 
-    if action_id == "open_rl_panel":
-        return {"type": "open_route", "status": "ready", "url": _absolute_url(request, "/rl-panel"), "dry_run": dry_run}
+    if action_id == "open_rl_panel" or action.get("category") == "xiaoyi_mission":
+        route = str(action.get("route") or "/rl-panel")
+        return {
+            "type": "open_route",
+            "status": "ready",
+            "url": _absolute_url(request, route),
+            "dry_run": dry_run,
+            "production_action_executed": False,
+        }
 
     backend_request = action.get("backend_request")
     if dry_run or not backend_request:
@@ -518,7 +637,7 @@ def action_registry() -> JSONResponse:
     return JSONResponse(
         {
             "updated_at": _utc_now(),
-            "scope": "top-menu RL panel linkage",
+            "scope": "Xiaoyi mission navigation plus gated RL and desktop linkage",
             "count": len(RL_ACTIONS),
             "actions": [_public_action(action) for action in RL_ACTIONS],
         }

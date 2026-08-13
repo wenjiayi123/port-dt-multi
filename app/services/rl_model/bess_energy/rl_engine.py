@@ -464,7 +464,14 @@ class SACEngine:
 # Trainer
 # =========================
 class Trainer:
-    def __init__(self, dt_min: int = 10, horizon: int = 144, seed: int = 42):
+    def __init__(
+        self,
+        dt_min: int = 10,
+        horizon: int = 144,
+        seed: int = 42,
+        *,
+        reset_history: bool = True,
+    ):
         self.dt_min = int(dt_min)
         self.horizon = int(horizon)
         self.seed = int(seed)
@@ -506,7 +513,9 @@ class Trainer:
             target_entropy=-1.2,
         )
         self.replay = ReplayBuffer(capacity=200000)
-        self.logger = SyncedLogger(DEFAULT_JSONL, reset=True)
+        # Evaluation must never erase the historical training evidence.  The old
+        # CLI reset this file even for ``--evaluate`` before loading a policy.
+        self.logger = SyncedLogger(DEFAULT_JSONL, reset=reset_history)
         self.display = DisplayMetricBuilder(
             cfg=self.cfg,
             dt_min=self.dt_min,
@@ -595,6 +604,23 @@ class Trainer:
         self._mirror_static_jsonl()
         return policy_path
 
+    def load_policy(self, path: Optional[str] = None) -> str:
+        policy_path = path or os.path.join(os.path.dirname(__file__), "policy.bin")
+        with open(policy_path, "r", encoding="utf-8") as f:
+            obj = json.load(f)
+        policy_w = np.asarray(obj["policy_W"], dtype=np.float64)
+        policy_b = np.asarray(obj["policy_b"], dtype=np.float64)
+        policy_log_std = np.asarray(obj["policy_log_std"], dtype=np.float64)
+        if policy_w.shape != self.policy.W.shape:
+            raise ValueError(f"policy_W shape mismatch: {policy_w.shape} != {self.policy.W.shape}")
+        if policy_b.shape != self.policy.b.shape or policy_log_std.shape != self.policy.log_std.shape:
+            raise ValueError("policy vector shape mismatch")
+        self.policy.W = policy_w
+        self.policy.b = policy_b
+        self.policy.log_std = policy_log_std
+        self.policy.residual_band = float(obj.get("residual_band_kW", self.policy.residual_band))
+        return policy_path
+
     def train_sac(self,
                   steps: int = 2000,
                   batch_size: int = 256,
@@ -679,6 +705,7 @@ class Trainer:
         }
 
     def evaluate(self, steps: Optional[int] = None) -> Dict[str, Any]:
+        self.load_policy()
         total_steps = int(steps or self.horizon)
         obs = self.env.reset(0)
         self.display = DisplayMetricBuilder(
@@ -732,7 +759,12 @@ def main() -> None:
     parser.add_argument("--sleep-sec", type=int, default=0, help="休眠秒数")
     args = parser.parse_args()
 
-    trainer = Trainer(dt_min=args.dt_min, horizon=args.horizon, seed=args.seed)
+    trainer = Trainer(
+        dt_min=args.dt_min,
+        horizon=args.horizon,
+        seed=args.seed,
+        reset_history=bool(args.train_sac),
+    )
     try:
         if args.train_sac:
             out = trainer.train_sac(

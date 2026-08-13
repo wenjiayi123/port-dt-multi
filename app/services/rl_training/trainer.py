@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import os
 import platform
 import threading
@@ -23,12 +24,16 @@ from .datasets import (
     load_port_dataset,
 )
 from .environment import PortOperationsEnv, dataset_quality_cadence
+from .baselines import FCFSNeutralPolicy
 from .mpc import MPCPolicy
 from .model_registry import ModelRegistry
 from .identifiers import resolve_child_dir, validate_identifier
 from .safety import assess_recommendation
 from .statistics import bootstrap_summary, summarize_metric_rows
 from .profiles import DEFAULT_PROFILE_ID, list_profiles, load_profile
+
+
+SB3_IMPORT_LOCK = threading.RLock()
 
 
 RUN_ROOT = Path("data/rl/runs")
@@ -54,7 +59,12 @@ ALGORITHMS: Dict[str, AlgorithmSpec] = {
     "dqn": AlgorithmSpec("dqn", "DQN", "RL", "discrete", True, "stable_baselines3.DQN", "Replay-buffer Q-learning on an explicit finite port-control lattice."),
     "a2c": AlgorithmSpec("a2c", "A2C", "RL", "continuous", True, "stable_baselines3.A2C", "Synchronous advantage actor-critic baseline for low-overhead on-policy optimization."),
     "tqc": AlgorithmSpec("tqc", "TQC", "RL", "continuous", True, "sb3_contrib.TQC", "Distributional off-policy actor-critic with truncated quantile critics."),
+    "qrdqn": AlgorithmSpec("qrdqn", "QR-DQN", "RL", "discrete", True, "sb3_contrib.QRDQN", "Distributional value learning for a finite auditable port-control lattice."),
+    "trpo": AlgorithmSpec("trpo", "TRPO", "RL", "continuous", True, "sb3_contrib.TRPO", "Trust-region policy optimization for conservative on-policy updates."),
+    "recurrent_ppo": AlgorithmSpec("recurrent_ppo", "Recurrent PPO", "RL", "continuous", True, "sb3_contrib.RecurrentPPO", "LSTM policy for delayed congestion and equipment-availability effects."),
+    "ars": AlgorithmSpec("ars", "ARS", "RL", "continuous", True, "sb3_contrib.ARS", "Derivative-free random-search policy baseline for robustness comparison."),
     "mpc": AlgorithmSpec("mpc", "MPC", "Control", "continuous", False, "scipy.optimize.minimize", "Receding-horizon model predictive control baseline."),
+    "fcfs": AlgorithmSpec("fcfs", "FCFS neutral", "Rule", "continuous", False, "port_dt.FCFSNeutralPolicy", "Non-optimizing first-come-first-served comparator with neutral energy and allocation commands."),
 }
 
 
@@ -126,7 +136,7 @@ class TrainingJob:
             "artifact_paths": {
                 "run_id": job_id,
                 "root_url": f"/api/rl/models/{job_id}",
-                "model_artifact_id": None if config["algorithm"] == "mpc" else "model.zip",
+                "model_artifact_id": "model.zip" if ALGORITHMS[config["algorithm"]].trainable else None,
                 "manifest_artifact_id": "manifest.json",
             },
             "rendering": {"enabled": False, "render_calls": 0, "trace_rows": 0},
@@ -180,6 +190,9 @@ class TrainingManager:
         self.run_root.mkdir(parents=True, exist_ok=True)
         self.jobs: Dict[str, TrainingJob] = {}
         self.lock = threading.RLock()
+        # Lazy imports in SB3/sb3-contrib are not safe when two first-time
+        # inference requests initialize the package concurrently.
+        self.policy_load_lock = SB3_IMPORT_LOCK
         self.max_concurrent_training = _bounded_env_int("PORT_DT_MAX_CONCURRENT_TRAINING", 1, 1, 32)
         self.max_concurrent_evaluation = _bounded_env_int("PORT_DT_MAX_CONCURRENT_EVALUATION", 2, 1, 32)
         self.max_training_steps = _bounded_env_int("PORT_DT_MAX_TRAINING_STEPS", 5_000_000, 64, 50_000_000)
@@ -206,10 +219,11 @@ class TrainingManager:
 
     def capabilities(self) -> Dict[str, Any]:
         try:
-            import gymnasium
-            import sb3_contrib
-            import stable_baselines3
-            import torch
+            with self.policy_load_lock:
+                import gymnasium
+                import sb3_contrib
+                import stable_baselines3
+                import torch
 
             runtime = {
                 "available": True,
@@ -253,6 +267,27 @@ class TrainingManager:
                     ],
                     "missing_factor_policy": "neutral_value_plus_explicit_availability_mask",
                 },
+                "port_ops_v3": {
+                    "observation_dimensions": 13 + 2 * len(FACTOR_COLUMNS),
+                    "observation_fields": [
+                        "hour_sin", "hour_cos", *NUMERIC_COLUMNS,
+                        *FACTOR_COLUMNS,
+                        *[f"{name}_available" for name in FACTOR_COLUMNS],
+                        "soc", "queue_pressure", "last_bess_power", "episode_progress",
+                    ],
+                    "continuous_action_dimensions": 5,
+                    "actions": [
+                        "bess_power", "service_factor", "flexible_load",
+                        "berth_priority", "yard_flow",
+                    ],
+                    "missing_factor_policy": "neutral_value_plus_explicit_availability_mask",
+                    "causal_coupling": "service and allocation actions change operational electric load",
+                    "raw_action_projection_diagnostics": [
+                        "event_rate", "mean_correction_kw", "mean_severity",
+                        "grid_cap", "soc_bound", "terminal_reachability", "power_bound",
+                    ],
+                    "projection_penalty": "explicit opt-in run parameter; absent historical configs remain reproducible",
+                },
             },
             "training_rendering": "disabled",
             "evaluation_rendering": "trajectory_json_only",
@@ -279,8 +314,9 @@ class TrainingManager:
         quality = dataset.describe().get("quality") or {}
         if quality.get("training_eligible") is not True:
             raise ValueError("dataset failed the quality gate: " + "; ".join(quality.get("errors") or ["unknown error"]))
-        total_steps = 0 if algorithm == "mpc" else int(raw.get("total_steps") or 10000)
-        if algorithm != "mpc" and not 64 <= total_steps <= self.max_training_steps:
+        trainable = ALGORITHMS[algorithm].trainable
+        total_steps = int(raw.get("total_steps") or 10000) if trainable else 0
+        if trainable and not 64 <= total_steps <= self.max_training_steps:
             raise ValueError(f"total_steps must be between 64 and {self.max_training_steps:,}")
         environment_version = str(
             raw.get("environment_version")
@@ -288,8 +324,8 @@ class TrainingManager:
             or profile.get("environment_version")
             or "port_ops_v1"
         )
-        if environment_version not in {"port_ops_v1", "port_ops_v2"}:
-            raise ValueError("environment_version must be port_ops_v1 or port_ops_v2")
+        if environment_version not in {"port_ops_v1", "port_ops_v2", "port_ops_v3"}:
+            raise ValueError("environment_version must be port_ops_v1, port_ops_v2 or port_ops_v3")
         required_factors = list(profile["factor_requirements"].get("required_for_training") or [])
         factor_coverage = quality.get("factor_coverage") or {}
         unavailable_required = [
@@ -308,10 +344,52 @@ class TrainingManager:
             max(4, round(episode_hours / cadence_hours)),
         )
         episode_steps = int(raw.get("episode_steps") or default_episode_steps)
+        bounded_episode_steps = max(4, episode_steps)
+        rollout_steps = min(512, max(32, bounded_episode_steps))
+        algorithm_parameters: Dict[str, Any] = {
+            "policy": "MlpPolicy",
+            "network_architecture": [64, 64],
+        }
+        if algorithm == "qrdqn":
+            algorithm_parameters.update(
+                n_quantiles=50,
+                train_frequency=8,
+                gradient_steps=1,
+            )
+        elif algorithm == "trpo":
+            algorithm_parameters.update(n_steps=rollout_steps)
+        elif algorithm == "recurrent_ppo":
+            algorithm_parameters.update(
+                policy="MlpLstmPolicy",
+                n_steps=rollout_steps,
+                lstm_hidden_size=64,
+            )
+        elif algorithm == "ars":
+            algorithm_parameters.update(
+                network_architecture=[32, 32],
+                n_delta=4,
+                n_top=2,
+                delta_std=0.03,
+                zero_policy=False,
+            )
         test_ratio = float(raw.get("test_ratio") or 0.2)
+        declared_validation = 0.1 if (dataset.metadata.get("split_policy") or {}).get("validation") else 0.0
+        validation_ratio = float(
+            raw["validation_ratio"]
+            if raw.get("validation_ratio") is not None
+            else declared_validation
+        )
+        if validation_ratio and not 0.05 <= validation_ratio <= 0.2:
+            raise ValueError("validation_ratio must be 0 or between 0.05 and 0.2")
+        if test_ratio + validation_ratio > 0.5:
+            raise ValueError("test_ratio + validation_ratio must not exceed 0.5")
         reward_weights = dict(raw.get("reward_weights") or {})
         if "safety" not in reward_weights and raw.get("safety_weight") is not None:
             reward_weights["safety"] = float(raw["safety_weight"])
+        projection_penalty_weight = min(
+            10.0,
+            max(0.0, float(raw.get("projection_penalty_weight") or 0.0)),
+        )
         return {
             **raw,
             "algorithm": algorithm,
@@ -321,14 +399,18 @@ class TrainingManager:
             "dataset_evidence": quality.get("evidence"),
             "port_profile_id": profile["profile_id"],
             "port_profile": profile,
+            "business_profile_id": str(
+                raw.get("business_profile_id") or "default_port_profile"
+            ),
             "environment_version": environment_version,
             "observation_dimensions": 13 if environment_version == "port_ops_v1" else 13 + 2 * len(FACTOR_COLUMNS),
             "action_dimensions": 3 if environment_version == "port_ops_v1" else 5,
             "total_steps": total_steps,
-            "episode_steps": max(4, episode_steps),
+            "episode_steps": bounded_episode_steps,
             "episode_hours": episode_hours,
             "step_hours": cadence_hours,
             "test_ratio": min(0.4, max(0.1, test_ratio)),
+            "validation_ratio": validation_ratio,
             "batch_size": max(16, min(2048, int(raw.get("batch_size") or 256))),
             "learning_rate": min(0.01, max(1e-6, float(raw.get("learning_rate") or 3e-4))),
             "gamma": min(0.9999, max(0.80, float(raw.get("gamma") or 0.99))),
@@ -340,8 +422,10 @@ class TrainingManager:
                 float(raw.get("demand_cap_kw") or profile["assets"]["demand_cap_kw"]),
             ),
             "reward_weights": reward_weights,
+            "projection_penalty_weight": projection_penalty_weight,
             "training_split": "chronological_train_only",
             "render_during_training": False,
+            "algorithm_parameters": algorithm_parameters,
         }
 
     def start(self, raw_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -354,26 +438,37 @@ class TrainingManager:
             job = TrainingJob(job_id, config, self)
             self.jobs[job_id] = job
             self.latest_job_id = job_id
-        if config["algorithm"] == "mpc":
-            job.log("MPC is a non-learning controller; no training samples consumed")
+        if not ALGORITHMS[config["algorithm"]].trainable:
+            algorithm = config["algorithm"]
+            job.log(f"{ALGORITHMS[algorithm].name} is a non-learning comparator; no training samples consumed")
             dataset = load_port_dataset(config["dataset_id"], self.data_root)
+            if algorithm == "mpc":
+                controller_parameters = MPCPolicy(
+                    action_dim=config["action_dimensions"],
+                    episode_steps=config["episode_steps"],
+                ).parameters()
+            else:
+                controller_parameters = FCFSNeutralPolicy(
+                    config["action_dimensions"]
+                ).parameters()
             manifest = {
                 "job_id": job.job_id,
-                "algorithm": "mpc",
-                "implementation": ALGORITHMS["mpc"].implementation,
+                "algorithm": algorithm,
+                "implementation": ALGORITHMS[algorithm].implementation,
                 "controller_only": True,
-                "controller_parameters": {
-                    "horizon": MPCPolicy().horizon,
-                    "action_dimensions": config["action_dimensions"],
-                },
+                "controller_parameters": controller_parameters,
                 "dataset_id": dataset.dataset_id,
                 "dataset_sha256": dataset.fingerprint,
-                "split": dataset.describe(config["test_ratio"]),
+                "split": dataset.describe(
+                    config["test_ratio"], config.get("validation_ratio", 0.0)
+                ),
                 "seed": config["seed"],
                 "port_profile_id": config["port_profile_id"],
+                "business_profile_id": config["business_profile_id"],
                 "environment_version": config["environment_version"],
                 "observation_dimensions": config["observation_dimensions"],
                 "action_dimensions": config["action_dimensions"],
+                "algorithm_parameters": config.get("algorithm_parameters"),
                 "render_calls_during_training": 0,
                 "completed_at": utc_now(),
             }
@@ -386,7 +481,13 @@ class TrainingManager:
         return job.snapshot()
 
     def _make_env(self, dataset: PortDataset, config: Dict[str, Any], *, training: bool, record_trace: bool = False) -> PortOperationsEnv:
-        train_slice, test_slice = dataset.split(config["test_ratio"])
+        validation_ratio = float(config.get("validation_ratio") or 0.0)
+        if validation_ratio > 0:
+            train_slice, _validation_slice, test_slice = dataset.split_three_way(
+                config["test_ratio"], validation_ratio
+            )
+        else:
+            train_slice, test_slice = dataset.split(config["test_ratio"])
         return PortOperationsEnv(
             dataset,
             train_slice if training else test_slice,
@@ -395,6 +496,7 @@ class TrainingManager:
             seed=config["seed"],
             demand_cap_kw=config["demand_cap_kw"],
             reward_weights=config["reward_weights"],
+            projection_penalty_weight=float(config.get("projection_penalty_weight") or 0.0),
             environment_version=config.get("environment_version", "port_ops_v1"),
             port_profile=config.get("port_profile"),
             normalization_slice=train_slice,
@@ -405,16 +507,24 @@ class TrainingManager:
     def _run_training(self, job: TrainingJob) -> None:
         env: Optional[PortOperationsEnv] = None
         try:
-            from sb3_contrib import TQC
-            from stable_baselines3 import A2C, DQN, PPO, SAC, TD3
-            from stable_baselines3.common.callbacks import BaseCallback
-            from stable_baselines3.common.monitor import Monitor
+            with self.policy_load_lock:
+                from sb3_contrib import ARS, QRDQN, RecurrentPPO, TQC, TRPO
+                from stable_baselines3 import A2C, DQN, PPO, SAC, TD3
+                from stable_baselines3.common.callbacks import BaseCallback
+                from stable_baselines3.common.monitor import Monitor
 
             config = job.config
             dataset = load_port_dataset(config["dataset_id"], self.data_root)
             env = self._make_env(dataset, config, training=True)
             monitored = Monitor(env, filename=str(job.run_dir / "monitor.csv"))
-            job.log(f"chronological train split loaded: {dataset.describe(config['test_ratio'])['train_rows']} rows")
+            split = dataset.describe(
+                config["test_ratio"], config.get("validation_ratio", 0.0)
+            )
+            job.log(f"chronological train split loaded: {split['train_rows']} rows")
+            if split.get("validation_rows"):
+                job.log(
+                    f"validation={split['validation_rows']} rows; blind test={split['test_rows']} rows"
+                )
             job.log("render disabled; evaluation holdout is not visible to trainer")
             job.update(status="RUNNING", stage="environment_ready")
 
@@ -496,6 +606,63 @@ class TrainingManager:
                 model = TD3(**common, buffer_size=config["replay_buffer"], batch_size=config["batch_size"], learning_starts=min(1000, max(32, config["total_steps"] // 10)), tau=config["tau"])
             elif algo == "dqn":
                 model = DQN(**common, buffer_size=config["replay_buffer"], batch_size=min(config["batch_size"], 256), learning_starts=min(1000, max(32, config["total_steps"] // 10)), tau=config["tau"], target_update_interval=max(50, config["episode_steps"] * 4))
+            elif algo == "qrdqn":
+                qrdqn_common = {
+                    **common,
+                    "policy_kwargs": {"net_arch": [64, 64], "n_quantiles": 50},
+                }
+                model = QRDQN(
+                    **qrdqn_common,
+                    buffer_size=config["replay_buffer"],
+                    batch_size=min(config["batch_size"], 256),
+                    learning_starts=min(1000, max(32, config["total_steps"] // 10)),
+                    target_update_interval=max(50, config["episode_steps"] * 4),
+                    train_freq=8,
+                    gradient_steps=1,
+                )
+            elif algo == "trpo":
+                n_steps = min(512, max(32, config["episode_steps"]))
+                batch = min(config["batch_size"], n_steps)
+                while n_steps % batch:
+                    batch -= 1
+                model = TRPO(
+                    **common,
+                    n_steps=n_steps,
+                    batch_size=max(8, batch),
+                )
+            elif algo == "recurrent_ppo":
+                n_steps = min(512, max(32, config["episode_steps"]))
+                batch = min(config["batch_size"], n_steps)
+                while n_steps % batch:
+                    batch -= 1
+                recurrent_common = {
+                    **common,
+                    "policy": "MlpLstmPolicy",
+                    "policy_kwargs": {
+                        "net_arch": [64, 64],
+                        "lstm_hidden_size": 64,
+                    },
+                }
+                model = RecurrentPPO(
+                    **recurrent_common,
+                    n_steps=n_steps,
+                    batch_size=max(8, batch),
+                    ent_coef=float(config.get("entropy_coef") or 0.0),
+                )
+            elif algo == "ars":
+                model = ARS(
+                    policy="MlpPolicy",
+                    env=monitored,
+                    learning_rate=max(0.001, config["learning_rate"] * 50),
+                    n_delta=4,
+                    n_top=2,
+                    delta_std=0.03,
+                    zero_policy=False,
+                    seed=config["seed"],
+                    verbose=0,
+                    device="cpu",
+                    policy_kwargs={"net_arch": [32, 32]},
+                )
             else:
                 raise ValueError(f"unknown algorithm: {algo}")
             callback = RealMetricsCallback()
@@ -510,7 +677,7 @@ class TrainingManager:
                 "implementation": ALGORITHMS[algo].implementation,
                 "dataset_id": dataset.dataset_id,
                 "dataset_sha256": dataset.fingerprint,
-                "split": dataset.describe(config["test_ratio"]),
+                "split": split,
                 "seed": config["seed"],
                 "total_steps_requested": config["total_steps"],
                 "total_steps_observed": int(model.num_timesteps),
@@ -518,9 +685,11 @@ class TrainingManager:
                 "model_sha256": file_sha256(model_path),
                 "runtime": self.capabilities().get("runtime"),
                 "port_profile_id": config["port_profile_id"],
+                "business_profile_id": config["business_profile_id"],
                 "environment_version": config["environment_version"],
                 "observation_dimensions": config["observation_dimensions"],
                 "action_dimensions": config["action_dimensions"],
+                "algorithm_parameters": config.get("algorithm_parameters"),
                 "render_calls_during_training": env.render_calls,
                 "completed_at": utc_now(),
             }
@@ -568,7 +737,11 @@ class TrainingManager:
         status["artifact_paths"] = {
             "run_id": str(resolved),
             "root_url": f"/api/rl/models/{resolved}",
-            "model_artifact_id": None if algorithm == "mpc" else "model.zip",
+            "model_artifact_id": (
+                "model.zip"
+                if algorithm in ALGORITHMS and ALGORITHMS[algorithm].trainable
+                else None
+            ),
             "manifest_artifact_id": "manifest.json",
         }
         manifest = status.get("manifest")
@@ -581,14 +754,18 @@ class TrainingManager:
                     "job_id", "algorithm", "implementation", "controller_only", "dataset_id",
                     "dataset_sha256", "seed", "total_steps_requested", "total_steps_observed",
                     "port_profile_id", "environment_version", "observation_dimensions",
-                    "action_dimensions",
+                    "action_dimensions", "algorithm_parameters",
                     "model_sha256", "render_calls_during_training", "completed_at",
                 )
                 if manifest.get(name) is not None
             }
             status["manifest"]["split"] = {
                 name: split.get(name)
-                for name in ("dataset_id", "sha256", "rows", "train_rows", "test_rows", "split_method", "test_ratio")
+                for name in (
+                    "dataset_id", "sha256", "rows", "train_rows",
+                    "validation_rows", "test_rows", "split_method",
+                    "test_ratio", "validation_ratio",
+                )
                 if split.get(name) is not None
             }
             status["manifest"]["split"]["quality"] = {
@@ -663,15 +840,147 @@ class TrainingManager:
         return job.snapshot()
 
     def _load_policy(self, config: Dict[str, Any], run_dir: Path, env: PortOperationsEnv):
-        algo = config["algorithm"]
-        if algo == "mpc":
-            action_dim = int(np.prod(env.action_space.shape)) if getattr(env.action_space, "shape", None) else int(config.get("action_dimensions") or 3)
-            return MPCPolicy(action_dim=action_dim)
-        from sb3_contrib import TQC
-        from stable_baselines3 import A2C, DQN, PPO, SAC, TD3
+        with self.policy_load_lock:
+            algo = config["algorithm"]
+            if algo == "mpc":
+                action_dim = int(np.prod(env.action_space.shape)) if getattr(env.action_space, "shape", None) else int(config.get("action_dimensions") or 3)
+                return MPCPolicy(
+                    action_dim=action_dim,
+                    episode_steps=env.episode_steps,
+                    soc_min=env.soc_min,
+                    soc_max=env.soc_max,
+                    initial_soc=0.55,
+                    bess_capacity_kwh=env.bess_capacity_kwh,
+                    bess_power_kw=env.bess_power_kw,
+                    step_hours=env.step_hours,
+                )
+            if algo == "fcfs":
+                action_dim = int(np.prod(env.action_space.shape)) if getattr(env.action_space, "shape", None) else int(config.get("action_dimensions") or 3)
+                return FCFSNeutralPolicy(action_dim=action_dim)
+            from sb3_contrib import ARS, QRDQN, RecurrentPPO, TQC, TRPO
+            from stable_baselines3 import A2C, DQN, PPO, SAC, TD3
 
-        classes = {"sac": SAC, "ppo": PPO, "td3": TD3, "dqn": DQN, "a2c": A2C, "tqc": TQC}
-        return classes[algo].load(str(run_dir / "model"), env=env, device="cpu")
+            classes = {
+                "sac": SAC,
+                "ppo": PPO,
+                "td3": TD3,
+                "dqn": DQN,
+                "a2c": A2C,
+                "tqc": TQC,
+                "qrdqn": QRDQN,
+                "trpo": TRPO,
+                "recurrent_ppo": RecurrentPPO,
+                "ars": ARS,
+            }
+            return classes[algo].load(str(run_dir / "model"), env=env, device="cpu")
+
+    def evaluate_split_evidence(
+        self,
+        job_id: str,
+        *,
+        split_name: str = "validation",
+        episodes: int = 10,
+        persist: bool = True,
+    ) -> Dict[str, Any]:
+        """Evaluate a saved policy on one explicit chronological split.
+
+        V3 uses this method to select an algorithm on validation rows without
+        reading blind-test results. It intentionally records no render trace and
+        does not append validation scores to the held-out benchmark ledger.
+        """
+        job_id = validate_identifier(job_id, field="job_id")
+        if split_name not in {"validation", "blind_test"}:
+            raise ValueError("split_name must be validation or blind_test")
+        run_dir = self.run_dir(job_id)
+        status = self._resolve_status(job_id)
+        if status.get("status") not in {"COMPLETED", "EVALUATED"}:
+            raise ValueError("training must complete before split evaluation")
+        config = _read_json(run_dir / "config.json", {})
+        dataset = load_port_dataset(config["dataset_id"], self.data_root)
+        validation_ratio = float(config.get("validation_ratio") or 0.0)
+        if validation_ratio <= 0:
+            raise ValueError("validation split is not configured for this run")
+        train_slice, validation_slice, test_slice = dataset.split_three_way(
+            config["test_ratio"], validation_ratio
+        )
+        selected_slice = validation_slice if split_name == "validation" else test_slice
+        env = PortOperationsEnv(
+            dataset,
+            selected_slice,
+            action_mode=ALGORITHMS[config["algorithm"]].action_space,
+            episode_steps=config["episode_steps"],
+            seed=config["seed"],
+            demand_cap_kw=config["demand_cap_kw"],
+            reward_weights=config["reward_weights"],
+            projection_penalty_weight=float(config.get("projection_penalty_weight") or 0.0),
+            environment_version=config.get("environment_version", "port_ops_v1"),
+            port_profile=config.get("port_profile"),
+            normalization_slice=train_slice,
+            training=False,
+            record_trace=False,
+        )
+        policy = self._load_policy(config, run_dir, env)
+        episode_metrics: List[Dict[str, float]] = []
+        requested_episodes = max(1, min(50, int(episodes)))
+        max_start = max(0, len(env.segment) - config["episode_steps"] - 1)
+        start_indices = np.linspace(
+            0,
+            max_start,
+            num=min(requested_episodes, max_start + 1),
+            dtype=int,
+        ).tolist()
+        for episode, start_index in enumerate(start_indices):
+            obs, _ = env.reset(
+                seed=config["seed"] + episode,
+                options={"start_index": start_index},
+            )
+            terminated = truncated = False
+            recurrent_state = None
+            episode_start = np.ones((1,), dtype=bool)
+            while not (terminated or truncated):
+                if config["algorithm"] == "recurrent_ppo":
+                    action, recurrent_state = policy.predict(
+                        obs,
+                        state=recurrent_state,
+                        episode_start=episode_start,
+                        deterministic=True,
+                    )
+                    episode_start[0] = False
+                else:
+                    action, _ = policy.predict(obs, deterministic=True)
+                obs, _reward, terminated, truncated, _info = env.step(action)
+            row = env.totals
+            row["delay_index_mean"] = row.pop("delay") / max(1, config["episode_steps"])
+            row["guardrail_violation_rate"] = row.pop("violations") / max(1, config["episode_steps"])
+            episode_metrics.append(row)
+        metrics = {
+            key: float(np.mean([item[key] for item in episode_metrics]))
+            for key in episode_metrics[0]
+        }
+        result = {
+            "job_id": job_id,
+            "algorithm": config["algorithm"],
+            "dataset_id": dataset.dataset_id,
+            "dataset_sha256": dataset.fingerprint,
+            "environment_version": config.get("environment_version", "port_ops_v1"),
+            "business_profile_id": config.get("business_profile_id") or "default_port_profile",
+            "split": f"chronological_{split_name}_only",
+            "episodes": len(episode_metrics),
+            "metrics": metrics,
+            "uncertainty": summarize_metric_rows(episode_metrics, seed=config["seed"]),
+            "episode_metrics": episode_metrics,
+            "evaluation_protocol": {
+                "deterministic_policy": True,
+                "render_during_policy_execution": False,
+                "window_start_indices": start_indices,
+                "normalization_fit": "chronological_train_rows_only",
+            },
+            "evaluated_at": utc_now(),
+        }
+        if persist:
+            _write_json(run_dir / f"{split_name}_evaluation.json", result)
+        env.close()
+        return result
 
     def evaluate(self, job_id: str, episodes: int = 10) -> Dict[str, Any]:
         if not self.evaluation_slots.acquire(blocking=False):
@@ -699,8 +1008,19 @@ class TrainingManager:
         for episode, start_index in enumerate(start_indices):
             obs, _ = env.reset(seed=config["seed"] + episode, options={"start_index": start_index})
             terminated = truncated = False
+            recurrent_state = None
+            episode_start = np.ones((1,), dtype=bool)
             while not (terminated or truncated):
-                action, _ = policy.predict(obs, deterministic=True)
+                if config["algorithm"] == "recurrent_ppo":
+                    action, recurrent_state = policy.predict(
+                        obs,
+                        state=recurrent_state,
+                        episode_start=episode_start,
+                        deterministic=True,
+                    )
+                    episode_start[0] = False
+                else:
+                    action, _ = policy.predict(obs, deterministic=True)
                 obs, _reward, terminated, truncated, _info = env.step(action)
             row = env.totals
             row["delay_index_mean"] = row.pop("delay") / max(1, config["episode_steps"])
@@ -718,10 +1038,15 @@ class TrainingManager:
             "dataset_id": dataset.dataset_id,
             "dataset_sha256": dataset.fingerprint,
             "port_profile_id": config.get("port_profile_id"),
+            "business_profile_id": config.get("business_profile_id") or "default_port_profile",
             "environment_version": config.get("environment_version", "port_ops_v1"),
             "observation_dimensions": config.get("observation_dimensions"),
             "action_dimensions": config.get("action_dimensions"),
-            "split": "chronological_test_holdout_only",
+            "split": (
+                "chronological_blind_test_only"
+                if float(config.get("validation_ratio") or 0.0) > 0
+                else "chronological_test_holdout_only"
+            ),
             "episodes": len(episode_metrics),
             "metrics": metrics,
             "uncertainty": uncertainty,
@@ -729,7 +1054,11 @@ class TrainingManager:
             "evaluation_protocol": {
                 "deterministic_policy": True,
                 "render_during_policy_execution": False,
-                "holdout": "chronological_test_only",
+                "holdout": (
+                    "chronological_blind_test_only"
+                    if float(config.get("validation_ratio") or 0.0) > 0
+                    else "chronological_test_only"
+                ),
                 "window_start_indices": start_indices,
                 "confidence_interval": "95% percentile bootstrap of episode means",
             },
@@ -820,7 +1149,16 @@ class TrainingManager:
             self.run_dir(result["job_id"]) / "config.json",
             {},
         )
-        total_steps = int(config.get("total_steps") or 0)
+        requested_steps = int(config.get("total_steps") or 0)
+        manifest = _read_json(
+            self.run_dir(result["job_id"]) / "manifest.json",
+            {},
+        )
+        total_steps = int(
+            manifest.get("total_steps_observed")
+            if manifest.get("total_steps_observed") is not None
+            else requested_steps
+        )
         trainable = bool(ALGORITHMS[result["algorithm"]].trainable)
         run_record = {
             "algorithm": result["algorithm"],
@@ -832,8 +1170,10 @@ class TrainingManager:
             "job_id": result["job_id"],
             "seed": config.get("seed"),
             "total_steps": total_steps,
+            "total_steps_requested": requested_steps,
             "environment_version": config.get("environment_version", "port_ops_v1"),
             "port_profile_id": config.get("port_profile_id"),
+            "business_profile_id": config.get("business_profile_id") or "default_port_profile",
             "observation_dimensions": config.get("observation_dimensions"),
             "action_dimensions": config.get("action_dimensions"),
             "evidence_label": (
@@ -861,14 +1201,51 @@ class TrainingManager:
         for spec in ALGORITHMS.values():
             matches = [value for value in registry.get("results", {}).values() if value.get("algorithm") == spec.id and (not dataset_id or value.get("dataset_id") == dataset_id)]
             latest = max(matches, key=lambda item: item.get("evaluated_at", "")) if matches else None
-            items.append({**asdict(spec), "status": "EVALUATED" if latest else ("READY" if spec.id == "mpc" else "UNTRAINED"), "latest_evaluation": latest})
+            items.append({**asdict(spec), "status": "EVALUATED" if latest else ("READY" if not spec.trainable else "UNTRAINED"), "latest_evaluation": latest})
         return {"baselines": items, "count": len(items), "dataset_id": dataset_id, "updated_at": registry.get("updated_at") or utc_now(), "source": "persisted_test_evaluations"}
 
-    def benchmark_summary(self, dataset_id: Optional[str] = None) -> Dict[str, Any]:
+    def benchmark_summary(
+        self,
+        dataset_id: Optional[str] = None,
+        environment_version: Optional[str] = None,
+        business_profile_id: Optional[str] = None,
+    ) -> Dict[str, Any]:
         registry = _read_json(self.benchmark_path, {"results": {}, "runs": []})
         runs = list(registry.get("runs") or registry.get("results", {}).values())
         if dataset_id:
             runs = [run for run in runs if run.get("dataset_id") == dataset_id]
+            if environment_version is None:
+                try:
+                    environment_version = str(
+                        load_port_dataset(dataset_id, self.data_root).metadata.get(
+                            "environment_version"
+                        )
+                        or ""
+                    ) or None
+                except Exception:
+                    environment_version = None
+        if environment_version:
+            runs = [
+                run
+                for run in runs
+                if run.get("environment_version") == environment_version
+            ]
+        if dataset_id and business_profile_id is None:
+            business_profile_id = "default_port_profile"
+        if business_profile_id:
+            profile_filtered = []
+            for run in runs:
+                observed_profile = run.get("business_profile_id")
+                if observed_profile is None and run.get("job_id"):
+                    config = _read_json(
+                        self.run_dir(str(run["job_id"])) / "config.json",
+                        {},
+                    )
+                    observed_profile = config.get("business_profile_id")
+                observed_profile = observed_profile or "default_port_profile"
+                if observed_profile == business_profile_id:
+                    profile_filtered.append(run)
+            runs = profile_filtered
         groups: List[Dict[str, Any]] = []
         for spec in ALGORITHMS.values():
             selected = [run for run in runs if run.get("algorithm") == spec.id]
@@ -892,6 +1269,17 @@ class TrainingManager:
                 )
             ]
             comparable_runs = claim_eligible if dataset_id else []
+            energy_cost_values = sorted(
+                float(run["metrics"]["energy_cost"])
+                for run in comparable_runs
+                if isinstance((run.get("metrics") or {}).get("energy_cost"), (int, float))
+            )
+            if energy_cost_values:
+                tail_start = max(0, math.ceil(0.95 * len(energy_cost_values)) - 1)
+                energy_cost_tail = energy_cost_values[tail_start:]
+                energy_cost_cvar95 = sum(energy_cost_tail) / len(energy_cost_tail)
+            else:
+                energy_cost_cvar95 = None
             formal_metric_names = sorted(
                 {
                     name
@@ -962,13 +1350,23 @@ class TrainingManager:
                     if dataset_id
                     else "dataset_filter_required_for_comparison"
                 ),
+                "tail_risk": {
+                    "metric": "energy_cost",
+                    "alpha": 0.95,
+                    "cvar": energy_cost_cvar95,
+                    "n": len(energy_cost_values),
+                    "basis": "claim_eligible_run_means_on_fixed_chronological_holdout",
+                },
                 "job_ids": [run.get("job_id") for run in selected],
             })
         return {
             "dataset_id": dataset_id,
+            "environment_version": environment_version,
+            "business_profile_id": business_profile_id,
             "algorithms": groups,
             "minimum_distinct_seeds_for_claim": 3,
             "comparison_requires_dataset_filter": True,
+            "comparison_requires_dataset_environment_and_business_profile_filter": True,
             "deterministic_controller_exception": "MPC requires one fixed-window run because it has no learned stochastic initialization",
             "source": "persisted_chronological_holdout_evaluations",
             "updated_at": registry.get("updated_at") or utc_now(),

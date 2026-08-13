@@ -99,7 +99,7 @@ class PolicyRunner:
                     return json.load(f)
             except Exception:
                 pass
-        return {"mode": "shadow", "updated": ts_to_iso_z(datetime.utcnow().replace(tzinfo=timezone.utc))}
+        return {"mode": "shadow", "updated": ts_to_iso_z(datetime.now(timezone.utc))}
 
     def save_mode(self, mode: str):
         self.mode = {"mode": mode, "updated": ts_to_iso_z(datetime.utcnow().replace(tzinfo=timezone.utc))}
@@ -227,7 +227,13 @@ class PolicyRunner:
         return a_proj, reasons
 
     # ---- 给定 ts 生成推荐调度（基线 + 残差） ----
-    def recommend_at(self, ts_iso: Optional[str], noise_scale: float=0.0) -> Dict[str, Any]:
+    def recommend_at(
+        self,
+        ts_iso: Optional[str],
+        noise_scale: float = 0.0,
+        *,
+        record_audit: bool = True,
+    ) -> Dict[str, Any]:
         # 选最近时间点
         if ts_iso and ts_iso in self.baseline_map:
             base = self.baseline_map[ts_iso]
@@ -261,22 +267,41 @@ class PolicyRunner:
                 a_res = mu[0]
 
         # 2) 安全投影
+        raw_action = a_res.copy()
         a_proj, reasons = self.project_action(base, a_res)
 
         # 3) 叠加到基线，给出推荐设定（以及新 PCC 估计与节省的近似）
         rec = self._apply_residual(base, a_proj)
         rec["reasons"] = reasons
         rec["mode"] = self.mode.get("mode","shadow")
+        rec["model_inference"] = {
+            "algorithm": "SAC",
+            "policy_loaded": self.policy is not None,
+            "feature_count": int(s_vec.shape[1]),
+            "raw_action": {
+                **{
+                    f"ΔP_shore_{b}_kW": float(raw_action[i])
+                    for i, b in enumerate(self.berth_order)
+                },
+                "ΔP_bess_kW": float(raw_action[-2]),
+                "Δr_res_kW": float(raw_action[-1]),
+            },
+            "projected_action": rec["delta_action"],
+            "projection_applied": bool(
+                np.max(np.abs(raw_action - a_proj)) > 1e-6
+            ),
+        }
 
         # 审计记录（供前端“屏蔽统计/原因”可视化）
-        write_jsonl("dispatch_recommendation", {
-            "ts": base["ts"],
-            "mode": rec["mode"],
-            "delta_action": rec["delta_action"],
-            "pcc_new_kW": rec["pcc_new_kW"],
-            "save_yuan_step": rec["save_yuan_step"],
-            "reasons": reasons
-        })
+        if record_audit:
+            write_jsonl("dispatch_recommendation", {
+                "ts": base["ts"],
+                "mode": rec["mode"],
+                "delta_action": rec["delta_action"],
+                "pcc_new_kW": rec["pcc_new_kW"],
+                "save_yuan_step": rec["save_yuan_step"],
+                "reasons": reasons
+            })
         return rec
 
     def _apply_residual(self, base: Dict[str, Any], a_proj: np.ndarray) -> Dict[str, Any]:
@@ -297,7 +322,10 @@ class PolicyRunner:
             "ts": base["ts"],
             "baseline": {
                 "P_shore": base["P_shore"], "P_bess_kW": base["P_bess_kW"],
-                "r_res_kW": base["r_res_kW"], "P_pcc_kW": base["P_pcc_kW"]
+                "r_res_kW": base["r_res_kW"], "P_pcc_kW": base["P_pcc_kW"],
+                "SOC": base["SOC"], "P_roll15_kW": base["P_roll15_kW"],
+                "price_yuan_per_kWh": base["price_yuan_per_kWh"],
+                "ef_kg_per_kWh": base["ef_kg_per_kWh"],
             },
             "delta_action": {**{f"ΔP_shore_{b}_kW": float(a_proj[i]) for i,b in enumerate(self.berth_order)},
                              "ΔP_bess_kW": float(a_proj[-2]), "Δr_res_kW": float(a_proj[-1])},

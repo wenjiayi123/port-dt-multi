@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/wenjiayi123/port-dt-multi/blob/main/config/ports/port-profile.schema.json",
-  "title": "Port DT Multi port profile v2",
+  "title": "Port DT Multi port profile v3",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -26,7 +26,7 @@
     "port_code": {"type": "string", "minLength": 1, "maxLength": 16},
     "timezone": {"type": "string", "minLength": 1},
     "currency": {"type": "string", "pattern": "^[A-Za-z]{3}$"},
-    "environment_version": {"enum": ["port_ops_v1", "port_ops_v2"]},
+    "environment_version": {"enum": ["port_ops_v1", "port_ops_v2", "port_ops_v3"]},
     "control_authority": {"const": "recommendation_only"},
     "calibration_status": {"type": "string", "minLength": 8},
     "assets": {
@@ -36,7 +36,9 @@
       "properties": {
         "bess_capacity_kwh": {"type": "number", "exclusiveMinimum": 0},
         "bess_power_kw": {"type": "number", "exclusiveMinimum": 0},
-        "demand_cap_kw": {"type": "number", "exclusiveMinimum": 0}
+        "demand_cap_kw": {"type": "number", "exclusiveMinimum": 0},
+        "operational_load_fraction": {"type": "number", "minimum": 0, "maximum": 1},
+        "allocation_load_fraction": {"type": "number", "minimum": 0, "maximum": 1}
       }
     },
     "control_limits": {

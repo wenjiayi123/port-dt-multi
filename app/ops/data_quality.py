@@ -35,7 +35,10 @@ Series = List[Tuple[EpochSec, Number]]
 # Keyed by (asset_type, point); deployments may add asset-specific overrides.
 DEFAULT_BOUNDS: Dict[Tuple[str, str], Tuple[Optional[float], Optional[float]]] = {
     # 岸桥（Quay Crane）
-    ("quay_crane", "active_power_kw"): (50.0, 2000.0),
+    # Modern STS quay cranes can draw above 2 MW during hoist/regen cycles;
+    # the checked-in equipment contract uses 4.2 MW rated units.  A 2 MW cap
+    # incorrectly invalidated every calibrated replay point and flattened PSI.
+    ("quay_crane", "active_power_kw"): (50.0, 5000.0),
     ("quay_crane", "status"): (0.0, 3.0),             # 0=idle,1=run,2=standby,3=fault （示例）
     # 场桥（RTG/RMG）
     ("yard_crane", "active_power_kw"): (20.0, 600.0),

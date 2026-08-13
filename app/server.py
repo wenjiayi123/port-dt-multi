@@ -25,6 +25,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, List, Optional
 from datetime import datetime, timezone, timedelta  # <- 加上 timedelta
@@ -65,10 +66,29 @@ from app.services.story.service import router as story_router
 from app.services.rl_training.api import router as real_rl_training_router
 from app.services.rl_training.trainer import ALGORITHMS as REAL_RL_ALGORITHMS
 from app.services.rl_training.trainer import TRAINING_MANAGER
+from app.services.rl_training.datasets import FACTOR_COLUMNS, load_port_dataset
 from app.services.business_benchmark import load_verified_report as load_business_benchmark
 from app.services.twin_schema.api import router as twin_schema_router
 from app.services.execution.api import router as site_execution_router
 from app.services.mobile_api.api import router as mobile_api_router
+from app.services.v3_port_ai import router as v3_port_ai_router
+from app.services.v3_runtime import V3RuntimeService
+from app.services.story_evidence import StoryEvidenceService
+from app.services.realtime_insights import RealtimeInsightsService
+from app.services.copilot.mission_control import XiaoyiMissionControl
+from app.services.mas_evidence import MASEvidenceService
+from app.services.twin_reliability import TwinReliabilityService
+from app.services.yard_lighting_evidence import YardLightingEvidenceService
+from app.services.hvac_evidence import HVACEvidenceService
+from app.services.shore_bess_evidence import ShoreBESSEvidenceService
+from app.services.bess_energy_evidence import BESSEnergyEvidenceService
+from app.services.yard_crane_evidence import YardCraneEvidenceService
+from app.services.ai_trust_evidence import AITrustEvidenceService
+from app.services.monitoring_evidence import MonitoringEvidenceService
+from app.services.opsx_evidence import OpsXEvidenceService
+from app.services.external_signals_evidence import ExternalSignalsEvidenceService
+from app.services.mlops_evidence import MLOpsEvidenceService
+from app.services.governance_evidence import GovernanceEvidenceService
 from app.operations import configure_operations, cors_origins, is_production
 
 from fastapi.staticfiles import StaticFiles
@@ -224,7 +244,7 @@ except Exception:
 # -------------------------------------------------
 app = FastAPI(
     title="Smart Port Twin API",
-    version="3.0.1",
+    version="3.2.0",
     docs_url=None if is_production() else "/docs",
     redoc_url=None if is_production() else "/redoc",
     openapi_url=None if is_production() else "/openapi.json",
@@ -295,15 +315,296 @@ app.include_router(real_rl_training_router)
 app.include_router(twin_schema_router)
 app.include_router(site_execution_router)
 app.include_router(mobile_api_router)
+app.include_router(v3_port_ai_router)
 
 di = Container()
+di.strategy_runtime = V3RuntimeService(di)
+story_evidence = StoryEvidenceService(TRAINING_MANAGER.run_root, di.strategy_runtime)
 stacked = CurvesStacked(di)
 curves = CurvesService(di)
+_ASSET_CURVE_CACHE: Dict[tuple, tuple[float, Dict[str, Any]]] = {}
+_ASSET_CURVE_CACHE_TTL_SECONDS = 2.0
+_ASSET_CURVE_CACHE_MAX_ENTRIES = 256
 energy_intensity = CurvesEnergyIntensity(di)
 peak_risk = CurvesPeakRisk(di)
+realtime_insights = RealtimeInsightsService(di, peak_risk)
+mas_evidence = MASEvidenceService()
+twin_reliability = TwinReliabilityService(di.strategy_runtime, di.telemetry)
+yard_lighting_evidence = YardLightingEvidenceService()
+hvac_evidence = HVACEvidenceService()
+shore_bess_evidence = ShoreBESSEvidenceService()
+bess_energy_evidence = BESSEnergyEvidenceService()
+yard_crane_evidence = YardCraneEvidenceService()
+ai_trust_evidence = AITrustEvidenceService({
+    "yard_lighting": yard_lighting_evidence,
+    "hvac": hvac_evidence,
+    "shore_bess": shore_bess_evidence,
+    "bess_energy": bess_energy_evidence,
+    "yard_crane": yard_crane_evidence,
+})
+monitoring_evidence = MonitoringEvidenceService(di.telemetry, di.monitoring)
+xiaoyi_mission_control = XiaoyiMissionControl(
+    realtime_insights,
+    monitoring_evidence,
+    di.strategy_runtime,
+)
+app.state.xiaoyi_mission_control = xiaoyi_mission_control
+opsx_evidence = OpsXEvidenceService(ai_trust_evidence, monitoring_evidence)
+mlops_evidence = MLOpsEvidenceService(TRAINING_MANAGER, opsx_evidence)
 carbon_intensity = CurvesCarbonIntensity(di)
 economic_benefit = CurvesEconomicBenefit(di)
 bess_capability = CurvesBessCapability(di)
+
+
+@app.get("/api/v3/runtime/status", tags=["v3-runtime"])
+async def v3_runtime_status() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(di.strategy_runtime.status))
+
+
+@app.get("/api/v3/modules/yard-lighting/evidence", tags=["v3-modules"])
+async def v3_yard_lighting_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(yard_lighting_evidence.build))
+
+
+@app.get("/api/v3/modules/hvac/evidence", tags=["v3-modules"])
+async def v3_hvac_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(hvac_evidence.build))
+
+
+@app.get("/api/v3/modules/shore-bess/evidence", tags=["v3-modules"])
+async def v3_shore_bess_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(shore_bess_evidence.build))
+
+
+@app.get("/api/v3/modules/bess-energy/evidence", tags=["v3-modules"])
+async def v3_bess_energy_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(bess_energy_evidence.build))
+
+
+@app.get("/api/v3/modules/yard-crane/evidence", tags=["v3-modules"])
+async def v3_yard_crane_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(yard_crane_evidence.build))
+
+
+@app.get("/api/v3/ai-trust/evidence", tags=["v3-governance"])
+async def v3_ai_trust_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(ai_trust_evidence.build))
+
+
+@app.get("/api/v3/monitoring/evidence", tags=["v3-governance"])
+async def v3_monitoring_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(monitoring_evidence.build))
+
+
+@app.get("/api/v3/opsx/evidence", tags=["v3-governance"])
+async def v3_opsx_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(opsx_evidence.build))
+
+
+@app.get("/api/v3/mlops/evidence", tags=["v3-governance"])
+async def v3_mlops_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(mlops_evidence.build))
+
+
+@app.get("/api/v3/runtime/frame", tags=["v3-runtime"])
+async def v3_runtime_frame() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(di.strategy_runtime.current_frame))
+
+
+@app.get("/api/v3/runtime/series", tags=["v3-runtime"])
+async def v3_runtime_series(
+    scenario: str = Query("strategy"),
+    horizon_min: int = Query(360, ge=1, le=24 * 60),
+    step_min: int = Query(1, ge=1, le=60),
+) -> JSONResponse:
+    allowed = {
+        "baseline",
+        "forecast",
+        "forecast_baseline",
+        *(row["id"] for row in di.strategy_runtime.coverage()["scenarios"] if row["state"] != "contract_only"),
+    }
+    if scenario not in allowed:
+        raise HTTPException(status_code=422, detail=f"unsupported V3 runtime scenario: {scenario}")
+    return JSONResponse(
+        await asyncio.to_thread(
+            di.strategy_runtime.series,
+            horizon_min=horizon_min,
+            step_min=step_min,
+            scenario=scenario,
+        )
+    )
+
+
+@app.get("/api/v3/runtime/coverage", tags=["v3-runtime"])
+async def v3_runtime_coverage() -> JSONResponse:
+    return JSONResponse(di.strategy_runtime.coverage())
+
+
+@app.get("/api/v3/realtime/insights", tags=["v3-runtime"])
+async def v3_realtime_insights(
+    asset_id: str = Query("qc-01"),
+    mode: str = Query("now", pattern="^(now|forecast|sim)$"),
+    cap_kw: float = Query(36000.0, ge=1.0),
+    horizon_min: int = Query(60, ge=15, le=360),
+    step_min: int = Query(5, ge=1, le=15),
+) -> JSONResponse:
+    return JSONResponse(
+        await asyncio.to_thread(
+            realtime_insights.build,
+            asset_id=asset_id,
+            mode=mode,
+            cap_kw=cap_kw,
+            horizon_min=horizon_min,
+            step_min=step_min,
+        )
+    )
+
+
+@app.get("/api/v3/twin/reliability", tags=["v3-runtime"])
+async def v3_twin_reliability(
+    refresh: bool = Query(False),
+    scenario: str = Query("strategy"),
+) -> JSONResponse:
+    return JSONResponse(
+        await asyncio.to_thread(
+            twin_reliability.build,
+            refresh=refresh,
+            selected_scenario=scenario,
+        )
+    )
+
+
+@app.get("/api/v3/mas/evidence", tags=["v3-runtime"])
+async def v3_mas_evidence(
+    scenario: str = Query("replay", pattern="^(replay|dense|degraded)$"),
+) -> JSONResponse:
+    try:
+        payload = await asyncio.to_thread(mas_evidence.build, scenario=scenario)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    return JSONResponse(payload)
+
+
+@app.get("/api/v3/twinlab/evidence", tags=["v3-runtime"])
+async def v3_twinlab_evidence(refresh: bool = Query(False)) -> JSONResponse:
+    reliability = await asyncio.to_thread(
+        twin_reliability.build,
+        refresh=refresh,
+        selected_scenario="strategy",
+    )
+    dataset = await asyncio.to_thread(
+        load_port_dataset,
+        "public_cn_sha_hourly_v3",
+        TRAINING_MANAGER.data_root,
+    )
+    description = await asyncio.to_thread(dataset.describe)
+    quality = description.get("quality") or {}
+    coverage = quality.get("factor_coverage") or {}
+    measured = set(dataset.metadata.get("measured_columns") or [])
+    derived = set(dataset.metadata.get("derived_columns") or [])
+    contracts = []
+    for factor in FACTOR_COLUMNS:
+        ratio = float(coverage.get(factor) or 0.0)
+        if factor in measured:
+            source = "public_measured"
+        elif factor in derived or ratio > 0.0:
+            source = "public_reanalysis_or_declared_derivative"
+        else:
+            source = "pending_port_connection"
+        contracts.append(
+            {
+                "feature": factor,
+                "source": source,
+                "coverage": ratio,
+                "null_rate": 1.0 - ratio,
+                "schema_ok": True,
+                "status": "REPLAY_READY" if ratio >= 1.0 else "PENDING_PORT",
+                "site_replacement": "required_before_site_claim",
+            }
+        )
+    stress = (reliability.get("software_stress") or {}).get("runs") or []
+    scenario_items = [
+        {
+            "id": row.get("id"),
+            "name": row.get("name"),
+            "tags": [row.get("status"), "recommendation-only"],
+            "pass_rate": (
+                float(row.get("safe_action_count") or 0)
+                / max(1, int(row.get("decision_count") or 0))
+            ),
+            "safe_action_count": int(row.get("safe_action_count") or 0),
+            "blocked_action_count": int(row.get("blocked_action_count") or 0),
+            "decision_count": int(row.get("decision_count") or 0),
+            "peak_kw": row.get("peak_kw"),
+            "terminal_soc": row.get("terminal_soc"),
+            "result": row.get("status"),
+            "passed": row.get("passed"),
+        }
+        for row in stress
+    ]
+    fail_closed = reliability.get("fail_closed_checks") or []
+    generated_at = datetime.fromtimestamp(
+        float(reliability.get("generated_at") or 0.0), tz=timezone.utc
+    ).isoformat().replace("+00:00", "Z")
+    return JSONResponse(
+        {
+            "available": bool(reliability.get("available")),
+            "schema": "port-dt-v3-twinlab-evidence.v1",
+            "mode": "hash_verified_policy_bounded_software_replay",
+            "generated_at": generated_at,
+            "production_authority": False,
+            "scenarios": {
+                "items": scenario_items,
+                "passed": int((reliability.get("software_stress") or {}).get("passed") or 0),
+                "total": int((reliability.get("software_stress") or {}).get("total") or 0),
+                "basis": (reliability.get("software_stress") or {}).get("basis"),
+                "distribution": {
+                    "safe_actions": sum(int(row.get("safe_action_count") or 0) for row in stress),
+                    "fail_closed_blocks": sum(int(row.get("blocked_action_count") or 0) for row in stress),
+                    "site_contract_pending": sum(row.get("state") == "contract_only" for row in (reliability.get("software_coverage") or {}).get("matrix") or []),
+                },
+            },
+            "drills": {
+                "items": [
+                    {
+                        "name": "有界软件压力矩阵",
+                        "evidence": f"{(reliability.get('software_stress') or {}).get('passed', 0)}/{(reliability.get('software_stress') or {}).get('total', 0)}",
+                        "result": "PASS" if (reliability.get("software_stress") or {}).get("pass_rate") == 1.0 else "REVIEW",
+                        "side_effect": "none",
+                    },
+                    *[
+                        {
+                            "name": row.get("id"),
+                            "evidence": row.get("basis"),
+                            "result": row.get("status"),
+                            "side_effect": "none",
+                        }
+                        for row in fail_closed
+                    ],
+                ],
+                "software_passed": int((reliability.get("software_stress") or {}).get("passed") or 0),
+                "software_total": int((reliability.get("software_stress") or {}).get("total") or 0),
+                "fail_closed_covered": sum(row.get("passed") is True for row in fail_closed),
+                "pending_port": sum(row.get("status") == "pending_port_connection" for row in fail_closed),
+                "site_rto_rpo": "pending_port_connection",
+            },
+            "contracts": {
+                "items": contracts,
+                "available": sum(row["coverage"] >= 1.0 for row in contracts),
+                "total": len(contracts),
+                "missing": [row["feature"] for row in contracts if row["coverage"] < 1.0],
+                "dataset_id": dataset.dataset_id,
+                "dataset_sha256": dataset.fingerprint,
+                "quality_status": quality.get("status"),
+                "training_eligible": quality.get("training_eligible"),
+            },
+            "policy": reliability.get("policy"),
+            "site_fidelity": reliability.get("site_fidelity"),
+            "claim_boundary": reliability.get("claim_boundary"),
+        }
+    )
 
 
 register_ingest_startup(app, di, interval_sec=30, step_sec=60)
@@ -311,6 +612,28 @@ register_ingest_startup(app, di, interval_sec=30, step_sec=60)
 _tos = TOSClient() if TOSClient else None
 _market = MarketClient() if MarketClient else None
 _ais = AISTideClient() if AISTideClient else None
+external_signals_evidence = ExternalSignalsEvidenceService(
+    di.telemetry,
+    tos=_tos,
+    market=_market,
+    ais_tide=_ais,
+    schedule=getattr(di, "schedule", None),
+)
+governance_evidence = GovernanceEvidenceService(
+    ai_trust_evidence,
+    opsx_evidence,
+    external_signals_evidence,
+)
+
+
+@app.get("/api/v3/external-signals/evidence", tags=["v3-governance"])
+async def v3_external_signals_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(external_signals_evidence.build))
+
+
+@app.get("/api/v3/governance/evidence", tags=["v3-governance"])
+async def v3_governance_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(governance_evidence.build))
 
 
 @app.get("/api/system/provenance", tags=["system"])
@@ -338,6 +661,7 @@ async def system_provenance() -> JSONResponse:
         "production": False,
     }
     telemetry_live = telemetry_status.get("mode") in {"live", "live_rest", "opcua", "mqtt", "tsdb"}
+    runtime_status = await asyncio.to_thread(di.strategy_runtime.status)
     engineering_simulators_enabled = os.getenv("PORT_DT_ENABLE_ENGINEERING_SIMULATORS", "").strip().lower() in {"1", "true", "yes", "on"}
     legacy_rl_enabled = os.getenv("PORT_DT_ENABLE_LEGACY_RL", "").strip().lower() in {"1", "true", "yes", "on"}
     return JSONResponse(
@@ -360,6 +684,7 @@ async def system_provenance() -> JSONResponse:
             },
             "external_adapters": adapters,
             "telemetry": telemetry_status,
+            "runtime_policy": runtime_status,
             "feature_flags": {
                 "engineering_simulators_enabled": engineering_simulators_enabled,
                 "legacy_rl_enabled": legacy_rl_enabled,
@@ -377,6 +702,8 @@ async def system_provenance() -> JSONResponse:
                 "rl_evaluation": "chronological_holdout_only",
                 "port_visualisation": "dataset_projection_or_strict_jsonl_adapter",
                 "forecast_twin": "telemetry_fitted_ridge_autoregression_with_explicit_scenario_parameters",
+                "strategy_twin": "hash_verified_saved_sac_policy_over_canonical_port_state",
+                "scenario_coverage": "offline_runtime_stress_matrix_with_fail_closed_site_boundaries",
                 "rlops": "persisted_training_and_holdout_evaluation_not_ope",
                 "opsx": "engineering_simulator_opt_in" if engineering_simulators_enabled else "unavailable_until_production_backend_is_configured",
                 "legacy_dashboard_generators": "opt_in_engineering_simulators" if engineering_simulators_enabled else "disabled_by_default",
@@ -728,7 +1055,7 @@ _RL_PANEL_HTML = r"""
           <div class="field"><label for="inpSafetyW">安全权重 / Safety W</label><input id="inpSafetyW" type="number" value="0.20" min="0" max="1" step="0.01"></div>
         </div>
 
-        <div class="section-label" style="margin-top:14px;">七算法可复现实验 / 6 RL + 1 Control Baseline</div>
+        <div class="section-label" style="margin-top:14px;">十二控制器可复现实验 / 10 RL + MPC + FCFS</div>
         <div id="baselineGrid" class="baseline-grid"></div>
 
         <div class="connector-grid">
@@ -2120,7 +2447,7 @@ async def home() -> HTMLResponse:
     html = _UI_INDEX.read_text(encoding="utf-8")
     # 自动注入监测适配器脚本（不改动源文件；若文件不存在则忽略）
     try:
-        _adapter_path = Path(__file__).resolve().parent / "ui" / "adapters" / "monitoring.js"
+        _adapter_path = Path(__file__).resolve().parent / "adapters" / "monitoring.js"
         if _adapter_path.exists() and ("ui/adapters/monitoring.js" not in html):
             html = html.replace("</body>", '  <script src="/ui/adapters/monitoring.js"></script>\n</body>')
     except Exception:
@@ -2135,12 +2462,12 @@ async def monitoring_adapter_js() -> HTMLResponse:
     前端适配器脚本（生产部署可由 Nginx/静态服务器托管；此处提供直连以便开发联调）
     """
     try:
-        path = Path(__file__).resolve().parent / "ui" / "adapters" / "monitoring.js"
+        path = Path(__file__).resolve().parent / "adapters" / "monitoring.js"
         if path.exists():
             return HTMLResponse(path.read_text(encoding="utf-8"),
                                 media_type="application/javascript",
                                 status_code=200)
-        return HTMLResponse("// monitoring adapter not found: app/ui/adapters/monitoring.js",
+        return HTMLResponse("// monitoring adapter not found: app/adapters/monitoring.js",
                             media_type="application/javascript", status_code=404)
     except Exception as e:
         return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
@@ -2274,12 +2601,12 @@ async def platform_home_brief() -> JSONResponse:
     except Exception:
         apps_total = 0
 
-    status = "稳定"
-    risk_label = "中低"
-    focus = "先巡检主链路"
-    status_sub = "当前无明显待审批拥塞，适合先看 Twin → Strategy → Execution → Audit 主链路一致性。"
-    risk_sub = "规则判定：待审批=0，最近闭环未出现异常回滚。"
-    focus_sub = "首页先给结论，细节继续在孪生、策略、执行和审计模块承接。"
+    status = "证据受限"
+    risk_label = "待验证"
+    focus = "先核验数据来源"
+    status_sub = "未接入现场 TOS/VTS/设备遥测前，不据空白执行记录推断港区稳定。"
+    risk_sub = "当前只能证明公开数据离线能力；运行风险需由现场告警、工单和控制回执确认。"
+    focus_sub = "先检查来源、时间戳、质量门与执行权限，再进入策略和孪生分析。"
 
     if pending_count >= 5 or last_status == "rolled_back":
         status = "临界"
@@ -2390,8 +2717,13 @@ async def list_assets() -> JSONResponse:
     try:
         assets = di.telemetry.list_assets()
         return JSONResponse(assets)
-    except Exception:
-        return JSONResponse([{"id": "agv-01", "label": "AGV-01"}], status_code=200)
+    except Exception as exc:
+        # Fail closed: never invent equipment just to populate the 3D scene.
+        return JSONResponse(
+            [],
+            status_code=503,
+            headers={"X-Port-DT-Source-Error": type(exc).__name__},
+        )
 
 
 async def _sse_generator(asset_id: str) -> AsyncGenerator[bytes, None]:
@@ -2683,6 +3015,18 @@ def _get_clean_series(asset_id: str, point: str, start_ts: float, end_ts: float,
     )
     return cleaned, quality, source or "unknown"
 
+
+def _monitoring_source_status() -> Dict[str, Any]:
+    source_status_fn = getattr(di.telemetry, "source_status", None)
+    if callable(source_status_fn):
+        try:
+            status = source_status_fn()
+            if isinstance(status, dict):
+                return status
+        except Exception:
+            pass
+    return {"mode": "unknown", "measured": False, "production": False}
+
 @app.get("/api/monitoring/anomaly/scan", tags=["monitoring"])
 async def monitoring_anomaly_scan(
     assets: Optional[str] = Query(None, description="逗号分隔资产ID（为空则自动截取前 10 个资产）"),
@@ -2744,7 +3088,9 @@ async def monitoring_anomaly_scan(
                     "start": _to_iso(start_ts), "end": _to_iso(end_ts),
                     "step_sec": step_sec, "method": method, "sensitivity": sensitivity
                 },
-                "items": items
+                "items": items,
+                "source_status": _monitoring_source_status(),
+                "boundary": {"incident_claim_eligible": False, "production_authority": False, "site_status": "待接入港口"},
             })
 
         # ✅ 调用 DI 的 MonitoringService（已在 app/di.py 中挂载）
@@ -2759,12 +3105,9 @@ async def monitoring_anomaly_scan(
             sensitivity=sensitivity,
             residual=False  # Residual anomaly mode is intentionally disabled for this endpoint.
         )
+        res["source_status"] = _monitoring_source_status()
+        res["boundary"] = {"incident_claim_eligible": False, "production_authority": False, "site_status": "待接入港口"}
         return JSONResponse(res)
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"monitoring.anomaly.scan 失败: {e}")
-
     except HTTPException:
         raise
     except Exception as e:
@@ -2839,11 +3182,19 @@ async def monitoring_drift_psi(
         edges = [lo + i*step for i in range(bins)] + [hi]  # 长度 bins+1
 
         res = _psi(edges, base_vals, cur_vals)
+        merged_bins = [
+            {**edge, **{key: value for key, value in detail.items() if key != "bin"}}
+            for edge, detail in zip(res["bins"], res["details"])
+        ]
+        level = "ok" if res["psi"] < 0.1 else ("warn" if res["psi"] < 0.25 else "drift")
         return JSONResponse({
             "asset": asset_id, "point": point, "asset_type": asset_type,
             "baseline": {"start": _to_iso(b0), "end": _to_iso(b1), "n": len(base_vals)},
             "recent":   {"start": _to_iso(r0), "end": _to_iso(r1), "n": len(cur_vals)},
-            "psi": res["psi"], "bins": res["bins"], "details": res["details"]
+            "psi": res["psi"], "level": level, "bins": merged_bins, "details": res["details"],
+            "source_status": _monitoring_source_status(),
+            "boundary": {"incident_claim_eligible": False, "production_authority": False, "site_status": "待接入港口"},
+            "warning": "PSI对班次与季节窗口敏感；用于准入诊断，不单独构成现场事故或根因结论。",
         })
     except HTTPException:
         raise
@@ -3599,9 +3950,22 @@ async def curves_asset(
     scenario: str = Query("baseline"),
     use_drivers: int = Query(1, ge=0, le=1),
 ) -> JSONResponse:
+    cache_key = (asset_id, mode, horizon_min, step_min, scenario, int(use_drivers))
+    now = time.monotonic()
+    cached = _ASSET_CURVE_CACHE.get(cache_key)
+    if cached and now - cached[0] < _ASSET_CURVE_CACHE_TTL_SECONDS:
+        response = JSONResponse(cached[1])
+        response.headers["X-Port-DT-Cache"] = "hit"
+        return response
     data = curves.asset(asset_id=asset_id, mode=mode, horizon_min=horizon_min,
                         step_min=step_min, scenario=scenario, use_drivers=bool(use_drivers))
-    return JSONResponse(data)
+    if len(_ASSET_CURVE_CACHE) >= _ASSET_CURVE_CACHE_MAX_ENTRIES:
+        oldest_key = min(_ASSET_CURVE_CACHE, key=lambda key: _ASSET_CURVE_CACHE[key][0])
+        _ASSET_CURVE_CACHE.pop(oldest_key, None)
+    _ASSET_CURVE_CACHE[cache_key] = (now, data)
+    response = JSONResponse(data)
+    response.headers["X-Port-DT-Cache"] = "miss"
+    return response
 
 # Command-center KPI aggregation
 # -------------------------------------------------
@@ -3638,6 +4002,7 @@ async def energy_today(
         "gas": summary.get("gas", {}),
         "intensity": summary.get("intensity", {}),
         "utilization_percent": summary.get("utilization_percent"),
+        "data_status": summary.get("data_status", {}),
         "assumptions": summary.get("assumptions", {}),
         "_source": summary.get("_source", "energy_service"),
     }
@@ -3682,8 +4047,25 @@ async def rl_list_strategies(
     max_items: int = Query(8, ge=1, le=50, description="返回条目上限"),
 ) -> JSONResponse:
     registry = TRAINING_MANAGER.model_registry().list()
+    preferred_algorithms = (
+        "sac", "ppo", "td3", "dqn", "a2c", "tqc", "qrdqn",
+        "trpo", "recurrent_ppo", "ars", "mpc", "fcfs",
+    )
+    # The registry is newest-first.  Surface the newest evaluated record per
+    # controller instead of allowing recent multi-seed/test runs from one
+    # algorithm to crowd the business-facing strategy list.
+    latest_by_algorithm: Dict[str, Dict[str, Any]] = {}
+    for record in registry.get("models", []):
+        algorithm = str(record.get("algorithm") or "").lower()
+        if algorithm and algorithm not in latest_by_algorithm:
+            latest_by_algorithm[algorithm] = record
+    selected_records = [
+        latest_by_algorithm[algorithm]
+        for algorithm in preferred_algorithms
+        if algorithm in latest_by_algorithm
+    ][:max_items]
     strategies = []
-    for record in registry.get("models", [])[:max_items]:
+    for record in selected_records:
         evaluation = record.get("evaluation") or {}
         metrics = evaluation.get("metrics") or {}
         violation_rate = metrics.get("guardrail_violation_rate")
@@ -3694,6 +4076,12 @@ async def rl_list_strategies(
             "impact": {
                 "reward": metrics.get("reward"),
                 "peak_kw": metrics.get("peak_kw"),
+                "throughput_teu": metrics.get("throughput_teu"),
+                "cost_per_teu": metrics.get("cost_per_teu"),
+                "carbon_kg_per_teu": metrics.get("carbon_kg_per_teu"),
+                "energy_kwh_per_teu": metrics.get("energy_kwh_per_teu"),
+                "service_completion_ratio": metrics.get("service_completion_ratio"),
+                "delay_index_mean": metrics.get("delay_index_mean"),
                 "guardrail_violation_rate": violation_rate,
                 "risk_level": "unassessed" if violation_rate is None else ("high" if float(violation_rate) > 0.05 else "reviewable"),
             },
@@ -3714,6 +4102,8 @@ async def rl_list_strategies(
         "strategies": strategies,
         "count": len(strategies),
         "source": "verified_model_registry",
+        "selection_basis": "newest_evaluated_record_per_algorithm_in_controller_order",
+        "algorithm_coverage": [str(item.get("meta", {}).get("algorithm") or "") for item in strategies],
         "generated_values": False,
         "requested_display_horizon_min": horizon_min,
         "requested_display_step_min": step_min,
@@ -3739,6 +4129,21 @@ async def rl_simulate(
         baseline = [float(item.get("baseline_kw") or 0.0) for item in frames]
         policy = [float(item.get("net_load_kw") or 0.0) for item in frames]
         peak_reduction = (max(baseline) - max(policy)) if baseline and policy else None
+        interval_hours = None
+        if len(frames) >= 2:
+            try:
+                start_ts = datetime.fromisoformat(str(frames[0].get("timestamp") or "").replace("Z", "+00:00"))
+                next_ts = datetime.fromisoformat(str(frames[1].get("timestamp") or "").replace("Z", "+00:00"))
+                candidate_interval = (next_ts - start_ts).total_seconds() / 3600.0
+                if 0 < candidate_interval <= 24:
+                    interval_hours = candidate_interval
+            except (TypeError, ValueError):
+                interval_hours = None
+        delta_kwh = (
+            sum(base - active for base, active in zip(baseline, policy)) * interval_hours
+            if baseline and policy and interval_hours is not None
+            else None
+        )
         window = {
             "start": frames[0].get("timestamp") if frames else None,
             "end": frames[-1].get("timestamp") if frames else None,
@@ -3748,9 +4153,11 @@ async def rl_simulate(
             "production_dispatched": False,
             "strategy_id": job_id,
             "summary": {
-                "delta_kWh": None,
+                "delta_kWh": delta_kwh,
                 "delta_carbon_kg": None,
                 "peak_reduction_kW": peak_reduction,
+                "decision_interval_hours": interval_hours,
+                "comparison_basis": "same_holdout_window_uncontrolled_baseline_kw_vs_policy_net_load_kw",
                 "window": window,
                 "dispatch_ready": False,
                 "reason": "留出集评测只产生决策证据，不授予设备执行权。",
@@ -5134,6 +5541,20 @@ async def app_center_overview() -> JSONResponse:
     """Expose the routes actually registered by the running FastAPI app."""
     rest_apis = []
     ui_apps = []
+    ui_catalog = {
+        "/rl-panel": {
+            "name": "RL 决策与证据控制台",
+            "description": "训练、历史指标、盲测评估、模型就绪度与回滚入口。",
+        },
+        "/integration-hub": {
+            "name": "港口集成中心",
+            "description": "TOS/ECS/EMS/CMDB 适配器契约、健康检查与现场替换边界。",
+        },
+        "/ops-copilot": {
+            "name": "Ops Copilot 运营副驾",
+            "description": "基于运行上下文、证据引用和可审计动作的运营辅助入口。",
+        },
+    }
     for route in app.routes:
         path = str(getattr(route, "path", ""))
         methods = sorted(method for method in (getattr(route, "methods", set()) or set()) if method not in {"HEAD", "OPTIONS"})
@@ -5144,16 +5565,30 @@ async def app_center_overview() -> JSONResponse:
                 "label": str(getattr(route, "summary", None) or getattr(route, "name", path)),
             })
         elif path in {"/rl-panel", "/integration-hub", "/ops-copilot"}:
-            ui_apps.append({"id": path.strip("/").replace("-", "_"), "name": path, "path": path, "category": "ui"})
+            catalog = ui_catalog[path]
+            ui_apps.append({
+                "id": path.strip("/").replace("-", "_"),
+                "name": catalog["name"],
+                "path": path,
+                "description": catalog["description"],
+                "category": "runtime_ui",
+                "status": "registered",
+            })
     rest_apis.sort(key=lambda item: (item["path"], item["methods"]))
     return JSONResponse({
         "platform_support": {
             "rest_apis": rest_apis,
             "webhooks": [],
-            "sdk": {"notebooks": [], "languages": ["python", "javascript"]},
+            "sdk": {"notebooks": [], "languages": [], "openapi_path": "/openapi.json"},
         },
         "apps": ui_apps,
         "counts": {"rest_routes": len(rest_apis), "ui_apps": len(ui_apps)},
+        "site_integrations": {
+            "connected": False,
+            "status": "pending_port_connection",
+            "required": ["API Gateway/OAuth2", "Webhook/Message Bus", "SDK/Notebook Registry"],
+        },
+        "data_class": "fastapi_runtime_registry_not_port_deployment_registry",
         "_source": "fastapi_runtime_route_registry",
     })
 
@@ -5272,37 +5707,22 @@ async def ai_trust_badge() -> JSONResponse:
 from fastapi import Query
 
 @app.get("/api/story/summary", tags=["story"])
-async def story_summary(hour: int = Query(0, ge=-24, le=24)) -> JSONResponse:
+async def story_summary(
+    hour: int = Query(0, ge=-24, le=24),
+    port: str = Query("shanghai"),
+    scenario: str = Query("sac_vs_fcfs"),
+) -> JSONResponse:
     """
     从最新真实留出集评测轨迹取一帧；无评测时明确不可用。
     """
-    status = TRAINING_MANAGER.status()
-    evaluation = status.get("evaluation") or {}
-    job_id = str(status.get("job_id") or "")
-    trace_path = TRAINING_MANAGER.run_root / job_id / "evaluation_trajectory.json"
-    trace = json.loads(trace_path.read_text(encoding="utf-8")) if job_id and trace_path.exists() else {}
-    frames = trace.get("frames") or []
-    if not frames:
-        raise HTTPException(status_code=503, detail="尚无训练完成后的留出集评测轨迹")
-    index = round((hour + 24) / 48 * (len(frames) - 1))
-    frame = frames[max(0, min(len(frames) - 1, index))]
-    return JSONResponse({
-        "available": True,
-        "hour": hour,
-        "events": [],
-        "baseline": {"peak_kw": frame.get("baseline_kw"), "bill_cny": None},
-        "with_rl": {
-            "peak_kw": frame.get("net_load_kw"),
-            "bill_cny": None,
-            "co2_ton": (float(frame["carbon_kg"]) / 1000.0) if frame.get("carbon_kg") is not None else None,
-        },
-        "frame": frame,
-        "job_id": job_id,
-        "algorithm": evaluation.get("algorithm"),
-        "dataset_id": evaluation.get("dataset_id"),
-        "dataset_sha256": evaluation.get("dataset_sha256"),
-        "_source": "rl_heldout_evaluation_trajectory",
-    })
+    return JSONResponse(
+        await asyncio.to_thread(
+            story_evidence.summary,
+            hour=hour,
+            port=port,
+            replay=scenario,
+        )
+    )
 
 
 @app.post("/api/story/play", tags=["story"])
@@ -5315,10 +5735,7 @@ async def story_play(payload: dict | None = None) -> JSONResponse:
     请求体：{"mode": "demo"}（可扩展）
     返回结构（由 service 决定，例如）：{"ok": true, "mode": "demo", "ts": "..."}
     """
-    raise HTTPException(
-        status_code=501,
-        detail="服务端回放编排器未配置；可直接读取 /api/story/summary 的留出集轨迹帧。",
-    )
+    return JSONResponse(await asyncio.to_thread(story_evidence.play_ack))
 
 # =================================================
 # ⭐⭐ 合规报表（Compliance）接口组 —— 保持

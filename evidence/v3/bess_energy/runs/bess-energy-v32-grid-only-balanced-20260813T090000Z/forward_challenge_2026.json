@@ -1,0 +1,90 @@
+{
+  "schema": "port-dt-bess-grid-only-forward-v32.v1",
+  "run_id": "bess-energy-v32-grid-only-balanced-20260813T090000Z",
+  "generated_at": "2026-08-13T08:55:28.327728Z",
+  "status": "GRID_ONLY_PROFILE_FORWARD_PASS",
+  "dataset": {
+    "dataset_id": "public_cn_sha_forward_2026m05_v1",
+    "sha256": "616fe7cde24695f0d19118c64d1e5c534f9adee47a886b33b6003e7e372bb06a",
+    "rows": 3624,
+    "start_at": "2026-01-01T00:00:00Z",
+    "end_at": "2026-05-31T23:00:00Z",
+    "candidate_selection_allowed": false
+  },
+  "profile": {
+    "market_revenue_enabled": false,
+    "reserve_revenue_cny": 0.0,
+    "dr_revenue_cny": 0.0,
+    "production_authority": false
+  },
+  "windows": 21,
+  "window_hours": 168,
+  "per_seed": [
+    {
+      "seed": 71,
+      "validation_selection_gate_passed": true,
+      "forward_gate_passed": true,
+      "admitted": true,
+      "metrics": {
+        "cost_reduction_vs_no_bess_percent": 0.010870742867280157,
+        "carbon_reduction_vs_no_bess_percent": 0.008995219969750862,
+        "peak_reduction_vs_no_bess_percent": 0.49341538342319796,
+        "event_compliance_rate_percent": 100.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 1.982541115402065e-18,
+        "reserve_revenue_cny": 0.0,
+        "dr_revenue_cny": 0.0,
+        "annualized_scenario_savings_cny": 17191.018601641357,
+        "annualized_scenario_carbon_reduction_t": 10.405303617601914,
+        "claim_eligible": false
+      },
+      "model_path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_71/selected_model.zip",
+      "model_sha256": "ba413c9dcf544da77811b47a455ef75271f236f0ac4f916e7f30e54a302b11a8"
+    },
+    {
+      "seed": 171,
+      "validation_selection_gate_passed": true,
+      "forward_gate_passed": true,
+      "admitted": true,
+      "metrics": {
+        "cost_reduction_vs_no_bess_percent": 0.03564937382171412,
+        "carbon_reduction_vs_no_bess_percent": 0.005807188745956516,
+        "peak_reduction_vs_no_bess_percent": 0.2794172364147628,
+        "event_compliance_rate_percent": 100.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "reserve_revenue_cny": 0.0,
+        "dr_revenue_cny": 0.0,
+        "annualized_scenario_savings_cny": 56376.00447257086,
+        "annualized_scenario_carbon_reduction_t": 6.717519112328284,
+        "claim_eligible": false
+      },
+      "model_path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_171/selected_model.zip",
+      "model_sha256": "9f1c866ca9163313beefb7c979ea63e79aa2f0326d70798ffd7ae987d72b0d38"
+    },
+    {
+      "seed": 271,
+      "validation_selection_gate_passed": true,
+      "forward_gate_passed": true,
+      "admitted": true,
+      "metrics": {
+        "cost_reduction_vs_no_bess_percent": 0.014572598608360547,
+        "carbon_reduction_vs_no_bess_percent": 0.022461016155286437,
+        "peak_reduction_vs_no_bess_percent": 0.03784299392419178,
+        "event_compliance_rate_percent": 100.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 6.60847038467355e-19,
+        "reserve_revenue_cny": 0.0,
+        "dr_revenue_cny": 0.0,
+        "annualized_scenario_savings_cny": 23045.14206702585,
+        "annualized_scenario_carbon_reduction_t": 25.98198748241285,
+        "claim_eligible": false
+      },
+      "model_path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_271/selected_model.zip",
+      "model_sha256": "ee9e441c11533e3bee949ae0efebf3e72292f41a961955a7a3ef50db1947f6fd"
+    }
+  ],
+  "seed_pass_rate": 1.0,
+  "admitted_public_offline_profile": true,
+  "claim_boundary": "场内储能V3.2保守电网侧候选：禁用没有公开结算证据的备用与DR收入，只验证能量、电需量、碳、退化和安全。公开电价与碳强度仍为工程派生，结论不是上海港结算实绩。"
+}

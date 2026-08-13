@@ -133,8 +133,47 @@ class PortDataset:
         split_at = max(2, min(self.rows - 2, int(self.rows * (1.0 - ratio))))
         return slice(0, split_at), slice(split_at, self.rows)
 
-    def describe(self, test_ratio: float = 0.2) -> Dict[str, Any]:
-        train_slice, test_slice = self.split(test_ratio)
+    def split_three_way(
+        self,
+        test_ratio: float = 0.2,
+        validation_ratio: float = 0.1,
+    ) -> tuple[slice, slice, slice]:
+        """Return chronological train/validation/blind-test slices.
+
+        ``split`` remains unchanged so historical v1/v2 runs can be loaded and
+        reproduced with their original 80/20 protocol. New v3 runs opt into
+        this method explicitly through ``validation_ratio``.
+        """
+        test = min(0.4, max(0.1, float(test_ratio)))
+        validation = min(0.2, max(0.05, float(validation_ratio)))
+        if test + validation > 0.5:
+            validation = 0.5 - test
+        train_stop = max(2, int(self.rows * (1.0 - test - validation)))
+        validation_stop = max(train_stop + 2, int(self.rows * (1.0 - test)))
+        validation_stop = min(self.rows - 2, validation_stop)
+        if validation_stop <= train_stop:
+            raise ValueError("dataset is too small for chronological train/validation/test isolation")
+        return (
+            slice(0, train_stop),
+            slice(train_stop, validation_stop),
+            slice(validation_stop, self.rows),
+        )
+
+    def describe(
+        self,
+        test_ratio: float = 0.2,
+        validation_ratio: float = 0.0,
+    ) -> Dict[str, Any]:
+        if float(validation_ratio) > 0:
+            train_slice, validation_slice, test_slice = self.split_three_way(
+                test_ratio,
+                validation_ratio,
+            )
+            split_method = "chronological_train_validation_blind_test_no_shuffle"
+        else:
+            train_slice, test_slice = self.split(test_ratio)
+            validation_slice = slice(train_slice.stop, train_slice.stop)
+            split_method = "chronological_holdout_no_shuffle"
         return {
             **self.metadata,
             "dataset_id": self.dataset_id,
@@ -143,9 +182,11 @@ class PortDataset:
             "columns": list(CANONICAL_COLUMNS),
             "optional_factor_columns": list(FACTOR_COLUMNS),
             "train_rows": train_slice.stop - train_slice.start,
+            "validation_rows": validation_slice.stop - validation_slice.start,
             "test_rows": test_slice.stop - test_slice.start,
-            "split_method": "chronological_holdout_no_shuffle",
+            "split_method": split_method,
             "test_ratio": float(test_ratio),
+            "validation_ratio": float(validation_ratio),
             "quality": dataset_quality_report(self),
         }
 

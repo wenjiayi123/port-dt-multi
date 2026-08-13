@@ -35,6 +35,7 @@ class PortOperationsEnv(gym.Env):
         reward_weights: Optional[Dict[str, float]] = None,
         environment_version: str = "port_ops_v1",
         port_profile: Optional[Dict[str, Any]] = None,
+        projection_penalty_weight: float = 0.0,
         normalization_slice: Optional[slice] = None,
         training: bool = True,
         record_trace: bool = False,
@@ -49,7 +50,7 @@ class PortOperationsEnv(gym.Env):
             raise ValueError("dataset slice is too short")
         self.action_mode = action_mode
         self.environment_version = str(environment_version)
-        if self.environment_version not in {"port_ops_v1", "port_ops_v2"}:
+        if self.environment_version not in {"port_ops_v1", "port_ops_v2", "port_ops_v3"}:
             raise ValueError(f"unsupported environment_version: {self.environment_version}")
         self.port_profile = validate_profile(port_profile or DEFAULT_PROFILE)
         self.episode_steps = max(4, min(int(episode_steps), len(self.segment) - 1))
@@ -62,10 +63,17 @@ class PortOperationsEnv(gym.Env):
         base_weights.update({k: float(v) for k, v in (reward_weights or {}).items() if k in base_weights})
         total = sum(max(0.0, v) for v in base_weights.values()) or 1.0
         self.weights = {k: max(0.0, v) / total for k, v in base_weights.items()}
+        # Kept outside the normalized business-objective weights so historical
+        # runs (whose configs do not declare it) remain exactly reproducible.
+        # New runs may explicitly penalize raw actor actions that require the
+        # safety layer to make them feasible.
+        self.projection_penalty_weight = max(0.0, float(projection_penalty_weight))
         assets = self.port_profile["assets"]
         limits = self.port_profile["control_limits"]
         self.bess_capacity_kwh = float(assets["bess_capacity_kwh"])
         self.bess_power_kw = min(float(assets["bess_power_kw"]), self.demand_cap_kw * 0.50)
+        self.operational_load_fraction = float(assets.get("operational_load_fraction", 0.35))
+        self.allocation_load_fraction = float(assets.get("allocation_load_fraction", 0.08))
         self.soc_min = float(limits["soc_min"])
         self.soc_max = float(limits["soc_max"])
         self.service_min = float(limits["service_factor_min"])
@@ -151,7 +159,32 @@ class PortOperationsEnv(gym.Env):
         self._queue = max(0.0, float(self.segment[self._start, 2]) * 0.8)
         self._last_bess_kw = 0.0
         self.trace = []
-        self._totals = {"reward": 0.0, "energy_cost": 0.0, "carbon_kg": 0.0, "throughput_teu": 0.0, "delay": 0.0, "violations": 0.0, "peak_kw": 0.0}
+        self._totals = {
+            "reward": 0.0,
+            "energy_cost": 0.0,
+            "carbon_kg": 0.0,
+            "throughput_teu": 0.0,
+            "delay": 0.0,
+            "violations": 0.0,
+            "peak_kw": 0.0,
+            "grid_energy_kwh": 0.0,
+            "bess_throughput_kwh": 0.0,
+            "flex_shift_energy_kwh": 0.0,
+            "work_demand_teu": self._queue,
+            "queue_peak_teu": self._queue,
+            "queue_end_teu": self._queue,
+            "weather_blocked_steps": 0.0,
+            "projection_count": 0.0,
+            "projection_correction_kw": 0.0,
+            "projection_severity": 0.0,
+            "projection_grid_cap_count": 0.0,
+            "projection_soc_bound_count": 0.0,
+            "projection_terminal_reachability_count": 0.0,
+            "projection_power_bound_count": 0.0,
+            "resource_factor_sum": 0.0,
+            "service_factor_sum": 0.0,
+            "terminal_soc_error": 0.0,
+        }
         return self._observation(), {"dataset_index": self._start, "training": self.training}
 
     def _row(self) -> np.ndarray:
@@ -210,7 +243,7 @@ class PortOperationsEnv(gym.Env):
                 *normalized.tolist(),
                 *(
                     self._factor_observation(factor_values, factor_mask)
-                    if self.environment_version == "port_ops_v2"
+                    if self.environment_version in {"port_ops_v2", "port_ops_v3"}
                     else []
                 ),
                 2.0 * soc - 1.0,
@@ -228,7 +261,7 @@ class PortOperationsEnv(gym.Env):
             "service_factor": round(float(control[1]), 6),
             "flexible_load_command": round(float(control[2]), 6),
         }
-        if self.environment_version == "port_ops_v2":
+        if self.environment_version in {"port_ops_v2", "port_ops_v3"}:
             result.update(
                 berth_priority=round(float(control[3]), 6),
                 yard_flow_command=round(float(control[4]), 6),
@@ -248,6 +281,7 @@ class PortOperationsEnv(gym.Env):
         """Apply the same software constraints used by ``step`` without mutation."""
         control = self._decode_action(action)
         requested_bess_kw = float(control[0]) * self.bess_power_kw
+        projection_reasons: list[str] = []
         # BESS is dispatched at hourly resolution and may traverse its rated
         # power range within a step. The former 35%/hour limit was a synthetic
         # bottleneck rather than a sourced equipment constraint.
@@ -255,23 +289,36 @@ class PortOperationsEnv(gym.Env):
         upper_power = self.bess_power_kw
         if max_grid_charge_kw is not None:
             upper_power = min(upper_power, float(max_grid_charge_kw))
-        bess_kw = float(
+        power_limited_kw = float(
             np.clip(
                 requested_bess_kw,
                 max(-self.bess_power_kw, last_bess_kw - ramp),
                 min(upper_power, last_bess_kw + ramp),
             )
         )
+        if abs(power_limited_kw - requested_bess_kw) > 1e-6:
+            if max_grid_charge_kw is not None and requested_bess_kw > upper_power + 1e-6:
+                projection_reasons.append("grid_charge_cap")
+            else:
+                projection_reasons.append("power_or_ramp_bound")
+        bess_kw = power_limited_kw
         projected_soc = float(soc)
         if bess_kw >= 0:
             max_charge = (self.soc_max - projected_soc) * self.bess_capacity_kwh / (0.96 * self.step_hours)
-            bess_kw = min(bess_kw, max(0.0, max_charge))
+            soc_limited_kw = min(bess_kw, max(0.0, max_charge))
+            if abs(soc_limited_kw - bess_kw) > 1e-6:
+                projection_reasons.append("soc_upper_bound")
+            bess_kw = soc_limited_kw
             projected_soc += bess_kw * self.step_hours * 0.96 / self.bess_capacity_kwh
         else:
             max_discharge = (projected_soc - self.soc_min) * self.bess_capacity_kwh * 0.96 / self.step_hours
-            bess_kw = -min(abs(bess_kw), max(0.0, max_discharge))
+            soc_limited_kw = -min(abs(bess_kw), max(0.0, max_discharge))
+            if abs(soc_limited_kw - bess_kw) > 1e-6:
+                projection_reasons.append("soc_lower_bound")
+            bess_kw = soc_limited_kw
             projected_soc -= abs(bess_kw) * self.step_hours / (0.96 * self.bess_capacity_kwh)
         if initial_soc is not None and remaining_steps is not None:
+            pre_terminal_kw = bess_kw
             remaining_fraction = max(0.0, min(1.0, remaining_steps / self.episode_steps))
             reachable_low = initial_soc - (initial_soc - self.soc_min) * remaining_fraction
             reachable_high = initial_soc + (self.soc_max - initial_soc) * remaining_fraction
@@ -305,15 +352,22 @@ class PortOperationsEnv(gym.Env):
                     * self.step_hours
                     / (0.96 * self.bess_capacity_kwh)
                 )
+            if abs(bess_kw - pre_terminal_kw) > 1e-6:
+                projection_reasons.append("terminal_soc_reachability")
+        correction_kw = abs(float(bess_kw) - requested_bess_kw)
+        projection_reasons = list(dict.fromkeys(projection_reasons))
         result = {
             "bess_kw": round(float(bess_kw), 6),
             "service_factor": round(float(control[1]), 6),
             "flexible_load_command": round(float(control[2]), 6),
             "projected_soc": round(float(projected_soc), 8),
-            "projection_applied": abs(bess_kw - requested_bess_kw) > 1e-6,
+            "projection_applied": correction_kw > 1e-6,
             "requested_bess_kw": round(float(requested_bess_kw), 6),
+            "projection_correction_kw": round(correction_kw, 6),
+            "projection_severity": round(correction_kw / max(1.0, self.bess_power_kw), 8),
+            "projection_reasons": projection_reasons,
         }
-        if self.environment_version == "port_ops_v2":
+        if self.environment_version in {"port_ops_v2", "port_ops_v3"}:
             result.update(
                 berth_priority=round(float(control[3]), 6),
                 yard_flow_command=round(float(control[4]), 6),
@@ -342,7 +396,7 @@ class PortOperationsEnv(gym.Env):
                         self.segment_factor_values[idx],
                         self.segment_factor_availability[idx],
                     )
-                    if self.environment_version == "port_ops_v2"
+                    if self.environment_version in {"port_ops_v2", "port_ops_v3"}
                     else []
                 ),
                 2.0 * self._soc - 1.0,
@@ -357,16 +411,39 @@ class PortOperationsEnv(gym.Env):
         row = self._row()
         control = self._decode_action(action)
         flex_command = float(control[2])
-        berth_priority = float(control[3]) if self.environment_version == "port_ops_v2" else 0.0
-        yard_flow = float(control[4]) if self.environment_version == "port_ops_v2" else 0.0
+        berth_priority = float(control[3]) if self.environment_version in {"port_ops_v2", "port_ops_v3"} else 0.0
+        yard_flow = float(control[4]) if self.environment_version in {"port_ops_v2", "port_ops_v3"} else 0.0
         flex_kw = flex_command * min(250.0, 0.08 * max(row[0], 1.0))
+        service_load_kw = 0.0
+        allocation_load_kw = 0.0
+        if self.environment_version == "port_ops_v3":
+            service_delta = float(control[1]) - 1.0
+            service_load_kw = (
+                float(row[0])
+                * self.operational_load_fraction
+                * service_delta
+            )
+            berth_ratio = berth_priority / self.berth_priority_limit if self.berth_priority_limit else 0.0
+            yard_ratio = yard_flow / self.yard_flow_limit if self.yard_flow_limit else 0.0
+            allocation_load_kw = (
+                float(row[0])
+                * self.allocation_load_fraction
+                * 0.5
+                * (berth_ratio + yard_ratio)
+            )
         projected = self.project_control(
             action,
             soc=self._soc,
             last_bess_kw=self._last_bess_kw,
             initial_soc=self._initial_soc,
             remaining_steps=self.episode_steps - self._local_step - 1,
-            max_grid_charge_kw=self.demand_cap_kw - float(row[0]) - flex_kw,
+            max_grid_charge_kw=(
+                self.demand_cap_kw
+                - float(row[0])
+                - flex_kw
+                - service_load_kw
+                - allocation_load_kw
+            ),
         )
         bess_kw = float(projected["bess_kw"])
         service_factor = float(projected["service_factor"])
@@ -421,7 +498,10 @@ class PortOperationsEnv(gym.Env):
         incoming_work = max(0.0, row[1] + 2.0 * row[2])
         served = min(self._queue + incoming_work, service_capacity)
         self._queue = max(0.0, self._queue + incoming_work - served)
-        net_kw = max(0.0, float(row[0]) + bess_kw + flex_kw)
+        net_kw = max(
+            0.0,
+            float(row[0]) + service_load_kw + allocation_load_kw + bess_kw + flex_kw,
+        )
         price = max(0.0, float(row[4]))
         carbon_factor = max(0.0, float(row[5]))
         energy_cost = net_kw * self.step_hours * price
@@ -449,8 +529,13 @@ class PortOperationsEnv(gym.Env):
             "peak": exceed_kw / self.demand_cap_kw,
             "safety": safety_penalty,
             "delay": delay_index,
+            "projection": float(projected["projection_severity"]),
         }
-        reward = -sum(self.weights[name] * value for name, value in components.items()) - degradation / 1000.0
+        weighted_business = sum(
+            self.weights[name] * components[name] for name in self.weights
+        )
+        reward = -weighted_business - degradation / 1000.0
+        reward -= self.projection_penalty_weight * components["projection"]
         violation = bool(exceed_kw > 0 or safety_penalty > 0)
         self._totals["reward"] += reward
         self._totals["energy_cost"] += energy_cost
@@ -459,11 +544,37 @@ class PortOperationsEnv(gym.Env):
         self._totals["delay"] += delay_index
         self._totals["violations"] += float(violation)
         self._totals["peak_kw"] = max(self._totals["peak_kw"], net_kw)
+        self._totals["grid_energy_kwh"] += net_kw * self.step_hours
+        self._totals["bess_throughput_kwh"] += abs(bess_kw) * self.step_hours
+        self._totals["flex_shift_energy_kwh"] += abs(flex_kw) * self.step_hours
+        self._totals["work_demand_teu"] += incoming_work
+        self._totals["queue_peak_teu"] = max(self._totals["queue_peak_teu"], self._queue)
+        self._totals["queue_end_teu"] = self._queue
+        self._totals["weather_blocked_steps"] += float(weather_blocked)
+        self._totals["projection_count"] += float(projected["projection_applied"])
+        self._totals["projection_correction_kw"] += float(projected["projection_correction_kw"])
+        self._totals["projection_severity"] += float(projected["projection_severity"])
+        reasons = set(projected["projection_reasons"])
+        self._totals["projection_grid_cap_count"] += float("grid_charge_cap" in reasons)
+        self._totals["projection_soc_bound_count"] += float(
+            bool({"soc_upper_bound", "soc_lower_bound"} & reasons)
+        )
+        self._totals["projection_terminal_reachability_count"] += float(
+            "terminal_soc_reachability" in reasons
+        )
+        self._totals["projection_power_bound_count"] += float(
+            "power_or_ramp_bound" in reasons
+        )
+        self._totals["resource_factor_sum"] += resource_factor
+        self._totals["service_factor_sum"] += service_factor
+        self._totals["terminal_soc_error"] += terminal_soc_error
         timestamp = self.segment_timestamps[self._start + self._local_step]
         info = {
             "timestamp": timestamp,
             "baseline_kw": float(row[0]),
             "net_load_kw": net_kw,
+            "service_load_delta_kw": service_load_kw,
+            "allocation_load_delta_kw": allocation_load_kw,
             "bess_kw": bess_kw,
             "soc": self._soc,
             "queue": self._queue,
@@ -474,6 +585,9 @@ class PortOperationsEnv(gym.Env):
             "guardrail_violation": violation,
             "terminal_soc_error": terminal_soc_error,
             "action_projection_applied": bool(projected["projection_applied"]),
+            "action_projection_correction_kw": float(projected["projection_correction_kw"]),
+            "action_projection_severity": float(projected["projection_severity"]),
+            "action_projection_reasons": list(projected["projection_reasons"]),
             "environment_version": self.environment_version,
             "berth_priority": berth_priority,
             "yard_flow_command": yard_flow,
@@ -504,7 +618,31 @@ class PortOperationsEnv(gym.Env):
 
     @property
     def totals(self) -> Dict[str, float]:
-        return dict(self._totals)
+        row = dict(self._totals)
+        steps = max(1, self._local_step)
+        throughput = max(0.0, row["throughput_teu"])
+        row.update(
+            cost_per_teu=row["energy_cost"] / max(1.0, throughput),
+            carbon_kg_per_teu=row["carbon_kg"] / max(1.0, throughput),
+            energy_kwh_per_teu=row["grid_energy_kwh"] / max(1.0, throughput),
+            service_completion_ratio=throughput / max(1.0, row["work_demand_teu"]),
+            bess_equivalent_full_cycles=(
+                row["bess_throughput_kwh"] / max(1.0, 2.0 * self.bess_capacity_kwh)
+            ),
+            weather_block_rate=row["weather_blocked_steps"] / steps,
+            action_projection_rate=row["projection_count"] / steps,
+            action_projection_correction_kw_mean=row["projection_correction_kw"] / steps,
+            action_projection_severity_mean=row["projection_severity"] / steps,
+            action_projection_grid_cap_rate=row["projection_grid_cap_count"] / steps,
+            action_projection_soc_bound_rate=row["projection_soc_bound_count"] / steps,
+            action_projection_terminal_reachability_rate=(
+                row["projection_terminal_reachability_count"] / steps
+            ),
+            action_projection_power_bound_rate=row["projection_power_bound_count"] / steps,
+            operational_resource_factor_mean=row["resource_factor_sum"] / steps,
+            service_factor_mean=row["service_factor_sum"] / steps,
+        )
+        return row
 
 
 def dataset_quality_cadence(dataset: PortDataset) -> float:

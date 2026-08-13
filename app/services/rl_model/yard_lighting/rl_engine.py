@@ -109,6 +109,14 @@ def _num_from_row(row: Dict[str,Any], cands: List[str], default: float=0.0) -> f
         return float(v)
     except: return default
 
+def _as_bool(value: Any) -> bool:
+    """Parse CSV booleans without treating non-empty ``"False"``/``"0"`` as true."""
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    return str(value or "").strip().lower() in {"1", "true", "yes", "y", "on"}
+
 # -------------------- ingest：从 /mnt/data 复制到 data/ --------------------
 REQUIRED_FILES = [
     "zones_master.csv","lighting_telemetry.csv","activity_forecast.csv",
@@ -315,8 +323,8 @@ class LightingDataset(torch.utils.data.Dataset):
                     "price": pr, "ef": eff, "activity": act,
                     "lux": lux0, "power_kW": p0, "dimming": d0,
                     "L_min": float(meta.get("L_min",20.0)),
-                    "critical": bool(meta.get("critical", False)),
-                    "complaint_zone": bool(meta.get("complaint_zone", False))
+                    "critical": _as_bool(meta.get("critical", False)),
+                    "complaint_zone": _as_bool(meta.get("complaint_zone", False))
                 })
             per_zone[zid]=seq
         return per_zone

@@ -39,6 +39,7 @@ import os
 import base64
 import time
 import datetime as dt
+import uuid
 
 # ========= 工具 =========
 
@@ -100,7 +101,15 @@ class ObjectStorage:
         if self._mode == "file":
             full = self._file_root / path
             full.parent.mkdir(parents=True, exist_ok=True)
-            full.write_bytes(_ensure_bytes(content))
+            temporary = full.with_name(f".{full.name}.tmp-{uuid.uuid4().hex}")
+            with temporary.open("wb") as stream:
+                stream.write(_ensure_bytes(content))
+                stream.flush()
+                os.fsync(stream.fileno())
+            # Audit/model objects may include operational context.  Local mode
+            # therefore uses owner-only permissions and an atomic replace.
+            os.chmod(temporary, 0o600)
+            os.replace(temporary, full)
             return f"file://{full.as_posix()}"
         else:
             # memory

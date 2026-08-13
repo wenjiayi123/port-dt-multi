@@ -135,25 +135,28 @@ class AlertsService:
         return alerts
 
     # -------- 3) 碳配额：今日估算排放 > 配额 --------
-    def _scan_carbon_quota(self, teu: int, quota_kgco2e: float, limit_assets: int) -> List[AlertItem]:
+    def _scan_carbon_quota(self, teu: int, quota_kgco2e: float, limit_assets: int) -> Tuple[List[AlertItem], Optional[float]]:
         try:
             energy = self.energy.build_today_summary(teu=teu, limit_assets=limit_assets)
-            kg_per_teu = float(energy.get("intensity", {}).get("kgCO2e_per_TEU", 0.0))
+            raw_intensity = energy.get("intensity", {}).get("kgCO2e_per_TEU")
+            if raw_intensity is None:
+                return [], None
+            kg_per_teu = float(raw_intensity)
             total_kgco2e = kg_per_teu * max(1, int(teu))
         except Exception:
-            total_kgco2e = 0.0
+            return [], None
 
         if total_kgco2e > quota_kgco2e:
             ratio = max(1.0, total_kgco2e / max(1.0, quota_kgco2e))
             score = round(min(1.0, (ratio - 1.0) / 1.0), 2)
             return [AlertItem(
                 type="carbon_quota",
-                title="碳配额超标风险",
-                detail=f"当日估算排放 {total_kgco2e:.1f} kgCO₂e 超过配额 {quota_kgco2e:.1f} kgCO₂e。",
+                title="工程碳阈值超标风险",
+                detail=f"公开校准模拟器墙钟日估算排放 {total_kgco2e:.1f} kgCO₂e 超过工程阈值 {quota_kgco2e:.1f} kgCO₂e；现场配额待接入港口。",
                 score=score,
                 meta={"total_kgco2e": total_kgco2e, "quota_kgco2e": quota_kgco2e}
-            )]
-        return []
+            )], total_kgco2e
+        return [], total_kgco2e
 
     # -------- 对外：一次性扫描三类预警 --------
     def scan(
@@ -190,9 +193,8 @@ class AlertsService:
         peak_eta_min = peak_alerts[0].meta.get("eta_min") if will_peak else None
 
         # 3) 碳配额
-        carbon_alerts = self._scan_carbon_quota(teu=teu, quota_kgco2e=quota_kgco2e, limit_assets=limit)
+        carbon_alerts, total_kgco2e_est = self._scan_carbon_quota(teu=teu, quota_kgco2e=quota_kgco2e, limit_assets=limit)
         quota_over = len(carbon_alerts) > 0
-        total_kgco2e_est = carbon_alerts[0].meta.get("total_kgco2e") if quota_over else 0.0
 
         # 汇总
         all_alerts = abnormal_alerts + peak_alerts + carbon_alerts
@@ -210,7 +212,9 @@ class AlertsService:
                 "will_peak": will_peak,
                 "peak_eta_min": peak_eta_min,
                 "quota_over": quota_over,
-                "total_kgco2e_est": round(float(total_kgco2e_est or 0.0), 3),
+                "carbon_assessment_available": total_kgco2e_est is not None,
+                "total_kgco2e_est": round(float(total_kgco2e_est), 3) if total_kgco2e_est is not None else None,
+                "production_alarm_authority": False,
             },
             "alerts": [
                 {

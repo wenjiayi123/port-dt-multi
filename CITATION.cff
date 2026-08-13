@@ -4,7 +4,7 @@ title: Port DT Multi
 type: software
 authors:
   - name: Port DT Multi contributors
-version: 3.0.1
-date-released: 2026-07-21
+version: 3.2.0
+date-released: 2026-08-13
 license: MIT
 abstract: Auditable open-source research and integration platform for port digital twins, reinforcement learning and model predictive control.

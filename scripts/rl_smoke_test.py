@@ -1,4 +1,4 @@
-"""Run all six RL algorithms and the MPC baseline on a disposable dataset."""
+"""Run every registered RL/control/rule implementation on a disposable dataset."""
 
 from __future__ import annotations
 
@@ -82,7 +82,7 @@ def main() -> None:
                 raise RuntimeError(f"{algorithm} failed: {status}")
             if status.get("rendering", {}).get("render_calls") != 0:
                 raise AssertionError(f"{algorithm} rendered during training")
-            if algorithm != "mpc" and manager.history(started["job_id"])["count"] < 1:
+            if ALGORITHMS[algorithm].trainable and manager.history(started["job_id"])["count"] < 1:
                 raise AssertionError(f"{algorithm} did not emit optimizer history")
             evaluation = manager.evaluate(started["job_id"], episodes=1)
             if evaluation["split"] != "chronological_test_holdout_only":

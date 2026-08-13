@@ -2,6 +2,8 @@ from __future__ import annotations
 
 import json
 import os
+import csv
+import hashlib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -30,6 +32,9 @@ DATA_DIR = BASE_DIR / "data"
 SNAPSHOT_PATH = DATA_DIR / "summary_snapshot.json"
 CATALOG_PATH = DATA_DIR / "ports_catalog.json"
 FACTOR_PATH = DATA_DIR / "factors.json"
+ROOT_DIR = Path(__file__).resolve().parents[3]
+V3_DATASET_PATH = ROOT_DIR / "data/rl/datasets/public_cn_sha_hourly_v3.csv"
+V3_IMPACT_PATH = ROOT_DIR / "evidence/v3/shanghai_public_business_impact_v3.json"
 
 
 # -------------------------
@@ -69,18 +74,105 @@ def _unavailable_summary(reason: str) -> Dict[str, Any]:
     }
 
 
+def _load_hash_verified_json(path: Path) -> Dict[str, Any]:
+    sidecar = path.with_suffix(".sha256")
+    if not path.is_file() or not sidecar.is_file():
+        return {}
+    try:
+        expected = sidecar.read_text(encoding="utf-8").split()[0]
+        observed = hashlib.sha256(path.read_bytes()).hexdigest()
+        payload = _read_json(path)
+    except Exception:
+        return {}
+    return payload if expected == observed and isinstance(payload, dict) else {}
+
+
+def _v3_public_esg_summary() -> Dict[str, Any]:
+    """Return carbon evidence while keeping audit-only ESG fields unavailable."""
+    impact = _load_hash_verified_json(V3_IMPACT_PATH)
+    dataset = impact.get("dataset") or {}
+    learned = impact.get("learned_efficiency_value") or {}
+    if not impact or not V3_DATASET_PATH.is_file():
+        return {}
+    observed_dataset_hash = hashlib.sha256(V3_DATASET_PATH.read_bytes()).hexdigest()
+    if observed_dataset_hash != dataset.get("sha256"):
+        return {}
+    try:
+        with V3_DATASET_PATH.open(encoding="utf-8", newline="") as stream:
+            rows = list(csv.DictReader(stream))[-8760:]
+        baseline_electricity_kwh = sum(float(row["base_load_kw"]) for row in rows)
+        baseline_carbon_kg = sum(
+            float(row["base_load_kw"]) * float(row["carbon_kg_per_kwh"])
+            for row in rows
+        )
+        throughput_teu = sum(float(row["throughput_teu"]) for row in rows)
+    except Exception:
+        return {}
+    carbon_improvement = learned.get("carbon_per_teu_relative_improvement") or {}
+    source_rows = dataset.get("source_observation_counts") or {}
+    return {
+        "available": True,
+        "audit_ready": False,
+        "evidence_mode": "public_data_offline_engineering",
+        "period_label": "2025 公开标定工程序列",
+        "port_name": "上海港公开目标域（非现场碳盘查）",
+        "score_esg": None,
+        "score_e": None,
+        "score_s": None,
+        "score_g": None,
+        "co2_12m_ton": baseline_carbon_kg / 1000.0,
+        "baseline_electricity_mwh": baseline_electricity_kwh / 1000.0,
+        "baseline_throughput_teu": throughput_teu,
+        "baseline_average_carbon_kg_per_kwh": (
+            baseline_carbon_kg / baseline_electricity_kwh
+            if baseline_electricity_kwh
+            else None
+        ),
+        "co2_vs_target_pct": None,
+        "ci_kg_per_teu": baseline_carbon_kg / throughput_teu if throughput_teu else None,
+        "renewable_share_pct": None,
+        "auto_compliance_pct": None,
+        "incidents_12m": None,
+        "audits_on_time_pct": None,
+        "policy_avoided_co2_ton": float(learned.get("annualized_avoided_carbon_kg") or 0) / 1000.0,
+        "policy_unit_carbon_improvement_pct": float(carbon_improvement.get("mean") or 0) * 100.0,
+        "policy_unit_carbon_improvement_ci_pct": [
+            float(carbon_improvement.get("ci_low") or 0) * 100.0,
+            float(carbon_improvement.get("ci_high") or 0) * 100.0,
+        ],
+        "public_evidence": {
+            "dataset_rows": int(dataset.get("rows") or 0),
+            "official_reporting_periods": int(source_rows.get("official_port_reporting_periods") or 0),
+            "public_reanalysis_hours": int(source_rows.get("aligned_public_reanalysis_hours") or 0),
+            "dataset_sha256": observed_dataset_hash,
+            "impact_sha256": hashlib.sha256(V3_IMPACT_PATH.read_bytes()).hexdigest(),
+        },
+        "site_fields_pending": [
+            "经审计 Scope 1/2 台账",
+            "结算电量与岸电/可再生能源分项",
+            "组织与运营边界",
+            "EHS 事件台账",
+            "监管申报日历与审计回执",
+        ],
+        "comment": "基线碳排由官方吞吐锚点、公开再分析和声明的工程负荷/排放因子派生；策略减碳为 SAC 三种子离线盲测的等量吞吐机械年化，不是集团碳盘查或经审计减排。",
+        "_source": "esg.v3_public_offline_evidence",
+        "data_class": "public_calibrated_engineering_carbon_not_audited_scope12",
+    }
+
+
 def get_summary(di: Any) -> Dict[str, Any]:
     """
     ESG / 合规驾驶舱汇总入口（被 app/server.py 的 /api/esg/summary 调用）。
     """
     snap = _load_snapshot()
+    public_summary = _v3_public_esg_summary()
     if not snap:
-        return _unavailable_summary("未找到 ESG 快照；系统未生成替代指标。")
+        return public_summary or _unavailable_summary("未找到 ESG 快照；系统未生成替代指标。")
 
     source = str(snap.get("_source", "")).lower()
     looks_like_demo = "demo" in source or "演示" in str(snap.get("period_label", ""))
     if looks_like_demo and not _demo_esg_allowed():
-        return _unavailable_summary(
+        return public_summary or _unavailable_summary(
             "检测到仓库内旧演示快照，已默认屏蔽。"
             "请接入经审计的能源、吞吐量、排放因子与事件数据。"
         )
@@ -181,7 +273,14 @@ class MonthlyItem:
 def get_ports_catalog() -> Dict[str, Any]:
     data = _read_json(CATALOG_PATH)
     if data:
-        return {"ports": data, "_source": "catalog.file"}
+        return {
+            "ports": [],
+            "templates": data,
+            "available": False,
+            "reason": "仓库内仅有集成模板，没有经审计的港口碳台账目录。",
+            "required_adapter": "audited_port_carbon_ledger_catalog",
+            "_source": "catalog.integration_templates_not_audited_ports",
+        }
 
     return {"ports": [], "available": False, "_source": "catalog.unavailable"}
 

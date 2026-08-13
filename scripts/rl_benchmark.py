@@ -1,12 +1,17 @@
-"""Run persisted multi-seed holdout benchmarks for the seven controllers."""
+"""Run persisted multi-seed blind-holdout benchmarks for registered controllers."""
 
 from __future__ import annotations
 
 import argparse
 import json
 import time
+from pathlib import Path
 
 from app.services.rl_training.trainer import ALGORITHMS, TRAINING_MANAGER
+
+
+ROOT = Path(__file__).resolve().parents[1]
+BUSINESS_PROFILES_PATH = ROOT / "config/rl_business_profiles_v3.json"
 
 
 def wait(job_id: str, timeout_seconds: int) -> dict:
@@ -28,7 +33,19 @@ def main() -> None:
     parser.add_argument("--episodes", type=int, default=10)
     parser.add_argument("--episode-hours", type=float, default=48.0)
     parser.add_argument("--episode-steps", type=int, default=0, help="explicit override; 0 derives steps from dataset cadence")
+    parser.add_argument("--validation-ratio", type=float, default=None, help="0 preserves historical 80/20; v3 datasets default to their declared three-way split")
     parser.add_argument("--timeout", type=int, default=7200)
+    parser.add_argument(
+        "--environment-version",
+        choices=("port_ops_v1", "port_ops_v2", "port_ops_v3"),
+        default="",
+        help="explicit environment contract; omitted uses the dataset declaration",
+    )
+    parser.add_argument(
+        "--business-profile",
+        default="",
+        help="optional profile id from config/rl_business_profiles_v3.json",
+    )
     args = parser.parse_args()
     algorithms = [item.strip().lower() for item in args.algorithms.split(",") if item.strip()]
     unknown = [item for item in algorithms if item not in ALGORITHMS]
@@ -44,6 +61,12 @@ def main() -> None:
         parser.error("--episodes must be at least 5")
     if args.steps < 64:
         parser.error("--steps must be at least 64")
+    business_profile = None
+    if args.business_profile:
+        payload = json.loads(BUSINESS_PROFILES_PATH.read_text(encoding="utf-8"))
+        business_profile = (payload.get("profiles") or {}).get(args.business_profile)
+        if not isinstance(business_profile, dict):
+            parser.error(f"unknown business profile: {args.business_profile}")
 
     completed = []
     for algorithm in algorithms:
@@ -57,8 +80,15 @@ def main() -> None:
                 "seed": seed,
                 "test_ratio": 0.2,
             }
+            if args.validation_ratio is not None:
+                config["validation_ratio"] = args.validation_ratio
             if args.episode_steps > 0:
                 config["episode_steps"] = args.episode_steps
+            if args.environment_version:
+                config["environment_version"] = args.environment_version
+            if business_profile is not None:
+                config["business_profile_id"] = args.business_profile
+                config["reward_weights"] = business_profile["reward_weights"]
             started = TRAINING_MANAGER.start(config)
             status = wait(started["job_id"], args.timeout)
             if status.get("status") != "COMPLETED":

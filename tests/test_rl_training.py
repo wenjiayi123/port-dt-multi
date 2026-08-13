@@ -38,10 +38,17 @@ def rows(count: int = 96):
 
 
 class DatasetTests(unittest.TestCase):
-    def test_seven_controller_contract(self):
-        self.assertEqual(list(ALGORITHMS), ["sac", "ppo", "td3", "dqn", "a2c", "tqc", "mpc"])
-        self.assertEqual(sum(spec.trainable for spec in ALGORITHMS.values()), 6)
+    def test_v3_controller_contract(self):
+        self.assertEqual(
+            list(ALGORITHMS),
+            [
+                "sac", "ppo", "td3", "dqn", "a2c", "tqc", "qrdqn",
+                "trpo", "recurrent_ppo", "ars", "mpc", "fcfs",
+            ],
+        )
+        self.assertEqual(sum(spec.trainable for spec in ALGORITHMS.values()), 10)
         self.assertEqual(ALGORITHMS["mpc"].family, "Control")
+        self.assertEqual(ALGORITHMS["fcfs"].family, "Rule")
 
     def test_chronological_split_and_fingerprint(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -52,6 +59,13 @@ class DatasetTests(unittest.TestCase):
             self.assertEqual(train.stop, test.start)
             self.assertLess(datetime.fromisoformat(dataset.timestamps[train.stop - 1].replace("Z", "+00:00")), datetime.fromisoformat(dataset.timestamps[test.start].replace("Z", "+00:00")))
             self.assertEqual(len(dataset.fingerprint), 64)
+
+    def test_v3_three_way_split_keeps_blind_test_isolated(self):
+        dataset = load_port_dataset("public_cn_sha_hourly_v3")
+        train, validation, test = dataset.split_three_way(0.2, 0.1)
+        self.assertEqual((train.stop, validation.stop, test.stop), (12280, 14035, 17544))
+        self.assertEqual(validation.start, train.stop)
+        self.assertEqual(test.start, validation.stop)
 
     def test_import_rejects_missing_canonical_mapping(self):
         with tempfile.TemporaryDirectory() as tmp:

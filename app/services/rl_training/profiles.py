@@ -25,6 +25,8 @@ DEFAULT_PROFILE: Dict[str, Any] = {
         "bess_capacity_kwh": 2500.0,
         "bess_power_kw": 900.0,
         "demand_cap_kw": 3500.0,
+        "operational_load_fraction": 0.35,
+        "allocation_load_fraction": 0.08,
     },
     "control_limits": {
         "soc_min": 0.12,
@@ -77,8 +79,8 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
     merged = _merge(DEFAULT_PROFILE, profile)
     profile_id = validate_identifier(merged.get("profile_id"), field="profile_id")
     merged["profile_id"] = profile_id
-    if merged.get("environment_version") not in {"port_ops_v1", "port_ops_v2"}:
-        raise ValueError("environment_version must be port_ops_v1 or port_ops_v2")
+    if merged.get("environment_version") not in {"port_ops_v1", "port_ops_v2", "port_ops_v3"}:
+        raise ValueError("environment_version must be port_ops_v1, port_ops_v2 or port_ops_v3")
     if merged.get("control_authority") != "recommendation_only":
         raise ValueError("open-source port profiles must keep control_authority=recommendation_only")
     port_code = str(merged.get("port_code") or "").strip().upper()
@@ -101,6 +103,11 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         value = float(assets[name])
         if value <= 0:
             raise ValueError(f"profile assets.{name} must be positive")
+        assets[name] = value
+    for name in ("operational_load_fraction", "allocation_load_fraction"):
+        value = float(assets[name])
+        if not 0 <= value <= 1:
+            raise ValueError(f"profile assets.{name} must be in [0, 1]")
         assets[name] = value
     limits = merged["control_limits"]
     numeric_limits = (
