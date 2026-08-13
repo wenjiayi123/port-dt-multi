@@ -17,6 +17,10 @@
   </g>
   <ellipse cx="1260" cy="180" rx="250" ry="180" fill="#0ea5e9" opacity=".12" filter="url(#glow)"/>
   <ellipse cx="1310" cy="380" rx="260" ry="120" fill="#10b981" opacity=".1" filter="url(#glow)"/>
+  <g font-family="ui-sans-serif,system-ui">
+    <rect x="1190" y="38" width="320" height="48" rx="24" fill="#3d2b0b" stroke="#f59e0b" stroke-width="2"/>
+    <text x="1217" y="69" fill="#fde68a" font-size="19" font-weight="800">独立研发者 · 温家懿 / Wen Jiayi</text>
+  </g>
   <g transform="translate(90 105)">
     <rect width="84" height="84" rx="22" fill="#102d4b" stroke="#38bdf8" stroke-width="2"/>
     <path d="M18 59h48M24 46h36l-6 13H30zM39 17h6v29h-6zM28 25h28v7H28z" fill="none" stroke="url(#cyan)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>

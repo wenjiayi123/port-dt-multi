@@ -5,6 +5,8 @@
   <em>Port &amp; Maritime Digital Twin AI Decision &amp; Dispatch System</em>
 </p>
 
+<h3 align="center">独立研发者 / Independent Developer：温家懿 · Wen Jiayi</h3>
+
 <p align="center">
   <img src="docs/assets/hero.svg" alt="港航数字孪生 AI 决策调度双端系统" width="100%" />
 </p>
@@ -38,10 +40,6 @@ It is an executable engineering platform for coordinated port production, energy
 | 落地边界 / Deployment boundary | 开源数据/校准回放用于可复现证据；接港时按数据契约替换 TOS、PLC、BMS/BA 等适配器，未过门禁时一律失败关闭 |
 
 > **一句话闭环：**公开数据/现场数据 → 数字孪生 → 预测与 RL/MPC 策略 → 软件安全包络 → 人工审批 → 双端任务执行/回放 → 审计证据。
-
-<p align="center">
-  <strong>研发作者：</strong>温家懿 · <strong>Research Author:</strong> Wen Jiayi
-</p>
 
 <p align="center">
   <a href="#项目介绍--project-introduction">项目介绍 / Introduction</a> ·
