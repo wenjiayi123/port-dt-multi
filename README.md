@@ -287,8 +287,8 @@ Open the new evidence-driven decision center after startup: <http://127.0.0.1:80
 | Time isolation | 70% train / 10% validation / 20% untouched blind test |
 | Shanghai target package | 17,544 hours + 22 official reporting anchors; SHA-256 pinned |
 | Advantage claim | Version-pinned five-metric comparison; validation selects the algorithm, then 3 seeds × ≥10,000 steps × 10 untouched blind windows report the result |
-| Selected SAC blind-test result | Weighted advantage **+3.98%** (95% CI **+2.71% to +4.91%**); throughput **+9.63%** and delay improvement **+19.30%** versus neutral FCFS |
-| Equivalent-throughput value | Cost/TEU **+4.53%** and carbon/TEU **+4.57%** improvement; annualized values are mechanical 48-hour extrapolations, not audited group savings |
+| Selected SAC blind-test result | Weighted advantage **+2.95%** (95% CI **+1.68% to +4.00%**); throughput **+8.40%** (95% CI **+3.56% to +11.47%**) and delay improvement **+16.77%** (95% CI **+9.78% to +21.38%**) versus neutral FCFS |
+| Equivalent-throughput value | Cost/TEU **+4.11%** (95% CI **+2.33% to +5.03%**) and carbon/TEU **+3.90%** (95% CI **+1.49% to +5.54%**) improvement; annualized values are mechanical 48-hour extrapolations, not audited group savings |
 | Causal environment | `port_ops_v3` couples service/allocation gains to operational electric load; cross-version comparison is rejected |
 | 3D runtime chain | Continuous calibrated public replay → fitted Ridge P10/P50/P90 → hash-verified SAC inference → control projection and software safety envelope |
 | Offline visual runtime | Repository-bundled ECharts + zero-CDN perspective Canvas twin; a first clone keeps charts, assets and three-state linkage without public JS CDNs |
