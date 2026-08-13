@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="560" viewBox="0 0 1600 560" role="img" aria-labelledby="title desc">
-  <title id="title">Port DT Multi</title>
-  <desc id="desc">Auditable port AI lifecycle platform from provenance to bounded action.</desc>
+  <title id="title">港航数字孪生 AI 决策调度双端系统</title>
+  <desc id="desc">Web and mobile port and maritime digital twin AI decision and dispatch system.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop stop-color="#071426"/><stop offset="0.52" stop-color="#0b2340"/><stop offset="1" stop-color="#071b25"/>
@@ -21,10 +21,10 @@
     <rect width="84" height="84" rx="22" fill="#102d4b" stroke="#38bdf8" stroke-width="2"/>
     <path d="M18 59h48M24 46h36l-6 13H30zM39 17h6v29h-6zM28 25h28v7H28z" fill="none" stroke="url(#cyan)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
-  <text x="205" y="144" fill="#7dd3fc" font-family="ui-sans-serif,system-ui" font-size="22" font-weight="700" letter-spacing="4">PORT AI · DIGITAL TWIN · CONTROL</text>
-  <text x="90" y="246" fill="#f8fafc" font-family="ui-sans-serif,system-ui" font-size="66" font-weight="850">Port DT Multi</text>
-  <text x="90" y="304" fill="#dbeafe" font-family="ui-sans-serif,system-ui" font-size="30" font-weight="650">可审计港口 AI 生命周期平台</text>
-  <text x="90" y="349" fill="#93c5fd" font-family="ui-sans-serif,system-ui" font-size="23">Auditable Port AI Lifecycle Platform</text>
+  <text x="205" y="144" fill="#7dd3fc" font-family="ui-sans-serif,system-ui" font-size="20" font-weight="700" letter-spacing="3">PORT &amp; MARITIME · DIGITAL TWIN · AI DISPATCH</text>
+  <text x="90" y="242" fill="#f8fafc" font-family="ui-sans-serif,system-ui" font-size="43" font-weight="850">港航数字孪生 AI 决策调度双端系统</text>
+  <text x="90" y="296" fill="#dbeafe" font-family="ui-sans-serif,system-ui" font-size="24" font-weight="650">Port &amp; Maritime Digital Twin AI Decision &amp; Dispatch System</text>
+  <text x="90" y="340" fill="#93c5fd" font-family="ui-sans-serif,system-ui" font-size="22">Web + Mobile · TwinLab + RL · Xiaoyi AI Copilot</text>
   <path d="M90 387h740" stroke="url(#cyan)" stroke-width="3"/>
   <text x="90" y="434" fill="#b7c9df" font-family="ui-sans-serif,system-ui" font-size="19">PROVENANCE → TWIN → TRAIN → EVALUATE → GOVERN → DRY-RUN → AUDIT</text>
   <g transform="translate(1010 95)" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -36,9 +36,9 @@
     <path d="M55 380c55-22 100-22 150 0s100 22 150 0 95-22 140 0" stroke="#60a5fa" stroke-width="3" opacity=".65"/>
   </g>
   <g font-family="ui-sans-serif,system-ui" font-size="14" font-weight="700">
-    <rect x="90" y="474" width="166" height="38" rx="19" fill="#0f3354" stroke="#2563eb"/><text x="113" y="498" fill="#bfdbfe">5 CONTROL BASELINES</text>
-    <rect x="270" y="474" width="173" height="38" rx="19" fill="#0c3b3d" stroke="#10b981"/><text x="294" y="498" fill="#a7f3d0">HELD-OUT EVIDENCE</text>
-    <rect x="457" y="474" width="176" height="38" rx="19" fill="#342057" stroke="#8b5cf6"/><text x="480" y="498" fill="#ddd6fe">FAIL-CLOSED GATES</text>
-    <rect x="647" y="474" width="154" height="38" rx="19" fill="#4a2c0c" stroke="#f59e0b"/><text x="672" y="498" fill="#fde68a">BILINGUAL UI</text>
+    <rect x="90" y="474" width="160" height="38" rx="19" fill="#0f3354" stroke="#2563eb"/><text x="113" y="498" fill="#bfdbfe">12 CONTROLLERS</text>
+    <rect x="264" y="474" width="160" height="38" rx="19" fill="#0c3b3d" stroke="#10b981"/><text x="291" y="498" fill="#a7f3d0">WEB + MOBILE</text>
+    <rect x="438" y="474" width="176" height="38" rx="19" fill="#342057" stroke="#8b5cf6"/><text x="466" y="498" fill="#ddd6fe">EVIDENCE GATES</text>
+    <rect x="628" y="474" width="170" height="38" rx="19" fill="#4a2c0c" stroke="#f59e0b"/><text x="653" y="498" fill="#fde68a">XIAOYI COPILOT</text>
   </g>
 </svg>
