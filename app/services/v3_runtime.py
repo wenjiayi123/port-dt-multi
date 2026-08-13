@@ -78,8 +78,8 @@ class V3RuntimeService:
                     policy = SAC.load(model_path, env=env, device="cpu")
                 self._metadata, self._config = metadata, config
                 self._env, self._policy = env, policy
-            except Exception as exc:
-                self._load_error = str(exc)
+            except Exception:
+                self._load_error = "runtime policy could not be loaded; inspect server logs"
 
     def status(self) -> dict[str, Any]:
         self._ensure_loaded()

@@ -173,16 +173,31 @@
         if (sum) sum.textContent = `资产数=${items.length}，异常总数=${total}` + (res.audit_uri?`（证据：${res.audit_uri}）`:'');
         const tb = $('mon-anom-table')?.querySelector('tbody');
         if (tb){
-          const rows = items.flatMap(it => (it.anomalies||[]).slice(0,200).map(a=>(
-            `<tr>
-              <td>${it.asset_id||it.asset||asset}</td>
-              <td class="mono">${a.ts}</td>
-              <td class="mono">${fmt(a.v,3)}</td>
-              <td>${fmt(a.score,2)}</td>
-              <td>${a.reason||'—'}</td>
-            </tr>`
-          )));
-          tb.innerHTML = rows.length? rows.join('') : `<tr><td colspan="5" class="small">暂无异常</td></tr>`;
+          tb.replaceChildren();
+          const rows = items.flatMap(it => (it.anomalies||[]).slice(0,200).map(a => [
+            it.asset_id || it.asset || asset,
+            a.ts || '—',
+            fmt(a.v, 3),
+            fmt(a.score, 2),
+            a.reason || '—',
+          ]));
+          if (!rows.length) {
+            const row = document.createElement('tr');
+            const cell = document.createElement('td');
+            cell.colSpan = 5; cell.className = 'small'; cell.textContent = '暂无异常';
+            row.appendChild(cell); tb.appendChild(row);
+          } else {
+            rows.forEach(values => {
+              const row = document.createElement('tr');
+              values.forEach((value, index) => {
+                const cell = document.createElement('td');
+                if (index === 1 || index === 2) cell.className = 'mono';
+                cell.textContent = String(value);
+                row.appendChild(cell);
+              });
+              tb.appendChild(row);
+            });
+          }
         }
       }catch(e){
         const sum = $('mon-anom-summary');

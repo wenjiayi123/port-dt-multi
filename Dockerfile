@@ -1,4 +1,4 @@
-FROM python:3.12-slim
+FROM python:3.12-slim@sha256:229a2c5bfa27522db7815ea81f9bed70af17ccb9de9fc7ad142b1877b5830d36
 
 ARG PORT_DT_VERSION=3.2.0
 
@@ -14,8 +14,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /opt/port-dt-multi
 COPY requirements.txt ./
-RUN python -m pip install --no-cache-dir --upgrade pip \
-    && python -m pip install --no-cache-dir -r requirements.txt \
+RUN python -m pip install --no-cache-dir -r requirements.txt \
     && useradd --create-home --uid 10001 portdt
 
 COPY --chown=portdt:portdt app ./app

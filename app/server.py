@@ -200,8 +200,8 @@ async def multiport_summary() -> JSONResponse:
     try:
         getsum = getattr(svc, "get_summary")
         data = await getsum() if asyncio.iscoroutinefunction(getsum) else getsum()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"multiport service error: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="multiport service unavailable")
 
     # 基础校验 & 轻度规范化
     if not isinstance(data, dict) or "ports" not in data:
@@ -2469,8 +2469,8 @@ async def monitoring_adapter_js() -> HTMLResponse:
                                 status_code=200)
         return HTMLResponse("// monitoring adapter not found: app/adapters/monitoring.js",
                             media_type="application/javascript", status_code=404)
-    except Exception as e:
-        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+    except Exception:
+        return HTMLResponse("// monitoring adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 @app.get("/ui/adapters/xiaoyi_sprite.js", response_class=HTMLResponse, tags=["ui"])
@@ -2490,8 +2490,8 @@ async def xiaoyi_sprite_adapter_js() -> HTMLResponse:
             media_type="application/javascript",
             status_code=404,
         )
-    except Exception as e:
-        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+    except Exception:
+        return HTMLResponse("// xiaoyi sprite adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 @app.get("/ui/adapters/bilingual_ui.js", response_class=HTMLResponse, tags=["ui"])
@@ -2509,8 +2509,8 @@ async def bilingual_ui_adapter_js() -> HTMLResponse:
             media_type="application/javascript",
             status_code=404,
         )
-    except Exception as e:
-        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+    except Exception:
+        return HTMLResponse("// bilingual UI adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 @app.get("/ui/adapters/rl_evidence_console.js", response_class=HTMLResponse, tags=["ui"])
@@ -2527,8 +2527,8 @@ async def rl_evidence_console_adapter_js() -> HTMLResponse:
             media_type="application/javascript",
             status_code=404,
         )
-    except Exception as e:
-        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+    except Exception:
+        return HTMLResponse("// RL evidence adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 def _read_exec_pending_snapshot(limit: int = 20) -> Dict[str, Any]:
@@ -2864,8 +2864,8 @@ async def telemetry_clean(
         return JSONResponse(body)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"telemetry.clean 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="telemetry.clean 失败；内部诊断已隐藏")
 
 @app.get("/api/telemetry/quality", tags=["telemetry"])
 async def telemetry_quality(
@@ -2884,8 +2884,8 @@ async def telemetry_quality(
         return JSONResponse({"asset_id": asset_id, "point": point, "quality": payload.get("quality", {}), "source": payload.get("source")})
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"telemetry.quality 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="telemetry.quality 失败；内部诊断已隐藏")
 
 @app.get("/api/telemetry/recent/{asset_id}", tags=["telemetry"])
 async def telemetry_recent(asset_id: str):
@@ -2901,8 +2901,8 @@ async def telemetry_recent(asset_id: str):
         return JSONResponse(arr)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"telemetry.recent 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="telemetry.recent 失败；内部诊断已隐藏")
 
 # Monitoring and operations API group
 # -------------------------------------------------
@@ -3110,8 +3110,8 @@ async def monitoring_anomaly_scan(
         return JSONResponse(res)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"monitoring.anomaly.scan 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="monitoring.anomaly.scan 失败；内部诊断已隐藏")
 
 def _psi(buckets_ref: List[float], ref_vals: List[float], cur_vals: List[float]) -> Dict[str, Any]:
     """
@@ -3198,8 +3198,8 @@ async def monitoring_drift_psi(
         })
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"monitoring.drift.psi 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="monitoring.drift.psi 失败；内部诊断已隐藏")
 
 
 # -------------------------------------------------
@@ -3236,7 +3236,7 @@ async def forecast_asset(
         except HTTPException:
             raise
         except Exception as exc:
-            raise HTTPException(status_code=502, detail=f"forecast driver load failed: {exc}") from exc
+            raise HTTPException(status_code=502, detail="forecast driver load failed") from exc
 
     # 向预测服务传入 drivers（若实现支持）；不支持时回退到原签名
     try:
@@ -3282,7 +3282,7 @@ async def external_weather(
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"weather adapter failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="weather adapter failed") from exc
 
 @app.get("/external/vessels_schedule", tags=["external"])
 async def external_vessels(
@@ -3453,7 +3453,7 @@ async def external_vessels(
 
         return JSONResponse(rows)
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"vessel schedule adapter failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="vessel schedule adapter failed") from exc
 
 
 @app.get("/external/power/tou_tariff", tags=["external"])
@@ -3472,7 +3472,7 @@ async def external_tou(
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"tariff adapter failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="tariff adapter failed") from exc
 
 # —— TOS / WMS：船期/泊位/工单/堆场/预约 —— #
 @app.get("/external/tos/vessels", tags=["external"])
@@ -3485,7 +3485,7 @@ async def ext_tos_vessels(
     try:
         return JSONResponse(_tos.vessel_calls(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS vessel query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS vessel query failed") from exc
 
 @app.get("/external/tos/berths", tags=["external"])
 async def ext_tos_berths(
@@ -3497,7 +3497,7 @@ async def ext_tos_berths(
         d0 = _parse_iso(date).replace(hour=0, minute=0, second=0, microsecond=0)
         return JSONResponse(_tos.berth_plan(d0))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS berth query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS berth query failed") from exc
 
 @app.get("/external/tos/move_orders", tags=["external"])
 async def ext_tos_moves(
@@ -3510,7 +3510,7 @@ async def ext_tos_moves(
     try:
         return JSONResponse(_tos.move_orders(_parse_iso(start), _parse_iso(end), status=status))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS move-order query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS move-order query failed") from exc
 
 @app.get("/external/tos/yard", tags=["external"])
 async def ext_tos_yard() -> JSONResponse:
@@ -3519,7 +3519,7 @@ async def ext_tos_yard() -> JSONResponse:
     try:
         return JSONResponse(_tos.yard_inventory())
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS yard query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS yard query failed") from exc
 
 @app.get("/external/tos/truck_appts", tags=["external"])
 async def ext_tos_truck(
@@ -3531,7 +3531,7 @@ async def ext_tos_truck(
         d0 = _parse_iso(date).replace(hour=0, minute=0, second=0, microsecond=0)
         return JSONResponse(_tos.truck_appointments(d0))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS truck query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS truck query failed") from exc
 
 
 # —— 电力市场：电价/需量/DR/碳价/绿证/边际因子 —— #
@@ -3545,7 +3545,7 @@ async def ext_mkt_da(
         d0 = _parse_iso(date).replace(hour=0, minute=0, second=0, microsecond=0)
         return JSONResponse(_market.day_ahead_price(d0))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"day-ahead price query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="day-ahead price query failed") from exc
 
 @app.get("/external/market/real_time", tags=["external"])
 async def ext_mkt_rt(
@@ -3557,7 +3557,7 @@ async def ext_mkt_rt(
     try:
         return JSONResponse(_market.real_time_price(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"real-time price query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="real-time price query failed") from exc
 
 @app.get("/external/market/demand_limit", tags=["external"])
 async def ext_mkt_dlimit(
@@ -3568,7 +3568,7 @@ async def ext_mkt_dlimit(
     try:
         return JSONResponse(_market.demand_limit(month))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"demand-limit query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="demand-limit query failed") from exc
 
 @app.get("/external/market/demand_charge", tags=["external"])
 async def ext_mkt_dcharge(
@@ -3579,7 +3579,7 @@ async def ext_mkt_dcharge(
     try:
         return JSONResponse(_market.demand_charge(month))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"demand-charge query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="demand-charge query failed") from exc
 
 @app.get("/external/market/dr_events", tags=["external"])
 async def ext_mkt_dr(
@@ -3591,7 +3591,7 @@ async def ext_mkt_dr(
     try:
         return JSONResponse(_market.dr_events(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"demand-response query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="demand-response query failed") from exc
 
 @app.get("/external/market/carbon_price", tags=["external"])
 async def ext_mkt_carbon(
@@ -3603,7 +3603,7 @@ async def ext_mkt_carbon(
     try:
         return JSONResponse(_market.carbon_price(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"carbon-price query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="carbon-price query failed") from exc
 
 @app.get("/external/market/grid_factor", tags=["external"])
 async def ext_mkt_gf(
@@ -3615,7 +3615,7 @@ async def ext_mkt_gf(
     try:
         return JSONResponse(_market.grid_factor(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"grid-factor query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="grid-factor query failed") from exc
 
 @app.get("/external/market/rec_price", tags=["external"])
 async def ext_mkt_rec(
@@ -3627,7 +3627,7 @@ async def ext_mkt_rec(
         d0 = _parse_iso(date).replace(hour=0, minute=0, second=0, microsecond=0)
         return JSONResponse(_market.rec_price(d0))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"REC-price query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="REC-price query failed") from exc
 
 @app.get("/external/market/signals", tags=["external"])
 async def ext_mkt_signals(
@@ -3640,7 +3640,7 @@ async def ext_mkt_signals(
     try:
         return JSONResponse(_market.compose_signals(_parse_iso(start), _parse_iso(end), prefer=prefer))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"market-signal composition failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="market-signal composition failed") from exc
 
 
 # —— AIS + 潮汐 —— #
@@ -3655,7 +3655,7 @@ async def ext_ais_live(
     try:
         return JSONResponse(_ais.live_ships(lat, lon, radius_km))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"AIS live query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="AIS live query failed") from exc
 
 @app.get("/external/ais/track", tags=["external"])
 async def ext_ais_track(
@@ -3667,7 +3667,7 @@ async def ext_ais_track(
     try:
         return JSONResponse(_ais.track(mmsi, hours=hours))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"AIS track query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="AIS track query failed") from exc
 
 @app.get("/external/ais/tide", tags=["external"])
 async def ext_tide_series(
@@ -3681,7 +3681,7 @@ async def ext_tide_series(
     try:
         return JSONResponse(_ais.tide_series(lat, lon, _parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"tide query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="tide query failed") from exc
 
 @app.get("/external/ais/context", tags=["external"])
 async def ext_ais_ctx(
@@ -3692,7 +3692,7 @@ async def ext_ais_ctx(
     try:
         return JSONResponse(_ais.compose_context(hours_ahead=hours_ahead))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"AIS/tide context failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="AIS/tide context failed") from exc
 
 
 # -------------------------------------------------
@@ -3736,7 +3736,7 @@ async def twin_run(
         )
         return JSONResponse(data)
     except Exception as exc:
-        raise HTTPException(status_code=503, detail=f"twin adapter failed: {exc}") from exc
+        raise HTTPException(status_code=503, detail="twin adapter failed") from exc
 
 
 
@@ -3825,8 +3825,8 @@ async def scene_aggregate_sim(
     try:
         data = aggregate_sim(di, scenario=scenario, horizon_min=horizon_min, step_min=step_min, limit=limit)
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"scene.aggregate_sim 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="scene.aggregate_sim 失败；内部诊断已隐藏")
 # -------------------------------------------------
 # 需量峰值风险（15min滚动）：曲线服务 · CurvesPeakRisk
 # -------------------------------------------------
@@ -3985,8 +3985,8 @@ async def energy_today(
             horizon_min=horizon_min,
             step_min=step_min,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"energy.today 聚合失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="energy.today 聚合失败；内部诊断已隐藏")
 
     elec = summary.get("electricity", {})
     if elec.get("kWh") is not None:
@@ -4031,8 +4031,8 @@ async def alerts_scan(
             step_min=step_min,
         )
         return JSONResponse(result)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"alerts.scan 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="alerts.scan 失败；内部诊断已隐藏")
 
 
 # =================================================
@@ -4182,8 +4182,8 @@ async def rl_simulate(
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"rl.simulate 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="rl.simulate 失败；内部诊断已隐藏")
 
 
 _RL_FUTURE_RUNS: List[Dict[str, Any]] = []
@@ -4283,7 +4283,7 @@ async def rl_future_run(
                     "reason": (strategy.get("explain") or {}).get("reason", ""),
                     "operator_guidance": (feasibility.get("operator_guidance") or {}).get("message", ""),
                 }
-            except Exception as simulation_error:
+            except Exception:
                 candidate = {
                     "id": strategy.get("id"),
                     "title": strategy.get("title") or strategy.get("id"),
@@ -4301,7 +4301,7 @@ async def rl_future_run(
                     "simulated_peak_kw": 0.0,
                     "delay_min": round(_rl_future_number(impact.get("throughput_delay_min_est")), 2),
                     "supports": [],
-                    "blockers": [f"反事实模拟失败：{simulation_error}"],
+                    "blockers": ["反事实模拟失败；内部诊断已隐藏，请检查服务日志。"],
                     "risk_flags": ["simulation_error"],
                     "reason": (strategy.get("explain") or {}).get("reason", ""),
                     "operator_guidance": "保持阻断，不进入后续执行。",
@@ -4468,8 +4468,8 @@ async def rl_future_run(
         return JSONResponse(response)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"rl.future.run 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="rl.future.run 失败；内部诊断已隐藏")
 
 
 @_engineering_route("get", "/api/rl/future/history", tags=["rl-future-engineering-simulator"])
@@ -4733,7 +4733,7 @@ async def rl_business_benchmark() -> JSONResponse:
     except (FileNotFoundError, ValueError, json.JSONDecodeError) as exc:
         raise HTTPException(
             status_code=409,
-            detail=f"业务KPI证据校验失败：{exc}",
+            detail="业务KPI证据校验失败；内部诊断已隐藏",
         ) from exc
     test = report.get("test") or {}
     return JSONResponse(
@@ -4832,8 +4832,8 @@ async def rl_desktop_panel_launch() -> JSONResponse:
             start_new_session=True,
         )
         launched = True
-    except (OSError, ValueError) as exc:
-        launch_error = str(exc)
+    except (OSError, ValueError):
+        launch_error = "desktop launch failed; inspect server logs"
     _RL_DESKTOP_PANEL_STATE.update(
         {
             "launch_requested_at": now,
@@ -5202,8 +5202,8 @@ async def rl_dispatch(
         return JSONResponse(result)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"dispatch 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="dispatch 失败；内部诊断已隐藏")
 
 
 async def rl_dispatch_history(
@@ -5212,8 +5212,8 @@ async def rl_dispatch_history(
     try:
         data = di.dispatch.list_history(limit=limit)
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"dispatch.history 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="dispatch.history 失败；内部诊断已隐藏")
 
 
 async def rl_dispatch_cancel(
@@ -5230,8 +5230,8 @@ async def rl_dispatch_cancel(
         return JSONResponse(data)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"dispatch.cancel 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="dispatch.cancel 失败；内部诊断已隐藏")
 
 
 # =================================================
@@ -5382,8 +5382,8 @@ async def exec_submit(
         return JSONResponse(data)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.submit 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.submit 失败；内部诊断已隐藏")
 
 
 async def exec_approve(
@@ -5399,15 +5399,15 @@ async def exec_approve(
         return JSONResponse(data)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.approve 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.approve 失败；内部诊断已隐藏")
 
 
 async def exec_get(job_id: str) -> JSONResponse:
     try:
         return JSONResponse(di.closedloop.get(job_id))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.get 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.get 失败；内部诊断已隐藏")
 
 
 async def exec_list(
@@ -5415,8 +5415,8 @@ async def exec_list(
 ) -> JSONResponse:
     try:
         return JSONResponse(di.closedloop.list(limit=limit))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.list 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.list 失败；内部诊断已隐藏")
 
 
 async def exec_abtest(job_id: str) -> JSONResponse:
@@ -5428,8 +5428,8 @@ async def exec_abtest(job_id: str) -> JSONResponse:
     """
     try:
         return JSONResponse(di.closedloop.ab_compare(job_id))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.abtest 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.abtest 失败；内部诊断已隐藏")
 
 
 async def exec_learn(
@@ -5447,16 +5447,16 @@ async def exec_learn(
         return JSONResponse(di.closedloop.learn(job_id=job_id, alpha=alpha))
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.learn 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.learn 失败；内部诊断已隐藏")
 
 
 async def exec_model(strategy_id: str) -> JSONResponse:
     """查询某策略的在线学习画像。"""
     try:
         return JSONResponse(di.closedloop.get_model(strategy_id=strategy_id))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.model 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.model 失败；内部诊断已隐藏")
 
 
 if _ENABLE_LEGACY_CLOSEDLOOP:
@@ -5606,13 +5606,13 @@ async def esg_summary() -> JSONResponse:
     try:
         # The ESG service owns measured-versus-simulated provenance aggregation.
         from app.services.esg.service import get_summary  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.service 导入失败；内部诊断已隐藏")
 
     try:
         data = get_summary(di)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.summary 执行失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.summary 执行失败；内部诊断已隐藏")
 
     return JSONResponse(data)
 
@@ -5627,12 +5627,12 @@ async def compliance_catalog() -> JSONResponse:
     """
     try:
         from app.services.esg.service import get_ports_catalog  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.service 导入失败；内部诊断已隐藏")
     try:
         return JSONResponse(get_ports_catalog())
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.catalog 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.catalog 失败；内部诊断已隐藏")
 
 
 @app.get("/api/compliance/timeseries", tags=["compliance"])
@@ -5643,14 +5643,14 @@ async def compliance_timeseries(
 ) -> JSONResponse:
     try:
         from app.services.esg.service import get_compliance_timeseries  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.service 导入失败；内部诊断已隐藏")
     try:
         y = year or datetime.now().year
         data = get_compliance_timeseries(port_code=port, year=int(y), granularity=granularity)
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.timeseries 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.timeseries 失败；内部诊断已隐藏")
 
 
 @app.get("/api/compliance/breakdown", tags=["compliance"])
@@ -5661,14 +5661,14 @@ async def compliance_breakdown(
 ) -> JSONResponse:
     try:
         from app.services.esg.service import get_compliance_breakdown  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.service 导入失败；内部诊断已隐藏")
     try:
         y = year or datetime.now().year
         data = get_compliance_breakdown(port_code=port, year=int(y), month=int(month))
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.breakdown 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.breakdown 失败；内部诊断已隐藏")
 
 # =================================================
 # Trust-badge API
@@ -5692,13 +5692,13 @@ async def ai_trust_badge() -> JSONResponse:
     try:
         # Trust evidence is resolved by the optional ai_trust service.
         from app.services.ai_trust.service import get_badge  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ai_trust.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="ai_trust.service 导入失败；内部诊断已隐藏")
 
     try:
         data = get_badge(di)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ai_trust.badge 执行失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="ai_trust.badge 执行失败；内部诊断已隐藏")
 
     return JSONResponse(data)
 # =================================================
@@ -5767,8 +5767,8 @@ async def compliance_monthly(
             diesel_model=diesel_model,
         )
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.monthly 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.monthly 失败；内部诊断已隐藏")
 
 
 @app.get("/api/compliance/quarterly", tags=["compliance"])
@@ -5797,8 +5797,8 @@ async def compliance_quarterly(
             diesel_model=diesel_model,
         )
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.quarterly 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.quarterly 失败；内部诊断已隐藏")
 
 
 @app.post("/api/compliance/make", tags=["compliance"])
@@ -5841,8 +5841,8 @@ async def compliance_make(
             "teu": int(cfg.get("teu", 12000)),
         }
         return JSONResponse(di.compliance.make_report(config=config, factors=ef, diesel_model=diesel_model))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.make 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.make 失败；内部诊断已隐藏")
 
 
 # -------------------------------------------------

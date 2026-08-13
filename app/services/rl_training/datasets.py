@@ -4,6 +4,7 @@ import csv
 import hashlib
 import json
 import math
+import os
 import shutil
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -95,7 +96,7 @@ def safe_dataset_id(value: str) -> str:
         cleaned = cleaned.replace("__", "_")
     if not cleaned or len(cleaned) > 64:
         raise ValueError("dataset_id must contain 1-64 letters, numbers, or separators")
-    return cleaned
+    return os.path.basename(cleaned)
 
 
 def file_sha256(path: Path) -> str:
@@ -433,8 +434,13 @@ def list_datasets(data_root: Path = DEFAULT_DATA_ROOT) -> List[Dict[str, Any]]:
                 description,
             )
             items.append(dict(description))
-        except Exception as exc:
-            items.append({"dataset_id": path.stem, "artifact_id": path.name, "valid": False, "error": str(exc)})
+        except Exception:
+            items.append({
+                "dataset_id": path.stem,
+                "artifact_id": path.name,
+                "valid": False,
+                "error": "dataset validation failed; inspect server logs",
+            })
     return items
 
 

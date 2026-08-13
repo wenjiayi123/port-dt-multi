@@ -289,7 +289,23 @@ def get_compliance_timeseries(port_code: str, year: int, granularity: str = "mon
     if granularity != "month":
         raise ValueError("仅支持 granularity='month'")
 
-    path = DATA_DIR / f"compliance_monthly_{port_code}_{year}.json"
+    registered = {
+        item.name.removeprefix("compliance_monthly_").removesuffix(".json"): item
+        for item in DATA_DIR.glob("compliance_monthly_*.json")
+        if item.is_file() and not item.name.endswith(".meta.json")
+    }
+    path = registered.get(f"{str(port_code).upper()}_{int(year)}")
+    if path is None:
+        return {
+            "port_code": port_code,
+            "year": year,
+            "granularity": granularity,
+            "items": [],
+            "totals": {},
+            "available": False,
+            "reason": "数据不存在或缺少可审计的 .meta.json 来源说明。",
+            "_source": "compliance.unavailable",
+        }
     data = _read_json(path)
     metadata = _read_json(path.with_suffix(".meta.json")) or {}
     verified = bool(metadata.get("source_url") and metadata.get("provenance_type") in {"public", "port_export", "audited"})

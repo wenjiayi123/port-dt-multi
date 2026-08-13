@@ -268,14 +268,14 @@ def _probe_xiaoyi_status() -> Dict[str, Any]:
             "health": health,
             "identity_check": "health_plus_openapi_chat_route",
         }
-    except Exception as exc:
+    except Exception:
         return {
             **cfg,
             "configured": True,
             "online": False,
             "chat_capable": False,
             "status": "offline",
-            "reason": f"小懿AI 未在线或不可达：{str(exc)[:180]}",
+            "reason": "小懿AI 未在线或不可达；内部连接诊断不向前端暴露。",
         }
 
 
@@ -323,12 +323,12 @@ def _call_xiaoyi(
             "latency_ms": round((time.perf_counter() - started) * 1000, 1),
             "response_validated": True,
         }
-    except Exception as exc:
+    except Exception:
         return {
             "ok": False,
             "status": "fallback",
             "engine_execution": "local_evidence_fallback",
-            "reason": f"小懿AI 调用失败，已退回本地 Copilot：{str(exc)[:220]}",
+            "reason": "小懿AI 调用失败，已退回本地 Copilot；内部异常不向前端暴露。",
             "config": cfg,
             "request": body,
             "latency_ms": round((time.perf_counter() - started) * 1000, 1),

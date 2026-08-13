@@ -109,10 +109,10 @@ def _probe_http(url: str, timeout_sec: float = 0.55) -> Dict[str, Any]:
             status_code = int(getattr(resp, "status", 200))
             ok = 200 <= status_code < 300
             return {"ok": ok, "status_code": status_code, "error": None}
-    except URLError as exc:
-        return {"ok": False, "status_code": None, "error": str(getattr(exc, "reason", exc))}
-    except Exception as exc:
-        return {"ok": False, "status_code": None, "error": str(exc)}
+    except URLError:
+        return {"ok": False, "status_code": None, "error": "integration endpoint unavailable"}
+    except Exception:
+        return {"ok": False, "status_code": None, "error": "integration probe failed"}
 
 
 def _probe_xiaoyi_service(
@@ -145,8 +145,8 @@ def _probe_xiaoyi_service(
                     "error": None if post_supported else f"POST {chat_path} missing from OpenAPI",
                     "post_supported": post_supported,
                 }
-        except Exception as exc:
-            schema["error"] = str(getattr(exc, "reason", exc))
+        except Exception:
+            schema["error"] = "integration schema endpoint unavailable"
     chat_capable = bool(health.get("ok") and schema.get("ok"))
     return {
         "ok": chat_capable,

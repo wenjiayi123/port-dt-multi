@@ -86,8 +86,8 @@ class TwinSchemaService:
             else:
                 try:
                     _iso8601(source["observed_at"], f"entity[{index}].source.observed_at")
-                except ValueError as exc:
-                    errors.append(str(exc))
+                except ValueError:
+                    errors.append(f"entity[{index}].source.observed_at must be ISO-8601")
         if len(ids) != len(set(ids)):
             errors.append("entity ids must be unique")
         entity_ids = set(ids)
@@ -130,8 +130,8 @@ class TwinSchemaService:
             for name in ("start_at", "end_at"):
                 try:
                     _iso8601(window[name], "validation_window." + name)
-                except ValueError as exc:
-                    errors.append(str(exc))
+                except ValueError:
+                    errors.append("validation_window timestamp must be ISO-8601")
         for name in ("parameters", "metrics", "thresholds", "provenance"):
             if payload.get(name) is not None and not isinstance(payload.get(name), dict):
                 errors.append(name + " must be an object")

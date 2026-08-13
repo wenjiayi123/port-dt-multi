@@ -3333,6 +3333,11 @@ border-left:3px solid rgba(148,163,184,.22);
 
     function bindAppCardNavigation(container) {
       if (!container) return;
+      const registeredRoutes = Object.freeze({
+        rl_panel: "/rl-panel",
+        integration_hub: "/integration-hub",
+        ops_copilot: "/ops-copilot",
+      });
       const jumpMap = {
         berth_planner: "#multiport-section",
         carbon_ledger: "#esg-section",
@@ -3344,8 +3349,8 @@ border-left:3px solid rgba(148,163,184,.22);
       const activate = (card) => {
         if (!card) return;
         const appId = card.getAttribute("data-app-id");
-        const appPath = card.getAttribute("data-app-path");
-        if (appPath && appPath.startsWith("/")) {
+        const appPath = registeredRoutes[appId];
+        if (appPath) {
           window.location.assign(appPath);
           return;
         }
@@ -3476,9 +3481,8 @@ border-left:3px solid rgba(148,163,184,.22);
             const category = app.category || "";
             const status = app.status === "registered" ? "运行时路由已注册" : "待接入港口";
             const meta = [owner, category, status].filter(Boolean).join(" · ");
-            const path = app.path || "";
             return `
-              <div class="app-card interactive" data-app-id="${id}" data-app-path="${path}" role="link" tabindex="0">
+              <div class="app-card interactive" data-app-id="${id}" role="link" tabindex="0">
                 <div class="app-title">${name}</div>
                 <div class="app-sub">${desc || "待接入港口（App 元数据）"}</div>
                 ${
@@ -9620,16 +9624,31 @@ border-left:3px solid rgba(148,163,184,.22);
           : '无可用时序输入 · 待接入港口，未生成替代异常结果';
       const tb = qs('mon-anom-table')?.querySelector('tbody');
       if (!tb) return;
-      const rows = items.flatMap(it => (it.anomalies||[]).slice(0,200).map(a=>(
-        `<tr>
-          <td>${it.asset_id||it.asset||asset}</td>
-          <td class="mono">${a.ts||'—'}</td>
-          <td class="mono">${fmt(a.v,3)}</td>
-          <td>${fmt(a.score,2)}</td>
-          <td>${a.reason||'—'}</td>
-        </tr>`
-      )));
-      tb.innerHTML = rows.length ? rows.join('') : `<tr><td colspan="5" class="small">暂无异常</td></tr>`;
+      tb.replaceChildren();
+      const anomalies = items.flatMap(it => (it.anomalies||[]).slice(0,200).map(a => ({
+        asset: it.asset_id || it.asset || asset,
+        timestamp: a.ts || '—',
+        value: fmt(a.v, 3),
+        score: fmt(a.score, 2),
+        reason: a.reason || '—',
+      })));
+      if (!anomalies.length) {
+        const row = document.createElement('tr');
+        const cell = document.createElement('td');
+        cell.colSpan = 5; cell.className = 'small'; cell.textContent = '暂无异常';
+        row.appendChild(cell); tb.appendChild(row);
+      } else {
+        anomalies.forEach(item => {
+          const row = document.createElement('tr');
+          [item.asset, item.timestamp, item.value, item.score, item.reason].forEach((value, index) => {
+            const cell = document.createElement('td');
+            if (index === 1 || index === 2) cell.className = 'mono';
+            cell.textContent = String(value);
+            row.appendChild(cell);
+          });
+          tb.appendChild(row);
+        });
+      }
     }catch(e){
       const s = qs('mon-anom-summary');
       if (s) s.textContent = '请求失败：' + e.message;
@@ -15666,11 +15685,22 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     const sigma = $('#dl-sigma')?.textContent?.trim();
     const pending = $('#qc-pending-count')?.textContent?.trim();
     const nextEvent = $('#ev-list li')?.textContent?.trim();
-    if(mape && !/待接入|—/.test(mape)) risks.push(`<li><strong>预测偏差：</strong>${mape}<span class="meta">现场实现值对齐后的 MAPE；同时结合覆盖率与残差 σ 判断。</span></li>`);
-    if(sigma && !/待接入|—/.test(sigma)) risks.push(`<li><strong>波动离散：</strong>${sigma}<span class="meta">现场实现值残差 σ 越高，说明该段工况更不稳定。</span></li>`);
-    if(pending && !/待接入|—/.test(pending)) risks.push(`<li><strong>执行待办：</strong>${pending}<span class="meta">来自已接入南向审批台账。</span></li>`);
-    if(nextEvent && !/等待|待接入|不可用/.test(nextEvent)) risks.push(`<li><strong>未来 60 分钟：</strong>${nextEvent}<span class="meta">来自 Ridge 预测与需量风险模型。</span></li>`);
-    if($('#qc-risk-list')) $('#qc-risk-list').innerHTML = risks.length ? risks.join('') : '<li>公开校准模拟器未触发模型风险。<span class="meta">现场预测校准、合同需量和审批台账待接入港口。</span></li>';
+    if(mape && !/待接入|—/.test(mape)) risks.push(['预测偏差：', mape, '现场实现值对齐后的 MAPE；同时结合覆盖率与残差 σ 判断。']);
+    if(sigma && !/待接入|—/.test(sigma)) risks.push(['波动离散：', sigma, '现场实现值残差 σ 越高，说明该段工况更不稳定。']);
+    if(pending && !/待接入|—/.test(pending)) risks.push(['执行待办：', pending, '来自已接入南向审批台账。']);
+    if(nextEvent && !/等待|待接入|不可用/.test(nextEvent)) risks.push(['未来 60 分钟：', nextEvent, '来自 Ridge 预测与需量风险模型。']);
+    const riskList = $('#qc-risk-list');
+    if(riskList){
+      riskList.replaceChildren();
+      const safeRisks = risks.length ? risks : [['', '公开校准模拟器未触发模型风险。', '现场预测校准、合同需量和审批台账待接入港口。']];
+      safeRisks.forEach(([label, value, meta])=>{
+        const li=document.createElement('li');
+        if(label){ const strong=document.createElement('strong'); strong.textContent=label; li.appendChild(strong); }
+        li.appendChild(document.createTextNode(value));
+        const span=document.createElement('span'); span.className='meta'; span.textContent=meta; li.appendChild(span);
+        riskList.appendChild(li);
+      });
+    }
   }
 
   $('#qc-export-main')?.addEventListener('click', ()=>{

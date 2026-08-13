@@ -22,9 +22,10 @@ def _load_json(filename: str) -> Dict[str, Any]:
     从 data 目录加载 JSON 配置。
     真实环境你只需要把同名文件替换为真实港口数据即可。
     """
-    path = DATA_DIR / filename
-    if not path.is_file():
-        raise FileNotFoundError(path)
+    registered = {item.name: item for item in DATA_DIR.glob("*.json") if item.is_file()}
+    path = registered.get(str(filename))
+    if path is None:
+        raise FileNotFoundError("registered EnergyX input not found")
     with path.open("r", encoding="utf-8") as f:
         return json.load(f)
 

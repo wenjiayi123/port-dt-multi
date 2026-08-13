@@ -129,6 +129,8 @@ def requires_admin(request: Request) -> bool:
     path = request.url.path.rstrip("/")
     return (
         path == "/api/rl/datasets/upload"
+        or path == "/api/rl/metrics/clear"
+        or path == "/api/rl/artifacts/upload"
         or path.startswith("/api/rl/models")
         or path.startswith("/api/exec")
         or path.startswith("/api/actuators")
@@ -143,6 +145,8 @@ class OperationsMiddleware(BaseHTTPMiddleware):
         request.state.request_id = request_id
         protected = request.url.path.startswith(("/api", "/external")) or request.url.path == "/metrics"
         if is_production() and protected:
+            response: Response | None = None
+            matched_index: int | None = None
             keys = api_keys()
             admins = admin_api_keys()
             supplied = request.headers.get("X-API-Key", "")
@@ -150,13 +154,26 @@ class OperationsMiddleware(BaseHTTPMiddleware):
             if content_length and content_length.isdigit() and int(content_length) > max_request_bytes():
                 response = JSONResponse({"detail": "request body exceeds production limit", "request_id": request_id}, status_code=413)
             elif not keys and not admins:
-                response: Response = JSONResponse({"detail": "production API authentication is not configured", "request_id": request_id}, status_code=503)
-            elif not any(hmac.compare_digest(supplied, expected) for expected in [*admins, *keys]):
-                response = JSONResponse({"detail": "invalid or missing API key", "request_id": request_id}, status_code=401)
+                response = JSONResponse({"detail": "production API authentication is not configured", "request_id": request_id}, status_code=503)
             else:
+                configured_keys = [*admins, *keys]
+                matched_index = next(
+                    (
+                        index
+                        for index, expected in enumerate(configured_keys)
+                        if hmac.compare_digest(supplied, expected)
+                    ),
+                    None,
+                )
+            if response is None and matched_index is None:
+                response = JSONResponse({"detail": "invalid or missing API key", "request_id": request_id}, status_code=401)
+            elif response is None:
                 is_admin = any(hmac.compare_digest(supplied, expected) for expected in admins)
                 request.state.auth_role = "admin" if is_admin else "operator"
-                identity = hashlib.sha256(supplied.encode("utf-8")).hexdigest()[:24]
+                # The stable rate-limit bucket is the configured key slot, not
+                # a digest of credential material. This avoids treating an API
+                # key like a password hashed with a fast general-purpose hash.
+                identity = f"{'admin' if is_admin else 'operator'}:{matched_index}"
                 allowed, remaining = RATE_LIMITER.allow(
                     identity,
                     limit=rate_limit_per_minute(),
@@ -170,6 +187,7 @@ class OperationsMiddleware(BaseHTTPMiddleware):
                     response = await call_next(request)
                 response.headers["X-RateLimit-Limit"] = str(rate_limit_per_minute())
                 response.headers["X-RateLimit-Remaining"] = str(remaining)
+            assert response is not None
         else:
             response = await call_next(request)
         duration = time.perf_counter() - started
@@ -196,13 +214,13 @@ def _verified_site_json(env_name: str, *, kind: str) -> Dict[str, Any]:
         return {"ok": False, "status": "not_configured", "env": env_name}
     path = Path(configured).expanduser()
     if not path.is_file():
-        return {"ok": False, "status": "file_missing", "env": env_name, "path": str(path)}
+        return {"ok": False, "status": "file_missing", "env": env_name, "artifact_id": path.name}
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
-    except Exception as exc:
-        return {"ok": False, "status": "invalid_json", "env": env_name, "path": str(path), "error": str(exc)}
+    except Exception:
+        return {"ok": False, "status": "invalid_json", "env": env_name, "artifact_id": path.name, "error": "attestation JSON is invalid"}
     if not isinstance(payload, dict):
-        return {"ok": False, "status": "invalid_payload", "env": env_name, "path": str(path)}
+        return {"ok": False, "status": "invalid_payload", "env": env_name, "artifact_id": path.name}
     common = bool(payload.get("site_id") and payload.get("approved") is True)
     try:
         if kind == "graph":
@@ -254,8 +272,11 @@ def _open_source_readiness_checks() -> Dict[str, Dict[str, Any]]:
     try:
         quality = dataset_quality_report(load_port_dataset("public_port_ops_v1", TRAINING_MANAGER.data_root))
         checks["canonical_dataset"] = {"ok": quality["training_eligible"], "status": quality["status"], "sha256": quality["dataset_sha256"]}
-    except Exception as exc:
-        checks["canonical_dataset"] = {"ok": False, "error": str(exc)}
+    except Exception:
+        checks["canonical_dataset"] = {
+            "ok": False,
+            "error": "canonical dataset readiness check failed; inspect server logs",
+        }
     runtime = TRAINING_MANAGER.capabilities().get("runtime") or {}
     checks["rl_runtime"] = {"ok": bool(runtime.get("available")), **runtime}
     with READINESS_BASE_LOCK:

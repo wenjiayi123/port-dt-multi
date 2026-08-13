@@ -30,6 +30,12 @@ class ContainerContractTests(unittest.TestCase):
         self.assertIn("/health/live", dockerfile)
         workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
         self.assertIn("PORT_DT_VERSION=3.2.0", workflow)
+        self.assertIn("python:3.12-slim@sha256:", dockerfile)
+        self.assertNotIn("| python", workflow)
+        codeql = (ROOT / ".github/workflows/codeql.yml").read_text(encoding="utf-8")
+        top_level = codeql.split("jobs:", 1)[0]
+        self.assertNotIn("security-events: write", top_level)
+        self.assertIn("security-events: write", codeql.split("jobs:", 1)[1])
 
     def test_docker_context_keeps_portable_evidence(self) -> None:
         ignored = (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()

@@ -502,10 +502,10 @@ def _request_json(method: str, url: str, body: Optional[Dict[str, Any]] = None, 
         with urlopen(req, timeout=timeout) as resp:
             raw = resp.read().decode("utf-8")
             return {"ok": True, "status_code": int(getattr(resp, "status", 200)), "data": json.loads(raw) if raw else {}}
-    except URLError as exc:
-        return {"ok": False, "status_code": None, "error": str(getattr(exc, "reason", exc))}
-    except Exception as exc:
-        return {"ok": False, "status_code": None, "error": str(exc)}
+    except URLError:
+        return {"ok": False, "status_code": None, "error": "backend connection failed"}
+    except Exception:
+        return {"ok": False, "status_code": None, "error": "backend request failed"}
 
 
 def _execute_backend_action(request: Request, action: Dict[str, Any], payload: Dict[str, Any], dry_run: bool) -> Dict[str, Any]:

@@ -234,8 +234,11 @@ class TrainingManager:
                 "training_device": "cpu",
                 "available_accelerator": "mps" if getattr(torch.backends, "mps", None) and torch.backends.mps.is_available() else None,
             }
-        except Exception as exc:
-            runtime = {"available": False, "error": str(exc)}
+        except Exception:
+            runtime = {
+                "available": False,
+                "error": "RL runtime import failed; inspect the dependency installation",
+            }
         return {
             "engine": "port-rl-engine-v1",
             "runtime": runtime,
@@ -705,13 +708,13 @@ class TrainingManager:
                 manifest=manifest,
             )
             self._sync_model_registry(job.job_id)
-        except TrainingStopped as exc:
-            job.log(str(exc))
+        except TrainingStopped:
+            job.log("training stopped by an approved control request")
             job.update(status="CANCELLED", stage="cancelled", evaluation_available=False)
-        except Exception as exc:
-            job.log(f"training failed: {exc}")
+        except Exception:
+            job.log("training failed; inspect the private error artifact")
             (job.run_dir / "error.log").write_text(traceback.format_exc(), encoding="utf-8")
-            job.update(status="FAILED", stage="failed", error=str(exc), evaluation_available=False)
+            job.update(status="FAILED", stage="failed", error="training failed; inspect server-side diagnostics", evaluation_available=False)
         finally:
             if env is not None:
                 env.close()
@@ -1379,10 +1382,10 @@ class TrainingManager:
     def _sync_model_registry(self, job_id: str) -> None:
         try:
             self.model_registry().sync(job_id)
-        except Exception as exc:
+        except Exception:
             job = self.jobs.get(job_id)
             if job is not None:
-                job.log(f"model registry sync failed without invalidating run: {exc}")
+                job.log("model registry sync failed without invalidating run; inspect server logs")
                 job.persist()
 
 

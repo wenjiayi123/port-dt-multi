@@ -19,7 +19,6 @@ jobs:
           cache: pip
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
           python -m pip install pip-audit==2.10.1
       - name: Dependency vulnerability audit
@@ -52,8 +51,12 @@ jobs:
             fi
             sleep 2
           done
-          curl --fail --silent http://127.0.0.1:8000/health/ready | python -m json.tool
-          curl --fail --silent http://127.0.0.1:8000/api/v3/overview | python -m json.tool >/dev/null
-          curl --fail --silent http://127.0.0.1:8000/api/v3/runtime/status | python -m json.tool >/dev/null
-          curl --fail --silent http://127.0.0.1:8000/api/v3/modules/hvac/evidence | python -m json.tool >/dev/null
+          curl --fail --silent --output /tmp/port-dt-ready-final.json http://127.0.0.1:8000/health/ready
+          python -m json.tool /tmp/port-dt-ready-final.json
+          curl --fail --silent --output /tmp/port-dt-overview.json http://127.0.0.1:8000/api/v3/overview
+          python -m json.tool /tmp/port-dt-overview.json >/dev/null
+          curl --fail --silent --output /tmp/port-dt-runtime.json http://127.0.0.1:8000/api/v3/runtime/status
+          python -m json.tool /tmp/port-dt-runtime.json >/dev/null
+          curl --fail --silent --output /tmp/port-dt-hvac.json http://127.0.0.1:8000/api/v3/modules/hvac/evidence
+          python -m json.tool /tmp/port-dt-hvac.json >/dev/null
           test "$(docker inspect --format '{{.Config.User}}' port-dt-multi-ci)" = "portdt"

@@ -20,6 +20,8 @@ REQUIRED = (
     ".env.example",
     "LICENSE",
     "Dockerfile",
+    "SECURITY.md",
+    "requirements.txt",
     ".dockerignore",
     "THIRD_PARTY_NOTICES.md",
     "MODEL_GOVERNANCE.md",
@@ -201,6 +203,7 @@ REQUIRED = (
     "docs/assets/rl-training-console-real-backend.png",
     "docs/assets/seven-controller-backend-results.png",
     ".github/workflows/ci.yml",
+    ".github/workflows/codeql.yml",
 )
 
 
@@ -219,6 +222,8 @@ def verify_container_contract(errors: list[str]) -> None:
             errors.append(f"Docker image omits required release content: {marker}")
     if "USER portdt" not in dockerfile:
         errors.append("Docker image does not declare its non-root runtime user")
+    if not dockerfile.startswith("FROM python:3.12-slim@sha256:"):
+        errors.append("Docker base image is not pinned to an immutable digest")
     requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
     for vulnerable_pin in (
         "torch==2.2.2",
@@ -230,6 +235,16 @@ def verify_container_contract(errors: list[str]) -> None:
                 "Release pins a known-vulnerable Intel macOS RL dependency: "
                 f"{vulnerable_pin}"
             )
+    ci_workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    if "| python" in ci_workflow:
+        errors.append("CI contains a download-then-execute style curl pipeline")
+    codeql_workflow = (ROOT / ".github/workflows/codeql.yml").read_text(encoding="utf-8")
+    top_level = codeql_workflow.split("jobs:", 1)[0]
+    if "security-events: write" in top_level:
+        errors.append("CodeQL grants security-events write at workflow scope")
+    security_policy = (ROOT / "SECURITY.md").read_text(encoding="utf-8")
+    if "https://github.com/wenjiayi123/port-dt-multi/security/advisories/new" not in security_policy:
+        errors.append("Security policy lacks a private vulnerability reporting URL")
     ignored = {
         line.strip().rstrip("/")
         for line in (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()

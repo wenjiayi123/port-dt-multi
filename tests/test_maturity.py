@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import io
 import os
 import tempfile
 import unittest
+import zipfile
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from unittest.mock import patch
@@ -22,6 +24,7 @@ from app.services.twin_schema.service import TwinSchemaService
 from app.operations import RATE_LIMITER, configure_operations, cors_origins, readiness_report
 from app.adapters import actuators as actuator_module
 from app.adapters.actuators import Command, IdempotencyStore, PortSouthboundGateway
+from app.services.rl_suite import rl_admin
 
 
 def canonical_rows(count: int = 96):
@@ -204,6 +207,9 @@ class RuntimeHardeningTests(unittest.TestCase):
         self.assertIn("overlapsProtectedNavigation", sprite)
         self.assertIn("restoreSafeDock(root)", sprite)
         self.assertIn('localStorage.removeItem(STORAGE_KEY)', sprite)
+        self.assertNotIn('data-app-path="${path}"', html)
+        self.assertIn("riskList.replaceChildren()", html)
+        self.assertIn("tb.replaceChildren()", html)
 
     def test_default_public_apis_hide_local_paths_and_legacy_artifacts(self):
         from app import server as server_module
@@ -311,6 +317,47 @@ class RuntimeHardeningTests(unittest.TestCase):
             client = TestClient(application)
             self.assertEqual(client.post("/api/rl/models/sync", headers={"X-API-Key": operator}).status_code, 403)
             self.assertEqual(client.post("/api/rl/models/sync", headers={"X-API-Key": admin}).status_code, 200)
+
+    def test_artifact_mutations_require_admin_and_zip_slip_is_blocked(self):
+        operator = "operator-artifact-key-with-at-least-32-characters"
+        admin = "admin-artifact-key-with-at-least-32-characters"
+
+        guarded = FastAPI()
+        configure_operations(guarded)
+
+        @guarded.post("/api/rl/artifacts/upload")
+        async def guarded_upload():
+            return {"ok": True}
+
+        with patch.dict(os.environ, {
+            "PORT_DT_ENV": "production",
+            "PORT_DT_API_KEYS": operator,
+            "PORT_DT_ADMIN_API_KEYS": admin,
+        }):
+            client = TestClient(guarded)
+            self.assertEqual(client.post("/api/rl/artifacts/upload", headers={"X-API-Key": operator}).status_code, 403)
+            self.assertEqual(client.post("/api/rl/artifacts/upload", headers={"X-API-Key": admin}).status_code, 200)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            model_root = Path(tmp) / "rl_model"
+            artifact_dir = model_root / "registered_model" / "artifacts"
+            artifact_dir.mkdir(parents=True)
+            payload = io.BytesIO()
+            with zipfile.ZipFile(payload, "w") as archive:
+                archive.writestr("../escape.json", "{}")
+            application = FastAPI()
+            application.include_router(rl_admin.router)
+            with patch.object(rl_admin, "MODEL_ROOT", model_root):
+                response = TestClient(application).post(
+                    "/api/rl/artifacts/upload?model=registered_model",
+                    files={"file": ("payload.zip", payload.getvalue(), "application/zip")},
+                )
+                self.assertEqual(response.status_code, 400)
+                self.assertFalse((model_root / "registered_model" / "escape.json").exists())
+                self.assertEqual(
+                    TestClient(application).get("/api/rl/metrics/latest?model=../escape").status_code,
+                    404,
+                )
 
     def test_production_api_enforces_body_limit_rate_limit_and_headers(self):
         application = FastAPI()

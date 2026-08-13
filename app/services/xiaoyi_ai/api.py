@@ -49,10 +49,10 @@ def _probe_http(url: str, timeout_sec: float = 0.55) -> Dict[str, Any]:
         with urlopen(req, timeout=timeout_sec) as resp:
             status_code = int(getattr(resp, "status", 200))
             return {"ok": 200 <= status_code < 300, "status_code": status_code, "error": None}
-    except URLError as exc:
-        return {"ok": False, "status_code": None, "error": str(getattr(exc, "reason", exc))}
-    except Exception as exc:
-        return {"ok": False, "status_code": None, "error": str(exc)}
+    except URLError:
+        return {"ok": False, "status_code": None, "error": "xiaoyi endpoint unavailable"}
+    except Exception:
+        return {"ok": False, "status_code": None, "error": "xiaoyi probe failed"}
 
 
 def _probe_xiaoyi_service(
@@ -93,8 +93,8 @@ def _probe_xiaoyi_service(
                     "chat_path_present": bool(methods),
                     "post_supported": post_supported,
                 }
-        except Exception as exc:
-            schema_probe["error"] = str(getattr(exc, "reason", exc))
+        except Exception:
+            schema_probe["error"] = "xiaoyi schema endpoint unavailable"
     chat_capable = bool(health.get("ok") and schema_probe.get("ok"))
     return {
         "ok": chat_capable,
@@ -234,8 +234,8 @@ def launch_xiaoyi(payload: Optional[Dict[str, Any]] = None, dry_run: bool = Fals
             time.sleep(0.35)
         _append_log("start_xiaoyi_ai", str(packet.get("status") or "launched"), packet)
         return packet
-    except Exception as exc:
-        packet.update({"status": "failed", "error": str(exc)})
+    except Exception:
+        packet.update({"status": "failed", "error": "xiaoyi launch failed; inspect server logs"})
         _append_log("start_xiaoyi_ai", "failed", packet)
         return packet
 

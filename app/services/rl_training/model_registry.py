@@ -165,8 +165,11 @@ class ModelRegistry:
         for path in sorted(self.run_root.glob("*/status.json")):
             try:
                 synced.append(self.sync(path.parent.name)["job_id"])
-            except Exception as exc:
-                errors.append({"job_id": path.parent.name, "error": str(exc)})
+            except Exception:
+                errors.append({
+                    "job_id": path.parent.name,
+                    "error": "registry synchronization failed; inspect server logs",
+                })
         return {"synced": synced, "errors": errors, "count": len(synced)}
 
     def readiness(self, job_id: str, benchmark: Dict[str, Any]) -> Dict[str, Any]:
