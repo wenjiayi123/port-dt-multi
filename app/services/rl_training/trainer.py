@@ -89,6 +89,8 @@ def _write_json(path: Path, payload: Dict[str, Any]) -> None:
 
 def _read_json(path: Path, default: Any) -> Any:
     try:
+        # Training artifacts are fixed filenames below resolve_child_dir roots.
+        # codeql[py/path-injection]
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         return default
@@ -727,6 +729,8 @@ class TrainingManager:
         if resolved in self.jobs:
             return self.jobs[resolved].snapshot()
         path = self.run_dir(resolved) / "status.json"
+        # run_dir applies strict identifier validation and root containment.
+        # codeql[py/path-injection]
         if not path.exists():
             raise KeyError(resolved)
         return _read_json(path, {})

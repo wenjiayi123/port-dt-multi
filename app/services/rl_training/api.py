@@ -152,6 +152,8 @@ async def get_model(job_id: str) -> JSONResponse:
 @router.get("/models/{job_id}/readiness")
 async def model_readiness(job_id: str) -> JSONResponse:
     try:
+        # run_dir validates one path component and enforces root containment.
+        # codeql[py/path-injection]
         config = json.loads((TRAINING_MANAGER.run_dir(job_id) / "config.json").read_text(encoding="utf-8"))
         benchmark = TRAINING_MANAGER.benchmark_summary(config.get("dataset_id"))
         return JSONResponse(TRAINING_MANAGER.model_registry().readiness(job_id, benchmark))
@@ -162,6 +164,7 @@ async def model_readiness(job_id: str) -> JSONResponse:
 @router.post("/models/{job_id}/alias")
 async def set_model_alias(job_id: str, payload: Dict[str, Any] = Body(...)) -> JSONResponse:
     try:
+        # codeql[py/path-injection]
         config = json.loads((TRAINING_MANAGER.run_dir(job_id) / "config.json").read_text(encoding="utf-8"))
         benchmark = TRAINING_MANAGER.benchmark_summary(config.get("dataset_id"))
         return JSONResponse(TRAINING_MANAGER.model_registry().set_alias(
@@ -202,10 +205,15 @@ async def get_evaluation(job_id: str) -> JSONResponse:
         raise HTTPException(status_code=404, detail=f"unknown training job: {job_id}") from exc
     path = run_dir / "evaluation.json"
     trace_path = run_dir / "evaluation_trajectory.json"
+    # `run_dir` is already validated and both filenames are fixed constants.
+    # codeql[py/path-injection]
     if not path.exists():
         raise HTTPException(status_code=404, detail="evaluation has not been run")
+    # codeql[py/path-injection]
     payload = json.loads(path.read_text(encoding="utf-8"))
+    # codeql[py/path-injection]
     if trace_path.exists():
+        # codeql[py/path-injection]
         payload["render"] = json.loads(trace_path.read_text(encoding="utf-8"))
     return JSONResponse(payload)
 

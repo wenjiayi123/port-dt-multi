@@ -20,6 +20,8 @@
 - Added clickable twin-reliability and deployment-readiness views. Software stress coverage remains separate from site fidelity, calibration and hardware-in-the-loop acceptance.
 - Hardened production APIs with HTTPS-only CORS, per-key sliding-window rate limits, request-body limits, no-store/security headers and explicit operator/admin separation.
 - Replaced path-string readiness checks with parsed, hash-recorded graph/calibration/shadow evidence; approvals and one shared `site_id` must validate or production admission stays closed.
+- Closed the remaining request-to-DOM and desktop-launch injection paths: Xiaoyi route labels now render through `textContent`, while Godot scenes and presets are code-owned allowlists with bounded timeouts and sanitized linkage metadata.
+- Made dataset identifiers fail closed instead of normalizing unsafe input into possible name collisions, added traversal/launch-injection regression tests, and documented every root-contained path sink that CodeQL cannot infer through the project validators.
 
 ## 3.1.0 - 2026-08-12
 

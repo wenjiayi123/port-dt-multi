@@ -25,6 +25,7 @@ router = APIRouter(prefix="/api/sailing", tags=["sailing-simulator"])
 MAIN_SCENE = "res://main.tscn"
 SMOKE_SCRIPT = "res://tools/ship_rl_smoke_test.gd"
 CONTROL_MODE = "launch_and_preset_scene"
+ALLOWED_PRESETS = frozenset({"main_scene", "route_demo", "ship_view", "headless_smoke_test"})
 
 _sailing_process: Optional[subprocess.Popen[Any]] = None
 _last_launch: Dict[str, Any] = {}
@@ -136,6 +137,20 @@ def _launch_command(preset: str = "main_scene", scene: str = MAIN_SCENE) -> List
     return command
 
 
+def _safe_preset(value: Any) -> str:
+    preset = str(value or "main_scene").strip()
+    if preset not in ALLOWED_PRESETS:
+        raise ValueError("unsupported sailing preset")
+    return preset
+
+
+def _safe_linkage_source(value: Any) -> str:
+    source = str(value or "port-dt-multi").strip()
+    if not source or len(source) > 64 or any(not (character.isalnum() or character in "._:-") for character in source):
+        return "port-dt-multi"
+    return source
+
+
 def _smoke_command() -> List[str]:
     cfg = _sailing_cfg()
     executable = str(cfg.get("godot_executable") or "")
@@ -178,8 +193,13 @@ def launch_sailing_simulator(payload: Optional[Dict[str, Any]] = None, dry_run: 
     if not _desktop_enabled():
         return {"type": "godot_launch", "status": "failed", "error": "desktop integrations disabled"}
     status = sailing_status()
-    preset = str(payload.get("preset") or "main_scene")
-    scene = str(payload.get("scene") or MAIN_SCENE)
+    try:
+        preset = _safe_preset(payload.get("preset"))
+    except ValueError:
+        return {"type": "godot_launch", "status": "failed", "error": "unsupported sailing preset"}
+    # The HTTP request never selects an executable scene. Scene choice remains
+    # a code-owned allowlist until the Godot-side authenticated control bridge exists.
+    scene = MAIN_SCENE
     force_new = bool(payload.get("force_new"))
     command = _launch_command(preset=preset, scene=scene)
     launch_packet: Dict[str, Any] = {
@@ -207,7 +227,8 @@ def launch_sailing_simulator(payload: Optional[Dict[str, Any]] = None, dry_run: 
 
     cfg = _sailing_cfg()
     env = os.environ.copy()
-    env["PORT_DT_LINKAGE_SOURCE"] = str(payload.get("source") or "port-dt-multi")
+    linkage_source = _safe_linkage_source(payload.get("source"))
+    env["PORT_DT_LINKAGE_SOURCE"] = linkage_source
     env["PORT_DT_SAILING_PRESET"] = preset
     try:
         _sailing_process = subprocess.Popen(
@@ -224,12 +245,12 @@ def launch_sailing_simulator(payload: Optional[Dict[str, Any]] = None, dry_run: 
             "preset": preset,
             "scene": scene,
             "pid": _sailing_process.pid,
-            "source": payload.get("source") or "port-dt-multi",
+            "source": linkage_source,
         }
         _append_log("open_sailing_simulator", "launched", launch_packet)
         return launch_packet
-    except Exception as exc:
-        launch_packet.update({"status": "failed", "error": str(exc)})
+    except Exception:
+        launch_packet.update({"status": "failed", "error": "sailing simulator launch failed; inspect server diagnostics"})
         _append_log("open_sailing_simulator", "failed", launch_packet)
         return launch_packet
 
@@ -237,7 +258,10 @@ def launch_sailing_simulator(payload: Optional[Dict[str, Any]] = None, dry_run: 
 def run_sailing_smoke_test(payload: Optional[Dict[str, Any]] = None, dry_run: bool = False) -> Dict[str, Any]:
     payload = payload or {}
     command = _smoke_command()
-    timeout_sec = float(payload.get("timeout_sec") or 35)
+    try:
+        timeout_sec = max(1.0, min(float(payload.get("timeout_sec") or 35), 60.0))
+    except (TypeError, ValueError):
+        timeout_sec = 35.0
     packet: Dict[str, Any] = {
         "type": "godot_headless_smoke_test",
         "dry_run": dry_run,
@@ -274,12 +298,12 @@ def run_sailing_smoke_test(payload: Optional[Dict[str, Any]] = None, dry_run: bo
         )
         _append_log("run_sailing_rl_smoke_test", packet["status"], packet)
         return packet
-    except subprocess.TimeoutExpired as exc:
-        packet.update({"status": "timeout", "error": str(exc)})
+    except subprocess.TimeoutExpired:
+        packet.update({"status": "timeout", "error": "sailing simulator smoke test exceeded its bounded timeout"})
         _append_log("run_sailing_rl_smoke_test", "timeout", packet)
         return packet
-    except Exception as exc:
-        packet.update({"status": "failed", "error": str(exc)})
+    except Exception:
+        packet.update({"status": "failed", "error": "sailing simulator smoke test failed; inspect server diagnostics"})
         _append_log("run_sailing_rl_smoke_test", "failed", packet)
         return packet
 

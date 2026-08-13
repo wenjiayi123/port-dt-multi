@@ -167,8 +167,11 @@ def load_profile(profile_id: str, profile_root: Path = DEFAULT_PROFILE_ROOT) -> 
     if resolved == DEFAULT_PROFILE_ID:
         return validate_profile(DEFAULT_PROFILE)
     path = profile_root / f"{resolved}.json"
+    # `resolved` is one validated path component and profile_root is configured.
+    # codeql[py/path-injection]
     if not path.exists():
         raise FileNotFoundError(f"port profile not found: {resolved}")
+    # codeql[py/path-injection]
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError(f"port profile must be a JSON object: {resolved}")

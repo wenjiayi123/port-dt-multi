@@ -15,7 +15,7 @@ import numpy as np
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from app.services.rl_training.datasets import PortDataset, dataset_quality_report, file_sha256, load_port_dataset, write_canonical_rows
+from app.services.rl_training.datasets import PortDataset, dataset_quality_report, file_sha256, load_port_dataset, safe_dataset_id, write_canonical_rows
 from app.services.rl_training.model_registry import ModelRegistry
 from app.services.rl_training.safety import assess_recommendation
 from app.services.rl_training.statistics import bootstrap_summary
@@ -25,6 +25,7 @@ from app.operations import RATE_LIMITER, configure_operations, cors_origins, rea
 from app.adapters import actuators as actuator_module
 from app.adapters.actuators import Command, IdempotencyStore, PortSouthboundGateway
 from app.services.rl_suite import rl_admin
+from app.services.sailing_simulator import api as sailing_api
 
 
 def canonical_rows(count: int = 96):
@@ -52,6 +53,12 @@ GOVERNANCE = {
 
 
 class DataAndStatisticsMaturityTests(unittest.TestCase):
+    def test_dataset_identifier_rejects_traversal_and_normalization_collisions(self):
+        self.assertEqual(safe_dataset_id("public_port_ops_v1"), "public_port_ops_v1")
+        for malicious in ("../outside", "/tmp/outside", "name.csv", "name space", "中文"):
+            with self.subTest(dataset_id=malicious), self.assertRaises(ValueError):
+                safe_dataset_id(malicious)
+
     def test_quality_gate_records_units_and_governance(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -187,6 +194,20 @@ class TwinSchemaTests(unittest.TestCase):
 
 
 class RuntimeHardeningTests(unittest.TestCase):
+    def test_sailing_launch_ignores_request_scene_and_rejects_unknown_preset(self):
+        safe_status = {"launchable": True}
+        safe_cfg = {"godot_executable": "/opt/godot", "project_path": "/srv/sailing"}
+        with patch.object(sailing_api, "sailing_status", return_value=safe_status), patch.object(sailing_api, "_sailing_cfg", return_value=safe_cfg), patch.dict(os.environ, {"PORT_DT_ENABLE_DESKTOP_INTEGRATIONS": "1"}):
+            preview = sailing_api.launch_sailing_simulator(
+                {"preset": "main_scene", "scene": "--editor", "source": "../../unsafe"},
+                dry_run=True,
+            )
+            self.assertEqual(preview["status"], "ready_to_launch")
+            self.assertEqual(preview["scene"], sailing_api.MAIN_SCENE)
+            self.assertNotIn("--editor", preview["command_artifacts"])
+            blocked = sailing_api.launch_sailing_simulator({"preset": "--path"}, dry_run=True)
+            self.assertEqual(blocked["status"], "failed")
+
     def test_default_ui_has_no_static_readiness_or_synthetic_demand_claims(self):
         html = Path("app/ui/index.html").read_text(encoding="utf-8")
         self.assertNotIn("mock-ready", html)

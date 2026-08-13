@@ -16261,9 +16261,9 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     guide.innerHTML = `
       <div class="xiaoyi-rl-guide-title">
         <span>小懿正在执行 RL 训练引导</span>
-        <b class="xiaoyi-rl-guide-chip">${algorithm}</b>
+        <b class="xiaoyi-rl-guide-chip"></b>
       </div>
-      <div class="xiaoyi-rl-guide-sub">目标：${objective}。${title} 已准备好，当前先回到首页，再从顶部菜单进入强化学习面板。</div>
+      <div class="xiaoyi-rl-guide-sub"></div>
       <div class="xiaoyi-rl-guide-steps">
         <div class="xiaoyi-rl-guide-step active"><div class="xiaoyi-rl-guide-dot">1</div><div><b>回到平台首页</b><br>从总入口开始承接小懿指令。</div></div>
         <div class="xiaoyi-rl-guide-step"><div class="xiaoyi-rl-guide-dot">2</div><div><b>定位顶部菜单</b><br>找到“强化学习面板 / RL Panel”。</div></div>
@@ -16271,6 +16271,8 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
         <div class="xiaoyi-rl-guide-step"><div class="xiaoyi-rl-guide-dot">4</div><div><b>打开训练 UI</b><br>弹出人工确认框，确认后才会启动训练。</div></div>
       </div>
     `;
+    guide.querySelector('.xiaoyi-rl-guide-chip').textContent = algorithm;
+    guide.querySelector('.xiaoyi-rl-guide-sub').textContent = `目标：${objective}。${title} 已准备好，当前先回到首页，再从顶部菜单进入强化学习面板。`;
     document.body.appendChild(guide);
     setTimeout(()=>setActive(guide, 1), 650);
     setTimeout(()=>{
