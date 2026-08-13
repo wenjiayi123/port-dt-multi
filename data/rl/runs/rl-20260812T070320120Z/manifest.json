@@ -1,0 +1,577 @@
+{
+  "job_id": "rl-20260812T070320120Z",
+  "algorithm": "dqn",
+  "implementation": "stable_baselines3.DQN",
+  "dataset_id": "public_cn_sha_hourly_v3",
+  "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+  "split": {
+    "dataset_id": "public_cn_sha_hourly_v3",
+    "title": "Shanghai official aggregate + Yangshan public reanalysis v3",
+    "created_at": "2026-08-12T06:09:21.370394Z",
+    "provenance_type": "public_official_aggregate_plus_public_reanalysis_and_declared_derivatives",
+    "evidence_tier": "public_official_aggregate_reanalysis_enriched",
+    "owner": "port-dt-multi maintainers",
+    "timezone": "UTC",
+    "intended_use": "Shanghai public-data offline RL training, blind holdout evaluation and port-adapter validation",
+    "license": "PRC Ministry of Transport public information; Open-Meteo attribution and upstream model terms; code MIT",
+    "port_profile_id": "cn_sha_public_benchmark_v3",
+    "environment_version": "port_ops_v3",
+    "measured_columns": [],
+    "official_aggregate_columns": [
+      "throughput_teu"
+    ],
+    "public_reanalysis_columns": [
+      "ambient_c",
+      "wind_speed_mps",
+      "wave_height_m",
+      "tide_m",
+      "current_speed_mps"
+    ],
+    "derived_columns": [
+      "hourly_throughput_teu_distribution",
+      "vessel_arrivals",
+      "base_load_kw",
+      "price_per_kwh",
+      "carbon_kg_per_kwh",
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "reefer_load_kw",
+      "pilot_tug_availability_ratio",
+      "closure_flag"
+    ],
+    "unavailable_factors": [
+      "visibility_km"
+    ],
+    "independent_source_observations": 17566,
+    "source_observation_counts": {
+      "official_port_reporting_periods": 22,
+      "aligned_public_reanalysis_hours": 17544
+    },
+    "snapshot": {
+      "artifact_id": "shanghai_yangshan_reanalysis_2024_2025.csv",
+      "sha256": "3bfecc268f830be4f69fab85a4c27a09adec14ad15a6e83bd12c52963ceb14a7",
+      "rows": 17544,
+      "refresh_result": {
+        "rows": 17544,
+        "sha256": "3bfecc268f830be4f69fab85a4c27a09adec14ad15a6e83bd12c52963ceb14a7",
+        "null_counts": {
+          "ocean_current_velocity_kmh": 96,
+          "sea_level_height_msl": 432
+        },
+        "weather_grid": {
+          "latitude": 30.5,
+          "longitude": 122.0
+        },
+        "marine_grid": {
+          "latitude": 30.5,
+          "longitude": 122.0
+        }
+      }
+    },
+    "reanalysis_processing": {
+      "alignment": "hourly UTC inner alignment on the weather and marine model grids",
+      "gap_fill": "linear interpolation within the same public reanalysis series; no terminal telemetry substituted",
+      "filled_value_counts": {
+        "ocean_current_velocity_kmh": 96,
+        "sea_level_height_msl": 432
+      }
+    },
+    "sources": [
+      {
+        "publisher": "Ministry of Transport of the People's Republic of China",
+        "role": "official_Shanghai_container_throughput_anchors",
+        "artifact_id": "shanghai_port_mot_2024_2025.json",
+        "sha256": "e8937ea74515bb3df73a4807c297f0d4a6c70b6e846b1edf7b41a75f190da8e9",
+        "source_urls": [
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202403/P020240528369534362302.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202404/P020240528368732806335.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202405/P020240528348031532627.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202406/P020240628504193219950.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202407/P020240726315056370661.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202408/P020240830512415780926.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202409/P020240929371784231670.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202410/P020241031537369031657.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202411/P020241127569785743903.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202412/P020241224528010634131.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202503/P020250326508512684765.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202503/P020250326523159037809.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202504/P020250430342705534557.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202505/P020250530444803811811.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202506/P020250630541133602289.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202507/P020250725557677106021.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202508/P020250827544303907995.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202509/P020250930551932136174.xlsx",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202510/P020251031671201713119.xlsx",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202511/P020251128543498309570.xlsx",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202512/P020251226513609255904.xlsx",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202601/P020260130498887936897.pdf"
+        ],
+        "accessed_at": "2026-08-12"
+      },
+      {
+        "publisher": "Open-Meteo / Copernicus ERA5",
+        "role": "hourly_public_weather_reanalysis_near_Yangshan",
+        "url": "https://archive-api.open-meteo.com/v1/archive",
+        "license_url": "https://open-meteo.com/en/license",
+        "accessed_at": "2026-08-12"
+      },
+      {
+        "publisher": "Open-Meteo marine model aggregation",
+        "role": "hourly_public_marine_reanalysis_near_Yangshan",
+        "url": "https://marine-api.open-meteo.com/v1/marine",
+        "license_url": "https://open-meteo.com/en/license",
+        "accessed_at": "2026-08-12"
+      }
+    ],
+    "split_policy": {
+      "training": "first 70 percent chronological rows",
+      "validation": "next 10 percent chronological rows",
+      "blind_test": "final 20 percent chronological rows",
+      "shuffle": false
+    },
+    "warning": "This is not Shanghai terminal telemetry. Official throughput remains aggregate, environmental values are reanalysis, terminal operational fields are engineering derivatives, and production dispatch stays prohibited until authorized field mapping, calibration, shadow operation and acceptance.",
+    "sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+    "rows": 17544,
+    "start_at": "2024-01-01T00:00:00Z",
+    "end_at": "2025-12-31T23:00:00Z",
+    "artifact_id": "public_cn_sha_hourly_v3.csv",
+    "columns": [
+      "timestamp",
+      "base_load_kw",
+      "throughput_teu",
+      "vessel_arrivals",
+      "tide_m",
+      "price_per_kwh",
+      "carbon_kg_per_kwh",
+      "ambient_c"
+    ],
+    "optional_factor_columns": [
+      "wind_speed_mps",
+      "visibility_km",
+      "wave_height_m",
+      "current_speed_mps",
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "reefer_load_kw",
+      "pilot_tug_availability_ratio",
+      "closure_flag"
+    ],
+    "train_rows": 12280,
+    "validation_rows": 1755,
+    "test_rows": 3509,
+    "split_method": "chronological_train_validation_blind_test_no_shuffle",
+    "test_ratio": 0.2,
+    "validation_ratio": 0.1,
+    "quality": {
+      "status": "pass",
+      "training_eligible": true,
+      "dataset_id": "public_cn_sha_hourly_v3",
+      "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+      "rows": 17544,
+      "time": {
+        "start_at": "2024-01-01T00:00:00Z",
+        "end_at": "2025-12-31T23:00:00Z",
+        "median_cadence_seconds": 3600.0,
+        "irregular_gap_count": 0,
+        "strictly_increasing": true
+      },
+      "missing_value_count": 0,
+      "non_finite_value_count": 0,
+      "physical_violation_count": 0,
+      "missing_governance_metadata": [],
+      "columns": {
+        "base_load_kw": {
+          "unit": "kW",
+          "min": 19058.8515625,
+          "p25": 21382.646484375,
+          "median": 22656.0712890625,
+          "p75": 23931.8095703125,
+          "max": 27677.998046875,
+          "mean": 22700.423911731752,
+          "std": 1620.2706689046174,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "throughput_teu": {
+          "unit": "TEU/sampling_interval",
+          "min": 4131.48193359375,
+          "p25": 5351.5335693359375,
+          "median": 6050.06884765625,
+          "p75": 6762.690673828125,
+          "max": 8507.19921875,
+          "mean": 6074.44140302151,
+          "std": 862.355676331925,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "vessel_arrivals": {
+          "unit": "vessel_calls/sampling_interval",
+          "min": 0.7945157885551453,
+          "p25": 1.0291410386562347,
+          "median": 1.1634747385978699,
+          "p75": 1.3005174100399017,
+          "max": 1.6359999179840088,
+          "mean": 1.1681618086528245,
+          "std": 0.16583762999285168,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "tide_m": {
+          "unit": "m",
+          "min": -1.809999942779541,
+          "p25": -0.4099999964237213,
+          "median": 0.23000000417232513,
+          "p75": 0.9300000071525574,
+          "max": 2.759999990463257,
+          "mean": 0.2753077974106405,
+          "std": 0.8662895385392361,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": -20.0,
+            "max": 20.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "price_per_kwh": {
+          "unit": "currency/kWh",
+          "min": 0.4300000071525574,
+          "p25": 0.4300000071525574,
+          "median": 0.7200000286102295,
+          "p75": 0.7200000286102295,
+          "max": 1.0800000429153442,
+          "mean": 0.7104166919986407,
+          "std": 0.22679799845180715,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "carbon_kg_per_kwh": {
+          "unit": "kgCO2e/kWh",
+          "min": 0.5400000214576721,
+          "p25": 0.5473219752311707,
+          "median": 0.5649999976158142,
+          "p75": 0.5826780200004578,
+          "max": 0.5899999737739563,
+          "mean": 0.565000002582868,
+          "std": 0.017677734983992006,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 5.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "ambient_c": {
+          "unit": "degreeCelsius",
+          "min": -1.399999976158142,
+          "p25": 10.5,
+          "median": 18.600000381469727,
+          "p75": 26.5,
+          "max": 32.20000076293945,
+          "mean": 18.11199270227327,
+          "std": 8.112262988230132,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": -60.0,
+            "max": 70.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "wind_speed_mps": {
+          "unit": "m/s",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.10000000149011612,
+          "max": 18.25,
+          "mean": 6.439315440292044,
+          "std": 2.6378582248109415,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 100.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "visibility_km": {
+          "unit": "km",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1000.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "wave_height_m": {
+          "unit": "m",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.019999999552965164,
+          "max": 2.759999990463257,
+          "mean": 0.5258538532300142,
+          "std": 0.33430444529192976,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 40.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "current_speed_mps": {
+          "unit": "m/s",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.0,
+          "max": 2.1666669845581055,
+          "mean": 0.7113115847751166,
+          "std": 0.3945485789087322,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 15.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "berth_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.6322270035743713,
+          "max": 0.9200000166893005,
+          "mean": 0.7696512263664034,
+          "std": 0.06098455227016419,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "yard_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.6123800277709961,
+          "max": 0.9200000166893005,
+          "mean": 0.7592823416796439,
+          "std": 0.0651903864813142,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "crane_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.8100000023841858,
+          "max": 0.98540198802948,
+          "mean": 0.9174556571988552,
+          "std": 0.03273373916214191,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "equipment_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.8849999904632568,
+          "max": 0.9824450016021729,
+          "mean": 0.9446975859676221,
+          "std": 0.01818541173067248,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "channel_congestion_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.5735380053520203,
+          "max": 0.8805819749832153,
+          "mean": 0.7159709532817803,
+          "std": 0.07036745816946409,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "reefer_load_kw": {
+          "unit": "kW",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 547.2315063476562,
+          "max": 1141.702392578125,
+          "mean": 744.4219901158393,
+          "std": 140.4671724569511,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "pilot_tug_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.7400000095367432,
+          "max": 0.9738690257072449,
+          "mean": 0.8832742089394614,
+          "std": 0.04364498721915798,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "closure_flag": {
+          "unit": "binary",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": true,
+          "optional": true
+        }
+      },
+      "factor_coverage": {
+        "wind_speed_mps": 1.0,
+        "visibility_km": 0.0,
+        "wave_height_m": 1.0,
+        "current_speed_mps": 1.0,
+        "berth_occupancy_ratio": 1.0,
+        "yard_occupancy_ratio": 1.0,
+        "crane_availability_ratio": 1.0,
+        "equipment_availability_ratio": 1.0,
+        "channel_congestion_ratio": 1.0,
+        "reefer_load_kw": 1.0,
+        "pilot_tug_availability_ratio": 1.0,
+        "closure_flag": 1.0
+      },
+      "available_factor_count": 11,
+      "factor_count": 12,
+      "evidence": {
+        "tier": "public_official_aggregate_reanalysis_enriched",
+        "measured_columns": [],
+        "derived_columns": [
+          "hourly_throughput_teu_distribution",
+          "vessel_arrivals",
+          "base_load_kw",
+          "price_per_kwh",
+          "carbon_kg_per_kwh",
+          "berth_occupancy_ratio",
+          "yard_occupancy_ratio",
+          "crane_availability_ratio",
+          "equipment_availability_ratio",
+          "channel_congestion_ratio",
+          "reefer_load_kw",
+          "pilot_tug_availability_ratio",
+          "closure_flag"
+        ],
+        "independent_source_observations": 17566,
+        "row_count_is_not_independent_information_count": true
+      },
+      "errors": [],
+      "warnings": [],
+      "generated_at": "2026-08-12T07:03:21.030087Z"
+    }
+  },
+  "seed": 242,
+  "total_steps_requested": 10000,
+  "total_steps_observed": 10000,
+  "training_device": "cpu",
+  "model_sha256": "582bf5e835b3874fdd5c7bf2eb56e08392d03a2cfc71ba7d48b34090555f8979",
+  "runtime": {
+    "available": true,
+    "stable_baselines3": "2.3.2",
+    "sb3_contrib": "2.3.0",
+    "gymnasium": "0.29.1",
+    "torch": "2.2.2",
+    "training_device": "cpu",
+    "available_accelerator": "mps"
+  },
+  "port_profile_id": "cn_sha_public_benchmark_v3",
+  "environment_version": "port_ops_v3",
+  "observation_dimensions": 37,
+  "action_dimensions": 5,
+  "algorithm_parameters": {
+    "policy": "MlpPolicy",
+    "network_architecture": [
+      64,
+      64
+    ]
+  },
+  "render_calls_during_training": 0,
+  "completed_at": "2026-08-12T07:03:53.498803Z"
+}

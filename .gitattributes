@@ -4,4 +4,12 @@
 *.jpeg binary
 *.zip binary
 *.csv text eol=lf
+
+# These published datasets are byte-hash evidence. Preserve their source
+# line endings so a clean clone verifies the same SHA-256 as the reports.
+data/public_sources/shanghai_yangshan_reanalysis_2024_2025.csv binary
+data/public_sources/shanghai_yangshan_reanalysis_2026_01_05.csv binary
+data/rl/datasets/public_cn_sha_forward_2026m05_v1.csv binary
+data/rl/datasets/public_cn_sha_hourly_v3.csv binary
 data/rl/datasets/public_us_la_6min_v1.csv binary -eol
+app/services/rl_model/hvac_cooling/data/*.csv binary

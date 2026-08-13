@@ -1,0 +1,113 @@
+{
+  "algorithm": "ppo",
+  "dataset_id": "public_cn_sha_hourly_v3",
+  "total_steps": 10000,
+  "episode_hours": 48.0,
+  "seed": 242,
+  "test_ratio": 0.2,
+  "validation_ratio": 0.1,
+  "episode_steps": 48,
+  "environment_version": "port_ops_v3",
+  "dataset_fingerprint": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+  "dataset_quality_status": "pass",
+  "dataset_evidence": {
+    "tier": "public_official_aggregate_reanalysis_enriched",
+    "measured_columns": [],
+    "derived_columns": [
+      "hourly_throughput_teu_distribution",
+      "vessel_arrivals",
+      "base_load_kw",
+      "price_per_kwh",
+      "carbon_kg_per_kwh",
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "reefer_load_kw",
+      "pilot_tug_availability_ratio",
+      "closure_flag"
+    ],
+    "independent_source_observations": 17566,
+    "row_count_is_not_independent_information_count": true
+  },
+  "port_profile_id": "cn_sha_public_benchmark_v3",
+  "port_profile": {
+    "profile_id": "cn_sha_public_benchmark_v3",
+    "name": "Shanghai public-data landing benchmark profile v3",
+    "port_code": "CNSHA",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "calibration_status": "official_aggregate_and_public_reanalysis_not_terminal_calibrated",
+    "environment_version": "port_ops_v2",
+    "control_authority": "recommendation_only",
+    "assets": {
+      "bess_capacity_kwh": 50000.0,
+      "bess_power_kw": 4000.0,
+      "demand_cap_kw": 36000.0,
+      "operational_load_fraction": 0.42,
+      "allocation_load_fraction": 0.08
+    },
+    "control_limits": {
+      "soc_min": 0.15,
+      "soc_max": 0.9,
+      "service_factor_min": 0.78,
+      "service_factor_max": 1.22,
+      "flexible_load_fraction": 0.22,
+      "berth_priority_limit": 0.35,
+      "yard_flow_limit": 0.3
+    },
+    "objectives": {
+      "cost": 0.18,
+      "carbon": 0.14,
+      "peak": 0.14,
+      "safety": 0.26,
+      "delay": 0.28
+    },
+    "factor_requirements": {
+      "required_for_training": [
+        "wind_speed_mps",
+        "wave_height_m",
+        "current_speed_mps"
+      ],
+      "required_for_site_claim": [
+        "berth_occupancy_ratio",
+        "yard_occupancy_ratio",
+        "crane_availability_ratio",
+        "equipment_availability_ratio",
+        "channel_congestion_ratio",
+        "wind_speed_mps",
+        "visibility_km",
+        "wave_height_m",
+        "current_speed_mps",
+        "pilot_tug_availability_ratio",
+        "closure_flag"
+      ]
+    },
+    "weather_limits": {
+      "wind_stop_mps": 20.0,
+      "visibility_stop_km": null,
+      "wave_stop_m": 3.5
+    },
+    "source_boundary": "CNSHA identifies the Shanghai public benchmark. Throughput is anchored to Ministry of Transport aggregate publications and environmental drivers are public reanalysis near Yangshan; equipment ratings, operating rules and all terminal-level fields remain engineering assumptions until operator mapping, calibration and shadow acceptance are completed."
+  },
+  "observation_dimensions": 37,
+  "action_dimensions": 5,
+  "step_hours": 1.0,
+  "batch_size": 256,
+  "learning_rate": 0.0003,
+  "gamma": 0.99,
+  "tau": 0.005,
+  "replay_buffer": 100000,
+  "demand_cap_kw": 36000.0,
+  "reward_weights": {},
+  "training_split": "chronological_train_only",
+  "render_during_training": false,
+  "algorithm_parameters": {
+    "policy": "MlpPolicy",
+    "network_architecture": [
+      64,
+      64
+    ]
+  }
+}

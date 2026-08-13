@@ -1,0 +1,57 @@
+{
+  "timezone": "Asia/Shanghai",
+  "window_policy": {
+    "active_date_range_utc": [
+      "2025-01-01 00:00:00+00:00",
+      "2025-01-10 23:55:00+00:00"
+    ],
+    "daily_windows_local": [
+      {
+        "start_hhmm": "09:00",
+        "end_hhmm": "12:00",
+        "tag": "AM_peak"
+      },
+      {
+        "start_hhmm": "18:00",
+        "end_hhmm": "22:00",
+        "tag": "PM_peak"
+      }
+    ],
+    "weekend_multiplier": 0.6,
+    "holiday_blackouts_local": []
+  },
+  "limits": {
+    "pcc_limit_kw": 14000.0,
+    "n_minus_1_buffer_kw": 1200.0,
+    "plant_soft_cap_kw": 12500.0,
+    "event_soft_cap_kw": 11800.0,
+    "min_gap_between_events_min": 120,
+    "event_duration_min_range": [
+      60,
+      180
+    ]
+  },
+  "weights": {
+    "cost_weight": 1.0,
+    "carbon_weight": 0.4,
+    "comfort_weight": 0.8
+  },
+  "ramp_limits": {
+    "chws_C_per_15min": 0.5,
+    "sat_C_per_15min": 0.6,
+    "tower_speed_pct_per_15min": 10,
+    "pump_speed_pct_per_15min": 10
+  },
+  "telemetry_required": {
+    "hvac_telemetry_csv": "hvac_telemetry.csv",
+    "market_price_csv": "market_price.csv",
+    "grid_ef_csv": "grid_ef.csv",
+    "plant_master_json": "plant_master.json"
+  },
+  "window_type": "monthly",
+  "granularity_min": 15,
+  "penalty_yuan_per_kW": 80.0,
+  "pcc_limit_kW": 12000,
+  "soft_cap_kW": 11000,
+  "n_minus_1_margin_kW": 1200
+}

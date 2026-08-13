@@ -1,0 +1,246 @@
+[
+  {
+    "event_id": "F_DR_0001",
+    "start_utc": "2025-01-01T19:00:00+00:00",
+    "end_utc": "2025-01-01T20:30:00+00:00",
+    "required_reduction_kw": 1307,
+    "target_blocks": [
+      "YB_06",
+      "YB_11"
+    ],
+    "price_adder_yuan_per_kWh": 0.176,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0002",
+    "start_utc": "2025-01-01T19:00:00+00:00",
+    "end_utc": "2025-01-01T20:45:00+00:00",
+    "required_reduction_kw": 2156,
+    "target_blocks": [
+      "YB_04",
+      "YB_07"
+    ],
+    "price_adder_yuan_per_kWh": 0.081,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0003",
+    "start_utc": "2025-01-01T19:00:00+00:00",
+    "end_utc": "2025-01-01T20:45:00+00:00",
+    "required_reduction_kw": 1243,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.179,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0004",
+    "start_utc": "2025-01-08T20:00:00+00:00",
+    "end_utc": "2025-01-08T21:00:00+00:00",
+    "required_reduction_kw": 2293,
+    "target_blocks": [
+      "YB_06",
+      "YB_10"
+    ],
+    "price_adder_yuan_per_kWh": 0.067,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0005",
+    "start_utc": "2025-01-08T19:00:00+00:00",
+    "end_utc": "2025-01-08T20:15:00+00:00",
+    "required_reduction_kw": 1716,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.206,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0006",
+    "start_utc": "2025-01-15T19:00:00+00:00",
+    "end_utc": "2025-01-15T20:45:00+00:00",
+    "required_reduction_kw": 1985,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.138,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0007",
+    "start_utc": "2025-01-15T11:00:00+00:00",
+    "end_utc": "2025-01-15T12:30:00+00:00",
+    "required_reduction_kw": 832,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.218,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0008",
+    "start_utc": "2025-01-15T20:00:00+00:00",
+    "end_utc": "2025-01-15T21:00:00+00:00",
+    "required_reduction_kw": 1016,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.198,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0009",
+    "start_utc": "2025-01-22T11:00:00+00:00",
+    "end_utc": "2025-01-22T13:00:00+00:00",
+    "required_reduction_kw": 918,
+    "target_blocks": [
+      "YB_09"
+    ],
+    "price_adder_yuan_per_kWh": 0.061,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0010",
+    "start_utc": "2025-01-22T19:00:00+00:00",
+    "end_utc": "2025-01-22T20:30:00+00:00",
+    "required_reduction_kw": 2262,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.221,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0011",
+    "start_utc": "2025-01-22T10:00:00+00:00",
+    "end_utc": "2025-01-22T11:00:00+00:00",
+    "required_reduction_kw": 1459,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.188,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0012",
+    "start_utc": "2025-01-29T20:00:00+00:00",
+    "end_utc": "2025-01-29T21:00:00+00:00",
+    "required_reduction_kw": 2444,
+    "target_blocks": [
+      "YB_09"
+    ],
+    "price_adder_yuan_per_kWh": 0.123,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0013",
+    "start_utc": "2025-01-29T10:00:00+00:00",
+    "end_utc": "2025-01-29T11:15:00+00:00",
+    "required_reduction_kw": 1505,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.221,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0014",
+    "start_utc": "2025-01-29T20:00:00+00:00",
+    "end_utc": "2025-01-29T21:00:00+00:00",
+    "required_reduction_kw": 1767,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.13,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0015",
+    "start_utc": "2025-02-05T20:00:00+00:00",
+    "end_utc": "2025-02-05T21:45:00+00:00",
+    "required_reduction_kw": 2129,
+    "target_blocks": [
+      "YB_03",
+      "YB_08"
+    ],
+    "price_adder_yuan_per_kWh": 0.097,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0016",
+    "start_utc": "2025-02-05T19:00:00+00:00",
+    "end_utc": "2025-02-05T20:00:00+00:00",
+    "required_reduction_kw": 2272,
+    "target_blocks": [
+      "YB_02",
+      "YB_07"
+    ],
+    "price_adder_yuan_per_kWh": 0.157,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0017",
+    "start_utc": "2025-02-12T19:00:00+00:00",
+    "end_utc": "2025-02-12T20:45:00+00:00",
+    "required_reduction_kw": 2127,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.225,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0018",
+    "start_utc": "2025-02-12T19:00:00+00:00",
+    "end_utc": "2025-02-12T20:00:00+00:00",
+    "required_reduction_kw": 1305,
+    "target_blocks": [
+      "YB_09",
+      "YB_08"
+    ],
+    "price_adder_yuan_per_kWh": 0.12,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0019",
+    "start_utc": "2025-02-12T20:00:00+00:00",
+    "end_utc": "2025-02-12T22:00:00+00:00",
+    "required_reduction_kw": 1050,
+    "target_blocks": [
+      "YB_05",
+      "YB_08"
+    ],
+    "price_adder_yuan_per_kWh": 0.173,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0020",
+    "start_utc": "2025-02-19T19:00:00+00:00",
+    "end_utc": "2025-02-19T20:30:00+00:00",
+    "required_reduction_kw": 966,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.225,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0021",
+    "start_utc": "2025-02-19T20:00:00+00:00",
+    "end_utc": "2025-02-19T21:45:00+00:00",
+    "required_reduction_kw": 2371,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.147,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0022",
+    "start_utc": "2025-02-26T10:00:00+00:00",
+    "end_utc": "2025-02-26T11:30:00+00:00",
+    "required_reduction_kw": 2496,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.118,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0023",
+    "start_utc": "2025-02-26T10:00:00+00:00",
+    "end_utc": "2025-02-26T11:15:00+00:00",
+    "required_reduction_kw": 1796,
+    "target_blocks": [],
+    "price_adder_yuan_per_kWh": 0.188,
+    "note": "RTG/RMG curtailment event"
+  },
+  {
+    "event_id": "F_DR_0024",
+    "start_utc": "2025-02-26T19:00:00+00:00",
+    "end_utc": "2025-02-26T20:15:00+00:00",
+    "required_reduction_kw": 1268,
+    "target_blocks": [
+      "YB_02",
+      "YB_01"
+    ],
+    "price_adder_yuan_per_kWh": 0.147,
+    "note": "RTG/RMG curtailment event"
+  }
+]

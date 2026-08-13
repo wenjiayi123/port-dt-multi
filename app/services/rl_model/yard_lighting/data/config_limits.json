@@ -1,0 +1,34 @@
+{
+  "lighting_policy": {
+    "min_dwell_min_default": 15,
+    "min_interval_min_default": 10,
+    "max_switches_per_night": 8,
+    "ramp_percent_per_step_default": 15,
+    "glare_threshold": 0.7,
+    "complaint_sensitive_hours_local": [
+      22,
+      6
+    ]
+  },
+  "reward_weights_default": {
+    "alpha_under_lux": 5.0,
+    "beta_switch": 0.2,
+    "gamma_glare": 2.0,
+    "delta_complaint": 5.0
+  },
+  "penalty_config": {
+    "under_lux_mode": "percent_time",
+    "under_lux_clip_per_step": 0.5
+  },
+  "units": {
+    "power": "kW",
+    "energy": "kWh",
+    "price": "CNY/kWh",
+    "ef": "kg/kWh",
+    "lux": "lux",
+    "time": "UTC ISO8601"
+  },
+  "price_config": {
+    "carbon_price_yuan_per_kg": 0.1
+  }
+}

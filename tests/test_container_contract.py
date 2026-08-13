@@ -39,6 +39,32 @@ class ContainerContractTests(unittest.TestCase):
         ):
             self.assertTrue(required.is_file(), required)
 
+    def test_clone_keeps_runtime_dependencies_and_dataset_bytes(self) -> None:
+        engine = (
+            ROOT / "app/services/rl_model/shore_bess/rl_engine.py"
+        ).read_text(encoding="utf-8")
+        self.assertNotIn("rl_engine_副本", engine)
+        self.assertIn("class GaussianPolicy", engine)
+        self.assertIn("class MLP", engine)
+
+        attributes = (ROOT / ".gitattributes").read_text(encoding="utf-8")
+        for dataset in (
+            "data/public_sources/shanghai_yangshan_reanalysis_2024_2025.csv",
+            "data/public_sources/shanghai_yangshan_reanalysis_2026_01_05.csv",
+            "data/rl/datasets/public_cn_sha_forward_2026m05_v1.csv",
+            "data/rl/datasets/public_cn_sha_hourly_v3.csv",
+        ):
+            self.assertIn(f"{dataset} binary", attributes)
+
+        gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+        for archive_allowlist in (
+            "!evidence/v3/runtime/selected_sac_v3.zip",
+            "!evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_*/selected_model.zip",
+            "!evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_*/selected_model.zip",
+            "!evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_*/selected_model.zip",
+        ):
+            self.assertIn(archive_allowlist, gitignore)
+
 
 if __name__ == "__main__":
     unittest.main()

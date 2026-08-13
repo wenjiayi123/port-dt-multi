@@ -99,7 +99,16 @@ class RLOpsService:
             if algorithm and record.get("algorithm") != algorithm:
                 continue
             job_id = str(record.get("job_id") or "")
-            history = TRAINING_MANAGER.history(job_id, limit=200).get("records", []) if job_id else []
+            if not job_id:
+                continue
+            try:
+                history = TRAINING_MANAGER.history(job_id, limit=200).get("records", [])
+            except KeyError:
+                # A portable release may intentionally omit superseded local
+                # experiment directories while retaining their immutable
+                # registry entries. Keep searching for a packaged run instead
+                # of turning one absent historical artifact into an HTTP 500.
+                continue
             if history:
                 selected_status = TRAINING_MANAGER.status(job_id)
                 selected_history = history

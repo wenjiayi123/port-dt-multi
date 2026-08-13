@@ -1,0 +1,13 @@
+ahu_id,building,zone_type,area_m2,design_cooling_kw,sat_sp_min_C,sat_sp_max_C,sp_pa_min,sp_pa_max,critical,weight
+AHU_001,Workshop,storage,2140,280.1,12.0,18.0,500,1200,0,0.95
+AHU_002,Gate,office,2986,259.7,12.0,18.0,500,1200,0,0.99
+AHU_003,Warehouse_A,sorting,1849,201.9,12.0,18.0,500,1200,0,1.06
+AHU_004,Terminal,storage,1030,279.1,12.0,18.0,500,1200,0,1.07
+AHU_005,Terminal,storage,1352,253.5,12.0,18.0,500,1200,1,0.97
+AHU_006,Office,storage,1884,246.3,12.0,18.0,500,1200,1,1.16
+AHU_007,Office,workshop,1698,173.8,12.0,18.0,500,1200,0,0.93
+AHU_008,Terminal,gate,2205,245.6,12.0,18.0,500,1200,1,0.91
+AHU_009,Office,sorting,1116,263.2,12.0,18.0,500,1200,1,0.85
+AHU_010,Warehouse_A,workshop,2255,234.6,12.0,18.0,500,1200,0,1.15
+AHU_011,Office,gate,1332,324.5,12.0,18.0,500,1200,0,1.12
+AHU_012,Warehouse_B,workshop,1774,401.8,12.0,18.0,500,1200,0,0.97

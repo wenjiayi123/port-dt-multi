@@ -1,0 +1,90 @@
+{
+  "site_timezone": "Asia/Shanghai",
+  "plant_name": "Main_Chiller_Plant_Port",
+  "chillers": [
+    {
+      "id": "CH_01",
+      "rated_kw": 1200.0,
+      "min_plr": 0.3,
+      "max_plr": 1.0,
+      "ramp_kw_per_min": 80.0,
+      "startup_min": 10,
+      "shutdown_min": 10
+    },
+    {
+      "id": "CH_02",
+      "rated_kw": 1200.0,
+      "min_plr": 0.3,
+      "max_plr": 1.0,
+      "ramp_kw_per_min": 80.0,
+      "startup_min": 10,
+      "shutdown_min": 10
+    },
+    {
+      "id": "CH_03",
+      "rated_kw": 1200.0,
+      "min_plr": 0.3,
+      "max_plr": 1.0,
+      "ramp_kw_per_min": 80.0,
+      "startup_min": 10,
+      "shutdown_min": 10
+    },
+    {
+      "id": "CH_04",
+      "rated_kw": 1200.0,
+      "min_plr": 0.3,
+      "max_plr": 1.0,
+      "ramp_kw_per_min": 80.0,
+      "startup_min": 10,
+      "shutdown_min": 10
+    }
+  ],
+  "pumps": {
+    "chw": {
+      "count": 2,
+      "rated_kw_each": 55.0,
+      "min_speed_pct": 30,
+      "max_speed_pct": 100,
+      "ramp_pct_per_min": 10
+    },
+    "cw": {
+      "count": 2,
+      "rated_kw_each": 45.0,
+      "min_speed_pct": 30,
+      "max_speed_pct": 100,
+      "ramp_pct_per_min": 10
+    }
+  },
+  "cooling_towers": {
+    "count": 3,
+    "rated_kw_each": 18.0,
+    "min_speed_pct": 30,
+    "max_speed_pct": 100,
+    "ramp_pct_per_min": 12
+  },
+  "setpoints": {
+    "chws_C": {
+      "min": 6.0,
+      "max": 9.0,
+      "ramp_C_per_15min": 0.5
+    },
+    "sat_C": {
+      "min": 12.0,
+      "max": 15.0,
+      "ramp_C_per_15min": 0.6
+    },
+    "static_pressure_Pa": {
+      "min": 500,
+      "max": 1200,
+      "ramp_Pa_per_15min": 50
+    }
+  },
+  "demand_limits": {
+    "pcc_limit_kw": 14000.0,
+    "n_minus_1_buffer_kw": 1200.0,
+    "plant_soft_cap_kw": 12500.0
+  },
+  "efficiency_map_source": "plant_efficiency_map.csv",
+  "market_price_source": "market_price.csv",
+  "grid_ef_source": "grid_ef.csv"
+}

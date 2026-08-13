@@ -16,6 +16,7 @@ from app.services.rl_training.profiles import load_profile
 
 REQUIRED = (
     "README.md",
+    ".gitattributes",
     ".env.example",
     "LICENSE",
     "Dockerfile",
@@ -32,6 +33,8 @@ REQUIRED = (
     "data/rl/business_kpi_benchmark_v1.json",
     "data/mobile/mobile_workflow_benchmark_v1.json",
     "data/rl/business_kpi_benchmark_v1_daily.csv",
+    "data/rl/benchmarks.json",
+    "data/rl/model_registry.json",
     "data/rl/datasets/public_port_ops_v1.meta.json",
     "data/rl/datasets/public_us_la_6min_v1.csv",
     "data/rl/datasets/public_us_la_6min_v1.meta.json",
@@ -94,6 +97,85 @@ REQUIRED = (
     "evidence/v3/runtime/selected_sac_v3.config.json",
     "evidence/v3/runtime/runtime_model.json",
     "evidence/v3/runtime/runtime_model.sha256",
+    "data/rl/runs/rl-20260813T063524662Z/config.json",
+    "data/rl/runs/rl-20260813T063524662Z/status.json",
+    "data/rl/runs/rl-20260813T063524662Z/manifest.json",
+    "data/rl/runs/rl-20260813T063524662Z/metrics.jsonl",
+    "data/rl/runs/rl-20260813T063524662Z/evaluation.json",
+    "data/rl/runs/rl-20260813T063524662Z/evaluation_trajectory.json",
+    "data/rl/runs/rl-20260813T063524662Z/model.zip",
+    "data/rl/runs/rl-20260813T064228701Z/MODEL_CARD.md",
+    "data/rl/runs/rl-20260813T064228701Z/config.json",
+    "data/rl/runs/rl-20260813T064228701Z/evaluation.json",
+    "data/rl/runs/rl-20260813T064228701Z/evaluation_trajectory.json",
+    "data/rl/runs/rl-20260813T064228701Z/manifest.json",
+    "data/rl/runs/rl-20260813T064228701Z/metrics.jsonl",
+    "data/rl/runs/rl-20260813T064228701Z/model.zip",
+    "data/rl/runs/rl-20260813T064228701Z/model_card.json",
+    "data/rl/runs/rl-20260813T064228701Z/monitor.csv",
+    "data/rl/runs/rl-20260813T064228701Z/status.json",
+    "data/rl/runs/rl-20260813T064228701Z/validation_evaluation.json",
+    "data/rl/runs/rl-20260812T065606173Z/status.json",
+    "data/rl/runs/rl-20260812T065606173Z/manifest.json",
+    "data/rl/runs/rl-20260812T065606173Z/metrics.jsonl",
+    "data/rl/runs/rl-20260812T065606173Z/model.zip",
+    "data/rl/runs/rl-20260812T070320120Z/status.json",
+    "data/rl/runs/rl-20260812T070320120Z/manifest.json",
+    "data/rl/runs/rl-20260812T070320120Z/metrics.jsonl",
+    "data/rl/runs/rl-20260812T070320120Z/model.zip",
+    "data/rl/runs/rl-20260812T070452272Z/status.json",
+    "data/rl/runs/rl-20260812T070452272Z/manifest.json",
+    "data/rl/runs/rl-20260812T070452272Z/metrics.jsonl",
+    "data/rl/runs/rl-20260812T070452272Z/model.zip",
+    "data/rl/runs/rl-20260812T074531393Z/config.json",
+    "data/rl/runs/rl-20260812T074531393Z/status.json",
+    "data/rl/runs/rl-20260812T074531393Z/manifest.json",
+    "data/rl/runs/rl-20260812T074531393Z/evaluation.json",
+    "data/rl/runs/rl-20260812T074531393Z/evaluation_trajectory.json",
+    "app/services/rl_model/hvac_cooling/artifacts/hvac_cooling_state.json",
+    "app/services/rl_model/hvac_cooling/artifacts/policy_evaluate_history.jsonl",
+    "app/services/rl_model/shore_bess/artifacts/shore_bess_outputs.jsonl",
+    "app/services/rl_model/bess_energy/policy_evaluate_history.jsonl",
+    "app/services/rl_model/bess_energy/offline_dataset.jsonl",
+    "app/services/rl_model/yard_crane/policy_evaluate_history.jsonl",
+    "app/services/rl_model/yard_crane/artifacts/offline_dataset_crane.jsonl",
+    "app/services/rl_model/yard_crane/artifacts/offline_dataset_crane_aug.jsonl",
+    "app/services/rl_model/yard_lighting/artifacts/offline_train.jsonl",
+    "app/services/rl_model/hvac_cooling/data/ahu_zones_master.csv",
+    "app/services/rl_model/hvac_cooling/data/demand_window_config.json",
+    "app/services/rl_model/hvac_cooling/data/grid_ef.csv",
+    "app/services/rl_model/hvac_cooling/data/hvac_telemetry.csv",
+    "app/services/rl_model/hvac_cooling/data/load_forecast.csv",
+    "app/services/rl_model/hvac_cooling/data/market_price.csv",
+    "app/services/rl_model/hvac_cooling/data/plant_efficiency_map.csv",
+    "app/services/rl_model/hvac_cooling/data/plant_master.json",
+    "app/services/rl_model/hvac_cooling/data/weather_forecast.csv",
+    "app/services/rl_model/yard_crane/data/crane_telemetry.csv",
+    "app/services/rl_model/yard_crane/data/cranes_master.csv",
+    "app/services/rl_model/yard_crane/data/dr_events.json",
+    "app/services/rl_model/yard_crane/data/grid_ef.csv",
+    "app/services/rl_model/yard_crane/data/grid_meter.csv",
+    "app/services/rl_model/yard_crane/data/job_events.csv",
+    "app/services/rl_model/yard_crane/data/market_price.csv",
+    "app/services/rl_model/yard_crane/data/queue_forecast.csv",
+    "app/services/rl_model/yard_crane/data/yard_blocks.csv",
+    "app/services/rl_model/yard_lighting/data/activity_forecast.csv",
+    "app/services/rl_model/yard_lighting/data/complaints_events.csv",
+    "app/services/rl_model/yard_lighting/data/config_limits.json",
+    "app/services/rl_model/yard_lighting/data/grid_ef.csv",
+    "app/services/rl_model/yard_lighting/data/lighting_telemetry.csv",
+    "app/services/rl_model/yard_lighting/data/market_price.csv",
+    "app/services/rl_model/yard_lighting/data/weather_astro.csv",
+    "app/services/rl_model/yard_lighting/data/zones_master.csv",
+    "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_43/selected_model.zip",
+    "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_143/selected_model.zip",
+    "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_243/selected_model.zip",
+    "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_47/selected_model.zip",
+    "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_147/selected_model.zip",
+    "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_247/selected_model.zip",
+    "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_71/selected_model.zip",
+    "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_171/selected_model.zip",
+    "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_271/selected_model.zip",
     "docs/V3_RUNTIME_DATA_CONTRACT.md",
     "app/ui/v3/index.html",
     "app/ui/v3/v3.css",
@@ -146,11 +228,42 @@ def verify_container_contract(errors: list[str]) -> None:
         errors.append("Docker context excludes portable V3 evidence")
 
     gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
-    runtime_model_allowlist = "!evidence/v3/runtime/selected_sac_v3.zip"
-    if runtime_model_allowlist not in {line.strip() for line in gitignore}:
+    archive_allowlists = (
+        "!evidence/v3/runtime/selected_sac_v3.zip",
+        "!evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_*/selected_model.zip",
+        "!evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_*/selected_model.zip",
+        "!evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_*/selected_model.zip",
+    )
+    gitignore_rules = {line.strip() for line in gitignore}
+    for archive_allowlist in archive_allowlists:
+        if archive_allowlist not in gitignore_rules:
+            errors.append(
+                "Git release excludes a selected V3 policy archive: "
+                f"missing {archive_allowlist}"
+            )
+
+    attributes = {
+        line.strip()
+        for line in (ROOT / ".gitattributes").read_text(encoding="utf-8").splitlines()
+        if line.strip() and not line.lstrip().startswith("#")
+    }
+    for dataset in (
+        "data/public_sources/shanghai_yangshan_reanalysis_2024_2025.csv",
+        "data/public_sources/shanghai_yangshan_reanalysis_2026_01_05.csv",
+        "data/rl/datasets/public_cn_sha_forward_2026m05_v1.csv",
+        "data/rl/datasets/public_cn_sha_hourly_v3.csv",
+    ):
+        marker = f"{dataset} binary"
+        if marker not in attributes:
+            errors.append(
+                "Git may normalize byte-hash evidence in a clean clone: "
+                f"missing {marker}"
+            )
+    hvac_marker = "app/services/rl_model/hvac_cooling/data/*.csv binary"
+    if hvac_marker not in attributes:
         errors.append(
-            "Git release excludes the selected V3 runtime policy archive: "
-            f"missing {runtime_model_allowlist}"
+            "Git may normalize HVAC byte-hash evidence in a clean clone: "
+            f"missing {hvac_marker}"
         )
 
 
