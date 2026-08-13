@@ -22,6 +22,10 @@ REQUIRED = (
     "Dockerfile",
     "SECURITY.md",
     "requirements.txt",
+    "requirements-linux.in",
+    "requirements-linux.lock",
+    "requirements-ci.in",
+    "requirements-ci.lock",
     ".dockerignore",
     "THIRD_PARTY_NOTICES.md",
     "MODEL_GOVERNANCE.md",
@@ -236,6 +240,20 @@ def verify_container_contract(errors: list[str]) -> None:
                 f"{vulnerable_pin}"
             )
     ci_workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    linux_lock = (ROOT / "requirements-linux.lock").read_text(encoding="utf-8")
+    ci_lock = (ROOT / "requirements-ci.lock").read_text(encoding="utf-8")
+    for name, lock in (("Linux", linux_lock), ("CI", ci_lock)):
+        if "--hash=sha256:" not in lock:
+            errors.append(f"{name} dependency lock does not contain distribution hashes")
+    for package in ("torch==2.13.0", "stable-baselines3==2.9.0", "sb3-contrib==2.9.0"):
+        if package not in linux_lock:
+            errors.append(f"Linux dependency lock omits the supported RL runtime: {package}")
+    if "pip-audit==2.10.1" not in ci_lock:
+        errors.append("CI dependency lock omits the vulnerability auditor")
+    if "--require-hashes -r requirements-linux.lock" not in dockerfile:
+        errors.append("Docker dependency installation does not require locked hashes")
+    if "--require-hashes -r requirements-ci.lock" not in ci_workflow:
+        errors.append("CI dependency installation does not require locked hashes")
     if "| python" in ci_workflow:
         errors.append("CI contains a download-then-execute style curl pipeline")
     codeql_workflow = (ROOT / ".github/workflows/codeql.yml").read_text(encoding="utf-8")

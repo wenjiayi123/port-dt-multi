@@ -37,6 +37,19 @@ class ContainerContractTests(unittest.TestCase):
         self.assertNotIn("security-events: write", top_level)
         self.assertIn("security-events: write", codeql.split("jobs:", 1)[1])
 
+    def test_linux_and_ci_dependency_installs_require_hash_locks(self) -> None:
+        dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        linux_lock = (ROOT / "requirements-linux.lock").read_text(encoding="utf-8")
+        ci_lock = (ROOT / "requirements-ci.lock").read_text(encoding="utf-8")
+        self.assertIn("--require-hashes -r requirements-linux.lock", dockerfile)
+        self.assertIn("--require-hashes -r requirements-ci.lock", workflow)
+        for package in ("torch==2.13.0", "stable-baselines3==2.9.0", "sb3-contrib==2.9.0"):
+            self.assertIn(package, linux_lock)
+        self.assertIn("pip-audit==2.10.1", ci_lock)
+        self.assertGreater(linux_lock.count("--hash=sha256:"), 50)
+        self.assertGreater(ci_lock.count("--hash=sha256:"), 50)
+
     def test_docker_context_keeps_portable_evidence(self) -> None:
         ignored = (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()
         active = {

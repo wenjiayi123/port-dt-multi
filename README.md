@@ -342,6 +342,11 @@ python -m pip install -r requirements.txt
 python -m uvicorn app.server:app --host 127.0.0.1 --port 8000
 ```
 
+Linux 容器和 CI 使用 `requirements-linux.lock` / `requirements-ci.lock` 与
+`--require-hashes` 校验每个发行包；`requirements.txt` 保留为跨平台开发入口。
+The Linux container and CI verify every distribution hash through the checked-in
+lock files; `requirements.txt` remains the cross-platform development input.
+
 打开 / Open:
 
 - V3 决策中枢 / V3 Decision Center: <http://127.0.0.1:8000/v3>

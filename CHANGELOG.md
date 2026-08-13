@@ -22,6 +22,7 @@
 - Replaced path-string readiness checks with parsed, hash-recorded graph/calibration/shadow evidence; approvals and one shared `site_id` must validate or production admission stays closed.
 - Closed the remaining request-to-DOM and desktop-launch injection paths: Xiaoyi route labels now render through `textContent`, while Godot scenes and presets are code-owned allowlists with bounded timeouts and sanitized linkage metadata.
 - Made dataset identifiers fail closed instead of normalizing unsafe input into possible name collisions, added traversal/launch-injection regression tests, and documented every root-contained path sink that CodeQL cannot infer through the project validators.
+- Added Python 3.12/Linux hash locks for the runtime and CI dependency graphs; container and CI installs now require matching distribution hashes, including the CI-only vulnerability auditor.
 
 ## 3.1.0 - 2026-08-12
 
