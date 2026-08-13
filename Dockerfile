@@ -26,9 +26,9 @@ COPY --chown=portdt:portdt docs ./docs
 COPY --chown=portdt:portdt scripts ./scripts
 COPY --chown=portdt:portdt README.md LICENSE VERSION ./
 
-# The checked-in run registry is intentionally excluded from the image build
-# context.  Keep writable runtime locations present for non-root training,
-# reports and audit receipts without mutating the portable evidence bundle.
+# Selected checked-in run evidence is copied into the image. Keep writable
+# runtime locations present for non-root training, reports and audit receipts
+# without mutating the portable evidence bundle.
 RUN mkdir -p data/objects data/rl/runs data/audit \
     && chown -R portdt:portdt data
 USER portdt

@@ -219,6 +219,17 @@ def verify_container_contract(errors: list[str]) -> None:
             errors.append(f"Docker image omits required release content: {marker}")
     if "USER portdt" not in dockerfile:
         errors.append("Docker image does not declare its non-root runtime user")
+    requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
+    for vulnerable_pin in (
+        "torch==2.2.2",
+        "stable-baselines3==2.3.2",
+        "sb3-contrib==2.3.0",
+    ):
+        if vulnerable_pin in requirements:
+            errors.append(
+                "Release pins a known-vulnerable Intel macOS RL dependency: "
+                f"{vulnerable_pin}"
+            )
     ignored = {
         line.strip().rstrip("/")
         for line in (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()

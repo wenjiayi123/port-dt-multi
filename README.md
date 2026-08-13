@@ -323,6 +323,15 @@ python -m scripts.release_check
 
 Python 3.12 is recommended. / 建议使用 Python 3.12。
 
+安全兼容边界：PyTorch 已锁定 2.13.0。Intel x86_64 macOS 的上游原生 wheel
+停留在存在已知高危漏洞的 2.2.x，因此全新安装请使用下方 Linux 容器；不再由
+`requirements.txt` 静默安装不安全的旧版本。Linux 与 Apple Silicon 可按本节原生安装。
+
+Security compatibility boundary: PyTorch is pinned to 2.13.0. Upstream native
+wheels for Intel x86_64 macOS stop at a vulnerable 2.2.x release, so fresh
+installs on that legacy host must use the Linux container below. Native Linux
+and Apple Silicon installations may use these commands.
+
 ```bash
 git clone https://github.com/wenjiayi123/port-dt-multi.git
 cd port-dt-multi

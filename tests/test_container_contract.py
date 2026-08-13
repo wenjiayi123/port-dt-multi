@@ -8,6 +8,13 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ContainerContractTests(unittest.TestCase):
+    def test_release_does_not_pin_known_vulnerable_intel_torch(self) -> None:
+        requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
+        self.assertNotIn("torch==2.2.2", requirements)
+        self.assertNotIn("stable-baselines3==2.3.2", requirements)
+        self.assertNotIn("sb3-contrib==2.3.0", requirements)
+        self.assertIn("torch==2.13.0", requirements)
+
     def test_v3_runtime_and_evidence_are_packaged(self) -> None:
         dockerfile = (ROOT / "Dockerfile").read_text(encoding="utf-8")
         for required_copy in (
@@ -21,6 +28,8 @@ class ContainerContractTests(unittest.TestCase):
             self.assertIn(required_copy, dockerfile)
         self.assertIn("USER portdt", dockerfile)
         self.assertIn("/health/live", dockerfile)
+        workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+        self.assertIn("PORT_DT_VERSION=3.2.0", workflow)
 
     def test_docker_context_keeps_portable_evidence(self) -> None:
         ignored = (ROOT / ".dockerignore").read_text(encoding="utf-8").splitlines()

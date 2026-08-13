@@ -31,14 +31,12 @@ python-dateutil==2.9.0.post0  # 解析 ISO 时间、相对时间计算
 # -------------------------
 # 真实强化学习与控制基线
 # -------------------------
-# Intel macOS no longer receives every newest upstream wheel. Keep the locally
-# verified V3 runtime there; use the current production pin on supported hosts.
-torch==2.2.2; sys_platform == "darwin" and platform_machine == "x86_64"
+# Intel macOS stopped receiving security-fixed upstream Torch wheels. Do not
+# silently install its vulnerable 2.2.x ceiling; use the Linux container on
+# that legacy host. Supported native platforms and the container use 2.13.0.
 torch==2.13.0; sys_platform != "darwin" or platform_machine != "x86_64"
 gymnasium==0.29.1          # 港口运营环境标准接口
-stable-baselines3==2.3.2; sys_platform == "darwin" and platform_machine == "x86_64"
 stable-baselines3==2.9.0; sys_platform != "darwin" or platform_machine != "x86_64"
-sb3-contrib==2.3.0; sys_platform == "darwin" and platform_machine == "x86_64"
 sb3-contrib==2.9.0; sys_platform != "darwin" or platform_machine != "x86_64"
 
 # -------------------------
