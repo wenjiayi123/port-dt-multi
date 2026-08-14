@@ -85,6 +85,7 @@ from app.services.bess_energy_evidence import BESSEnergyEvidenceService
 from app.services.yard_crane_evidence import YardCraneEvidenceService
 from app.services.ai_trust_evidence import AITrustEvidenceService
 from app.services.monitoring_evidence import MonitoringEvidenceService
+from app.services.future_decision import FutureDecisionService
 from app.services.opsx_evidence import OpsXEvidenceService
 from app.services.external_signals_evidence import ExternalSignalsEvidenceService
 from app.services.mlops_evidence import MLOpsEvidenceService
@@ -343,6 +344,7 @@ ai_trust_evidence = AITrustEvidenceService({
     "yard_crane": yard_crane_evidence,
 })
 monitoring_evidence = MonitoringEvidenceService(di.telemetry, di.monitoring)
+future_decision = FutureDecisionService(di.strategy_runtime, monitoring_evidence)
 xiaoyi_mission_control = XiaoyiMissionControl(
     realtime_insights,
     monitoring_evidence,
@@ -394,6 +396,42 @@ async def v3_ai_trust_evidence() -> JSONResponse:
 @app.get("/api/v3/monitoring/evidence", tags=["v3-governance"])
 async def v3_monitoring_evidence() -> JSONResponse:
     return JSONResponse(await asyncio.to_thread(monitoring_evidence.build))
+
+
+@app.post("/api/v3/future-decision/run", tags=["v3-runtime"])
+async def v3_future_decision_run(
+    payload: Dict[str, Any] = Body(
+        default={
+            "horizon_min": 90,
+            "step_min": 5,
+            "max_candidates": 3,
+            "source": "rl-future-deck",
+        }
+    ),
+) -> JSONResponse:
+    try:
+        horizon_min = int(payload.get("horizon_min", 90))
+        step_min = int(payload.get("step_min", 5))
+        max_candidates = int(payload.get("max_candidates", 3))
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=422, detail="future decision parameters must be integers") from exc
+    if not 15 <= horizon_min <= 24 * 60:
+        raise HTTPException(status_code=422, detail="horizon_min must be between 15 and 1440")
+    if not 1 <= step_min <= 60 or step_min > horizon_min:
+        raise HTTPException(status_code=422, detail="step_min must be between 1 and horizon_min")
+    if not 1 <= max_candidates <= 3:
+        raise HTTPException(status_code=422, detail="max_candidates must be between 1 and 3")
+    try:
+        result = await asyncio.to_thread(
+            future_decision.run,
+            horizon_min=horizon_min,
+            step_min=step_min,
+            max_candidates=max_candidates,
+            source=str(payload.get("source") or "rl-future-deck")[:80],
+        )
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    return JSONResponse(result)
 
 
 @app.get("/api/v3/opsx/evidence", tags=["v3-governance"])
@@ -733,7 +771,7 @@ def _inject_xiaoyi_sprite(html: str) -> str:
     marker = "/ui/adapters/xiaoyi_sprite.js"
     if marker in html:
         return html
-    tag = '  <script src="/ui/adapters/xiaoyi_sprite.js?v=20260712-speech-v2"></script>\n'
+    tag = '  <script src="/ui/adapters/xiaoyi_sprite.js?v=20260814-evidence-context-v3"></script>\n'
     if "</body>" in html:
         return html.replace("</body>", f"{tag}</body>")
     return html + tag

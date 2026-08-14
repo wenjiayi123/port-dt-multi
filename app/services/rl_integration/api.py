@@ -239,6 +239,7 @@ async def rl_integration_health(request: Request) -> JSONResponse:
         "/api/sailing/status": _route_exists(request, "/api/sailing/status", {"GET"}),
         "/api/sailing/launch": _route_exists(request, "/api/sailing/launch", {"POST"}),
         "/api/sailing/actions/execute": _route_exists(request, "/api/sailing/actions/execute", {"POST"}),
+        "/api/sailing/logs": _route_exists(request, "/api/sailing/logs", {"GET"}),
     }
     rl_online = all(rl_routes.values())
 
@@ -258,7 +259,7 @@ async def rl_integration_health(request: Request) -> JSONResponse:
         "xiaoyi_ai": {
             "name": xiaoyi_cfg.get("name", "小懿AI"),
             "online": xiaoyi_online,
-            "label": "小懿在线" if xiaoyi_online else "小懿未启动",
+            "label": "小懿在线" if xiaoyi_online else "小懿未在线 · 后端证据兜底",
             "base_url": xiaoyi_base_url,
             "health_url": xiaoyi_health_url,
             "chat_url": xiaoyi_base_url + xiaoyi_chat_path,
@@ -273,6 +274,10 @@ async def rl_integration_health(request: Request) -> JSONResponse:
                 "/api/xiaoyi/status": _route_exists(request, "/api/xiaoyi/status", {"GET"}),
                 "/api/xiaoyi/launch": _route_exists(request, "/api/xiaoyi/launch", {"POST"}),
             },
+            "desktop_control_available": bool(
+                desktop_enabled
+                and _route_exists(request, "/api/xiaoyi/launch", {"POST"})
+            ),
         },
         "rl_interface": {
             "name": "RL接口",
@@ -284,7 +289,11 @@ async def rl_integration_health(request: Request) -> JSONResponse:
         "sailing_simulator": {
             "name": sailing_cfg.get("name", "航行模拟器"),
             "launchable": sailing_launchable,
-            "label": "航行模拟器可启动" if sailing_launchable else "航行模拟器不可启动",
+            "label": (
+                "航行桌面联动未启用"
+                if not desktop_enabled
+                else ("航行模拟器可启动" if sailing_launchable else "航行模拟器不可启动")
+            ),
             "project_root": sailing_root,
             "project_file": sailing_project,
             "godot_executable": godot_executable,
@@ -293,7 +302,14 @@ async def rl_integration_health(request: Request) -> JSONResponse:
                 "/api/sailing/status": _route_exists(request, "/api/sailing/status", {"GET"}),
                 "/api/sailing/launch": _route_exists(request, "/api/sailing/launch", {"POST"}),
                 "/api/sailing/actions/execute": _route_exists(request, "/api/sailing/actions/execute", {"POST"}),
+                "/api/sailing/logs": _route_exists(request, "/api/sailing/logs", {"GET"}),
             },
+            "desktop_control_available": bool(
+                desktop_enabled
+                and sailing_launchable
+                and _route_exists(request, "/api/sailing/launch", {"POST"})
+                and _route_exists(request, "/api/sailing/actions/execute", {"POST"})
+            ),
         },
     }
 

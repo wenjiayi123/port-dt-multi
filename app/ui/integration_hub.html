@@ -484,6 +484,15 @@
     let policyRecoveryContext = null;
     let logItems = [];
     let selectedTrainingTarget = "shore_bess";
+    let integrationCapabilities = {
+      desktopEnabled:false,
+      xiaoyiLaunch:false,
+      sailingStatus:false,
+      sailingLaunch:false,
+      sailingActions:false,
+      sailingLogs:false,
+      sailingLaunchable:false
+    };
 
     const TRAINING_TARGETS = {
       yard_lighting: {
@@ -548,6 +557,37 @@
       pill.classList.toggle("bad", !ok && !warn);
       pill.classList.toggle("warn", !ok && warn);
     }
+    function setButtonAvailability(selector, available, reason=""){
+      const button = $(selector);
+      if(!button) return;
+      button.disabled = !available;
+      button.title = available ? "" : reason;
+      button.setAttribute("aria-disabled", available ? "false" : "true");
+    }
+    function updateIntegrationCapabilities(health, sailing){
+      const systems = health.systems || {};
+      const xiaoyi = systems.xiaoyi_ai || {};
+      const sailingSystem = systems.sailing_simulator || sailing || {};
+      const routes = sailingSystem.routes || {};
+      integrationCapabilities = {
+        desktopEnabled:Boolean(health.desktop_integrations_enabled),
+        xiaoyiLaunch:Boolean(xiaoyi.routes?.["/api/xiaoyi/launch"]),
+        sailingStatus:Boolean(routes["/api/sailing/status"]),
+        sailingLaunch:Boolean(routes["/api/sailing/launch"]),
+        sailingActions:Boolean(routes["/api/sailing/actions/execute"]),
+        sailingLogs:Boolean(routes["/api/sailing/logs"]),
+        sailingLaunchable:Boolean(sailingSystem.launchable)
+      };
+      const disabledReason = integrationCapabilities.desktopEnabled
+        ? "桌面项目或对应后端路由当前不可用"
+        : "默认安全配置未启用桌面进程控制；小懿问答与 V3 RL 证据仍可使用";
+      setButtonAvailability("#btnXiaoyiStart", integrationCapabilities.xiaoyiLaunch, disabledReason);
+      setButtonAvailability("#btnSailingLaunch", integrationCapabilities.sailingLaunch && integrationCapabilities.sailingLaunchable, disabledReason);
+      ["#btnSailingRouteDemo", "#btnSailingSwitchView", "#btnSailingSmoke"].forEach(selector=>
+        setButtonAvailability(selector, integrationCapabilities.sailingActions && integrationCapabilities.sailingLaunchable, disabledReason)
+      );
+      setButtonAvailability("#btnLoadSailingLogs", integrationCapabilities.sailingLogs, disabledReason);
+    }
     function addLog(kind, msg, detail){
       logItems.unshift({time:now(), kind, msg, detail});
       logItems = logItems.slice(0, 80);
@@ -593,11 +633,7 @@
       const el = $("#assistantAnswer");
       el.textContent = "思考中...";
       await new Promise(r=>setTimeout(r, 650));
-      el.textContent = "";
-      for(const ch of text){
-        el.textContent += ch;
-        await new Promise(r=>setTimeout(r, 18));
-      }
+      el.textContent = text;
     }
     function currentTrainingTarget(){
       return TRAINING_TARGETS[selectedTrainingTarget] || TRAINING_TARGETS.shore_bess;
@@ -1031,17 +1067,19 @@
       if(fromQuery && actionRegistry.some(a=>a.id === fromQuery)) select.value = fromQuery;
     }
     async function refreshHealth(){
-      const [health, sailing] = await Promise.all([
-        api("/api/rl/integration/health").catch(err=>({systems:{}, summary:{xiaoyi:"小懿待检查", rl:"RL待检查", sailing:"航行待检查"}, error:String(err)})),
-        api("/api/sailing/status").catch(err=>({label:"航行模拟器不可启动", error:String(err)}))
-      ]);
+      const health = await api("/api/rl/integration/health").catch(err=>({systems:{}, summary:{xiaoyi:"小懿待检查", rl:"RL待检查", sailing:"航行待检查"}, error:String(err)}));
       const systems = health.systems || {};
+      const sailingRoutes = systems.sailing_simulator?.routes || {};
+      const sailing = sailingRoutes["/api/sailing/status"]
+        ? await api("/api/sailing/status").catch(err=>({...systems.sailing_simulator, error:String(err)}))
+        : {...(systems.sailing_simulator || {}), boundary:"默认安全配置未挂载桌面航行控制路由"};
+      updateIntegrationCapabilities(health, sailing);
       setText("#stXiaoyi", health.summary?.xiaoyi || "小懿待检查");
       setText("#stRl", health.summary?.rl || "RL待检查");
       setText("#stSailing", sailing.label || health.summary?.sailing || "航行待检查");
       statusClass($("#pillXiaoyi"), Boolean(systems.xiaoyi_ai?.online), true);
       statusClass($("#pillRl"), Boolean(systems.rl_interface?.online), false);
-      statusClass($("#pillSailing"), Boolean(sailing.launchable), false);
+      statusClass($("#pillSailing"), Boolean(integrationCapabilities.sailingLaunchable && integrationCapabilities.sailingLaunch), !integrationCapabilities.desktopEnabled);
       renderSailing(sailing);
       addLog("HEALTH", "联动状态已刷新", `${health.summary?.rl || "RL"} / ${sailing.label || "Sailing"}`);
     }
@@ -1051,33 +1089,89 @@
       setText("#sailingControl", data.control_mode || "launch");
       const proc = data.process || {};
       setText("#sailingProcess", proc.running ? `RUNNING pid=${proc.pid}` : "未跟踪运行进程");
-      setText("#sailingPacket", pretty(data));
+      setText("#sailingPacket", pretty({
+        label:data.label,
+        desktop_control_available:Boolean(data.desktop_control_available),
+        project_root:data.project_root,
+        project_file:data.project_file,
+        godot_executable:data.godot_executable,
+        process:data.process,
+        routes:data.routes,
+        boundary:data.boundary || "桌面动作必须人工确认；状态和日志只在路由挂载后读取。",
+        error:data.error
+      }));
+    }
+    function compactRlStatus(st){
+      const evaluation = st.evaluation || {};
+      const manifest = st.manifest || {};
+      return {
+        job_id:st.job_id,
+        status:st.status,
+        stage:st.stage,
+        progress:st.progress,
+        step:st.step,
+        total_steps:st.total_steps,
+        algorithm:st.algorithm,
+        dataset_id:st.dataset_id,
+        summary:st.summary,
+        metrics:st.metrics,
+        latest_logs:(st.logs || []).slice(0, 8),
+        artifact_paths:st.artifact_paths,
+        artifact_verification:{
+          model_sha256:manifest.model_sha256,
+          dataset_sha256:manifest.dataset_sha256,
+          render_calls_during_training:manifest.render_calls_during_training
+        },
+        held_out_evaluation:evaluation.metrics ? {
+          split:evaluation.split,
+          episodes:evaluation.episodes,
+          metrics:{
+            reward:evaluation.metrics.reward,
+            throughput_teu:evaluation.metrics.throughput_teu,
+            delay_index_mean:evaluation.metrics.delay_index_mean,
+            energy_cost:evaluation.metrics.energy_cost,
+            carbon_kg:evaluation.metrics.carbon_kg,
+            peak_kw:evaluation.metrics.peak_kw,
+            guardrail_violation_rate:evaluation.metrics.guardrail_violation_rate
+          },
+          evidence_label:evaluation.evidence_label
+        } : null,
+        production_boundary:"训练与留出集评测证据；不是现场 KPI 或生产执行回执。"
+      };
     }
     function renderRlStatus(data){
       const st = data.status || data;
       const m = st.metrics || {};
+      const manifest = st.manifest || {};
       const state = String(st.status || "IDLE").toUpperCase();
       const progress = Number.isFinite(Number(st.progress)) ? Number(st.progress) : 0;
       setText("#rlStatus", state);
       setText("#rlProgress", Number.isFinite(Number(st.progress)) ? `${progress.toFixed(1)}%` : "—");
-      setText("#rlStepReward", `${st.step ?? m.step ?? "—"} / ${Number(st.reward ?? m.reward ?? 0).toFixed(2)}`);
-      setText("#rlPolicy", st.policy_version || m.policy_version || "—");
-      const policy = st.policy_version || m.policy_version;
+      const reward = Number(st.reward ?? m.reward ?? m.reward_mean);
+      setText("#rlStepReward", `${st.step ?? m.step ?? "—"} / ${Number.isFinite(reward) ? reward.toFixed(2) : "—"}`);
+      const policy = st.policy_version || m.policy_version || (manifest.model_sha256 ? `${String(st.algorithm || "policy").toUpperCase()} ${manifest.model_sha256.slice(0, 12)}` : "");
+      setText("#rlPolicy", policy || "—");
       if(policy) setText("#impactTargetModel", `${selectedTrainingTarget} · ${policy}`);
-      if(state === "COMPLETED" && progress >= 99.9){
+      if(["COMPLETED", "EVALUATED"].includes(state) && progress >= 99.9){
         setImpactStage("#stageArtifact", "done");
-        setText("#impactTargetState", `训练已完成 · ${policy || "policy ready"}`);
+        setText("#impactTargetState", `${state === "EVALUATED" ? "训练与留出集评测已完成" : "训练已完成"} · ${policy || "policy ready"} · 待策略测试/护栏`);
       }else{
         setImpactStage("#stageArtifact", state === "RUNNING" || state === "PAUSED" ? "active" : "blocked");
         setText("#impactTargetState", `训练 ${state} · ${progress.toFixed(1)}% · 当前策略不可上线`);
       }
-      setText("#rlPacket", pretty(st));
+      setText("#rlPacket", pretty(compactRlStatus(st)));
     }
     async function refreshRlStatus(){
-      const data = await api("/api/rl/train/status");
-      renderRlStatus(data);
-      addLog("RL", "训练状态已读取", data.status?.summary || data.summary || "");
-      return data;
+      try{
+        const data = await api("/api/rl/train/status");
+        renderRlStatus(data);
+        addLog("RL", "训练状态已读取", data.status?.summary || data.summary || "");
+        return data;
+      }catch(err){
+        setText("#rlPacket", String(err));
+        addLog("ERROR", "训练状态读取失败", String(err));
+        return null;
+      }
     }
     function buildAssistantPayload(dryRun, confirm=false){
       const actionId = $("#assistantAction").value || params.get("action") || "";
@@ -1103,7 +1197,16 @@
         return;
       }
       setText("#assistantPacket", "小懿正在判断动作...");
-      const data = await api("/api/assistant/actions/execute", {method:"POST", body:payload});
+      let data;
+      try{
+        data = await api("/api/assistant/actions/execute", {method:"POST", body:payload});
+      }catch(err){
+        const message = `小懿动作网关暂不可用：${String(err)}。未执行任何联动动作。`;
+        setText("#assistantPacket", message);
+        addLog("ERROR", "小懿动作判断失败", String(err));
+        await typeAnswer(message);
+        return null;
+      }
       pendingPacket = data;
       setText("#assistantPacket", pretty(data));
       const action = data.action || {};
@@ -1256,26 +1359,58 @@
       return true;
     }
     async function launchXiaoyi(){
+      if(!integrationCapabilities.xiaoyiLaunch){
+        const message = "小懿桌面启动桥当前未挂载；问答将继续使用后端证据兜底。";
+        setText("#assistantPacket", message);
+        addLog("BOUNDARY", message, "no desktop process started");
+        await typeAnswer(message);
+        return null;
+      }
       setText("#assistantPacket", "正在启动小懿AI...");
-      const data = await api("/api/xiaoyi/launch", {method:"POST", body:{confirm:true, source:"integration_hub"}});
-      setText("#assistantPacket", pretty(data));
-      await typeAnswer(`执行结果：${data.result?.status || "完成"}。\n小懿地址：${data.status?.base_url || "http://127.0.0.1:8010"}`);
-      addLog("XIAOYI", `start_xiaoyi_ai · ${data.result?.status || "done"}`, data.result?.pid ? `pid=${data.result.pid}` : "");
-      await refreshHealth();
+      try{
+        const data = await api("/api/xiaoyi/launch", {method:"POST", body:{confirm:true, source:"integration_hub"}});
+        setText("#assistantPacket", pretty(data));
+        await typeAnswer(`执行结果：${data.result?.status || "完成"}。\n小懿地址：${data.status?.base_url || "http://127.0.0.1:8010"}`);
+        addLog("XIAOYI", `start_xiaoyi_ai · ${data.result?.status || "done"}`, data.result?.pid ? `pid=${data.result.pid}` : "");
+        await refreshHealth();
+        return data;
+      }catch(err){
+        setText("#assistantPacket", String(err));
+        addLog("ERROR", "小懿桌面启动失败", String(err));
+        await typeAnswer(`启动失败：${String(err)}。小懿问答仍会使用后端证据兜底。`);
+        return null;
+      }
     }
     async function executeSailing(actionId){
+      if(!integrationCapabilities.sailingActions || !integrationCapabilities.sailingLaunchable){
+        const message = "航行模拟器动作桥当前不可用，未执行桌面动作。";
+        setText("#sailingPacket", message); addLog("BOUNDARY", message, actionId); return null;
+      }
       setText("#sailingPacket", "正在执行航行模拟器动作...");
-      const data = await api("/api/sailing/actions/execute", {method:"POST", body:{action_id:actionId, dry_run:false, confirm:true, source:"integration_hub"}});
-      setText("#sailingPacket", pretty(data));
-      addLog("SAILING", `${actionId} · ${data.execution?.status || "done"}`, data.execution?.output_tail ? data.execution.output_tail.split("\n").slice(-4).join("\n") : "");
-      renderSailing(data.status || {});
-      return data;
+      try{
+        const data = await api("/api/sailing/actions/execute", {method:"POST", body:{action_id:actionId, dry_run:false, confirm:true, source:"integration_hub"}});
+        setText("#sailingPacket", pretty(data));
+        addLog("SAILING", `${actionId} · ${data.execution?.status || "done"}`, data.execution?.output_tail ? data.execution.output_tail.split("\n").slice(-4).join("\n") : "");
+        renderSailing(data.status || {});
+        return data;
+      }catch(err){
+        setText("#sailingPacket", String(err)); addLog("ERROR", `${actionId} 执行失败`, String(err)); return null;
+      }
     }
     async function launchSailing(){
-      const data = await api("/api/sailing/launch", {method:"POST", body:{confirm:true, source:"integration_hub", preset:"main_scene"}});
-      setText("#sailingPacket", pretty(data));
-      addLog("SAILING", `open_sailing_simulator · ${data.result?.status || "done"}`, data.result?.pid ? `pid=${data.result.pid}` : "");
-      renderSailing(data.status || {});
+      if(!integrationCapabilities.sailingLaunch || !integrationCapabilities.sailingLaunchable){
+        const message = "航行模拟器启动桥当前不可用，未启动桌面进程。";
+        setText("#sailingPacket", message); addLog("BOUNDARY", message, "no desktop process started"); return null;
+      }
+      try{
+        const data = await api("/api/sailing/launch", {method:"POST", body:{confirm:true, source:"integration_hub", preset:"main_scene"}});
+        setText("#sailingPacket", pretty(data));
+        addLog("SAILING", `open_sailing_simulator · ${data.result?.status || "done"}`, data.result?.pid ? `pid=${data.result.pid}` : "");
+        renderSailing(data.status || {});
+        return data;
+      }catch(err){
+        setText("#sailingPacket", String(err)); addLog("ERROR", "航行模拟器启动失败", String(err)); return null;
+      }
     }
     async function runPolicyTest(){
       const button = $("#btnRlPolicyTest");
@@ -1324,9 +1459,31 @@
       await askXiaoyi();
     }
     async function loadSailingLogs(){
-      const data = await api("/api/sailing/logs?limit=12");
-      (data.items || []).reverse().forEach(item=>{
-        addLog("SAILING/API", `${item.action_id} · ${item.status}`, item.detail?.preset || item.detail?.script || "");
+      if(!integrationCapabilities.sailingLogs){
+        const message = "航行日志路由当前未挂载，没有发起请求。";
+        setText("#sailingPacket", message); addLog("BOUNDARY", message, "GET /api/sailing/logs unavailable"); return;
+      }
+      try{
+        const data = await api("/api/sailing/logs?limit=12");
+        (data.items || []).reverse().forEach(item=>{
+          addLog("SAILING/API", `${item.action_id} · ${item.status}`, item.detail?.preset || item.detail?.script || "");
+        });
+      }catch(err){
+        setText("#sailingPacket", String(err)); addLog("ERROR", "航行日志同步失败", String(err));
+      }
+    }
+    async function confirmSailingOperation(actionId){
+      const labels = {
+        open_sailing_simulator:"打开 Godot 航行模拟器",
+        start_navigation_demo:"启动航线演示",
+        switch_ship_view:"切换船舶视角",
+        run_sailing_rl_smoke_test:"运行 smoke test"
+      };
+      const endpoint = actionId === "open_sailing_simulator" ? "POST /api/sailing/launch" : "POST /api/sailing/actions/execute";
+      return requestXiaoyiConfirmation({
+        title:"确认桌面航行联动动作", operation:labels[actionId] || actionId, confirmLabel:"人工确认并执行",
+        details:[{label:"动作",value:labels[actionId] || actionId},{label:"动作 ID",value:actionId},{label:"接口",value:endpoint},{label:"回执",value:"航行状态 + 统一动作日志"}],
+        boundary:"该动作可能启动或操作本机 Godot 进程，因此必须人工确认；不会获得港口生产控制权。"
       });
     }
     function bindEvents(){
@@ -1346,10 +1503,10 @@
       $("#btnXiaoyiRecommend").addEventListener("click", async()=>{if(await confirmXiaoyiOperation("recommend")) await recommendTrainingParameters();});
       $("#btnRlStatus").addEventListener("click", refreshRlStatus);
       $("#btnRlPolicyTest").addEventListener("click", runPolicyTest);
-      $("#btnSailingLaunch").addEventListener("click", launchSailing);
-      $("#btnSailingRouteDemo").addEventListener("click", ()=>executeSailing("start_navigation_demo"));
-      $("#btnSailingSwitchView").addEventListener("click", ()=>executeSailing("switch_ship_view"));
-      $("#btnSailingSmoke").addEventListener("click", ()=>executeSailing("run_sailing_rl_smoke_test"));
+      $("#btnSailingLaunch").addEventListener("click", async()=>{if(await confirmSailingOperation("open_sailing_simulator")) await launchSailing();});
+      $("#btnSailingRouteDemo").addEventListener("click", async()=>{if(await confirmSailingOperation("start_navigation_demo")) await executeSailing("start_navigation_demo");});
+      $("#btnSailingSwitchView").addEventListener("click", async()=>{if(await confirmSailingOperation("switch_ship_view")) await executeSailing("switch_ship_view");});
+      $("#btnSailingSmoke").addEventListener("click", async()=>{if(await confirmSailingOperation("run_sailing_rl_smoke_test")) await executeSailing("run_sailing_rl_smoke_test");});
       $("#btnLoadSailingLogs").addEventListener("click", loadSailingLogs);
       $("#btnClearLogs").addEventListener("click", ()=>{logItems=[];renderLog();});
       document.querySelectorAll("[data-training-target]").forEach(button=>button.addEventListener("click", ()=>selectTrainingTarget(button.dataset.trainingTarget)));

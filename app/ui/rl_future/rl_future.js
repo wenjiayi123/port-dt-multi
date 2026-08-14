@@ -1,7 +1,7 @@
 const initialSituation = [
   ['BESS SoC', null],
-  ['岸电功率', null],
-  ['奖励漂移', null],
+  ['聚合负荷', null],
+  ['分布漂移 PSI', null],
   ['候选数量', null],
   ['硬约束', null],
 ];
@@ -21,6 +21,11 @@ function escapeHtml(value) {
 function finiteNumber(value, fallback = 0) {
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
+}
+
+function relativeEnergyPercent(item) {
+  const baseline = finiteNumber(item?.baseline_energy_kwh);
+  return baseline > 0 ? finiteNumber(item?.energy_saving_kwh) / baseline * 100 : 0;
 }
 
 function renderBars(items = initialSituation) {
@@ -44,7 +49,7 @@ function renderStrategies() {
       <div class="strategy-card">
         <div class="strategy-title"><span>候选 ${index}</span><b>WAIT</b></div>
         <div class="strategy-meta">
-          <span>节能 <b>--</b></span><span>风险 <b>--</b></span><span>可信度 <b>--</b></span>
+          <span>相对FCFS <b>--</b></span><span>风险 <b>--</b></span><span>证据区间 <b>--</b></span>
         </div>
       </div>
     `).join('');
@@ -54,9 +59,9 @@ function renderStrategies() {
     <div class="strategy-card ${item.active ? 'active' : ''}">
       <div class="strategy-title"><span>${escapeHtml(item.name)}</span><b>${escapeHtml(item.tag)}</b></div>
       <div class="strategy-meta">
-        <span>节能 <b>${escapeHtml(item.save)}</b></span>
+        <span>相对FCFS <b>${escapeHtml(item.save)}</b></span>
         <span>风险 <b>${escapeHtml(item.risk)}</b></span>
-        <span>可信度 <b>${escapeHtml(item.trust)}</b></span>
+        <span>证据区间 <b>${escapeHtml(item.trust)}</b></span>
       </div>
     </div>
   `).join('');
@@ -116,8 +121,8 @@ function resetRunUI() {
     '<div class="terminal-idle">等待 FastAPI 返回本次推演证据……</div>';
   document.getElementById('snapshotGrid').innerHTML = [
     ['BESS 荷电状态', '等待后端场景快照'],
-    ['岸电当前功率', '等待后端场景快照'],
-    ['模型奖励漂移', '等待可观测信号'],
+    ['聚合回放负荷', '等待后端场景快照'],
+    ['分布漂移 PSI', '等待可观测信号'],
     ['策略候选池', '等待候选生成'],
   ].map(([name, note]) => `<div><span>${name}</span><strong>--</strong><em>${note}</em></div>`).join('');
   document.getElementById('runCandidateGrid').innerHTML =
@@ -155,8 +160,8 @@ function closeSimulation() {
 function renderSnapshot(snapshot) {
   const items = [
     ['BESS 荷电状态', `${finiteNumber(snapshot.bess_soc_pct).toFixed(1)}%`, '后端场景快照'],
-    ['岸电当前功率', `${finiteNumber(snapshot.shore_power_kw).toFixed(0)} kW`, '岸电节点聚合'],
-    ['模型奖励漂移', finiteNumber(snapshot.reward_drift).toFixed(3), 'RL Ops 观测信号'],
+    ['聚合回放负荷', `${finiteNumber(snapshot.shore_power_kw).toFixed(0)} kW`, '公开数据校准回放'],
+    ['分布漂移 PSI', finiteNumber(snapshot.reward_drift).toFixed(3), 'V3 监控准入信号'],
     ['策略候选池', `${finiteNumber(snapshot.candidate_pool_size).toFixed(0)} 条`, '候选生成器输出'],
   ];
   document.getElementById('snapshotGrid').innerHTML = items.map((item, index) => `
@@ -182,11 +187,11 @@ function renderRunCandidates(data) {
         <b class="candidate-tag">${recommended ? '推荐' : escapeHtml(item.tag || 'CANDIDATE')}</b>
       </div>
       <div class="candidate-metrics">
-        <div><span>节能</span><b>${energySaving.toFixed(1)} kWh</b></div>
+        <div><span>相对FCFS能耗</span><b>${energyPercent.toFixed(1)}%</b></div>
         <div><span>削峰</span><b>${finiteNumber(item.peak_reduction_kw).toFixed(1)} kW</b></div>
-        <div><span>可信度</span><b>${finiteNumber(item.confidence).toFixed(2)}</b></div>
+        <div><span>证据区间</span><b>${(finiteNumber(item.confidence) * 100).toFixed(0)}% CI</b></div>
       </div>
-      <div class="candidate-result"><span>电耗改善 ${energyPercent.toFixed(1)}%</span><strong>${item.dispatch_ready ? '仿真可用' : '保持阻断'}</strong></div>
+      <div class="candidate-result"><span>配对窗口电量差 ${energySaving.toFixed(1)} kWh</span><strong>${item.dispatch_ready ? '可进入dry-run' : '保持阻断'}</strong></div>
     </article>`;
   }).join('') || '<div class="terminal-idle">后端未返回候选策略。</div>';
   document.getElementById('candidateStatus').textContent = `${candidates.length} / ${candidates.length}`;
@@ -238,13 +243,13 @@ function applyRunToMainSurface(data) {
   document.getElementById('riskValue').textContent =
     data.decision.ready_for_human_dry_run ? 'DRY-RUN' : 'BLOCKED';
   document.getElementById('trustValue').textContent =
-    recommended ? finiteNumber(recommended.confidence).toFixed(2) : '--';
+    recommended ? `${(finiteNumber(recommended.confidence) * 100).toFixed(0)}% CI` : '--';
 
   const driftLimitGuard = guardrails.find(item => item.id === 'model_drift');
   renderBars([
     ['BESS SoC', finiteNumber(data.snapshot.bess_soc_pct), `${finiteNumber(data.snapshot.bess_soc_pct).toFixed(0)}%`],
-    ['岸电功率', Math.min(100, finiteNumber(data.snapshot.shore_power_kw) / 50), `${finiteNumber(data.snapshot.shore_power_kw).toFixed(0)}kW`],
-    ['奖励漂移', Math.min(100, finiteNumber(data.snapshot.reward_drift) * 1000), finiteNumber(data.snapshot.reward_drift).toFixed(3)],
+    ['聚合负荷', Math.min(100, finiteNumber(data.snapshot.shore_power_kw) / 500), `${finiteNumber(data.snapshot.shore_power_kw).toFixed(0)}kW`],
+    ['分布漂移 PSI', Math.min(100, finiteNumber(data.snapshot.reward_drift) * 100), finiteNumber(data.snapshot.reward_drift).toFixed(3)],
     ['候选数量', Math.min(100, candidates.length / 3 * 100), String(candidates.length)],
     ['硬约束', hardPassRate, `${hardPassCount}/${hardRules.length}`],
   ]);
@@ -257,7 +262,7 @@ function applyRunToMainSurface(data) {
       tag: item.id === data.recommended_strategy_id ? 'RECOMMENDED' : (item.tag || 'CANDIDATE'),
       save: `${savingPercent.toFixed(1)}%`,
       risk: item.risk_level || 'UNKNOWN',
-      trust: finiteNumber(item.confidence).toFixed(2),
+      trust: `${(finiteNumber(item.confidence) * 100).toFixed(0)}% CI`,
       active: item.id === data.recommended_strategy_id,
     };
   });
@@ -266,8 +271,8 @@ function applyRunToMainSurface(data) {
   document.getElementById('counterGrid').innerHTML = candidates.map(item => `
     <div class="counter-item">
       <span>${escapeHtml(item.mode || '候选')} · ${escapeHtml(item.title || item.id)}</span>
-      <strong>节能 ${finiteNumber(item.energy_saving_kwh).toFixed(1)} kWh</strong>
-      <em>削峰 ${finiteNumber(item.peak_reduction_kw).toFixed(1)} kW · ${item.dispatch_ready ? '仿真可用' : '护栏前阻断'}</em>
+      <strong>相对FCFS能耗 ${relativeEnergyPercent(item).toFixed(1)}%</strong>
+      <em>配对窗口电量差 ${finiteNumber(item.energy_saving_kwh).toFixed(1)} kWh · 峰值差 ${finiteNumber(item.peak_reduction_kw).toFixed(1)} kW · ${item.dispatch_ready ? '可进入dry-run' : '护栏前阻断'}</em>
     </div>
   `).join('');
   document.getElementById('guardList').innerHTML = guardrails.map(item => `
@@ -278,8 +283,8 @@ function applyRunToMainSurface(data) {
   guardStatus.style.background =
     data.decision.ready_for_human_dry_run ? 'var(--green)' : '#ff6c7f';
   document.getElementById('aiSummary').textContent =
-    `${data.decision.label}。推荐候选：${data.decision.recommended_strategy_title || '无'}。${data.decision.production_boundary}` +
-    (driftLimitGuard ? ` 奖励漂移检查：${driftLimitGuard.passed ? '通过' : '阻断'}。` : '');
+    `${data.decision.label}。安全参照：${data.decision.recommended_strategy_title || '无'}。${data.decision.production_boundary}` +
+    (driftLimitGuard ? ` 分布漂移检查：${driftLimitGuard.passed ? '通过' : '阻断'}。` : '');
   writeLogs(data.logs || []);
 }
 
@@ -293,7 +298,7 @@ async function ignite() {
   setStage('situation', 'active');
   appendTerminal('[Boundary] 建立离线反事实推演通道；生产下发接口保持隔离', 'audit');
   try {
-    const response = await fetch('/api/rl/future/run', {
+    const response = await fetch('/api/v3/future-decision/run', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
