@@ -27,7 +27,12 @@ def cors_origins() -> list[str]:
         if is_production() and any(item == "*" or not item.startswith("https://") for item in configured):
             return []
         return configured
-    return [] if is_production() else ["http://127.0.0.1:8000", "http://localhost:8000"]
+    return [] if is_production() else [
+        "http://127.0.0.1:8000",
+        "http://localhost:8000",
+        "http://127.0.0.1:8765",
+        "http://localhost:8765",
+    ]
 
 
 class RuntimeMetrics:

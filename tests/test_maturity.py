@@ -302,6 +302,13 @@ class RuntimeHardeningTests(unittest.TestCase):
         with patch.dict(os.environ, {"PORT_DT_ENV": "production", "PORT_DT_CORS_ORIGINS": ""}):
             self.assertEqual(cors_origins(), [])
 
+    def test_development_cors_allows_flutter_web_acceptance_origin(self):
+        with patch.dict(
+            os.environ,
+            {"PORT_DT_ENV": "development", "PORT_DT_CORS_ORIGINS": ""},
+        ):
+            self.assertIn("http://127.0.0.1:8765", cors_origins())
+
     def test_configured_cors_is_explicit(self):
         with patch.dict(os.environ, {"PORT_DT_ENV": "production", "PORT_DT_CORS_ORIGINS": "https://ops.example, https://audit.example"}):
             self.assertEqual(cors_origins(), ["https://ops.example", "https://audit.example"])
