@@ -8,6 +8,15 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ContainerContractTests(unittest.TestCase):
+    def test_v3_has_explicit_home_navigation(self) -> None:
+        page = (ROOT / "app/ui/v3/index.html").read_text(encoding="utf-8")
+        css = (ROOT / "app/ui/v3/v3.css").read_text(encoding="utf-8")
+
+        self.assertIn('class="home-link"', page)
+        self.assertIn('href="/"', page)
+        self.assertIn("返回主界面", page)
+        self.assertIn(".home-link", css)
+
     def test_release_does_not_pin_known_vulnerable_intel_torch(self) -> None:
         requirements = (ROOT / "requirements.txt").read_text(encoding="utf-8")
         self.assertNotIn("torch==2.2.2", requirements)
