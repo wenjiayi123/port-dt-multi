@@ -11,5 +11,8 @@ data/public_sources/shanghai_yangshan_reanalysis_2024_2025.csv binary
 data/public_sources/shanghai_yangshan_reanalysis_2026_01_05.csv binary
 data/rl/datasets/public_cn_sha_forward_2026m05_v1.csv binary
 data/rl/datasets/public_cn_sha_hourly_v3.csv binary
+data/rl/datasets/public_cn_sha_regulatory_scenario_v4.csv binary
+data/rl/datasets/public_cn_sha_regulatory_forward_2026m05_v4.csv binary
+data/rl/runs/rl-20260821T065745532Z/monitor.csv binary
 data/rl/datasets/public_us_la_6min_v1.csv binary -eol
 app/services/rl_model/hvac_cooling/data/*.csv binary

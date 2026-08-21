@@ -63,7 +63,10 @@ REQUIRED = (
     "data/rl/datasets/public_cn_sha_forward_2026m05_v1.csv",
     "data/rl/datasets/public_cn_sha_forward_2026m05_v1.meta.json",
     "config/ports/cn_sha_public_benchmark_v3.json",
+    "config/ports/cn_sha_regulatory_scenario_v4.json",
     "config/v3_advantage_benchmark.json",
+    "config/regulatory_delay_scenario_v4.json",
+    "config/regulatory_delay_forward_challenge_v4.json",
     "config/rl_business_profiles_v3.json",
     "evidence/v3/shanghai_public_advantage_v3.json",
     "evidence/v3/shanghai_public_advantage_v3.md",
@@ -103,6 +106,16 @@ REQUIRED = (
     "evidence/v3/runtime/selected_sac_v3.config.json",
     "evidence/v3/runtime/runtime_model.json",
     "evidence/v3/runtime/runtime_model.sha256",
+    "app/services/rl_training/regulatory_environment.py",
+    "data/rl/datasets/public_cn_sha_regulatory_scenario_v4.csv",
+    "data/rl/datasets/public_cn_sha_regulatory_scenario_v4.meta.json",
+    "data/rl/datasets/public_cn_sha_regulatory_forward_2026m05_v4.csv",
+    "data/rl/datasets/public_cn_sha_regulatory_forward_2026m05_v4.meta.json",
+    "docs/DATASET_CARD_public_cn_sha_regulatory_scenario_v4.md",
+    "scripts/build_regulatory_delay_scenario_v4.py",
+    "scripts/train_regulatory_resilience_v4.py",
+    "scripts/evaluate_regulatory_resilience_forward_v4.py",
+    "evidence/v4/regulatory_delay/latest.json",
     "data/rl/runs/rl-20260813T063524662Z/config.json",
     "data/rl/runs/rl-20260813T063524662Z/status.json",
     "data/rl/runs/rl-20260813T063524662Z/manifest.json",
@@ -389,6 +402,82 @@ def verify_portable_evidence(
         errors.append("Shanghai portable evidence lacks neutral FCFS baseline")
 
 
+def verify_regulatory_resilience_evidence(errors: list[str]) -> None:
+    """Fail closed unless V4 selection, model and forward evidence agree by hash."""
+    evidence_root = (ROOT / "evidence/v4/regulatory_delay").resolve()
+    latest_path = evidence_root / "latest.json"
+    if not latest_path.is_file():
+        return
+    pointer = json.loads(latest_path.read_text(encoding="utf-8"))
+    if pointer.get("status") != "ADMITTED_OFFLINE_SCENARIO_CANDIDATE":
+        errors.append("V4 regulatory candidate is not admitted")
+    if pointer.get("production_authority") is not False:
+        errors.append("V4 regulatory pointer grants production authority")
+
+    payloads: dict[str, dict] = {}
+    for label, path_key, hash_key in (
+        ("selection", "report_path", "report_sha256"),
+        ("forward", "forward_challenge_path", "forward_challenge_sha256"),
+    ):
+        candidate = (ROOT / str(pointer.get(path_key) or "")).resolve()
+        if not candidate.is_relative_to(evidence_root) or not candidate.is_file():
+            errors.append(f"V4 regulatory {label} evidence path is invalid")
+            continue
+        observed = hashlib.sha256(candidate.read_bytes()).hexdigest()
+        if observed != pointer.get(hash_key):
+            errors.append(f"V4 regulatory {label} evidence hash mismatch")
+            continue
+        payloads[label] = json.loads(candidate.read_text(encoding="utf-8"))
+
+    model_path = (ROOT / str(pointer.get("selected_model_path") or "")).resolve()
+    model_root = (ROOT / "data/rl/runs").resolve()
+    if not model_path.is_relative_to(model_root) or not model_path.is_file():
+        errors.append("V4 selected model path is invalid")
+    elif hashlib.sha256(model_path.read_bytes()).hexdigest() != pointer.get(
+        "selected_model_sha256"
+    ):
+        errors.append("V4 selected model hash mismatch")
+
+    selection = payloads.get("selection") or {}
+    if selection:
+        contract = selection.get("contract") or {}
+        admission = selection.get("admission") or {}
+        legacy = selection.get("legacy_preservation") or {}
+        if contract.get("observation_dimensions") != 53:
+            errors.append("V4 observation contract is not 53-dimensional")
+        if contract.get("action_dimensions") != 7:
+            errors.append("V4 action contract is not 7-dimensional")
+        if admission.get("passed") is not True:
+            errors.append("V4 selection admission did not pass")
+        if admission.get("model_promoted") is not False:
+            errors.append("V4 selection unexpectedly promoted a model")
+        if admission.get("production_authority") is not False:
+            errors.append("V4 selection grants production authority")
+        if legacy.get("preserved") is not True:
+            errors.append("V4 selection did not preserve legacy artifacts")
+
+    forward = payloads.get("forward") or {}
+    if forward:
+        forward_dataset = forward.get("forward_dataset") or {}
+        protocol = forward.get("protocol") or {}
+        admission = forward.get("admission") or {}
+        candidate_metrics = forward.get("candidate_metrics") or {}
+        if forward.get("status") != "PASS":
+            errors.append("V4 independent forward challenge did not pass")
+        if forward_dataset.get("candidate_selection_allowed") is not False:
+            errors.append("V4 forward dataset permits candidate selection")
+        if protocol.get("candidate_selection_or_tuning") is not False:
+            errors.append("V4 forward protocol permits candidate tuning")
+        if admission.get("passed") is not True:
+            errors.append("V4 forward admission did not pass")
+        if admission.get("model_promoted") is not False:
+            errors.append("V4 forward challenge unexpectedly promoted a model")
+        if admission.get("production_authority") is not False:
+            errors.append("V4 forward challenge grants production authority")
+        if float(candidate_metrics.get("guardrail_violation_rate") or 0.0) != 0.0:
+            errors.append("V4 forward challenge has guardrail violations")
+
+
 def main() -> int:
     errors: list[str] = []
     report: dict = {}
@@ -396,6 +485,7 @@ def main() -> int:
     for relative in REQUIRED:
         if not (ROOT / relative).is_file():
             errors.append(f"missing release evidence: {relative}")
+    verify_regulatory_resilience_evidence(errors)
     mission_api = (ROOT / "app/services/copilot/api.py").read_text(encoding="utf-8")
     mission_ui = (ROOT / "app/ui/ops_copilot.html").read_text(encoding="utf-8")
     for marker in (

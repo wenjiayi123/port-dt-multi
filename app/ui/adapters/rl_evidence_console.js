@@ -10,6 +10,12 @@
     reefer_load_kw:"冷藏箱负荷", pilot_tug_availability_ratio:"引航/拖轮可用",
     closure_flag:"港区关闭"
   };
+  const REGULATORY_LABELS = {
+    maritime_inspection_ratio:"海事检查", customs_inspection_ratio:"海关查验",
+    maritime_detention_ratio:"严重缺陷滞留", customs_secondary_check_ratio:"二次查验",
+    inspection_resource_availability_ratio:"监管资源可用", regulatory_release_ratio:"放行率"
+  };
+  const ALL_FACTOR_LABELS = {...FACTOR_LABELS, ...REGULATORY_LABELS};
 
   function escapeHtml(value){
     return String(value ?? "").replace(/[&<>"']/g, char => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[char]));
@@ -28,6 +34,7 @@
       .rl-contract-row{display:grid;grid-template-columns:76px 1fr;gap:8px;padding:6px 0;border-bottom:1px solid #1a304b;font-size:10px}.rl-contract-row span{color:#7fa7c9}.rl-contract-row b{color:#d7ebfb;line-height:1.5}.rl-factor-cloud{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.rl-factor-cloud i{font-style:normal;font-size:9px;color:#9cd8f5;border:1px solid #244966;background:#071c31;border-radius:999px;padding:3px 6px}
       .rl-xiaoyi-card{display:grid;grid-template-columns:72px 1fr;gap:10px;align-items:center}.rl-xiaoyi-card img{width:72px;height:104px;object-fit:contain;filter:drop-shadow(0 9px 14px rgba(14,165,233,.22))}.rl-xiaoyi-card strong{display:block;color:#f2f9ff;font-size:13px}.rl-xiaoyi-card p{margin:5px 0 0;color:#99b7d0;font-size:10px;line-height:1.5}.rl-xiaoyi-advice{margin-top:8px;padding:8px;border:1px solid #28506d;border-radius:9px;background:#071b2e;color:#bae6fd;font-size:10px;line-height:1.55;min-height:48px}
       .rl-data-wrap{grid-column:1/-1}.rl-data-table td:nth-child(2),.rl-data-table td:nth-child(3){font-variant-numeric:tabular-nums}.rl-data-note{margin-top:7px;color:#83a7c4;font-size:9px;line-height:1.5}
+      .rl-regulatory{grid-column:1/-1}.rl-regulatory-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.rl-regulatory-metric{border:1px solid #254966;border-radius:10px;background:#071b2e;padding:9px}.rl-regulatory-metric span{display:block;color:#8db6d8;font-size:9px}.rl-regulatory-metric b{display:block;margin-top:4px;color:#eaf7ff;font-size:16px}.rl-regulatory-boundary{margin-top:8px;color:#9fc3dc;font-size:10px;line-height:1.55}
       @media(max-width:1100px){.rl-proof-grid{grid-template-columns:1fr 1fr}.rl-data-wrap{grid-column:1/-1}.rl-proof-panel.xiaoyi{grid-column:1/-1}.rl-proof-kpis{grid-template-columns:repeat(2,1fr)}}@media(max-width:680px){.rl-proof-head{display:block}.rl-proof-actions{margin-top:10px}.rl-proof-grid{grid-template-columns:1fr}.rl-proof-panel,.rl-data-wrap,.rl-proof-panel.xiaoyi{grid-column:1}.rl-proof-kpis{grid-template-columns:1fr 1fr}}
     `;
     document.head.appendChild(style);
@@ -49,7 +56,7 @@
       <div class="rl-proof-kpis">
         <div class="rl-proof-kpi"><span>真实控制器矩阵</span><b data-proof-algo>—</b><em data-proof-mix>读取算法族</em></div>
         <div class="rl-proof-kpi"><span>当前公开训练包</span><b data-proof-rows>—</b><em data-proof-tier>等待读取来源</em></div>
-        <div class="rl-proof-kpi"><span>v2 观测 / 动作</span><b data-proof-contract>—</b><em>缺失因素使用显式可用性掩码</em></div>
+        <div class="rl-proof-kpi"><span>V4 观测 / 动作</span><b data-proof-contract>—</b><em>监管因素与缺失值均有显式掩码</em></div>
         <div class="rl-proof-kpi"><span>可用于比较结论的算法</span><b data-proof-ready>—</b><em>RL 需 ≥ 3 独立种子且每次 ≥ 10k 步</em></div>
       </div>
       <div class="rl-proof-grid">
@@ -58,10 +65,10 @@
           <table class="rl-algo-table"><thead><tr><th>算法</th><th>实现</th><th>动作</th><th>种子/状态</th></tr></thead><tbody data-proof-algos><tr><td colspan="4">读取中…</td></tr></tbody></table>
         </div>
         <div class="rl-proof-panel">
-          <h3>目标函数 · 观测 · 动作 <small>port_ops_v2</small></h3>
+          <h3>目标函数 · 观测 · 动作 <small>port_ops_v4</small></h3>
           <div class="rl-contract-row"><span>目标函数</span><b data-proof-objectives>从当前数据集的港口场景包读取中…</b></div>
           <div class="rl-contract-row"><span>基础观测</span><b>时钟、负荷、吞吐、到港、潮位、价格、碳因子、气温、SOC、队列、上一动作、时段进度</b></div>
-          <div class="rl-contract-row"><span>建议动作</span><b>BESS功率、服务强度、柔性负荷、泊位优先级、堆场流量；默认无生产下发权</b></div>
+          <div class="rl-contract-row"><span>建议动作</span><b>BESS、服务、柔性负荷、泊位、堆场、检查窗口预留、放行后恢复优先级；无执法结论或放行权</b></div>
           <div class="rl-factor-cloud" data-proof-factors></div>
         </div>
         <div class="rl-proof-panel xiaoyi">
@@ -71,6 +78,17 @@
             <div><strong>小懿AI · 训练与全系统助手</strong><p>读取后端数据指纹、算法实现、多种子门禁和场景包状态；训练按钮仍保留人工确认。</p></div>
           </div>
           <div class="rl-xiaoyi-advice" data-proof-advice-text>等待后端证据。点击“解读训练门禁”后，小懿只解释真实状态，不生成优秀指标。</div>
+        </div>
+        <div class="rl-proof-panel rl-regulatory">
+          <h3>海事 / 海关检查连锁延误 <small>2026 独立前向挑战 · 模型锁定后只评估</small></h3>
+          <div class="rl-regulatory-grid">
+            <div class="rl-regulatory-metric"><span>前向门禁</span><b data-reg-status>读取中</b></div>
+            <div class="rl-regulatory-metric"><span>监管延误 TEU·h</span><b data-reg-delay>—</b></div>
+            <div class="rl-regulatory-metric"><span>服务完成率</span><b data-reg-service>—</b></div>
+            <div class="rl-regulatory-metric"><span>单箱成本</span><b data-reg-cost>—</b></div>
+            <div class="rl-regulatory-metric"><span>安全违规</span><b data-reg-safety>—</b></div>
+          </div>
+          <div class="rl-regulatory-boundary" data-reg-boundary>只读取哈希门禁后的持久化证据；不将工程压力情景表述为海事局、海关或码头现场 KPI。</div>
         </div>
         <div class="rl-proof-panel rl-data-wrap">
           <h3>公开数据包可信度对照 <small>行数不等于独立信息量</small></h3>
@@ -94,13 +112,18 @@
     return Number(value || 0).toLocaleString("en-US");
   }
 
-  function render(root, capabilities, datasetsPayload, benchmark){
+  function formatImprovement(summary){
+    if(!summary || !Number.isFinite(Number(summary.mean))) return "—";
+    return `${(100 * Number(summary.mean)).toFixed(2)}%`;
+  }
+
+  function render(root, capabilities, datasetsPayload, benchmark, regulatory){
     const algorithms = capabilities.algorithms || [];
     const summaries = new Map((benchmark.algorithms || []).map(item => [item.id, item]));
     root.querySelector("[data-proof-algo]").textContent = `${algorithms.length} 类`;
     const rlCount = algorithms.filter(item => item.trainable).length;
     root.querySelector("[data-proof-mix]").textContent = `${rlCount} RL + ${algorithms.length - rlCount} 基线`;
-    const contract = capabilities.contracts?.port_ops_v2 || {};
+    const contract = capabilities.contracts?.port_ops_v4 || {};
     root.querySelector("[data-proof-contract]").textContent = `${contract.observation_dimensions || "—"}D / ${contract.continuous_action_dimensions || "—"}D`;
     const readyCount = [...summaries.values()].filter(item => item.multi_seed_ready).length;
     root.querySelector("[data-proof-ready]").textContent = `${readyCount} / ${algorithms.length}`;
@@ -111,9 +134,9 @@
       const status = ready ? "结论门禁通过" : (summary.smoke_runs ? "仅链路烟测" : "待正式评测");
       return `<tr><td><b>${escapeHtml(item.name)}</b><br><span class="rl-proof-status ${ready ? "ok" : "warn"}">${escapeHtml(item.family)}</span></td><td>${escapeHtml(item.implementation)}</td><td>${escapeHtml(item.action_space)}</td><td>${escapeHtml(seeds.join(", ") || "—")}<br><span class="rl-proof-status ${ready ? "ok" : "warn"}">${status}</span></td></tr>`;
     }).join("");
-    root.querySelector("[data-proof-factors]").innerHTML = Object.keys(FACTOR_LABELS).map(name => `<i>${FACTOR_LABELS[name]}</i>`).join("");
+    root.querySelector("[data-proof-factors]").innerHTML = Object.keys(ALL_FACTOR_LABELS).map(name => `<i>${ALL_FACTOR_LABELS[name]}</i>`).join("");
     const datasets = datasetsPayload.datasets || [];
-    const preferred = datasets.find(item => item.dataset_id === "public_us_la_6min_v1") || datasets.find(item => item.dataset_id === "public_port_ops_v1") || datasets[0] || {};
+    const preferred = datasets.find(item => item.dataset_id === "public_cn_sha_regulatory_scenario_v4") || datasets.find(item => item.dataset_id === "public_cn_sha_hourly_v3") || datasets[0] || {};
     const profiles = capabilities.port_profiles || [];
     const profile = profiles.find(item => item.profile_id === preferred.port_profile_id) || {};
     const objectives = profile.objectives || {};
@@ -129,14 +152,23 @@
     root.querySelector("[data-proof-datasets]").innerHTML = datasets.map(item => {
       const evidence = item.quality?.evidence || {};
       const factorCoverage = item.quality?.factor_coverage || {};
-      const covered = Object.values(factorCoverage).filter(value => Number(value) > 0).length;
+      const regulatoryCoverage = item.quality?.regulatory_factor_coverage || {};
+      const covered = [...Object.values(factorCoverage), ...Object.values(regulatoryCoverage)].filter(value => Number(value) > 0).length;
       const independent = Number(evidence.independent_source_observations || 0);
       const hash = String(item.sha256 || item.quality?.dataset_sha256 || "—");
-      return `<tr data-dataset="${escapeHtml(item.dataset_id)}"><td><b>${escapeHtml(item.dataset_id)}</b><br>${escapeHtml(item.title || "")}</td><td>${formatInteger(item.rows)}</td><td>${independent ? formatInteger(independent) : "未登记"}</td><td>${escapeHtml(evidence.tier || "未登记")}</td><td>${covered} / ${Object.keys(FACTOR_LABELS).length}</td><td>${escapeHtml(item.port_profile_id || "reference_port_v1")}<br><span class="mono">${escapeHtml(hash.slice(0,12))}…</span></td></tr>`;
+      return `<tr data-dataset="${escapeHtml(item.dataset_id)}"><td><b>${escapeHtml(item.dataset_id)}</b><br>${escapeHtml(item.title || "")}</td><td>${formatInteger(item.rows)}</td><td>${independent ? formatInteger(independent) : "未登记"}</td><td>${escapeHtml(evidence.tier || "未登记")}</td><td>${covered} / ${Object.keys(ALL_FACTOR_LABELS).length}</td><td>${escapeHtml(item.port_profile_id || "reference_port_v1")}<br><span class="mono">${escapeHtml(hash.slice(0,12))}…</span></td></tr>`;
     }).join("") || '<tr><td colspan="6">没有可训练数据集</td></tr>';
+    const forward = regulatory?.forward_challenge || {};
+    const incumbent = forward.paired_comparisons?.legacy_v3_engineering_sop || {};
+    root.querySelector("[data-reg-status]").textContent = regulatory?.forward_challenge_status === "PASS" ? "PASS" : "BLOCKED";
+    root.querySelector("[data-reg-delay]").textContent = `↓ ${formatImprovement(incumbent.regulatory_delay_teu_hours)}`;
+    root.querySelector("[data-reg-service]").textContent = `↑ ${formatImprovement(incumbent.service_completion_ratio)}`;
+    root.querySelector("[data-reg-cost]").textContent = `↓ ${formatImprovement(incumbent.cost_per_teu)}`;
+    root.querySelector("[data-reg-safety]").textContent = Number(forward.candidate_metrics?.guardrail_violation_rate || 0) === 0 ? "0 / PASS" : "BLOCKED";
+    root.querySelector("[data-reg-boundary]").textContent = `20 × 48h 成对前向窗口 · 禁止选模/调参=${forward.protocol?.candidate_selection_or_tuning === false ? "是" : "否"} · 生产权限=${regulatory?.production_authority ? "开启" : "关闭"} · 工程压力情景，不是现场 KPI。`;
   }
 
-  function advise(root, capabilities, benchmark){
+  function advise(root, capabilities, benchmark, regulatory){
     const datasets = capabilities.datasets || [];
     const highFrequency = datasets.find(item => item.dataset_id === "public_us_la_6min_v1");
     const missing = (benchmark.algorithms || []).filter(item => !item.multi_seed_ready).map(item => item.name);
@@ -147,6 +179,9 @@
       missing.length
         ? `仍未通过多种子结论门禁：${missing.join("、")}。训练中心可运行，但不能把烟测写成性能结论。`
         : `${(benchmark.algorithms || []).length} 类控制器的持久化评测门禁已满足；仍需检查同数据指纹、同窗口与业务约束后再做比较。`,
+      regulatory?.forward_challenge_status === "PASS"
+        ? "V4 监管延误候选已通过模型锁定后的 2026 前向挑战；只能声明工程情景价值。"
+        : "V4 监管延误前向门禁未通过，不得对外声明改善。",
       "生产执行保持关闭；真实港口接入还需场景包校准、现场字段来源、影子运行和独立硬件联锁。"
     ].join("\n");
     root.querySelector("[data-proof-advice-text]").textContent = message;
@@ -155,13 +190,14 @@
   async function load(root){
     root.querySelector("[data-proof-advice-text]").textContent = "正在读取后端能力、数据质量和持久化评测登记…";
     try{
-      const [capabilities, datasets, benchmark] = await Promise.all([
+      const [capabilities, datasets, benchmark, regulatory] = await Promise.all([
         readJson("/api/rl/engine/capabilities"),
         readJson("/api/rl/datasets"),
-        readJson("/api/rl/benchmarks/summary?dataset_id=public_us_la_6min_v1")
+        readJson("/api/rl/benchmarks/summary?dataset_id=public_cn_sha_hourly_v3"),
+        readJson("/api/rl/regulatory-resilience/evidence")
       ]);
-      root.__proofState = {capabilities, datasets, benchmark};
-      render(root, capabilities, datasets, benchmark);
+      root.__proofState = {capabilities, datasets, benchmark, regulatory};
+      render(root, capabilities, datasets, benchmark, regulatory);
       root.querySelector("[data-proof-advice-text]").textContent = "证据已同步。点击“解读训练门禁”查看当前可声明与不可声明的边界。";
     }catch(error){
       root.querySelector("[data-proof-advice-text]").textContent = `后端证据读取失败：${error.message}`;
@@ -174,7 +210,7 @@
     root.querySelector("[data-proof-refresh]").addEventListener("click", () => load(root));
     root.querySelector("[data-proof-advice]").addEventListener("click", () => {
       const state = root.__proofState;
-      if(state) advise(root, state.capabilities, state.benchmark);
+      if(state) advise(root, state.capabilities, state.benchmark, state.regulatory);
     });
     root.querySelector("[data-proof-xiaoyi]").addEventListener("click", () => {
       const widget = document.querySelector(".xiaoyi-sprite-root");

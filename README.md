@@ -177,6 +177,16 @@ For port replacement, `port_ops_v2` exposes 37 observations (base state, twelve 
 
 V3 formal evidence uses `port_ops_v3`, which retains the 37D/5D contract while causally charging service-intensity, berth-priority and yard-flow gains to operational electric load. This prevents a policy from manufacturing a throughput gain without the corresponding energy consequence. V1/V2 manifests remain immutable historical evidence and are never mixed into a V3 comparison.
 
+### V4 · 海事/海关检查连锁延误韧性 / Regulatory-delay resilience
+
+`port_ops_v4` 以增量合同扩展为 **53 维状态 / 7 维建议动作**：新增海事检查、海关查验、严重缺陷滞留、二次查验、监管资源可用度、放行率及“检查中—待放行—放行后追赶”内部队列；新动作仅用于预留检查窗口与放行后恢复优先级，不能改变执法结论或签发放行。旧 `port_ops_v1/v2/v3` 模型、报告和指标保持原样，V3 策略通过中性适配器在 V4 中运行时两个新增动作固定为 0。
+
+正式增量训练使用 17,544 小时上海公开基础包叠加预声明监管压力情景，执行 **3 个种子 × 20,000 SAC 环境步**，训练不渲染、验证集选模。候选模型锁定后，另用 2026-01-01 至 2026-05-31 的 3,624 小时前向数据做 20 个成对 48 小时挑战，该数据禁止选模和调参。相对“未感知监管的 V3 工程 SOP 代理”，监管延误 TEU·小时平均降低 **58.95%（95% CI 52.14%–65.13%）**，服务完成率相对提升 **12.55%（11.00%–14.09%）**，单位 TEU 成本改善 **9.23%（8.43%–10.06%）**，单位 TEU 碳排放改善 **9.99%（9.31%–10.64%）**，安全违规率为 0。第一轮因电池终端修正后的斜率越界而 `BLOCKED`，修复后重新训练的通过证据追加保留；两轮均未替换旧冠军，`production_authority=false`。
+
+这些数字是 `OUT_OF_PERIOD_FORWARD_ENGINEERING_STRESS_CHALLENGE_NOT_FIELD_KPI`，不是上海海事局、海关或码头现场 KPI。检查选择率、时长和资源能力必须由经授权的监管/TOS/船舶事件替换后，才能进行影子验证。机器可读证据：[`evidence/v4/regulatory_delay/latest.json`](evidence/v4/regulatory_delay/latest.json)；接口：`GET /api/rl/regulatory-resilience/evidence`；数据卡：[`docs/DATASET_CARD_public_cn_sha_regulatory_scenario_v4.md`](docs/DATASET_CARD_public_cn_sha_regulatory_scenario_v4.md)。
+
+`port_ops_v4` adds a 53-state/7-action contract for maritime inspections, customs checks, detention/secondary checks, authority-resource availability, release state, and downstream recovery queues. The two new actions reserve terminal readiness and prioritize post-release recovery only; they do not alter official findings or release decisions. After three-seed SAC training, the locked candidate improves regulatory-delay TEU-hours by 58.95% (95% CI 52.14%–65.13%) against a regulator-unaware V3 engineering proxy on a 2026 out-of-period forward engineering challenge, with zero guardrail violations. This is not field performance or production authority.
+
 <p align="center">
   <img src="docs/assets/rl-training-console-real-backend.png" alt="Real backend RL training console with Los Angeles public dataset, profile-bound objective weights, optimizer parameters, progress source, and test-only replay control" width="96%" />
   <br />

@@ -32,6 +32,24 @@
         "guardrail_violation_rate_max": 0.0
       },
       "claim_boundary": "Candidate for public-data offline policy comparison only. Site value requires authorized operating and settlement data plus shadow-operation acceptance."
+    },
+    "regulatory_resilience_v4": {
+      "name": "监管延误韧性优先",
+      "reward_weights": {
+        "cost": 0.14,
+        "carbon": 0.10,
+        "peak": 0.10,
+        "safety": 0.26,
+        "delay": 0.40
+      },
+      "regulatory_delay_penalty_weight": 0.65,
+      "admission_constraints": {
+        "regulatory_delay_teu_hours_relative_to_regulator_unaware_sop_max": -0.02,
+        "service_completion_ratio_relative_to_regulator_unaware_sop_min": 0.0,
+        "cost_per_teu_relative_to_regulator_unaware_sop_max": 0.02,
+        "guardrail_violation_rate_max": 0.0
+      },
+      "claim_boundary": "Predeclared engineering regulatory stress scenario only. It is not a Shanghai maritime/customs field KPI, and release/dispatch authority remains with authorized officials and operators."
     }
   }
 }

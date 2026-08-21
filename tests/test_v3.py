@@ -1417,6 +1417,52 @@ class V3FactsApiTests(unittest.TestCase):
         self.assertIn("教师动作模仿损失", ui)
         self.assertIn("策略梯度更新", ui)
 
+    def test_regulatory_resilience_v4_evidence_is_hash_gated_and_fail_closed(self):
+        response = TestClient(server.app).get(
+            "/api/rl/regulatory-resilience/evidence"
+        )
+        self.assertEqual(response.status_code, 200)
+        payload = response.json()
+        self.assertEqual(
+            payload["status"], "ADMITTED_OFFLINE_SCENARIO_CANDIDATE"
+        )
+        self.assertEqual(len(payload["report_sha256"]), 64)
+        self.assertEqual(payload["forward_challenge_status"], "PASS")
+        self.assertEqual(len(payload["forward_challenge_sha256"]), 64)
+        self.assertFalse(payload["production_authority"])
+        report = payload["report"]
+        self.assertEqual(report["contract"]["observation_dimensions"], 53)
+        self.assertEqual(report["contract"]["action_dimensions"], 7)
+        self.assertEqual(report["training"]["steps_per_seed"], 20000)
+        self.assertEqual(len(report["training"]["runs"]), 3)
+        self.assertTrue(report["admission"]["passed"])
+        self.assertFalse(report["admission"]["model_promoted"])
+        self.assertFalse(report["admission"]["production_authority"])
+        self.assertTrue(report["legacy_preservation"]["preserved"])
+        self.assertNotIn("sha256_before", report["legacy_preservation"])
+        self.assertEqual(
+            report["evidence_label"],
+            "PREDECLARED_ENGINEERING_STRESS_SCENARIO_NOT_FIELD_KPI",
+        )
+        forward = payload["forward_challenge"]
+        self.assertEqual(
+            forward["evidence_label"],
+            "OUT_OF_PERIOD_FORWARD_ENGINEERING_STRESS_CHALLENGE_NOT_FIELD_KPI",
+        )
+        self.assertEqual(forward["forward_dataset"]["rows"], 3624)
+        self.assertFalse(
+            forward["forward_dataset"]["candidate_selection_allowed"]
+        )
+        self.assertFalse(forward["protocol"]["candidate_selection_or_tuning"])
+        self.assertEqual(forward["protocol"]["paired_windows"], 20)
+        self.assertEqual(forward["protocol"]["episode_steps"], 48)
+        self.assertTrue(forward["admission"]["passed"])
+        self.assertFalse(forward["admission"]["model_promoted"])
+        self.assertFalse(forward["admission"]["production_authority"])
+        self.assertEqual(
+            forward["candidate_metrics"]["guardrail_violation_rate"], 0.0
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

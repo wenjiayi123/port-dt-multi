@@ -18,12 +18,14 @@ from .datasets import (
     DEFAULT_DATA_ROOT,
     FACTOR_COLUMNS,
     NUMERIC_COLUMNS,
+    REGULATORY_COLUMNS,
     PortDataset,
     file_sha256,
     list_datasets,
     load_port_dataset,
 )
 from .environment import PortOperationsEnv, dataset_quality_cadence
+from .regulatory_environment import RegulatoryPortOperationsEnv
 from .baselines import FCFSNeutralPolicy
 from .mpc import MPCPolicy
 from .model_registry import ModelRegistry
@@ -293,6 +295,29 @@ class TrainingManager:
                     ],
                     "projection_penalty": "explicit opt-in run parameter; absent historical configs remain reproducible",
                 },
+                "port_ops_v4": {
+                    "observation_dimensions": RegulatoryPortOperationsEnv.OBSERVATION_DIMENSIONS,
+                    "observation_fields": [
+                        "hour_sin", "hour_cos", *NUMERIC_COLUMNS,
+                        *FACTOR_COLUMNS,
+                        *[f"{name}_available" for name in FACTOR_COLUMNS],
+                        *REGULATORY_COLUMNS,
+                        *[f"{name}_available" for name in REGULATORY_COLUMNS],
+                        "soc", "queue_pressure", "last_bess_power", "episode_progress",
+                        "maritime_hold_pressure", "customs_hold_pressure",
+                        "regulatory_hold_work_pressure", "recovery_queue_pressure",
+                    ],
+                    "continuous_action_dimensions": RegulatoryPortOperationsEnv.ACTION_DIMENSIONS,
+                    "actions": [
+                        "bess_power", "service_factor", "flexible_load",
+                        "berth_priority", "yard_flow", "inspection_buffer",
+                        "recovery_priority",
+                    ],
+                    "regulatory_authority": "recommendation_only_no_release_authority",
+                    "safety_revision": RegulatoryPortOperationsEnv.SAFETY_REVISION,
+                    "delay_chain": "inspection_demand_to_hold_to_release_to_recovery_queue",
+                    "scenario_boundary": "regulatory factors require site replacement before field claims",
+                },
             },
             "training_rendering": "disabled",
             "evaluation_rendering": "trajectory_json_only",
@@ -329,10 +354,13 @@ class TrainingManager:
             or profile.get("environment_version")
             or "port_ops_v1"
         )
-        if environment_version not in {"port_ops_v1", "port_ops_v2", "port_ops_v3"}:
-            raise ValueError("environment_version must be port_ops_v1, port_ops_v2 or port_ops_v3")
+        if environment_version not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4"}:
+            raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3 or port_ops_v4")
         required_factors = list(profile["factor_requirements"].get("required_for_training") or [])
-        factor_coverage = quality.get("factor_coverage") or {}
+        factor_coverage = {
+            **(quality.get("factor_coverage") or {}),
+            **(quality.get("regulatory_factor_coverage") or {}),
+        }
         unavailable_required = [
             name for name in required_factors
             if float(factor_coverage.get(name) or 0.0) <= 0.0
@@ -395,6 +423,20 @@ class TrainingManager:
             10.0,
             max(0.0, float(raw.get("projection_penalty_weight") or 0.0)),
         )
+        regulatory_delay_penalty_weight = min(
+            10.0,
+            max(0.0, float(raw.get("regulatory_delay_penalty_weight") or 0.35)),
+        )
+        if environment_version == "port_ops_v4":
+            observation_dimensions = RegulatoryPortOperationsEnv.OBSERVATION_DIMENSIONS
+            action_dimensions = RegulatoryPortOperationsEnv.ACTION_DIMENSIONS
+        else:
+            observation_dimensions = (
+                13
+                if environment_version == "port_ops_v1"
+                else 13 + 2 * len(FACTOR_COLUMNS)
+            )
+            action_dimensions = 3 if environment_version == "port_ops_v1" else 5
         return {
             **raw,
             "algorithm": algorithm,
@@ -408,8 +450,8 @@ class TrainingManager:
                 raw.get("business_profile_id") or "default_port_profile"
             ),
             "environment_version": environment_version,
-            "observation_dimensions": 13 if environment_version == "port_ops_v1" else 13 + 2 * len(FACTOR_COLUMNS),
-            "action_dimensions": 3 if environment_version == "port_ops_v1" else 5,
+            "observation_dimensions": observation_dimensions,
+            "action_dimensions": action_dimensions,
             "total_steps": total_steps,
             "episode_steps": bounded_episode_steps,
             "episode_hours": episode_hours,
@@ -428,6 +470,12 @@ class TrainingManager:
             ),
             "reward_weights": reward_weights,
             "projection_penalty_weight": projection_penalty_weight,
+            "regulatory_delay_penalty_weight": regulatory_delay_penalty_weight,
+            "environment_safety_revision": (
+                RegulatoryPortOperationsEnv.SAFETY_REVISION
+                if environment_version == "port_ops_v4"
+                else None
+            ),
             "training_split": "chronological_train_only",
             "render_during_training": False,
             "algorithm_parameters": algorithm_parameters,
@@ -493,7 +541,17 @@ class TrainingManager:
             )
         else:
             train_slice, test_slice = dataset.split(config["test_ratio"])
-        return PortOperationsEnv(
+        environment_class = (
+            RegulatoryPortOperationsEnv
+            if config.get("environment_version") == "port_ops_v4"
+            else PortOperationsEnv
+        )
+        environment_kwargs = {
+            "regulatory_delay_penalty_weight": float(
+                config.get("regulatory_delay_penalty_weight") or 0.35
+            )
+        } if environment_class is RegulatoryPortOperationsEnv else {}
+        return environment_class(
             dataset,
             train_slice if training else test_slice,
             action_mode=ALGORITHMS[config["algorithm"]].action_space,
@@ -507,6 +565,7 @@ class TrainingManager:
             normalization_slice=train_slice,
             training=training,
             record_trace=record_trace,
+            **environment_kwargs,
         )
 
     def _run_training(self, job: TrainingJob) -> None:
@@ -911,7 +970,17 @@ class TrainingManager:
             config["test_ratio"], validation_ratio
         )
         selected_slice = validation_slice if split_name == "validation" else test_slice
-        env = PortOperationsEnv(
+        environment_class = (
+            RegulatoryPortOperationsEnv
+            if config.get("environment_version") == "port_ops_v4"
+            else PortOperationsEnv
+        )
+        environment_kwargs = {
+            "regulatory_delay_penalty_weight": float(
+                config.get("regulatory_delay_penalty_weight") or 0.35
+            )
+        } if environment_class is RegulatoryPortOperationsEnv else {}
+        env = environment_class(
             dataset,
             selected_slice,
             action_mode=ALGORITHMS[config["algorithm"]].action_space,
@@ -925,6 +994,7 @@ class TrainingManager:
             normalization_slice=train_slice,
             training=False,
             record_trace=False,
+            **environment_kwargs,
         )
         policy = self._load_policy(config, run_dir, env)
         episode_metrics: List[Dict[str, float]] = []

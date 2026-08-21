@@ -62,7 +62,11 @@ class AdapterProvenanceTests(unittest.TestCase):
         multiport = MultiportService().get_summary()
         self.assertFalse(multiport["available"])
         self.assertTrue(multiport["readiness_available"])
-        self.assertEqual(multiport["counts"]["public_benchmark_profiles"], 3)
+        self.assertEqual(multiport["counts"]["public_benchmark_profiles"], 4)
+        self.assertIn(
+            "cn_sha_regulatory_scenario_v4",
+            {row["profile_id"] for row in multiport["profiles"]},
+        )
         self.assertIsNone(multiport["counts"]["production_deployments"])
 
     def test_rlops_uses_persisted_evaluations_and_labels_non_ope(self):

@@ -12,12 +12,14 @@ import numpy as np
 from app.services.rl_training.datasets import (
     CANONICAL_COLUMNS,
     FACTOR_COLUMNS,
+    REGULATORY_COLUMNS,
     import_dataset,
     load_port_dataset,
     write_canonical_rows,
     write_extended_rows,
 )
 from app.services.rl_training.environment import PortOperationsEnv
+from app.services.rl_training.regulatory_environment import RegulatoryPortOperationsEnv
 from app.services.rl_training.profiles import load_profile
 from app.services.rl_training.trainer import ALGORITHMS
 
@@ -168,6 +170,92 @@ class EnvironmentTests(unittest.TestCase):
             self.assertFalse(info["factor_availability"]["visibility_km"])
             self.assertIn("berth_priority", info)
 
+    def test_v4_regulatory_hold_release_and_recovery_contract_is_additive(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            enriched_rows = []
+            for row in rows():
+                enriched_rows.append(
+                    {
+                        **row,
+                        "wind_speed_mps": 4.2,
+                        "wave_height_m": 0.5,
+                        "current_speed_mps": 0.4,
+                        "berth_occupancy_ratio": 0.72,
+                        "yard_occupancy_ratio": 0.68,
+                        "crane_availability_ratio": 0.95,
+                        "equipment_availability_ratio": 0.96,
+                        "channel_congestion_ratio": 0.44,
+                        "pilot_tug_availability_ratio": 0.9,
+                        "closure_flag": 0.0,
+                        "maritime_inspection_ratio": 0.25,
+                        "customs_inspection_ratio": 0.3,
+                        "maritime_detention_ratio": 0.03,
+                        "customs_secondary_check_ratio": 0.12,
+                        "inspection_resource_availability_ratio": 0.85,
+                        "regulatory_release_ratio": 0.82,
+                    }
+                )
+            write_extended_rows(
+                "port_v4",
+                enriched_rows,
+                {
+                    "provenance_type": "verified_test",
+                    "license": "test",
+                    "owner": "test",
+                    "timezone": "UTC",
+                    "intended_use": "test",
+                    "environment_version": "port_ops_v4",
+                },
+                root,
+            )
+            dataset = load_port_dataset("port_v4", root)
+            train, _ = dataset.split()
+            env = RegulatoryPortOperationsEnv(
+                dataset,
+                train,
+                training=True,
+                episode_steps=12,
+                port_profile=load_profile("cn_sha_regulatory_scenario_v4"),
+            )
+            observation, _ = env.reset(seed=3, options={"start_index": 0})
+            self.assertEqual(
+                observation.shape,
+                (
+                    13
+                    + 2 * len(FACTOR_COLUMNS)
+                    + 2 * len(REGULATORY_COLUMNS)
+                    + 4,
+                ),
+            )
+            self.assertEqual(env.action_space.shape, (7,))
+            _, _, _, _, info = env.step(np.zeros(7, dtype=np.float32))
+            self.assertGreater(info["regulatory_hold_teu"], 0.0)
+            self.assertGreater(info["released_work_teu"], 0.0)
+            self.assertEqual(
+                info["regulatory_authority"],
+                "recommendation_only_no_release_authority",
+            )
+            self.assertTrue(
+                all(info["regulatory_factor_availability"].values())
+            )
+            self.assertEqual(env.trace, [])
+            projected = env.project_control(
+                np.asarray([-1.0, 0, 0, 0, 0, 0, 0], dtype=np.float32),
+                soc=0.2,
+                last_bess_kw=-3500.0,
+                initial_soc=0.55,
+                remaining_steps=40,
+            )
+            self.assertLessEqual(
+                abs(projected["bess_kw"] - (-3500.0)),
+                env.bess_power_kw + 0.001,
+            )
+            self.assertEqual(
+                projected["safety_revision"],
+                RegulatoryPortOperationsEnv.SAFETY_REVISION,
+            )
+
     def test_time_features_follow_timestamp_cadence(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -189,6 +277,23 @@ class EnvironmentTests(unittest.TestCase):
             first, _ = env.reset(options={"start_index": 0})
             next_day, _ = env.reset(options={"start_index": 240})
             np.testing.assert_allclose(first[:2], next_day[:2], atol=1e-6)
+
+    def test_v4_yard_threshold_float32_rounding_is_not_a_violation(self):
+        dataset = load_port_dataset("public_cn_sha_regulatory_forward_2026m05_v4")
+        training = load_port_dataset("public_cn_sha_regulatory_scenario_v4")
+        train, _, _ = training.split_three_way(0.2, 0.1)
+        env = RegulatoryPortOperationsEnv(
+            dataset,
+            slice(0, 96),
+            training=False,
+            episode_steps=12,
+            port_profile=load_profile("cn_sha_regulatory_scenario_v4"),
+            normalization_slice=slice(0, 70),
+        )
+        self.assertAlmostEqual(float(np.float32(0.92)), 0.92, places=6)
+        yard_excess = max(0.0, float(np.float32(0.92)) - 0.92 - 1e-6)
+        self.assertEqual(yard_excess, 0.0)
+        env.close()
 
 
 if __name__ == "__main__":

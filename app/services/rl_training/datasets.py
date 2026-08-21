@@ -39,6 +39,14 @@ FACTOR_COLUMNS = (
     "pilot_tug_availability_ratio",
     "closure_flag",
 )
+REGULATORY_COLUMNS = (
+    "maritime_inspection_ratio",
+    "customs_inspection_ratio",
+    "maritime_detention_ratio",
+    "customs_secondary_check_ratio",
+    "inspection_resource_availability_ratio",
+    "regulatory_release_ratio",
+)
 DEFAULT_DATA_ROOT = Path("data/rl/datasets")
 COLUMN_UNITS = {
     "base_load_kw": "kW",
@@ -60,6 +68,12 @@ COLUMN_UNITS = {
     "reefer_load_kw": "kW",
     "pilot_tug_availability_ratio": "ratio",
     "closure_flag": "binary",
+    "maritime_inspection_ratio": "ratio",
+    "customs_inspection_ratio": "ratio",
+    "maritime_detention_ratio": "ratio",
+    "customs_secondary_check_ratio": "ratio",
+    "inspection_resource_availability_ratio": "ratio",
+    "regulatory_release_ratio": "ratio",
 }
 PHYSICAL_BOUNDS = {
     "base_load_kw": (0.0, None),
@@ -81,6 +95,12 @@ PHYSICAL_BOUNDS = {
     "reefer_load_kw": (0.0, None),
     "pilot_tug_availability_ratio": (0.0, 1.0),
     "closure_flag": (0.0, 1.0),
+    "maritime_inspection_ratio": (0.0, 1.0),
+    "customs_inspection_ratio": (0.0, 1.0),
+    "maritime_detention_ratio": (0.0, 1.0),
+    "customs_secondary_check_ratio": (0.0, 1.0),
+    "inspection_resource_availability_ratio": (0.0, 1.0),
+    "regulatory_release_ratio": (0.0, 1.0),
 }
 REQUIRED_GOVERNANCE_METADATA = ("provenance_type", "license", "owner", "timezone", "intended_use")
 _DESCRIPTION_CACHE: Dict[str, tuple[int, int, Dict[str, Any]]] = {}
@@ -122,6 +142,12 @@ class PortDataset:
     )
     factor_availability: np.ndarray = field(
         default_factory=lambda: np.empty((0, len(FACTOR_COLUMNS)), dtype=np.float32)
+    )
+    regulatory_values: np.ndarray = field(
+        default_factory=lambda: np.empty((0, len(REGULATORY_COLUMNS)), dtype=np.float32)
+    )
+    regulatory_availability: np.ndarray = field(
+        default_factory=lambda: np.empty((0, len(REGULATORY_COLUMNS)), dtype=np.float32)
     )
 
     @property
@@ -185,6 +211,7 @@ class PortDataset:
             "rows": self.rows,
             "columns": list(CANONICAL_COLUMNS),
             "optional_factor_columns": list(FACTOR_COLUMNS),
+            "optional_regulatory_columns": list(REGULATORY_COLUMNS),
             "train_rows": train_slice.stop - train_slice.start,
             "validation_rows": validation_slice.stop - validation_slice.start,
             "test_rows": test_slice.stop - test_slice.start,
@@ -268,6 +295,38 @@ def dataset_quality_report(dataset: PortDataset) -> Dict[str, Any]:
             "constant": bool(observed.size and np.ptp(observed) <= 1e-12),
             "optional": True,
         }
+    regulatory_coverage: Dict[str, float] = {}
+    regulatory_values = dataset.regulatory_values
+    regulatory_availability = dataset.regulatory_availability
+    if regulatory_values.shape != (dataset.rows, len(REGULATORY_COLUMNS)):
+        regulatory_values = np.zeros((dataset.rows, len(REGULATORY_COLUMNS)), dtype=np.float32)
+    if regulatory_availability.shape != (dataset.rows, len(REGULATORY_COLUMNS)):
+        regulatory_availability = np.zeros((dataset.rows, len(REGULATORY_COLUMNS)), dtype=np.float32)
+    for index, column in enumerate(REGULATORY_COLUMNS):
+        available = regulatory_availability[:, index] > 0.5
+        coverage = float(np.mean(available)) if available.size else 0.0
+        regulatory_coverage[column] = coverage
+        observed = regulatory_values[available, index].astype(np.float64)
+        lower, upper = PHYSICAL_BOUNDS[column]
+        violations = 0
+        if observed.size:
+            violations += int(np.sum(observed < lower)) if lower is not None else 0
+            violations += int(np.sum(observed > upper)) if upper is not None else 0
+        physical_violations += violations
+        columns[column] = {
+            "unit": COLUMN_UNITS[column],
+            "coverage_ratio": coverage,
+            "available_rows": int(np.sum(available)),
+            "min": float(np.min(observed)) if observed.size else None,
+            "max": float(np.max(observed)) if observed.size else None,
+            "mean": float(np.mean(observed)) if observed.size else None,
+            "std": float(np.std(observed)) if observed.size else None,
+            "physical_bounds": {"min": lower, "max": upper},
+            "physical_violation_count": violations,
+            "constant": bool(observed.size and np.ptp(observed) <= 1e-12),
+            "optional": True,
+            "scenario_only": True,
+        }
     missing_metadata = [name for name in REQUIRED_GOVERNANCE_METADATA if not dataset.metadata.get(name)]
     errors: List[str] = []
     warnings: List[str] = []
@@ -316,6 +375,9 @@ def dataset_quality_report(dataset: PortDataset) -> Dict[str, Any]:
         "factor_coverage": factor_coverage,
         "available_factor_count": available_factor_count,
         "factor_count": len(FACTOR_COLUMNS),
+        "regulatory_factor_coverage": regulatory_coverage,
+        "available_regulatory_factor_count": sum(value > 0 for value in regulatory_coverage.values()),
+        "regulatory_factor_count": len(REGULATORY_COLUMNS),
         "evidence": {
             "tier": evidence_tier,
             "measured_columns": measured_columns,
@@ -371,6 +433,8 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
     rows: List[List[float]] = []
     factor_rows: List[List[float]] = []
     factor_masks: List[List[float]] = []
+    regulatory_rows: List[List[float]] = []
+    regulatory_masks: List[List[float]] = []
     # codeql[py/path-injection]
     with path.open("r", encoding="utf-8-sig", newline="") as stream:
         reader = csv.DictReader(stream)
@@ -395,6 +459,18 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
                 factor_mask.append(1.0)
             factor_rows.append(factor_row)
             factor_masks.append(factor_mask)
+            regulatory_row: List[float] = []
+            regulatory_mask: List[float] = []
+            for column in REGULATORY_COLUMNS:
+                raw = row.get(column)
+                if raw is None or str(raw).strip() == "":
+                    regulatory_row.append(0.0)
+                    regulatory_mask.append(0.0)
+                    continue
+                regulatory_row.append(_finite_number(raw, column, line))
+                regulatory_mask.append(1.0)
+            regulatory_rows.append(regulatory_row)
+            regulatory_masks.append(regulatory_mask)
     if len(rows) < 48:
         raise ValueError(f"dataset {resolved} needs at least 48 chronological rows; got {len(rows)}")
     metadata: Dict[str, Any] = {}
@@ -419,6 +495,8 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
         metadata,
         np.asarray(factor_rows, dtype=np.float32),
         np.asarray(factor_masks, dtype=np.float32),
+        np.asarray(regulatory_rows, dtype=np.float32),
+        np.asarray(regulatory_masks, dtype=np.float32),
     )
 
 
@@ -495,9 +573,10 @@ def import_dataset(
             missing = [source for source in mapping.values() if source not in source_fields]
             if missing:
                 raise ValueError(f"source CSV missing mapped columns: {', '.join(missing)}")
+            optional_columns = (*FACTOR_COLUMNS, *REGULATORY_COLUMNS)
             factor_mapping = {
                 name: str(supplied_mapping.get(name, name))
-                for name in FACTOR_COLUMNS
+                for name in optional_columns
                 if name in supplied_mapping or name in source_fields
             }
             writer_fields = (*CANONICAL_COLUMNS, *factor_mapping.keys())
@@ -594,7 +673,7 @@ def write_extended_rows(
     data_root.mkdir(parents=True, exist_ok=True)
     path = data_root / f"{resolved}.csv"
     tmp = data_root / f".{resolved}.building.csv"
-    fieldnames = (*CANONICAL_COLUMNS, *FACTOR_COLUMNS)
+    fieldnames = (*CANONICAL_COLUMNS, *FACTOR_COLUMNS, *REGULATORY_COLUMNS)
     with tmp.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fieldnames)
         writer.writeheader()
@@ -604,7 +683,7 @@ def write_extended_rows(
             output.update(
                 {
                     name: row.get(name, "")
-                    for name in FACTOR_COLUMNS
+                    for name in (*FACTOR_COLUMNS, *REGULATORY_COLUMNS)
                 }
             )
             timestamp = _parse_timestamp(output["timestamp"], line)
@@ -613,7 +692,7 @@ def write_extended_rows(
             previous_timestamp = timestamp
             for column in NUMERIC_COLUMNS:
                 _finite_number(output[column], column, line)
-            for column in FACTOR_COLUMNS:
+            for column in (*FACTOR_COLUMNS, *REGULATORY_COLUMNS):
                 if output[column] == "" or output[column] is None:
                     continue
                 _finite_number(output[column], column, line)

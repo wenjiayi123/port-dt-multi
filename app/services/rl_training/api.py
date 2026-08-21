@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,8 @@ from .trainer import TRAINING_MANAGER
 
 
 router = APIRouter(prefix="/api/rl", tags=["rl-training-real"])
+REPO_ROOT = Path(__file__).resolve().parents[3]
+REGULATORY_EVIDENCE_ROOT = REPO_ROOT / "evidence/v4/regulatory_delay"
 
 
 @router.get("/engine/capabilities")
@@ -128,6 +131,66 @@ async def benchmark_summary(
             environment_version=environment_version,
             business_profile_id=business_profile_id,
         )
+    )
+
+
+@router.get("/regulatory-resilience/evidence")
+async def regulatory_resilience_evidence() -> JSONResponse:
+    """Return hash-gated V4 evidence without exposing local absolute paths."""
+    pointer_path = REGULATORY_EVIDENCE_ROOT / "latest.json"
+    if not pointer_path.exists():
+        raise HTTPException(
+            status_code=404, detail="regulatory resilience evidence is unavailable"
+        )
+    pointer = json.loads(pointer_path.read_text(encoding="utf-8"))
+    report_path = (REPO_ROOT / str(pointer.get("report_path") or "")).resolve()
+    evidence_root = REGULATORY_EVIDENCE_ROOT.resolve()
+    if not report_path.is_relative_to(evidence_root) or not report_path.is_file():
+        raise HTTPException(status_code=409, detail="regulatory evidence pointer is invalid")
+    observed_sha256 = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    if observed_sha256 != pointer.get("report_sha256"):
+        raise HTTPException(
+            status_code=409, detail="regulatory evidence hash gate failed"
+        )
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    legacy = dict(report.get("legacy_preservation") or {})
+    legacy.pop("sha256_before", None)
+    legacy.pop("sha256_after", None)
+    report["legacy_preservation"] = legacy
+
+    forward_path_value = str(pointer.get("forward_challenge_path") or "")
+    if not forward_path_value:
+        raise HTTPException(
+            status_code=409, detail="independent forward challenge is unavailable"
+        )
+    forward_path = (REPO_ROOT / forward_path_value).resolve()
+    if not forward_path.is_relative_to(evidence_root) or not forward_path.is_file():
+        raise HTTPException(
+            status_code=409, detail="forward challenge pointer is invalid"
+        )
+    forward_sha256 = hashlib.sha256(forward_path.read_bytes()).hexdigest()
+    if forward_sha256 != pointer.get("forward_challenge_sha256"):
+        raise HTTPException(
+            status_code=409, detail="forward challenge hash gate failed"
+        )
+    forward_challenge = json.loads(forward_path.read_text(encoding="utf-8"))
+    if forward_challenge.get("status") != "PASS":
+        raise HTTPException(
+            status_code=409, detail="independent forward challenge is blocked"
+        )
+    return JSONResponse(
+        {
+            "schema": "port-dt-regulatory-resilience-api.v2",
+            "status": report.get("status"),
+            "report_sha256": observed_sha256,
+            "evidence_path": str(report_path.relative_to(REPO_ROOT)),
+            "forward_challenge_status": forward_challenge.get("status"),
+            "forward_challenge_sha256": forward_sha256,
+            "forward_challenge_path": str(forward_path.relative_to(REPO_ROOT)),
+            "production_authority": False,
+            "report": report,
+            "forward_challenge": forward_challenge,
+        }
     )
 
 

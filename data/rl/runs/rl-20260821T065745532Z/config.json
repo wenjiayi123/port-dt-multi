@@ -1,0 +1,152 @@
+{
+  "algorithm": "sac",
+  "dataset_id": "public_cn_sha_regulatory_scenario_v4",
+  "environment_version": "port_ops_v4",
+  "port_profile_id": "cn_sha_regulatory_scenario_v4",
+  "business_profile_id": "regulatory_resilience_v4",
+  "reward_weights": {
+    "cost": 0.14,
+    "carbon": 0.1,
+    "peak": 0.1,
+    "safety": 0.26,
+    "delay": 0.4
+  },
+  "regulatory_delay_penalty_weight": 0.65,
+  "projection_penalty_weight": 0.1,
+  "total_steps": 20000,
+  "episode_hours": 48.0,
+  "episode_steps": 48,
+  "test_ratio": 0.2,
+  "validation_ratio": 0.1,
+  "batch_size": 256,
+  "learning_rate": 0.0003,
+  "gamma": 0.99,
+  "tau": 0.005,
+  "replay_buffer": 100000,
+  "seed": 185,
+  "dataset_fingerprint": "2325d935d8e752940e00b8c5227a07d1fe6da9c74da0a0c254fcc349b7988c08",
+  "dataset_quality_status": "pass",
+  "dataset_evidence": {
+    "tier": "public_data_offline_regulatory_stress_scenario",
+    "measured_columns": [],
+    "derived_columns": [
+      "hourly_throughput_teu_distribution",
+      "vessel_arrivals",
+      "base_load_kw",
+      "price_per_kwh",
+      "carbon_kg_per_kwh",
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "reefer_load_kw",
+      "pilot_tug_availability_ratio",
+      "closure_flag",
+      "maritime_inspection_ratio",
+      "customs_inspection_ratio",
+      "maritime_detention_ratio_global_psc_reference_plus_stress",
+      "customs_secondary_check_ratio",
+      "inspection_resource_availability_ratio",
+      "regulatory_release_ratio"
+    ],
+    "independent_source_observations": 17566,
+    "row_count_is_not_independent_information_count": true
+  },
+  "port_profile": {
+    "profile_id": "cn_sha_regulatory_scenario_v4",
+    "name": "Shanghai public-data regulatory delay stress profile v4",
+    "port_code": "CNSHA",
+    "timezone": "Asia/Shanghai",
+    "currency": "CNY",
+    "calibration_status": "public_aggregate_reanalysis_plus_predeclared_regulatory_scenario_not_terminal_calibrated",
+    "environment_version": "port_ops_v4",
+    "control_authority": "recommendation_only",
+    "assets": {
+      "bess_capacity_kwh": 50000.0,
+      "bess_power_kw": 4000.0,
+      "demand_cap_kw": 36000.0,
+      "operational_load_fraction": 0.42,
+      "allocation_load_fraction": 0.08
+    },
+    "control_limits": {
+      "soc_min": 0.15,
+      "soc_max": 0.9,
+      "service_factor_min": 0.78,
+      "service_factor_max": 1.22,
+      "flexible_load_fraction": 0.22,
+      "berth_priority_limit": 0.35,
+      "yard_flow_limit": 0.3,
+      "inspection_buffer_limit": 1.0,
+      "recovery_priority_limit": 1.0
+    },
+    "objectives": {
+      "cost": 0.14,
+      "carbon": 0.1,
+      "peak": 0.1,
+      "safety": 0.26,
+      "delay": 0.4
+    },
+    "factor_requirements": {
+      "required_for_training": [
+        "wind_speed_mps",
+        "wave_height_m",
+        "current_speed_mps",
+        "maritime_inspection_ratio",
+        "customs_inspection_ratio",
+        "maritime_detention_ratio",
+        "customs_secondary_check_ratio",
+        "inspection_resource_availability_ratio",
+        "regulatory_release_ratio"
+      ],
+      "required_for_site_claim": [
+        "berth_occupancy_ratio",
+        "yard_occupancy_ratio",
+        "crane_availability_ratio",
+        "equipment_availability_ratio",
+        "channel_congestion_ratio",
+        "wind_speed_mps",
+        "visibility_km",
+        "wave_height_m",
+        "current_speed_mps",
+        "pilot_tug_availability_ratio",
+        "closure_flag",
+        "maritime_inspection_ratio",
+        "customs_inspection_ratio",
+        "maritime_detention_ratio",
+        "customs_secondary_check_ratio",
+        "inspection_resource_availability_ratio",
+        "regulatory_release_ratio"
+      ]
+    },
+    "weather_limits": {
+      "wind_stop_mps": 20.0,
+      "visibility_stop_km": null,
+      "wave_stop_m": 3.5
+    },
+    "regulatory_operations": {
+      "maritime_inspection_capacity_vessels_per_hour": 0.24,
+      "customs_inspection_capacity_vessels_per_hour": 0.3,
+      "inspection_buffer_capacity_gain": 0.65,
+      "inspection_buffer_service_reserve_fraction": 0.04,
+      "recovery_service_capacity_gain": 0.18,
+      "inspection_readiness_load_fraction": 0.01,
+      "recovery_load_fraction": 0.02
+    },
+    "source_boundary": "Regulatory process states are an offline stress scenario grounded in official process rules, not Shanghai inspection telemetry. The two added controls reserve terminal readiness and prioritize post-release recovery only; neither can alter authority decisions or release a vessel."
+  },
+  "observation_dimensions": 53,
+  "action_dimensions": 7,
+  "step_hours": 1.0,
+  "demand_cap_kw": 36000.0,
+  "environment_safety_revision": "v4_terminal_soc_then_ramp_recheck_v1",
+  "training_split": "chronological_train_only",
+  "render_during_training": false,
+  "algorithm_parameters": {
+    "policy": "MlpPolicy",
+    "network_architecture": [
+      64,
+      64
+    ]
+  }
+}

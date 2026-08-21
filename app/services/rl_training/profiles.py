@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping
 from zoneinfo import ZoneInfo
 
-from .datasets import FACTOR_COLUMNS
+from .datasets import FACTOR_COLUMNS, REGULATORY_COLUMNS
 from .identifiers import validate_identifier
 
 
@@ -36,6 +36,8 @@ DEFAULT_PROFILE: Dict[str, Any] = {
         "flexible_load_fraction": 0.60,
         "berth_priority_limit": 1.0,
         "yard_flow_limit": 1.0,
+        "inspection_buffer_limit": 1.0,
+        "recovery_priority_limit": 1.0,
     },
     "objectives": {
         "cost": 0.25,
@@ -62,6 +64,15 @@ DEFAULT_PROFILE: Dict[str, Any] = {
         "visibility_stop_km": None,
         "wave_stop_m": None,
     },
+    "regulatory_operations": {
+        "maritime_inspection_capacity_vessels_per_hour": 0.22,
+        "customs_inspection_capacity_vessels_per_hour": 0.28,
+        "inspection_buffer_capacity_gain": 0.55,
+        "inspection_buffer_service_reserve_fraction": 0.05,
+        "recovery_service_capacity_gain": 0.12,
+        "inspection_readiness_load_fraction": 0.015,
+        "recovery_load_fraction": 0.025,
+    },
 }
 
 
@@ -79,8 +90,8 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
     merged = _merge(DEFAULT_PROFILE, profile)
     profile_id = validate_identifier(merged.get("profile_id"), field="profile_id")
     merged["profile_id"] = profile_id
-    if merged.get("environment_version") not in {"port_ops_v1", "port_ops_v2", "port_ops_v3"}:
-        raise ValueError("environment_version must be port_ops_v1, port_ops_v2 or port_ops_v3")
+    if merged.get("environment_version") not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4"}:
+        raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3 or port_ops_v4")
     if merged.get("control_authority") != "recommendation_only":
         raise ValueError("open-source port profiles must keep control_authority=recommendation_only")
     port_code = str(merged.get("port_code") or "").strip().upper()
@@ -118,6 +129,8 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         "flexible_load_fraction",
         "berth_priority_limit",
         "yard_flow_limit",
+        "inspection_buffer_limit",
+        "recovery_priority_limit",
     )
     for name in numeric_limits:
         limits[name] = float(limits[name])
@@ -129,6 +142,8 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         "flexible_load_fraction",
         "berth_priority_limit",
         "yard_flow_limit",
+        "inspection_buffer_limit",
+        "recovery_priority_limit",
     ):
         if not 0 <= limits[name] <= 1:
             raise ValueError(f"profile control_limits.{name} must be in [0, 1]")
@@ -146,7 +161,7 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
     requirements = merged["factor_requirements"]
     for scope in ("required_for_training", "required_for_site_claim"):
         factors = list(requirements.get(scope) or [])
-        unknown = sorted(set(factors) - set(FACTOR_COLUMNS))
+        unknown = sorted(set(factors) - set((*FACTOR_COLUMNS, *REGULATORY_COLUMNS)))
         if unknown:
             raise ValueError(
                 f"profile factor_requirements.{scope} contains unknown factors: "
@@ -159,6 +174,24 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         if value is not None and float(value) <= 0:
             raise ValueError(f"profile weather_limits.{name} must be positive or null")
         weather_limits[name] = None if value is None else float(value)
+    regulatory = merged["regulatory_operations"]
+    for name in (
+        "maritime_inspection_capacity_vessels_per_hour",
+        "customs_inspection_capacity_vessels_per_hour",
+    ):
+        regulatory[name] = float(regulatory[name])
+        if regulatory[name] <= 0:
+            raise ValueError(f"profile regulatory_operations.{name} must be positive")
+    for name in (
+        "inspection_buffer_capacity_gain",
+        "inspection_buffer_service_reserve_fraction",
+        "recovery_service_capacity_gain",
+        "inspection_readiness_load_fraction",
+        "recovery_load_fraction",
+    ):
+        regulatory[name] = float(regulatory[name])
+        if not 0 <= regulatory[name] <= 1:
+            raise ValueError(f"profile regulatory_operations.{name} must be in [0, 1]")
     return merged
 
 
