@@ -31,6 +31,14 @@
 
 It is an executable engineering platform for coordinated port production, energy, equipment, and safety operations. The Web command center covers twin visualization, policy experiments, dispatch review, and model governance; the Flutter client supports frontline inspection, alert handling, task confirmation, and shift handover. Both clients consume the same backend contracts, model artifacts, and audit trail.
 
+## 学术顾问 / Academic Advisor
+
+**Prof. Hamid Reza Karimi**
+
+衷心感谢 Hamid Reza Karimi 教授对本项目的学术支持与指导。
+
+We sincerely thank Prof. Hamid Reza Karimi for his academic support and guidance.
+
 | 项目维度 / Dimension | 当前能力 / Current capability |
 |---|---|
 | 双端协同 / Dual-end workflow | Web 指挥中心 + Flutter 一线移动端，同源数据、同模型版本、同任务与审计 ID |
