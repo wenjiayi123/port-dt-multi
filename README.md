@@ -31,14 +31,6 @@
 
 It is an executable engineering platform for coordinated port production, energy, equipment, and safety operations. The Web command center covers twin visualization, policy experiments, dispatch review, and model governance; the Flutter client supports frontline inspection, alert handling, task confirmation, and shift handover. Both clients consume the same backend contracts, model artifacts, and audit trail.
 
-## 学术顾问 / Academic Advisor
-
-**Prof. Hamid Reza Karimi**
-
-衷心感谢 Hamid Reza Karimi 教授对本项目的学术支持与指导。
-
-We sincerely thank Prof. Hamid Reza Karimi for his academic support and guidance.
-
 | 项目维度 / Dimension | 当前能力 / Current capability |
 |---|---|
 | 双端协同 / Dual-end workflow | Web 指挥中心 + Flutter 一线移动端，同源数据、同模型版本、同任务与审计 ID |
@@ -577,6 +569,18 @@ The current gate runs the complete unit-test suite and a 64-step smoke experimen
 Contributions should be provenance-aware, reproducible, and explicit about safety impact. Read the [contribution guide](CONTRIBUTING.md), [governance](GOVERNANCE.md), [code of conduct](CODE_OF_CONDUCT.md), and [support policy](SUPPORT.md). The pull-request template asks for data, evaluation, rollback, and verification evidence.
 
 安全问题请不要提交公开 Issue；请使用 GitHub Private Vulnerability Reporting。/ Do not disclose vulnerabilities in public issues; use GitHub Private Vulnerability Reporting.
+
+## 学术顾问 / Academic Advisor
+
+> **Prof. Dr. Hamid Reza Karimi**<br />
+> MAE · MEASA · MEurASc · MNAAI · DFIIAV · FISCM · FAAIA<br />
+> President-Elect, IIAV<br />
+> Department of Mechanical Engineering, Politecnico di Milano<br />
+> Milan, Italy
+
+衷心感谢 Hamid Reza Karimi 教授对本项目的学术支持与指导。
+
+We sincerely thank Prof. Dr. Hamid Reza Karimi for his academic support and guidance.
 
 ## 📄 许可证与引用 / License & citation
 
