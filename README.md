@@ -570,7 +570,7 @@ Contributions should be provenance-aware, reproducible, and explicit about safet
 
 安全问题请不要提交公开 Issue；请使用 GitHub Private Vulnerability Reporting。/ Do not disclose vulnerabilities in public issues; use GitHub Private Vulnerability Reporting.
 
-## Academic Advisor
+## 学术顾问与致谢 / Academic Advisor & Acknowledgements
 
 **[Prof. Dr. Hamid Reza Karimi](https://www.ae-info.org/ae/Member/Karimi_Hamid_Reza), MAE, MEASA, MEurASc, MNAAI, DFIIAV, FISCM, FAAIA**<br />
 **President-Elect, IIAV**<br />
