@@ -1,4 +1,4 @@
-"""Fail closed when checked-in business KPI or RL release evidence is stale."""
+"""Verify checked-in business KPI and RL reports against their source inputs."""
 
 from __future__ import annotations
 
@@ -30,10 +30,10 @@ REQUIRED = (
     "THIRD_PARTY_NOTICES.md",
     "MODEL_GOVERNANCE.md",
     "docs/BUSINESS_KPI_BENCHMARK.md",
-    "docs/RESUME_CLAIMS_WEB.md",
+    "docs/WEB_METRICS.md",
     "docs/SHARED_WEB_MOBILE_ARCHITECTURE.md",
     "docs/MOBILE_WORKFLOW_BENCHMARK.md",
-    "docs/RESUME_CLAIMS_DUAL_FRONTEND.md",
+    "docs/DUAL_FRONTEND_METRICS.md",
     "config/business_kpi_benchmark_v1.json",
     "config/mobile_workflow_benchmark_v1.json",
     "data/rl/business_kpi_benchmark_v1.json",
@@ -53,7 +53,7 @@ REQUIRED = (
     "docs/SITE_DATA_REPLACEMENT_CONTRACT_V3.md",
     "docs/PRODUCTION_READINESS.md",
     "docs/V3_TECHNICAL_EVIDENCE.md",
-    "docs/V3_HR_TECHNICAL_AUDIT.md",
+    "docs/V3_IMPLEMENTATION_REFERENCE.md",
     "data/public_sources/shanghai_port_mot_2024_2025.json",
     "data/public_sources/shanghai_yangshan_reanalysis_2024_2025.csv",
     "data/public_sources/shanghai_port_mot_2026_forward.json",
@@ -531,14 +531,14 @@ def main() -> int:
             errors.append("Xiaoyi Q-style character asset fingerprint changed")
     try:
         report = load_verified_report()
-        claims = report.get("resume_claims_rounded_percent") or {}
+        claims = report.get("summary_metrics_rounded_percent") or {}
         expected = {
             "berth_utilization_relative_improvement_percent": 9.0,
             "average_waiting_time_reduction_percent": 17.0,
             "scenario_energy_cost_reduction_percent": 12.0,
         }
         if claims != expected:
-            errors.append(f"resume KPI claims changed: {claims}")
+            errors.append(f"summary KPI metrics changed: {claims}")
         if report.get("dataset", {}).get("split_sizes") != {
             "train": 35064,
             "validation": 8784,

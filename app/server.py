@@ -2064,11 +2064,11 @@ async function loadBusinessEvidence(){
   const report = await response.json();
   const test = report.test || {};
   const exact = test.improvements || {};
-  const claims = report.resume_claims_rounded_percent || {};
+  const claims = report.summary_metrics_rounded_percent || {};
   const setText = (selector, value)=>{ const node=$(selector); if(node) node.textContent=value; };
-  setText("#businessBerthKpi", `+${Number(exact.berth_utilization_relative_improvement_percent||0).toFixed(2)}%（简历 ${Number(claims.berth_utilization_relative_improvement_percent||0).toFixed(0)}%）`);
-  setText("#businessWaitKpi", `-${Number(exact.average_waiting_time_reduction_percent||0).toFixed(2)}%（简历 ${Number(claims.average_waiting_time_reduction_percent||0).toFixed(0)}%）`);
-  setText("#businessCostKpi", `-${Number(exact.scenario_energy_cost_reduction_percent||0).toFixed(2)}%（简历 ${Number(claims.scenario_energy_cost_reduction_percent||0).toFixed(0)}%）`);
+  setText("#businessBerthKpi", `+${Number(exact.berth_utilization_relative_improvement_percent||0).toFixed(2)}%（摘要 ${Number(claims.berth_utilization_relative_improvement_percent||0).toFixed(0)}%）`);
+  setText("#businessWaitKpi", `-${Number(exact.average_waiting_time_reduction_percent||0).toFixed(2)}%（摘要 ${Number(claims.average_waiting_time_reduction_percent||0).toFixed(0)}%）`);
+  setText("#businessCostKpi", `-${Number(exact.scenario_energy_cost_reduction_percent||0).toFixed(2)}%（摘要 ${Number(claims.scenario_energy_cost_reduction_percent||0).toFixed(0)}%）`);
   setText("#businessHoldoutRows", `${Number(test.rows||0).toLocaleString("zh-CN")} rows`);
   setText("#businessEvidenceChip", report.release_gate?.passed ? "证据校验通过 · PASS" : "证据不可用 · BLOCKED");
   const period=report.dataset?.test_period||{};
@@ -4806,8 +4806,8 @@ async def rl_business_benchmark() -> JSONResponse:
                     "energy_balance",
                 )
             },
-            "resume_claims_rounded_percent": report.get(
-                "resume_claims_rounded_percent"
+            "summary_metrics_rounded_percent": report.get(
+                "summary_metrics_rounded_percent"
             ),
             "claim_text": report.get("claim_text"),
             "evidence_boundary": report.get("evidence_boundary"),

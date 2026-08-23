@@ -2,25 +2,24 @@
 """
 app/adapters/actuators.py
 
-【文件用途】
+【功能】
 - 提供“南向控制网关（PortSouthboundGateway）”，统一对接 OPC UA / Modbus-TCP /
   MQTT / HTTP(EMS/SCADA/TOS/PCS) 四类控制通道。
 - 提供指令白名单、幂等（Idempotency-Key）、双通道确认（Two-man rule / two-channel confirm）、
-  电子签名校验（e-sign placeholder）、证据包落盘（黑匣子）、一键回滚能力（若底层支持）。
+  电子签名校验接口、审计记录和底层支持范围内的回滚能力。
 - 若真实三方库、现场配置或鉴权缺失，网关必须拒绝执行，不得伪装成下发成功。
 - 与现有项目的“审计目录 data/objects/audit/”兼容（沿用 guard-*.json / evt-*.json 风格）。
 
-【谁会调用本文件】
-- 未来将由 `app/services/dispatch.py`（作业/能管/充电等指令下发服务）直接调用
+【调用关系】
+- 作业、能源和充电等指令服务调用
   PortSouthboundGateway.dispatch()/confirm()/rollback()。
-- 也会被 `app/services/closed_loop.py`（闭环控制）在自动/半自动模式里调用。
-- UI 或 API 层（我们随后会加到 `app/server.py` 的路由）会通过服务层间接触达本网关。
+- 闭环控制通过服务层调用本网关，UI 与 API 不直接访问南向协议适配器。
 
 【本文件依赖/被依赖关系】
 - 依赖：Python 标准库；可选依赖（若安装）：opcua、pymodbus、paho-mqtt、requests。
 - 写入：`data/objects/audit/` 目录（证据包），与现有审计文件并存。
 - 读取：`PORT_DT_ACTUATOR_CONFIG` 指向的现场配置；未配置时默认禁用。
-- 不直接依赖你现有的 infra.message_bus/storage/tsdb，避免破坏现状；后续我们再无缝接上。
+- 不直接依赖 infra.message_bus/storage/tsdb，保持协议适配器与业务存储解耦。
 
 【如何落地到真实港口】
 - 在 `data/objects/config/actuators.json` 填入现场 OPC UA/Modbus/MQTT/HTTP 的地址、资产映射、白名单。
@@ -400,8 +399,8 @@ class PortSouthboundGateway:
     - 校验白名单与签名
     - 幂等去重
     - 路由到指定通道
-    - 生成证据包（输入/路由/审批/时间戳/结果/约束）
-    - 支持“影子模式/小流量/全量”的逐步集成（后续我们和 rollout 服务对接）
+    - 记录输入、路由、审批、时间戳、结果与约束
+    - 为影子模式、小流量和全量集成预留 rollout 服务接口
     """
     def __init__(self, config_path: Optional[str] = None):
         self.cfg = Config(config_path)

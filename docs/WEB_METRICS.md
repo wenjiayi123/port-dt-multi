@@ -1,6 +1,6 @@
-# Web端简历指标与面试证据
+# Web 端项目指标说明
 
-## 建议简历内容
+## 项目摘要
 
 **【工程1】港航数字孪生 AI 决策调度双端系统（独立全栈自研）**
 
@@ -26,7 +26,7 @@ SAC/PPO/TD3/DQN/A2C/TQC/QR-DQN/TRPO/Recurrent PPO/ARS 与 MPC、FCFS；训练阶
 Gymnasium + Stable-Baselines3/SB3-Contrib/PyTorch + 10 类 RL + SciPy MPC + FCFS +
 NumPy/Pandas + Docker + GitHub Actions
 
-## 面试边界
+## 适用范围
 
 - V3 SAC 业务指标来自上海公开聚合/再分析数据的时序盲测；MPA 历史 KPI 来自冻结的协调策略反事实，二者都不是现场部署或因果效果证据。
 - V4 监管延误指标来自 2026 独立前向时段上的冻结工程压力情景；候选模型不使用该时段选模或调参。官方资料只支撑“检查—缺陷/滞留—整改/复查—放行”的流程，不支撑上海本地检查概率、持续时间或资源能力参数。

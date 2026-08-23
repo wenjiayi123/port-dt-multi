@@ -264,7 +264,7 @@ def _verified_site_json(env_name: str, *, kind: str) -> Dict[str, Any]:
     }
 
 
-def _open_source_readiness_checks() -> Dict[str, Dict[str, Any]]:
+def _repository_readiness_checks() -> Dict[str, Dict[str, Any]]:
     from app.services.rl_training.datasets import dataset_quality_report, load_port_dataset
     from app.services.rl_training.trainer import TRAINING_MANAGER
 
@@ -290,7 +290,7 @@ def _open_source_readiness_checks() -> Dict[str, Dict[str, Any]]:
 
 
 def readiness_report() -> Dict[str, Any]:
-    checks = _open_source_readiness_checks()
+    checks = _repository_readiness_checks()
     origins = cors_origins()
     keys = api_keys()
     admins = admin_api_keys()
