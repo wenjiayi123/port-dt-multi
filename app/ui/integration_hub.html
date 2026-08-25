@@ -1438,12 +1438,16 @@
         }else{
           setImpactStage("#stageSimulation", "blocked");
           setText("#flowRl", `策略测试未通过：${status}。`);
+          setText("#impactRisk", "BLOCKED");
+          setText("#impactTargetState", `策略测试未通过 · ${status} · 未进入上线护栏`);
         }
         addLog("RL/SIM", `策略测试：${status}`, data.execution_result?.result?.strategy_id || "latest strategy");
       }catch(err){
         setImpactStage("#stageSimulation", "blocked");
         setText("#rlPacket", String(err));
         setText("#impactRisk", "ERROR");
+        setText("#flowRl", "策略测试请求失败；未进入上线护栏。");
+        setText("#impactTargetState", "策略测试请求失败 · 未进入上线护栏");
         addLog("ERROR", "策略测试失败", String(err));
       }finally{
         button.disabled = false;

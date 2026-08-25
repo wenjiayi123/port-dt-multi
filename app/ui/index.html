@@ -2459,11 +2459,11 @@ border-left:3px solid rgba(148,163,184,.22);
       margin-left:0 !important;
     }
 
-    /* 导航单独作为下一行，12 个入口在桌面端保持一排 */
+    /* 导航单独作为下一行，13 个入口在桌面端保持一排 */
     .nav-shell{
       width:100%;
       display:grid !important;
-      grid-template-columns:repeat(12, minmax(0, 1fr));
+      grid-template-columns:repeat(13, minmax(0, 1fr));
       justify-content:stretch !important;
       align-items:stretch !important;
       gap:clamp(6px, .48vw, 10px) !important;
@@ -2501,7 +2501,7 @@ border-left:3px solid rgba(148,163,184,.22);
 
     @media (max-width: 1200px){
       .nav-shell{
-        grid-template-columns:repeat(12, minmax(0, 1fr));
+        grid-template-columns:repeat(13, minmax(0, 1fr));
         gap:5px !important;
         padding:7px !important;
       }
@@ -2515,7 +2515,7 @@ border-left:3px solid rgba(148,163,184,.22);
     }
     @media (max-width: 760px){
       .nav-shell{
-        grid-template-columns:repeat(12, minmax(56px, 1fr));
+        grid-template-columns:repeat(13, minmax(56px, 1fr));
         gap:4px !important;
         overflow-x:auto;
         overflow-y:visible;
@@ -15713,7 +15713,7 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     if($('#sel-scenario') && scen) $('#sel-scenario').value = scen;
     if($('#chkDrivers')) $('#chkDrivers').checked = !!drivers;
     $('#btn-agg-sim')?.click();
-    clickMode('sim');
+    document.querySelector('#viewSeg button[data-mode="sim"]')?.click();
     setTimeout(syncSidebarState, 120);
   });
 

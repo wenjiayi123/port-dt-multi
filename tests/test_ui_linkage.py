@@ -76,6 +76,43 @@ class UiLinkageTests(unittest.TestCase):
         ):
             self.assertIn(marker, hub)
 
+    def test_qc_aggregate_simulation_reuses_the_registered_twin_mode_control(self):
+        home = (ROOT / "app/ui/index.html").read_text(encoding="utf-8")
+        self.assertIn(
+            "document.querySelector('#viewSeg button[data-mode=\"sim\"]')?.click();",
+            home,
+        )
+        self.assertNotIn("clickMode('sim')", home)
+
+    def test_primary_navigation_grid_covers_all_thirteen_entries(self):
+        home = (ROOT / "app/ui/index.html").read_text(encoding="utf-8")
+        self.assertEqual(home.count("grid-template-columns:repeat(13,"), 3)
+        self.assertNotIn("grid-template-columns:repeat(12,", home)
+
+    def test_direct_training_button_requires_the_same_human_review_gate(self):
+        source = (ROOT / "app/server.py").read_text(encoding="utf-8")
+        self.assertIn(
+            '$("#btnStartTrain")?.addEventListener("click", showAssistantRunConfirm);',
+            source,
+        )
+        self.assertNotIn(
+            '$("#btnStartTrain")?.addEventListener("click", startTraining);',
+            source,
+        )
+        self.assertIn("已取消训练启动；未调用 /api/rl/train/start。", source)
+
+    def test_policy_test_failure_exits_testing_state(self):
+        hub = (ROOT / "app/ui/integration_hub.html").read_text(encoding="utf-8")
+        self.assertIn('setText("#impactRisk", "BLOCKED");', hub)
+        self.assertIn(
+            'setText("#impactTargetState", `策略测试未通过 · ${status} · 未进入上线护栏`);',
+            hub,
+        )
+        self.assertIn(
+            'setText("#impactTargetState", "策略测试请求失败 · 未进入上线护栏");',
+            hub,
+        )
+
     def test_local_xiaoyi_fallback_is_operator_facing_chinese(self):
         response = self.client.post(
             "/api/copilot/mission",

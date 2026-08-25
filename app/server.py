@@ -1228,8 +1228,8 @@ _RL_PANEL_HTML = r"""
 </main>
 <div id="assistantConfirmBackdrop" class="confirm-backdrop" role="dialog" aria-modal="true" aria-labelledby="assistantConfirmTitle">
   <div class="confirm-dialog">
-    <h2 id="assistantConfirmTitle">小懿请求执行 RL 训练</h2>
-    <div id="assistantConfirmIntro" class="small muted">请确认训练目标、接口调用和风险边界。</div>
+    <h2 id="assistantConfirmTitle">强化学习训练启动确认</h2>
+    <div id="assistantConfirmIntro" class="small muted">请在启动前确认训练目标、数据集、参数、接口调用和风险边界。</div>
     <div class="confirm-grid">
       <div class="confirm-item"><span>自然语言指令</span><b id="confirmCommandText">—</b></div>
       <div class="confirm-item"><span>训练目标</span><b id="confirmObjectiveText">—</b></div>
@@ -1242,7 +1242,7 @@ _RL_PANEL_HTML = r"""
     <div class="risk-list" id="confirmRiskText"></div>
     <div class="row-actions" style="margin-top:14px;justify-content:flex-end;">
       <button id="btnCancelAssistantRun" class="btn ghost">取消</button>
-      <button id="btnConfirmAssistantRun" class="btn">开始执行</button>
+      <button id="btnConfirmAssistantRun" class="btn">确认并启动</button>
     </div>
   </div>
 </div>
@@ -1557,7 +1557,7 @@ function confirmationSummary(){
   const cfg = trainConfig();
   const risks = OBJECTIVE_RISK[cfg.objective] || OBJECTIVE_RISK.multi_objective;
   return {
-    command: commandFrom || "小懿，开始 RL 训练",
+    command: commandFrom || "操作员点击“启动训练”",
     objective: objectiveLabelFrom || cfg.objective_label,
     algoScenario: `${cfg.algorithm_label} · ${cfg.scenario_label}`,
     assetHorizon: `${cfg.asset_label} · horizon=${cfg.horizon_min}min · step=${cfg.step_min}min`,
@@ -1577,7 +1577,7 @@ function showAssistantRunConfirm(){
   $("#confirmRecommendText").textContent = s.recommendation;
   $("#confirmRiskText").innerHTML = `<b>执行风险与边界</b><br>${s.risks.map(x=>`• ${x}`).join("<br>")}<br>• 点击“开始执行”后才会调用 /api/rl/train/start；训练结果仍需策略测试、安全校验和 dry-run，不能直接生产执行。`;
   box.style.display = "flex";
-  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] assistant confirmation pending · ${s.objective}`);
+  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training confirmation pending · ${s.objective}`);
 }
 
 function hideAssistantRunConfirm(){
@@ -2418,7 +2418,7 @@ $("#btnDispatch").addEventListener("click", dispatchSelected);
 $("#btnHistory").addEventListener("click", loadHistory);
 $("#btnBackToPlatform")?.addEventListener("click", ()=> goBackTo(returnTo));
 $("#btnBackToHome")?.addEventListener("click", ()=> goBackTo('/'));
-$("#btnStartTrain")?.addEventListener("click", startTraining);
+$("#btnStartTrain")?.addEventListener("click", showAssistantRunConfirm);
 $("#btnPauseTrain")?.addEventListener("click", pauseTraining);
 $("#btnResetTrain")?.addEventListener("click", resetTraining);
 $("#btnPollTrainStatus")?.addEventListener("click", ()=> pollTrainingStatus({log:true, sourceLabel:"manual poll"}));
@@ -2426,15 +2426,15 @@ $("#btnEvaluateTrain")?.addEventListener("click", evaluateTraining);
 $("#btnVerifyDryRun")?.addEventListener("click", ()=> verifyPolicyForOnline({source:"manual_verify_online"}));
 $("#btnCancelAssistantRun")?.addEventListener("click", ()=>{
   hideAssistantRunConfirm();
-  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] assistant command cancelled · human gate`);
-  if($("#trainDetail")) $("#trainDetail").textContent = "已取消小懿训练指令；未调用 /api/rl/train/start。";
+  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training start cancelled · human gate`);
+  if($("#trainDetail")) $("#trainDetail").textContent = "已取消训练启动；未调用 /api/rl/train/start。";
 });
 $("#btnConfirmAssistantRun")?.addEventListener("click", async ()=>{
   hideAssistantRunConfirm();
   const s = confirmationSummary();
   if($("#trainDetail")) $("#trainDetail").textContent = `人工确认通过：${s.objective}，正在启动训练。`;
   await startTraining();
-  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] assistant confirmed · ${s.objective} -> #btnStartTrain -> /api/rl/train/start`);
+  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training confirmed · ${s.objective} -> #btnStartTrain -> /api/rl/train/start`);
 });
 $("#btnPingConnector")?.addEventListener("click", refreshConnector);
 $("#btnRefreshMobileRequests")?.addEventListener("click", loadMobileTrainingRequests);
