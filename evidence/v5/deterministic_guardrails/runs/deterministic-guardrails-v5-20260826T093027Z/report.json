@@ -1,0 +1,351 @@
+{
+  "schema": "port-dt-deterministic-business-guardrails-evidence.v1",
+  "run_id": "deterministic-guardrails-v5-20260826T093027Z",
+  "status": "PASS",
+  "generated_at": "2026-08-26T09:30:27.977912Z",
+  "dataset": {
+    "dataset_id": "public_cn_sha_integrated_scenario_v5",
+    "artifact": "data/rl/datasets/public_cn_sha_integrated_scenario_v5.csv",
+    "sha256": "5092e0c838cf5da1c97a39821e6c9658aed0354610a3603f66fc4d8175f236a9",
+    "rows_replayed": 17544,
+    "independent_source_observations": 17566,
+    "public_observation_boundary": "Only inherited official aggregate throughput and public weather/marine reanalysis are public observations. Gate, intermodal, reefer, shore-power, maintenance, marine-resource, dangerous-goods and vessel-design fields are deterministic engineering scenario variables and are not Shanghai terminal telemetry. Production authority remains false."
+  },
+  "chronological_replay": {
+    "status_counts": {
+      "blocked": 7140,
+      "pass": 10404
+    },
+    "violation_code_counts": {
+      "UNDER_KEEL_CLEARANCE": 7140
+    },
+    "warning_code_counts": {},
+    "under_keel_clearance_m": {
+      "minimum": -1.0906053185462952,
+      "maximum": 3.583171248435974,
+      "blocked_window_count": 7140
+    },
+    "representative_rows": {
+      "blocked": {
+        "row_index": 0,
+        "timestamp": "2024-01-01T00:00:00Z",
+        "result": {
+          "status": "blocked",
+          "recommendation_feasible": false,
+          "dispatch_allowed": false,
+          "human_review_required": true,
+          "violations": [
+            {
+              "code": "UNDER_KEEL_CLEARANCE",
+              "field": "under_keel_clearance_m",
+              "value": -0.16616320610046387,
+              "required_min": 0.8,
+              "message": "channel transit must remain closed regardless of policy recommendation"
+            }
+          ],
+          "warnings": [],
+          "estimates": {
+            "under_keel_clearance_m": -0.16616320610046387,
+            "required_under_keel_clearance_m": 0.8,
+            "integrated_net_load_kw": 22430.270871756387
+          },
+          "fallback": {
+            "channel_transit_allowed": false,
+            "automatic_execution": false,
+            "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+          },
+          "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+        }
+      },
+      "pass": {
+        "row_index": 3,
+        "timestamp": "2024-01-01T03:00:00Z",
+        "result": {
+          "status": "pass",
+          "recommendation_feasible": true,
+          "dispatch_allowed": false,
+          "human_review_required": true,
+          "violations": [],
+          "warnings": [],
+          "estimates": {
+            "under_keel_clearance_m": 1.0008179396390915,
+            "required_under_keel_clearance_m": 0.8,
+            "integrated_net_load_kw": 23074.823756545335
+          },
+          "fallback": {
+            "channel_transit_allowed": true,
+            "automatic_execution": false,
+            "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+          },
+          "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+        }
+      }
+    },
+    "interpretation": "Blocked rows are the intended fail-closed result, not failed software tests."
+  },
+  "challenge_suite": {
+    "checks": {
+      "safe_reference_not_blocked": true,
+      "under_keel_clearance_blocked": true,
+      "channel_closure_blocked": true,
+      "weather_stop_blocked": true,
+      "dangerous_goods_yard_blocked": true,
+      "reefer_safety_reserve_blocked": true,
+      "maintenance_safety_reserve_blocked": true,
+      "integrated_demand_cap_blocked": true,
+      "missing_hydrographic_input_blocked": true
+    },
+    "passed": true,
+    "results": {
+      "safe_reference": {
+        "status": "pass",
+        "recommendation_feasible": true,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": 7.7,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 21360.8
+        },
+        "fallback": {
+          "channel_transit_allowed": true,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      },
+      "under_keel_clearance": {
+        "status": "blocked",
+        "recommendation_feasible": false,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [
+          {
+            "code": "UNDER_KEEL_CLEARANCE",
+            "field": "under_keel_clearance_m",
+            "value": -1.3,
+            "required_min": 0.8,
+            "message": "channel transit must remain closed regardless of policy recommendation"
+          }
+        ],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": -1.3,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 21360.8
+        },
+        "fallback": {
+          "channel_transit_allowed": false,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      },
+      "channel_closure": {
+        "status": "blocked",
+        "recommendation_feasible": false,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [
+          {
+            "code": "CHANNEL_CLOSED",
+            "field": "closure_flag",
+            "value": 1.0,
+            "message": "a learner cannot override a declared channel closure"
+          }
+        ],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": 7.7,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 21360.8
+        },
+        "fallback": {
+          "channel_transit_allowed": false,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      },
+      "weather_stop": {
+        "status": "blocked",
+        "recommendation_feasible": false,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [
+          {
+            "code": "WEATHER_STOP_LIMIT",
+            "field": "wind_speed_mps",
+            "value": 25.0,
+            "limit": 20.0
+          }
+        ],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": 7.7,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 21360.8
+        },
+        "fallback": {
+          "channel_transit_allowed": false,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      },
+      "dangerous_goods_yard": {
+        "status": "blocked",
+        "recommendation_feasible": false,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [
+          {
+            "code": "DANGEROUS_GOODS_YARD_LIMIT",
+            "field": "yard_flow_command",
+            "message": "positive yard inflow is blocked until dangerous-goods segregation capacity is restored"
+          }
+        ],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": 7.7,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 21360.8
+        },
+        "fallback": {
+          "channel_transit_allowed": false,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      },
+      "reefer_safety_reserve": {
+        "status": "blocked",
+        "recommendation_feasible": false,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [
+          {
+            "code": "REEFER_SAFETY_RESERVE",
+            "field": "reefer_service_ratio",
+            "message": "cold-chain risk requires at least the declared service reserve"
+          }
+        ],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": 7.7,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 21360.8
+        },
+        "fallback": {
+          "channel_transit_allowed": false,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      },
+      "maintenance_safety_reserve": {
+        "status": "blocked",
+        "recommendation_feasible": false,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [
+          {
+            "code": "MAINTENANCE_SAFETY_RESERVE",
+            "field": "maintenance_reserve_ratio",
+            "message": "high failure risk cannot be traded away for short-term throughput"
+          }
+        ],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": 7.7,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 21360.8
+        },
+        "fallback": {
+          "channel_transit_allowed": false,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      },
+      "integrated_demand_cap": {
+        "status": "blocked",
+        "recommendation_feasible": false,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [
+          {
+            "code": "INTEGRATED_DEMAND_CAP",
+            "field": "estimated_net_load_kw",
+            "value": 40876.0,
+            "allowed_max": 36000.0
+          }
+        ],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": 7.7,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 40876.0
+        },
+        "fallback": {
+          "channel_transit_allowed": false,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      },
+      "missing_hydrographic_input": {
+        "status": "blocked",
+        "recommendation_feasible": false,
+        "dispatch_allowed": false,
+        "human_review_required": true,
+        "violations": [
+          {
+            "code": "MISSING_HARD_CONSTRAINT_INPUT",
+            "field": "channel_chart_depth_m",
+            "message": "deterministic feasibility cannot be established"
+          },
+          {
+            "code": "UNDER_KEEL_CLEARANCE",
+            "field": "under_keel_clearance_m",
+            "value": -10.3,
+            "required_min": 0.8,
+            "message": "channel transit must remain closed regardless of policy recommendation"
+          }
+        ],
+        "warnings": [],
+        "estimates": {
+          "under_keel_clearance_m": -10.3,
+          "required_under_keel_clearance_m": 0.8,
+          "integrated_net_load_kw": 21360.8
+        },
+        "fallback": {
+          "channel_transit_allowed": false,
+          "automatic_execution": false,
+          "instruction": "hold affected task, retain incumbent feasible plan, and escalate to the named human approval workflow"
+        },
+        "authority": "deterministic_review_gate_no_release_navigation_or_actuator_authority"
+      }
+    }
+  },
+  "non_rl_responsibilities": [
+    "source completeness and unit validation",
+    "maritime and customs release authority",
+    "weather and channel closure",
+    "under-keel-clearance acceptance",
+    "pilot tug and channel capacity confirmation",
+    "dangerous-goods segregation",
+    "reefer minimum service reserve",
+    "maintenance minimum safety reserve",
+    "integrated electrical demand cap",
+    "human approval execution rollback and audit"
+  ],
+  "integration_boundary": {
+    "recommendation_only": true,
+    "dispatch_allowed": false,
+    "production_authority": false,
+    "next_stage": "existing end-to-end coordination, independent approval and actuator interlock services"
+  }
+}

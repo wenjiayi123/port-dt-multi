@@ -4319,8 +4319,8 @@ border-left:3px solid rgba(148,163,184,.22);
 
       <!-- 策略仿真对比小图 -->
       <div class="small" style="margin-top:4px;color:#8aa6d8;">策略仿真对比（聚合功率）：<span class="mono" id="simMeta">—</span></div>
-      
-<button class="btn" id="btn-sim-save">保存仿真图(PNG)</button>
+      <canvas id="simCanvas" aria-label="强化学习策略与基线聚合功率对比图"></canvas>
+      <button class="btn" id="btn-sim-save">保存仿真图(PNG)</button>
 
       <!-- 可解释特征（保持） -->
       <div class="exp-wrap">
@@ -4995,6 +4995,7 @@ border-left:3px solid rgba(148,163,184,.22);
         <div class="kpi"><div class="k">模型可用信号</div><div class="v" id="ext-v3-signals">—</div><div class="small">公开回放输入</div></div>
         <div class="kpi"><div class="k">现场适配器</div><div class="v" id="ext-v3-live">—</div><div class="small">已授权实时连接</div></div>
         <div class="kpi"><div class="k">目标港</div><div class="v" id="ext-v3-port" style="font-size:17px;">—</div><div class="small">公开域≠现场终端</div></div>
+        <div class="kpi"><div class="k">靠泊事件网关</div><div class="v" id="ext-port-call" style="font-size:17px;color:#fcd34d;">—</div><div class="small">合同通过≠实时接入</div></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin:10px 0;">
         <button class="btn" id="btn-ext-refresh" title="从V3来源分级接口重新计算">刷新外部环境</button>
@@ -5008,6 +5009,22 @@ border-left:3px solid rgba(148,163,184,.22);
         <span class="small">港口代码</span>
         <input id="ext-port" placeholder="如：CNSHA" value="CNSHA" readonly />
         <span class="small">V3公开目标域；现场终端代码待接入港口</span>
+      </div>
+
+      <div id="port-call-gateway-panel" style="margin-top:10px;padding:11px;border:1px solid rgba(96,165,250,.22);border-radius:10px;background:rgba(7,16,31,.62);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div>
+            <div style="font-weight:700;color:#dbeafe;">标准靠泊事件接入闸门</div>
+            <div class="small" id="port-call-gateway-status" style="margin-top:4px;color:#fcd34d;">正在检查接口、来源授权、时区、船舶身份与事件时序…</div>
+          </div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;">
+            <button class="btn" id="btn-port-call-readiness">刷新接入状态</button>
+            <button class="btn" id="btn-port-call-contract">查看标准字段</button>
+            <button class="btn" id="btn-port-call-preflight">运行接入前校验</button>
+          </div>
+        </div>
+        <div class="small" style="margin-top:7px;color:#8aa6d8;">校验覆盖预计、请求、计划、实际四类事件，以及到港、引航、拖轮、系泊、泊位、装卸、加油和离港流程。内置样例只验证合同，不会被显示为真实港口数据。</div>
+        <pre id="port-call-gateway-detail" style="margin:8px 0 0;max-height:260px;overflow:auto;white-space:pre-wrap;color:#cfe0ff;background:#050b16;border:1px solid #1e2a44;border-radius:8px;padding:9px;">未配置经授权的实时靠泊事件源时，查询接口失败关闭，不生成模拟航次。</pre>
       </div>
 
       <!-- 两列：左 TOS/AIS，右 市场/潮汐 -->
@@ -5070,6 +5087,7 @@ border-left:3px solid rgba(148,163,184,.22);
 (function(){
   const byId=(id)=>document.getElementById(id);
   let externalV3Evidence=null;
+  let portCallReadiness=null;
   function lineChart(id,rows,color,decimals){
     const canvas=byId(id); if(!canvas)return;
     const rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
@@ -5092,8 +5110,11 @@ border-left:3px solid rgba(148,163,184,.22);
     byId('ext-v3-signals').textContent=String(signals.filter(s=>s.model_input).length);
     byId('ext-v3-live').textContent=String(j.live_adapter_count||0);
     byId('ext-v3-port').textContent=j.port?.unlocode||'CNSHA';
+    const portCall=j.adapter_status?.port_call||{};
+    byId('ext-port-call').textContent=portCall.live_data_verified?'已验证':'待配置';
+    byId('ext-port-call').style.color=portCall.live_data_verified?'#86efac':'#fcd34d';
     byId('ext-v3-status').textContent=`数据集=${dataset.dataset_id} · SHA=${String(dataset.sha256||'').slice(0,12)}… · 官方报告期=${dataset.official_reporting_periods||0} · 再分析=${Number(dataset.reanalysis_hours||0).toLocaleString('zh-CN')}小时 · 实时适配器=${j.live_adapter_count||0} · 现场=${j.boundary?.site_status||'待接入港口'}`;
-    const grid=byId('ext-signal-grid');grid.innerHTML='';signals.forEach(s=>{const ok=s.availability==='public_replay';const item=document.createElement('div');item.style.cssText=`padding:8px;border-radius:8px;border:1px solid ${ok?'#22c55e55':'#f59e0b55'};background:${ok?'#22c55e0d':'#f59e0b0d'};`;item.innerHTML=`<div style="color:${ok?'#86efac':'#fcd34d'};font-weight:600;">${ok?'✓':'◷'} ${s.name}</div><div class="small">${s.evidence_class} · 模型=${s.model_input?'是':'否'}</div>`;grid.appendChild(item);});
+    const grid=byId('ext-signal-grid');grid.innerHTML='';signals.forEach(s=>{const ok=s.availability==='public_replay'||s.availability==='live_rest';const item=document.createElement('div');item.style.cssText=`padding:8px;border-radius:8px;border:1px solid ${ok?'#22c55e55':'#f59e0b55'};background:${ok?'#22c55e0d':'#f59e0b0d'};`;item.innerHTML=`<div style="color:${ok?'#86efac':'#fcd34d'};font-weight:600;">${ok?'✓':'◷'} ${s.name}</div><div class="small">${s.evidence_class} · 模型=${s.model_input?'是':'否'}</div>`;grid.appendChild(item);});
     byId('tbl-tos').querySelector('tbody').innerHTML=pendingRow(6,`${tables.tos_schedule?.state}：${tables.tos_schedule?.reason}`);
     byId('tbl-ais').querySelector('tbody').innerHTML=pendingRow(4,`${tables.ais_arrivals?.state}：${tables.ais_arrivals?.reason}`);
     const fill=(tableId,rows,decimals,unit)=>{byId(tableId).querySelector('tbody').innerHTML=(rows||[]).slice(0,24).map(row=>`<tr><td>${new Date(row.timestamp).toLocaleString()}</td><td class="mono">${Number(row.value).toFixed(decimals)} ${unit||''}<div class="small">源:${String(row.source_timestamp||'').slice(0,16)}</div></td></tr>`).join('')||pendingRow(2,'待接入港口');};
@@ -5102,12 +5123,53 @@ border-left:3px solid rgba(148,163,184,.22);
     byId('ext-v3-detail').textContent='V3外部信号结论：需量/电价/碳因子/潮位/海况/吞吐来自哈希固定的公开回放并参与模型；TOS船期、AIS航迹和实时市场未获授权，均显示待接入港口且不生成替代实体。';
   }
   async function loadExternalV3(){const response=await fetch('/api/v3/external-signals/evidence',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);renderExternalV3(await response.json());}
+  function portCallContractSample(){
+    const now=new Date(),updated=new Date(now.getTime()-60*1000);
+    const items=[
+      ['ARR','port_arrival','instant',1],
+      ['BERTH-START','berth','start',2],
+      ['CARGO-START','cargo_operations','start',3],
+      ['CARGO-COMPLETE','cargo_operations','complete',9],
+      ['BERTH-COMPLETE','berth','complete',10],
+      ['DEP','port_departure','instant',11],
+    ];
+    return {
+      schema_version:'port_call_event.v1',site_id:'SITE.CNSHA.CONTRACT.TEST',
+      source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',retrieved_at:now.toISOString(),evidence_class:'contract_test_only'},
+      events:items.map(([suffix,event_type,event_side,hour])=>({
+        event_id:`EV.PC001.${suffix}.1`,port_call_id:'PC.CNSHA.001',vessel_name:'PORT DT CONTRACT TEST',vessel_imo:'9176187',vessel_mmsi:'563123456',port_unlocode:'CNSHA',terminal_id:'TERM.YS.1',berth_id:'BERTH.03',event_type,event_phase:'planned',event_side,event_time:new Date(now.getTime()+hour*3600*1000).toISOString(),source_updated_at:updated.toISOString(),revision:1,source_reference:`TOS.PC001.${suffix}.1`
+      }))
+    };
+  }
+  function renderPortCallReadiness(j){
+    portCallReadiness=j;const status=j.adapter_status||{},boundary=j.boundary||{};
+    byId('port-call-gateway-status').textContent=status.live_data_verified
+      ? `已验证实时靠泊源 · 站点=${status.site_id||'—'} · 每批事件仍须通过质量闸门`
+      : `待接入港口 · ${boundary.reason||'未配置经授权的实时靠泊事件源'}`;
+    byId('port-call-gateway-status').style.color=status.live_data_verified?'#86efac':'#fcd34d';
+    byId('ext-port-call').textContent=status.live_data_verified?'已验证':'待配置';
+    byId('ext-port-call').style.color=status.live_data_verified?'#86efac':'#fcd34d';
+  }
+  async function loadPortCallReadiness(){
+    const response=await fetch('/api/v3/port-call/readiness',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const payload=await response.json();renderPortCallReadiness(payload);return payload;
+  }
+  async function validatePortCallContract(){
+    const response=await fetch('/api/v3/port-call/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(portCallContractSample())});
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);const payload=await response.json();
+    byId('port-call-gateway-detail').textContent=JSON.stringify({valid:payload.valid,accepted_event_count:payload.accepted_event_count,quality:payload.quality,evidence_digest:payload.evidence_digest,boundary:payload.boundary,warnings:payload.warnings},null,2);
+    byId('port-call-gateway-status').textContent=payload.valid?'接入前合同样例通过 · 真实数据仍未接入 · 无生产控制权':'接入前合同样例未通过';
+    byId('port-call-gateway-status').style.color=payload.valid?'#86efac':'#f87171';
+  }
   window.loadExternalV3=loadExternalV3;
   byId('btn-ext-refresh')?.addEventListener('click',(event)=>{event.preventDefault();event.stopImmediatePropagation();loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});},true);
   byId('btn-ext-provenance')?.addEventListener('click',async()=>{if(!externalV3Evidence)await loadExternalV3();byId('ext-v3-detail').textContent=JSON.stringify({dataset:externalV3Evidence.dataset,public_sources:externalV3Evidence.public_sources,adapter_status:externalV3Evidence.adapter_status},null,2);});
   byId('btn-ext-registry')?.addEventListener('click',async()=>{if(!externalV3Evidence)await loadExternalV3();byId('ext-v3-detail').textContent=JSON.stringify({signal_registry:externalV3Evidence.signal_registry,timeline_sample:externalV3Evidence.timeline.slice(0,3)},null,2);});
   byId('btn-ext-contract')?.addEventListener('click',async()=>{if(!externalV3Evidence)await loadExternalV3();byId('ext-v3-detail').textContent=JSON.stringify({boundary:externalV3Evidence.boundary,replacement_contract:externalV3Evidence.replacement_contract},null,2);});
-  const start=()=>loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});setTimeout(start,1200);setTimeout(start,4000);
+  byId('btn-port-call-readiness')?.addEventListener('click',async()=>{try{const payload=await loadPortCallReadiness();byId('port-call-gateway-detail').textContent=JSON.stringify({adapter_status:payload.adapter_status,boundary:payload.boundary,quality_gates:payload.quality_gates},null,2);}catch(error){byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;}});
+  byId('btn-port-call-contract')?.addEventListener('click',async()=>{try{const payload=portCallReadiness||await loadPortCallReadiness();byId('port-call-gateway-detail').textContent=JSON.stringify({schema_version:payload.schema_version,event_contract:payload.event_contract,quality_gates:payload.quality_gates,boundary:payload.boundary},null,2);}catch(error){byId('port-call-gateway-status').textContent='靠泊事件合同加载失败：'+error.message;}});
+  byId('btn-port-call-preflight')?.addEventListener('click',()=>validatePortCallContract().catch(error=>{byId('port-call-gateway-status').textContent='接入前校验失败：'+error.message;byId('port-call-gateway-status').style.color='#f87171';}));
+  const start=()=>{loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});loadPortCallReadiness().catch(error=>{byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;});};setTimeout(start,1200);setTimeout(start,4000);
 })();
 </script>
 
@@ -8246,6 +8308,7 @@ border-left:3px solid rgba(148,163,184,.22);
         show({error:'保存PNG失败', detail:String(e).slice(0,200)});
       }
     }
+    globalThis.saveCanvasPNG = saveCanvasPNG;
 
     function ensureSimSaveButton(){
       if (document.getElementById('btn-sim-save')) return;
@@ -9404,6 +9467,16 @@ border-left:3px solid rgba(148,163,184,.22);
     <button data-tab="scn" class="active">场景工厂</button>
     <button data-tab="drill">韧性演练</button>
     <button data-tab="contract">数据契约</button>
+    <button data-tab="calibration">现场标定</button>
+    <button data-tab="shadow-acceptance">影子验收</button>
+    <button data-tab="execution-acceptance">执行放行</button>
+    <button data-tab="port-call-collaboration">靠泊协同</button>
+    <button data-tab="maritime-interoperability">标准互操作</button>
+    <button data-tab="forecast-uncertainty">预测校准</button>
+    <button data-tab="business-benefit-attribution">收益归因</button>
+    <button data-tab="end-to-end-coordination">全链协同</button>
+    <button data-tab="production-continuity">连续运行</button>
+    <button data-tab="operating-model-governance">责任治理</button>
   </div>
 
   <!-- Tab: 场景工厂 -->
@@ -9470,6 +9543,205 @@ border-left:3px solid rgba(148,163,184,.22);
       <thead><tr><th>特征</th><th>来源</th><th>覆盖率</th><th>Null%</th><th>Schema</th><th>现场状态</th></tr></thead>
       <tbody><tr><td colspan="6" class="small" style="color:#8aa6d8;">正在读取数据契约…</td></tr></tbody>
     </table>
+  </div>
+
+  <!-- Tab: 现场标定 -->
+  <div id="tab-calibration" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">训练窗只拟合参数，后续验证窗独立计算误差、漂移和置信区间；合同样例不冒充现场测量或港口标定。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="calibration-readiness">刷新标定状态</button>
+      <button class="btn" id="calibration-contract">查看标定合同</button>
+      <button class="btn" id="calibration-preflight">运行合同标定</button>
+      <span class="small" id="calibration-readiness-status" style="color:#fcd34d;">等待检查现场标定证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">训练记录</div><div class="v" id="calibration-train">—</div><div class="small">仅用于参数拟合</div></div>
+      <div class="kpi"><div class="k">验证记录</div><div class="v" id="calibration-validation">—</div><div class="small">未参与拟合</div></div>
+      <div class="kpi"><div class="k">归一化误差</div><div class="v" id="calibration-nmae">—</div><div class="small">固定上限百分之十二</div></div>
+      <div class="kpi"><div class="k">决定系数</div><div class="v" id="calibration-r2">—</div><div class="small">固定下限零点七五</div></div>
+      <div class="kpi"><div class="k">现场资格</div><div class="v" id="calibration-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需授权测量与独立审批</div></div>
+    </div>
+    <pre id="calibration-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场标定证据时保持失败关闭；浏览器样例只验证计算合同，不保存、不审批。</pre>
+  </div>
+
+  <!-- Tab: 影子验收 -->
+  <div id="tab-shadow-acceptance" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">候选策略只给建议，不发送设备指令；逐周期绑定现行策略实测来源、候选建议回执、安全门、运营复核和回退演练。候选业务效果仍是预测值，不冒充实测收益。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="shadow-readiness">刷新影子状态</button>
+      <button class="btn" id="shadow-contract">查看验收合同</button>
+      <button class="btn" id="shadow-preflight">运行合同影子</button>
+      <span class="small" id="shadow-readiness-status" style="color:#fcd34d;">等待检查连续现场影子证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">影子周期</div><div class="v" id="shadow-cycles">—</div><div class="small">固定下限三十五轮</div></div>
+      <div class="kpi"><div class="k">连续运营日</div><div class="v" id="shadow-days">—</div><div class="small">固定下限七天</div></div>
+      <div class="kpi"><div class="k">安全门违规率</div><div class="v" id="shadow-guardrail">—</div><div class="small">固定要求为零</div></div>
+      <div class="kpi"><div class="k">建议时延百分位</div><div class="v" id="shadow-latency">—</div><div class="small">固定上限两千毫秒</div></div>
+      <div class="kpi"><div class="k">现场资格</div><div class="v" id="shadow-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需双人审批与回退演练</div></div>
+    </div>
+    <pre id="shadow-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场影子证据时保持失败关闭；浏览器样例只验证验收合同，不保存、不审批、不执行。</pre>
+  </div>
+
+  <!-- Tab: 执行放行 -->
+  <div id="tab-execution-acceptance" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">模型建议不能直接控制设备。生产放行必须把资产动作白名单、参数边界、短时确认、异人二通道、设备读回、独立联锁、急停和回退调试绑定到同一现场配置摘要。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="execution-readiness">刷新执行门</button>
+      <button class="btn" id="execution-contract">查看联锁合同</button>
+      <button class="btn" id="execution-preflight">运行合同预检</button>
+      <span class="small" id="execution-readiness-status" style="color:#fcd34d;">等待检查现场执行配置与联锁证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">固定调试场景</div><div class="v" id="execution-scenarios">—</div><div class="small">八项必须全部覆盖</div></div>
+      <div class="kpi"><div class="k">危险指令执行数</div><div class="v" id="execution-unsafe">—</div><div class="small">固定要求为零</div></div>
+      <div class="kpi"><div class="k">设备读回覆盖</div><div class="v" id="execution-readback">—</div><div class="small">安全指令与回退均需读回</div></div>
+      <div class="kpi"><div class="k">独立联锁覆盖</div><div class="v" id="execution-interlock">—</div><div class="small">联锁跳闸与急停</div></div>
+      <div class="kpi"><div class="k">现场资格</div><div class="v" id="execution-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需现场调试与三方审批</div></div>
+    </div>
+    <pre id="execution-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场执行放行证据时保持失败关闭；浏览器预检不暂存工单、不读取密钥、不发送设备指令。</pre>
+  </div>
+
+  <!-- Tab: 靠泊协同 -->
+  <div id="tab-port-call-collaboration" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">船公司、船舶代理、码头、引航机构、拖轮机构和港口管理机构共同维护一个修订版本。延误按里程碑依赖传播，再核对泊位、引航员和拖轮占用；系统只给重排建议，异议未解决时版本不能关闭，也不修改真实预计到港时间。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="collaboration-readiness">刷新协同状态</button>
+      <button class="btn" id="collaboration-contract">查看六方合同</button>
+      <button class="btn" id="collaboration-preflight">运行延误传播</button>
+      <span class="small" id="collaboration-readiness-status" style="color:#fcd34d;">等待检查现场六方协同证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">参与方覆盖</div><div class="v" id="collaboration-participants">—</div><div class="small">固定要求六方齐全</div></div>
+      <div class="kpi"><div class="k">受影响里程碑</div><div class="v" id="collaboration-affected">—</div><div class="small">按依赖链传播</div></div>
+      <div class="kpi"><div class="k">重排前资源冲突</div><div class="v" id="collaboration-conflicts-before">—</div><div class="small">泊位、引航员、拖轮</div></div>
+      <div class="kpi"><div class="k">重排后资源冲突</div><div class="v" id="collaboration-conflicts-after">—</div><div class="small">固定要求为零</div></div>
+      <div class="kpi"><div class="k">现场资格</div><div class="v" id="collaboration-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需六方回执与独立审批</div></div>
+    </div>
+    <pre id="collaboration-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场靠泊协同证据时保持失败关闭；浏览器样例只计算延误传播和重排建议，不保存、不审批、不修改真实计划。</pre>
+  </div>
+
+  <!-- Tab: 国际标准互操作 -->
+  <div id="tab-maritime-interoperability" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">把内部靠泊事件、海事单一窗口最小申报语义和通用水文数据模型产品目录绑定到同一个映射摘要。内部合同通过不等于外部符合性、主管机关受理或电子海图适航许可；页面不会报送、不会导航、不会下发指令。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="interoperability-readiness">刷新互操作状态</button>
+      <button class="btn" id="interoperability-contract">查看标准合同</button>
+      <button class="btn" id="interoperability-preflight">运行映射核验</button>
+      <span class="small" id="interoperability-readiness-status" style="color:#fcd34d;">等待检查外部符合性与现场复核证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">标准体系</div><div class="v" id="interoperability-profiles">—</div><div class="small">固定三类语义合同</div></div>
+      <div class="kpi"><div class="k">靠泊标准事件</div><div class="v" id="interoperability-events">—</div><div class="small">时间戳与装卸量预报</div></div>
+      <div class="kpi"><div class="k">单一窗口数据元</div><div class="v" id="interoperability-imo-elements">—</div><div class="small">一般申报最小子集</div></div>
+      <div class="kpi"><div class="k">水文产品目录</div><div class="v" id="interoperability-s100-products">—</div><div class="small">六类港航相关产品</div></div>
+      <div class="kpi"><div class="k">语义缺口</div><div class="v" id="interoperability-gaps">—</div><div class="small">固定要求为零</div></div>
+      <div class="kpi"><div class="k">现场资格</div><div class="v" id="interoperability-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需三类外部报告与三方复核</div></div>
+    </div>
+    <pre id="interoperability-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场标准互操作证据时保持失败关闭；浏览器样例只验证字段映射，不连接海事单一窗口或电子海图显示与信息系统。</pre>
+  </div>
+
+  <!-- Tab: 多目标预测与不确定性校准 -->
+  <div id="tab-forecast-uncertainty" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">统一评估预计到港时间、泊位作业时长、岸桥效率、堆场拥堵、设备故障、天气停工、监管延误和能源负荷。特征必须在预测签发前冻结，训练、区间校准和测试严格按时间分窗；留出集经验覆盖率不是未来分布不变的保证。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="forecast-readiness">刷新预测状态</button>
+      <button class="btn" id="forecast-contract">查看校准合同</button>
+      <button class="btn" id="forecast-preflight">运行留出评估</button>
+      <span class="small" id="forecast-readiness-status" style="color:#fcd34d;">等待检查现场预签发预测与留出校准证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">预测目标覆盖</div><div class="v" id="forecast-targets">—</div><div class="small">固定要求八类齐全</div></div>
+      <div class="kpi"><div class="k">三窗记录</div><div class="v" id="forecast-window-rows" style="font-size:17px;">—</div><div class="small">训练／校准／留出测试</div></div>
+      <div class="kpi"><div class="k">百分之八十区间</div><div class="v" id="forecast-coverage-80">—</div><div class="small">通过目标数</div></div>
+      <div class="kpi"><div class="k">百分之九十五区间</div><div class="v" id="forecast-coverage-95">—</div><div class="small">通过目标数</div></div>
+      <div class="kpi"><div class="k">未通过目标</div><div class="v" id="forecast-failed">—</div><div class="small">误差、宽度、漂移共同门禁</div></div>
+      <div class="kpi"><div class="k">现场资格</div><div class="v" id="forecast-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需实测结果与三方复核</div></div>
+    </div>
+    <pre id="forecast-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场预测校准证据时保持失败关闭；浏览器样例只拟合固定合同并计算留出误差和区间命中率，不保存、不审批、不触发资源承诺或设备指令。</pre>
+  </div>
+
+  <!-- Tab: 实际执行绑定的业务收益归因 -->
+  <div id="tab-business-benefit-attribution" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">把建议回执、人工批准、实际执行、后验计量和同期现行调度对照绑定到预注册分析方案。能源费用、等待时间、泊位利用率、吞吐量、碳排放、非计划停机、维护费用和监管延误均按同一业务窗口计算；公开数据反事实和影子预测不能改称现场已实现收益。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="benefit-readiness">刷新归因状态</button>
+      <button class="btn" id="benefit-contract">查看归因合同</button>
+      <button class="btn" id="benefit-preflight">运行成对归因</button>
+      <span class="small" id="benefit-readiness-status" style="color:#fcd34d;">等待检查现场执行、同期对照与后验计量证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">完整对照组</div><div class="v" id="benefit-pairs">—</div><div class="small">现场固定下限三十组</div></div>
+      <div class="kpi"><div class="k">执行回执覆盖</div><div class="v" id="benefit-execution">—</div><div class="small">候选与现行计划均需回执</div></div>
+      <div class="kpi"><div class="k">主指标相对收益</div><div class="v" id="benefit-primary-effect">—</div><div class="small">成对双重差分</div></div>
+      <div class="kpi"><div class="k">主指标置信下限</div><div class="v" id="benefit-primary-ci">—</div><div class="small">固定要求大于零</div></div>
+      <div class="kpi"><div class="k">吞吐非劣门</div><div class="v" id="benefit-throughput">—</div><div class="small">百分之九十五下限不低于负百分之二</div></div>
+      <div class="kpi"><div class="k">同期其他干预</div><div class="v" id="benefit-concurrent">—</div><div class="small">固定要求为零</div></div>
+      <div class="kpi"><div class="k">现场资格</div><div class="v" id="benefit-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需三方复核与预注册协议</div></div>
+    </div>
+    <pre id="benefit-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场收益归因证据时保持失败关闭；浏览器样例只验证成对归因计算，不保存、不审批、不形成现场收益声明。合同样例≠现场已实现收益 · 不自动承诺资源 · 无生产控制权。</pre>
+  </div>
+
+  <!-- Tab: 港口全链条跨资源滚动协同 -->
+  <div id="tab-end-to-end-coordination" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">把船舶到港、航道、靠泊、装卸、水平运输、堆场、闸口、铁路和维修九阶段放入同一滚动计划，并统一核对航道窗口、泊位、引航员、拖轮、岸桥、车辆、箱位、闸口、铁路、岸电储能和维修班组十一类容量。冻结计划不可改，前后工序保留十五分钟交接缓冲。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="coordination-readiness">刷新协同状态</button>
+      <button class="btn" id="coordination-contract">查看全链合同</button>
+      <button class="btn" id="coordination-preflight">运行滚动排程</button>
+      <span class="small" id="coordination-readiness-status" style="color:#fcd34d;">等待检查现场统一计划、真实资源容量与跨部门复核证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">业务链数量</div><div class="v" id="coordination-chains">—</div><div class="small">合同样例两条，现场固定下限十条</div></div>
+      <div class="kpi"><div class="k">任务数量</div><div class="v" id="coordination-tasks">—</div><div class="small">每条链覆盖九阶段</div></div>
+      <div class="kpi"><div class="k">资源类型覆盖</div><div class="v" id="coordination-resources">—</div><div class="small">固定十一类资源</div></div>
+      <div class="kpi"><div class="k">原计划冲突槽</div><div class="v" id="coordination-before">—</div><div class="small">十五分钟粒度</div></div>
+      <div class="kpi"><div class="k">候选计划冲突槽</div><div class="v" id="coordination-after">—</div><div class="small">固定要求为零</div></div>
+      <div class="kpi"><div class="k">最大调整时间</div><div class="v" id="coordination-shift">—</div><div class="small">固定上限一百八十分钟</div></div>
+      <div class="kpi"><div class="k">现场资格</div><div class="v" id="coordination-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需十条业务链与四方独立复核</div></div>
+    </div>
+    <pre id="coordination-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场全链协同证据时保持失败关闭；浏览器样例只生成候选计划，不保存、不审批、不修改共享计划。合同求解≠现场统一计划 · 不承诺资源 · 无生产控制权。</pre>
+  </div>
+
+  <!-- Tab: 二十四小时连续运行与灾备 -->
+  <div id="tab-production-continuity" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">按小时连续核对应用程序接口网关、决策建议、数字孪生、数据接入、消息队列、证据存储、遥测存储和运营界面八个组件，同时绑定服务目标、事件闭环、每日备份还原、灰度回退和六类故障恢复演练。进程在线或单次健康检查不等于生产连续性。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="continuity-readiness">刷新连续运行状态</button>
+      <button class="btn" id="continuity-contract">查看服务与灾备合同</button>
+      <button class="btn" id="continuity-preflight">运行七天连续性核验</button>
+      <span class="small" id="continuity-readiness-status" style="color:#fcd34d;">等待检查连续服务、事件、备份恢复和故障演练证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">连续观测时间</div><div class="v" id="continuity-hours">—</div><div class="small">合同七天，现场三十天</div></div>
+      <div class="kpi"><div class="k">组件服务目标</div><div class="v" id="continuity-components">—</div><div class="small">固定八个核心组件</div></div>
+      <div class="kpi"><div class="k">恢复演练</div><div class="v" id="continuity-drills">—</div><div class="small">固定六类全部通过</div></div>
+      <div class="kpi"><div class="k">备份还原验证</div><div class="v" id="continuity-backups">—</div><div class="small">每天至少一次</div></div>
+      <div class="kpi"><div class="k">已关闭事件</div><div class="v" id="continuity-incidents">—</div><div class="small">含工单、根因与复盘</div></div>
+      <div class="kpi"><div class="k">现场服务声明</div><div class="v" id="continuity-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需三十天实测与三方复核</div></div>
+    </div>
+    <pre id="continuity-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场连续性证据时保持失败关闭；浏览器样例不形成现场服务等级承诺，不执行自动故障切换。合同通过≠现场连续运行验收 · 不自动切换 · 无生产控制权。</pre>
+  </div>
+
+  <!-- Tab: 组织责任、值班与升级治理 -->
+  <div id="tab-operating-model-governance" style="display:none;">
+    <div class="small" style="color:#8aa6d8;margin:-4px 0 6px;">把数据、模型风险、海事安全、码头运营、引航拖轮、设备控制、能源、网络安全、事件指挥、业务收益、变更和管理层问责分配给实名目录人员，并对十项关键流程执行申请、批准、执行、验证异人分权。五类关键岗位按每天三班设置主备与交接回执。</div>
+    <div class="row" style="gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+      <button class="btn" id="governance-readiness">刷新责任治理状态</button>
+      <button class="btn" id="governance-contract">查看职责与分权合同</button>
+      <button class="btn" id="governance-preflight">运行七天值守核验</button>
+      <span class="small" id="governance-readiness-status" style="color:#fcd34d;">等待检查实名任命、异人审批、培训资质、三班值守和升级链证据…</span>
+    </div>
+    <div class="kpi-grid" style="margin:8px 0;">
+      <div class="kpi"><div class="k">实名角色人员</div><div class="v" id="governance-people">—</div><div class="small">固定下限十二人</div></div>
+      <div class="kpi"><div class="k">责任领域覆盖</div><div class="v" id="governance-domains">—</div><div class="small">固定十二类</div></div>
+      <div class="kpi"><div class="k">关键审批流程</div><div class="v" id="governance-workflows">—</div><div class="small">固定十项</div></div>
+      <div class="kpi"><div class="k">连续值守天数</div><div class="v" id="governance-days">—</div><div class="small">合同七天，现场四周</div></div>
+      <div class="kpi"><div class="k">三班主备岗位</div><div class="v" id="governance-assignments">—</div><div class="small">七天应为一百零五班岗</div></div>
+      <div class="kpi"><div class="k">分权冲突</div><div class="v" id="governance-conflicts">—</div><div class="small">固定要求为零</div></div>
+      <div class="kpi"><div class="k">现场组织资格</div><div class="v" id="governance-site-state" style="font-size:17px;color:#fcd34d;">待接入</div><div class="small">需目录任命与三方复核</div></div>
+    </div>
+    <pre id="governance-detail" class="mono" style="min-height:240px;max-height:420px;overflow:auto;white-space:pre-wrap;">未配置现场组织治理证据时保持失败关闭；浏览器样例不任命人员、不授予账号或生产权限。职责表≠现场正式任命 · 禁止自批自执 · 无生产控制权。</pre>
   </div>
 </div>
 <!-- === [TwinLab · END] ================================== -->
@@ -12077,16 +12349,18 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
 <!-- === [Module A · Training Monitor · SCRIPT · END] =========================== -->
 <script>
 (function(){
+  function downloadSimulationCanvas(){
+    const canvas = document.getElementById('simCanvas');
+    if(!canvas || !canvas.width || !canvas.height) return;
+    const anchor = document.createElement('a');
+    anchor.href = canvas.toDataURL('image/png');
+    anchor.download = `rl-sim-${Date.now()}.png`;
+    anchor.click();
+  }
   function bindSimSaveOnce(){
     const el = document.getElementById('btn-sim-save');
     if (!el || el.dataset.bound) return;
-    el.addEventListener('click', function(){
-      try{
-        if (typeof saveCanvasPNG === 'function'){
-          saveCanvasPNG('simCanvas', `rl-sim-${Date.now()}.png`);
-        }
-      }catch(e){ console.error(e); }
-    });
+    el.addEventListener('click', downloadSimulationCanvas);
     el.dataset.bound = '1';
   }
   window.addEventListener('load', bindSimSaveOnce);
@@ -13725,7 +13999,7 @@ async function pullOverview(scenario=masScenario){
 
   // 选项卡
   const tabs = $('#twinlab-tabs');
-  const pages = { scn:$('#tab-scn'), drill:$('#tab-drill'), contract:$('#tab-contract') };
+  const pages = { scn:$('#tab-scn'), drill:$('#tab-drill'), contract:$('#tab-contract'), calibration:$('#tab-calibration'), 'shadow-acceptance':$('#tab-shadow-acceptance'), 'execution-acceptance':$('#tab-execution-acceptance'), 'port-call-collaboration':$('#tab-port-call-collaboration'), 'maritime-interoperability':$('#tab-maritime-interoperability'), 'forecast-uncertainty':$('#tab-forecast-uncertainty'), 'business-benefit-attribution':$('#tab-business-benefit-attribution'), 'end-to-end-coordination':$('#tab-end-to-end-coordination'), 'production-continuity':$('#tab-production-continuity'), 'operating-model-governance':$('#tab-operating-model-governance') };
   tabs?.addEventListener('click', (e)=>{
     if(e.target.tagName!=='BUTTON') return;
     tabs.querySelectorAll('button').forEach(b=>b.classList.remove('active'));
@@ -13734,6 +14008,16 @@ async function pullOverview(scenario=masScenario){
     Object.keys(pages).forEach(x=> pages[x].style.display = (x===k?'block':'none'));
     if(k==='drill')   loadDrills();
     if(k==='contract') loadContracts();
+    if(k==='calibration') loadCalibrationReadiness(false);
+    if(k==='shadow-acceptance') loadShadowReadiness(false);
+    if(k==='execution-acceptance') loadExecutionReadiness(false);
+    if(k==='port-call-collaboration') loadCollaborationReadiness(false);
+    if(k==='maritime-interoperability') loadInteroperabilityReadiness(false);
+    if(k==='forecast-uncertainty') loadForecastReadiness(false);
+    if(k==='business-benefit-attribution') loadBenefitReadiness(false);
+    if(k==='end-to-end-coordination') loadCoordinationReadiness(false);
+    if(k==='production-continuity' && !continuityReadiness) loadContinuityReadiness(false);
+    if(k==='operating-model-governance' && !governanceReadiness) loadGovernanceReadiness(false);
   });
 
   // ========== 场景工厂 ==========
@@ -13840,6 +14124,532 @@ async function pullOverview(scenario=masScenario){
     await loadContracts();
     $('#con-meta').textContent = `校验：schema=${c.quality_status||'不可用'} · training_eligible=${c.training_eligible===true} · 回放字段=${c.available||0}/${c.total||0} · 缺失=${(c.missing||[]).join(', ')||'无'} · 现场替换仍必需`;
   });
+
+  // ========== 现场标定 ==========
+  let calibrationReadiness=null;
+  function calibrationContractSample(){
+    const start=Date.UTC(2026,0,1,0,0,0), rows=[];
+    for(let index=0;index<72;index+=1){
+      const hour=index%24;
+      const throughput=100+24*Math.sin(2*Math.PI*hour/24);
+      const arrivals=hour%4;
+      const ambient=28+5*Math.sin(2*Math.PI*(hour-4)/24);
+      const tide=1.5*Math.sin(2*Math.PI*(hour+2)/12);
+      const noise=((index%5)-2)*0.6;
+      rows.push({
+        timestamp:new Date(start+index*3600000).toISOString(),
+        asset_group:index%2===0?'QC.GROUP.A':'QC.GROUP.B',
+        observed_power_kw:800+2.5*throughput+30*arrivals+15*ambient+5*tide+noise,
+        throughput_teu:throughput,vessel_arrivals:arrivals,ambient_c:ambient,tide_m:tide,
+        source_reference:`METER.QC.${String(index).padStart(4,'0')}`
+      });
+    }
+    return {
+      schema_version:'site_twin_calibration_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',dataset_id:'CNSHA.QC.CALIBRATION.CONTRACT.202601',
+      source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:new Date(start+96*3600000).toISOString(),evidence_class:'contract_test_only'},
+      split:{training_window:{start_at:new Date(start).toISOString(),end_at:new Date(start+47*3600000).toISOString()},validation_window:{start_at:new Date(start+48*3600000).toISOString(),end_at:new Date(start+71*3600000).toISOString()}},
+      model:{target:'observed_power_kw',features:['throughput_teu','vessel_arrivals','ambient_c','tide_m'],ridge_alpha:0.1},rows
+    };
+  }
+  function renderCalibrationReadiness(j,showDetail=false){
+    calibrationReadiness=j;const boundary=j.boundary||{},artifact=j.configured_artifact||{};
+    $('#calibration-readiness-status').textContent=boundary.site_calibrated
+      ? `现场标定证据已验证 · ${artifact.artifact_id||'版本化证据'} · 生产执行仍关闭`
+      : `待接入港口标定样本 · ${boundary.reason||'授权测量、独立验证与审批未完成'}`;
+    $('#calibration-readiness-status').style.color=boundary.site_calibrated?'#86efac':'#fcd34d';
+    $('#calibration-site-state').textContent=boundary.site_calibrated?'证据已验证':'待接入';
+    $('#calibration-site-state').style.color=boundary.site_calibrated?'#86efac':'#fcd34d';
+    if(showDetail) $('#calibration-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:artifact,boundary},null,2);
+  }
+  async function loadCalibrationReadiness(showDetail=false){
+    const j=await safeJSON('/api/v3/twin-calibration/readiness');
+    renderCalibrationReadiness(j,showDetail);return j;
+  }
+  $('#calibration-readiness')?.addEventListener('click',()=>loadCalibrationReadiness(true));
+  $('#calibration-contract')?.addEventListener('click',async()=>{
+    const j=calibrationReadiness||await loadCalibrationReadiness(false);
+    $('#calibration-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);
+  });
+  $('#calibration-preflight')?.addEventListener('click',async()=>{
+    $('#calibration-readiness-status').textContent='正在拟合训练窗并核验独立验证窗…';
+    try{
+      const response=await fetch('/api/v3/twin-calibration/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(calibrationContractSample())});
+      const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status}`);
+      const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};
+      $('#calibration-train').textContent=String(e.training_rows??'—');
+      $('#calibration-validation').textContent=String(e.validation_rows??'—');
+      $('#calibration-nmae').textContent=Number.isFinite(Number(m.normalized_mae))?(Number(m.normalized_mae)*100).toFixed(2)+'%':'—';
+      $('#calibration-r2').textContent=Number.isFinite(Number(m.r2))?Number(m.r2).toFixed(4):'—';
+      $('#calibration-site-state').textContent=b.site_calibrated?'证据已验证':'合同通过≠现场标定';
+      $('#calibration-site-state').style.color=b.site_calibrated?'#86efac':'#fcd34d';
+      $('#calibration-readiness-status').textContent=`合同标定通过 · 训练 ${e.training_rows} / 验证 ${e.validation_rows} · 现场测量=${e.measured_outcomes===true?'已验证':'未验证'} · 无生产控制权`;
+      $('#calibration-readiness-status').style.color='#86efac';
+      $('#calibration-detail').textContent=JSON.stringify({model_version:e.model_version,dataset_sha256:e.dataset_sha256,parameters:e.parameters,metrics:e.metrics,thresholds:e.thresholds,threshold_checks:e.threshold_checks,uncertainty:e.uncertainty,error_decomposition:e.error_decomposition,drift_diagnostic:e.drift_diagnostic,validation_status:e.validation_status,measured_outcomes:e.measured_outcomes,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);
+    }catch(error){
+      $('#calibration-readiness-status').textContent='标定合同校验失败：'+error.message;
+      $('#calibration-readiness-status').style.color='#f87171';
+    }
+  });
+
+  // ========== 影子验收 ==========
+  let shadowReadiness=null;
+  function shadowContractSample(){
+    const start=Date.UTC(2026,1,1,0,0,0),cycles=[];
+    for(let day=0;day<7;day+=1){
+      for(let slot=0;slot<5;slot+=1){
+        const index=day*5+slot,started=start+day*86400000+slot*3*3600000;
+        const energy=1800+slot*45+day*8,throughput=120+slot*6,delay=34+slot;
+        cycles.push({
+          cycle_id:`SHADOW.CYCLE.${String(index).padStart(4,'0')}`,
+          started_at:new Date(started).toISOString(),ended_at:new Date(started+45*60000).toISOString(),
+          asset_group:slot%2===0?'TERMINAL.POWER.A':'TERMINAL.POWER.B',scenario:['normal_operations','peak_berthing','high_temperature'][index%3],
+          data_quality_passed:true,
+          incumbent:{actual_energy_kwh:energy,actual_throughput_teu:throughput,actual_delay_minutes:delay,source_reference:`TOS.METER.CYCLE.${String(index).padStart(4,'0')}`},
+          candidate:{projected_energy_kwh:energy*0.98,projected_throughput_teu:throughput,projected_delay_minutes:delay*0.97,recommendation_receipt_id:`DECISION.RECEIPT.${String(index).padStart(4,'0')}`,recommendation_available:true,action_feasible:true,recommendation_latency_ms:420+index},
+          guardrail:{violation_count:0,codes:[]},review:{disposition:index%6===0?'not_reviewed':'accepted'},side_effect:false
+        });
+      }
+    }
+    return {
+      schema_version:'site_shadow_observation.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'SHADOW.CONTRACT.202602',
+      source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:new Date(start+8*86400000).toISOString(),evidence_class:'contract_test_only'},
+      policy:{candidate_policy_version:'candidate.policy.contract.v1',incumbent_policy_version:'incumbent.sop.contract.v1',calibration_evidence_digest:'a'.repeat(64),twin_graph_digest:'b'.repeat(64),recommendation_only:true},cycles
+    };
+  }
+  function renderShadowReadiness(j,showDetail=false){
+    shadowReadiness=j;const boundary=j.boundary||{},artifact=j.configured_artifact||{};
+    $('#shadow-readiness-status').textContent=boundary.site_shadow_accepted
+      ? `现场影子验收证据已验证 · ${artifact.artifact_id||'版本化证据'} · 本模块仍不执行`
+      : `待接入连续现场影子周期 · ${boundary.reason||'现行策略实测、候选回执、双人审批和回退演练未完成'}`;
+    $('#shadow-readiness-status').style.color=boundary.site_shadow_accepted?'#86efac':'#fcd34d';
+    $('#shadow-site-state').textContent=boundary.site_shadow_accepted?'证据已验证':'待接入';
+    $('#shadow-site-state').style.color=boundary.site_shadow_accepted?'#86efac':'#fcd34d';
+    $('#shadow-cycles').textContent=artifact.shadow_cycles??'—';
+    $('#shadow-days').textContent=artifact.operational_days??'—';
+    if(showDetail) $('#shadow-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:artifact,boundary},null,2);
+  }
+  async function loadShadowReadiness(showDetail=false){
+    const j=await safeJSON('/api/v3/shadow-acceptance/readiness');
+    renderShadowReadiness(j,showDetail);return j;
+  }
+  $('#shadow-readiness')?.addEventListener('click',()=>loadShadowReadiness(true));
+  $('#shadow-contract')?.addEventListener('click',async()=>{
+    const j=shadowReadiness||await loadShadowReadiness(false);
+    $('#shadow-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);
+  });
+  $('#shadow-preflight')?.addEventListener('click',async()=>{
+    $('#shadow-readiness-status').textContent='正在核验连续周期、固定安全门和逐周期回执…';
+    try{
+      const response=await fetch('/api/v3/shadow-acceptance/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(shadowContractSample())});
+      const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status}`);
+      const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};
+      $('#shadow-cycles').textContent=String(e.shadow_cycles??'—');
+      $('#shadow-days').textContent=String(e.operational_days??'—');
+      $('#shadow-guardrail').textContent=Number.isFinite(Number(m.guardrail_violation_rate))?(Number(m.guardrail_violation_rate)*100).toFixed(2)+'%':'—';
+      $('#shadow-latency').textContent=Number.isFinite(Number(m.p95_recommendation_latency_ms))?Number(m.p95_recommendation_latency_ms).toFixed(0)+' 毫秒':'—';
+      $('#shadow-site-state').textContent=b.site_shadow_accepted?'证据已验证':'合同通过≠现场验收';
+      $('#shadow-site-state').style.color=b.site_shadow_accepted?'#86efac':'#fcd34d';
+      $('#shadow-readiness-status').textContent=`合同影子通过 · ${e.shadow_cycles} 轮 / ${e.operational_days} 天 · 现行策略实测=${e.measured_incumbent_baseline===true?'已验证':'未验证'} · 不执行设备指令`;
+      $('#shadow-readiness-status').style.color='#86efac';
+      $('#shadow-detail').textContent=JSON.stringify({run_id:e.run_id,candidate_policy_version:e.candidate_policy_version,incumbent_policy_version:e.incumbent_policy_version,comparison_window:e.comparison_window,scenario_counts:e.scenario_counts,asset_group_counts:e.asset_group_counts,metrics:e.metrics,thresholds:e.thresholds,threshold_checks:e.threshold_checks,acceptance_status:e.acceptance_status,measured_incumbent_baseline:e.measured_incumbent_baseline,candidate_business_impact_measured:e.candidate_business_impact_measured,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);
+    }catch(error){
+      $('#shadow-readiness-status').textContent='影子合同校验失败：'+error.message;
+      $('#shadow-readiness-status').style.color='#f87171';
+    }
+  });
+
+  // ========== 执行放行 ==========
+  let executionReadiness=null;
+  function executionContractSample(){
+    const start=Date.UTC(2026,2,1,0,0,0);
+    const scenarios=['safe_command_readback','out_of_bounds_block','expired_command_block','duplicate_command_block','lost_acknowledgement_block','independent_interlock_trip','emergency_stop','rollback_restore'];
+    const tests=scenarios.map((scenario,index)=>({
+      test_id:`EXECUTION.TEST.${String(index).padStart(2,'0')}`,scenario,asset_id:'BESS.CONTRACT.01',action:'set',
+      started_at:new Date(start+index*3600000).toISOString(),ended_at:new Date(start+index*3600000+15*60000).toISOString(),
+      passed:true,equipment_command_sent:false,
+      readback_verified:scenario==='safe_command_readback'||scenario==='rollback_restore',
+      rollback_verified:scenario==='rollback_restore',
+      interlock_verified:scenario==='independent_interlock_trip'||scenario==='emergency_stop',
+      requester:'contract-requester',confirmer:'contract-confirmer',source_reference:`COMMISSIONING.RECEIPT.${String(index).padStart(2,'0')}`
+    }));
+    return {
+      schema_version:'site_execution_commissioning_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'EXECUTION.CONTRACT.202603',
+      source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:new Date(start+24*3600000).toISOString(),evidence_class:'contract_test_only'},
+      shadow_acceptance_digest:'c'.repeat(64),
+      actuator_config:{
+        schema_version:'site_actuator_config.v2',site_id:'SITE.CNSHA.CONTRACT',mode:'contract_test',enabled:true,
+        whitelist:{'BESS.CONTRACT.01':['set']},
+        routing:{asset:{'BESS.CONTRACT.01':{channel:'dry_run',endpoint:'contract-only',interlock_id:'INTERLOCK.CONTRACT.01',readback_mode:'contract_receipt',rollback_supported:true}},type:{}},
+        security:{confirmation_token_env:'PORT_DT_CONTRACT_SECOND_CHANNEL',require_two_channel:true,require_constraints:true,require_verified_readback:true,require_independent_interlock:true,require_rollback:true,command_ttl_seconds:60},
+        constraints:{asset:{'BESS.CONTRACT.01':{set:{power_kw:{required:true,min:-100,max:100}}}},type:{}}
+      },tests
+    };
+  }
+  function renderExecutionReadiness(j,showDetail=false){
+    executionReadiness=j;const boundary=j.boundary||{},artifact=j.configured_artifacts||{};
+    $('#execution-readiness-status').textContent=boundary.site_execution_accepted
+      ? `现场执行放行证据已验证 · ${artifact.evidence_artifact_id||'版本化证据'} · 每条指令仍需异人确认`
+      : `待接入执行配置与现场联锁验收 · ${boundary.reason||'读回、联锁、回退和三方审批未完成'}`;
+    $('#execution-readiness-status').style.color=boundary.site_execution_accepted?'#86efac':'#fcd34d';
+    $('#execution-site-state').textContent=boundary.site_execution_accepted?'证据已验证':'待接入';
+    $('#execution-site-state').style.color=boundary.site_execution_accepted?'#86efac':'#fcd34d';
+    if(showDetail) $('#execution-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,actuator_config_schema:j.actuator_config_schema,configured_artifacts:artifact,boundary},null,2);
+  }
+  async function loadExecutionReadiness(showDetail=false){
+    const j=await safeJSON('/api/v3/execution-acceptance/readiness');
+    renderExecutionReadiness(j,showDetail);return j;
+  }
+  $('#execution-readiness')?.addEventListener('click',()=>loadExecutionReadiness(true));
+  $('#execution-contract')?.addEventListener('click',async()=>{
+    const j=executionReadiness||await loadExecutionReadiness(false);
+    $('#execution-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,actuator_config_schema:j.actuator_config_schema,contract:j.contract,boundary:j.boundary},null,2);
+  });
+  $('#execution-preflight')?.addEventListener('click',async()=>{
+    $('#execution-readiness-status').textContent='正在核验白名单、短时确认、读回、独立联锁、急停和回退矩阵…';
+    try{
+      const response=await fetch('/api/v3/execution-acceptance/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(executionContractSample())});
+      const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status}`);
+      const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};
+      $('#execution-scenarios').textContent=String(Object.keys(e.scenario_counts||{}).length||'—');
+      $('#execution-unsafe').textContent=String(m.unsafe_command_execution_count??'—');
+      $('#execution-readback').textContent=Number.isFinite(Number(m.readback_coverage_rate))?(Number(m.readback_coverage_rate)*100).toFixed(0)+'%':'—';
+      $('#execution-interlock').textContent=Number.isFinite(Number(m.interlock_coverage_rate))?(Number(m.interlock_coverage_rate)*100).toFixed(0)+'%':'—';
+      $('#execution-site-state').textContent=b.site_execution_accepted?'证据已验证':'合同通过≠现场放行';
+      $('#execution-site-state').style.color=b.site_execution_accepted?'#86efac':'#fcd34d';
+      $('#execution-readiness-status').textContent=`合同预检通过 · 八项场景齐全 · 危险执行 ${m.unsafe_command_execution_count} · 现场调试=${e.site_commissioning_verified===true?'已验证':'未验证'} · 未发送设备指令`;
+      $('#execution-readiness-status').style.color='#86efac';
+      $('#execution-detail').textContent=JSON.stringify({run_id:e.run_id,actuator_config_sha256:e.actuator_config_sha256,shadow_acceptance_digest:e.shadow_acceptance_digest,scenario_counts:e.scenario_counts,metrics:e.metrics,acceptance_status:e.acceptance_status,site_commissioning_verified:e.site_commissioning_verified,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);
+    }catch(error){
+      $('#execution-readiness-status').textContent='执行合同校验失败：'+error.message;
+      $('#execution-readiness-status').style.color='#f87171';
+    }
+  });
+
+  // ========== 港口靠泊六方协同 ==========
+  let collaborationReadiness=null;
+  function collaborationContractSample(){
+    const start=Date.UTC(2026,3,10,0,0,0);
+    const roles=['shipping_line','vessel_agent','terminal','pilotage','towage','port_authority'];
+    const participants=roles.map(role=>({participant_id:`PARTY.${role.toUpperCase()}`,role,organization:`CONTRACT ${role}`,source_reference:`IDENTITY.${role.toUpperCase()}.V1`,authorized:false}));
+    const events=['port_arrival','pilotage_start','berth_start','cargo_start','cargo_complete','berth_complete','port_departure'];
+    const makeCall=(portCallId,vesselImo,priority,hours)=>{
+      let previous=null;
+      const milestones=events.map((eventType,index)=>{
+        const milestoneId=`${portCallId}.M${String(index+1).padStart(2,'0')}`;
+        const row={milestone_id:milestoneId,event_type:eventType,planned_at:new Date(start+hours[index]*3600000).toISOString(),duration_minutes:eventType==='pilotage_start'?30:(eventType==='berth_start'?(portCallId.endsWith('001')?480:360):0),depends_on:previous?[previous]:[],resource_ids:eventType==='pilotage_start'?['PILOT.01','TUG.01']:(eventType==='berth_start'?['BERTH.03']:[]),source_reference:`PCS.${milestoneId}.R1`};
+        previous=milestoneId;return row;
+      });
+      return {port_call_id:portCallId,vessel_name:`CONTRACT VESSEL ${portCallId.slice(-3)}`,vessel_imo:vesselImo,priority,milestones};
+    };
+    return {
+      schema_version:'port_call_collaboration_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'COLLABORATION.CONTRACT.202604',collaboration_revision:2,port_call_event_digest:'d'.repeat(64),
+      source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:new Date(start+31*3600000).toISOString(),evidence_class:'contract_test_only'},
+      participants,
+      resources:[
+        {resource_id:'BERTH.03',resource_type:'berth',capacity:1,owner_participant_id:'PARTY.TERMINAL',source_reference:'TOS.RESOURCE.BERTH.03'},
+        {resource_id:'PILOT.01',resource_type:'pilot',capacity:1,owner_participant_id:'PARTY.PILOTAGE',source_reference:'PILOT.RESOURCE.01'},
+        {resource_id:'TUG.01',resource_type:'tug',capacity:1,owner_participant_id:'PARTY.TOWAGE',source_reference:'TUG.RESOURCE.01'}
+      ],
+      port_calls:[makeCall('PC.CNSHA.001','9176187',1,[6,7,8,8.5,15.5,16,17]),makeCall('PC.CNSHA.002','9308742',2,[14,15,17,17.5,22.5,23,24])],
+      disruptions:[{disruption_id:'DELAY.PC001.ARRIVAL.01',port_call_id:'PC.CNSHA.001',milestone_id:'PC.CNSHA.001.M01',delay_minutes:120,occurred_at:new Date(start+5*3600000).toISOString(),reason:'restricted visibility at anchorage',source_reference:'VTS.DELAY.PC001.01'}],
+      responses:[]
+    };
+  }
+  function renderCollaborationReadiness(j,showDetail=false){
+    collaborationReadiness=j;const boundary=j.boundary||{},artifact=j.configured_artifact||{};
+    $('#collaboration-readiness-status').textContent=boundary.site_collaboration_accepted
+      ? `现场六方协同证据已验证 · ${artifact.artifact_id||'版本化证据'} · 真实变更仍需责任人确认`
+      : `待接入六方统一时间线与回执 · ${boundary.reason||'授权身份、资源窗、异议闭环和独立审批未完成'}`;
+    $('#collaboration-readiness-status').style.color=boundary.site_collaboration_accepted?'#86efac':'#fcd34d';
+    $('#collaboration-site-state').textContent=boundary.site_collaboration_accepted?'证据已验证':'待接入';
+    $('#collaboration-site-state').style.color=boundary.site_collaboration_accepted?'#86efac':'#fcd34d';
+    $('#collaboration-participants').textContent=artifact.participant_count??'—';
+    $('#collaboration-conflicts-after').textContent=artifact.conflicts_after_replan??'—';
+    if(showDetail) $('#collaboration-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:artifact,boundary},null,2);
+  }
+  async function loadCollaborationReadiness(showDetail=false){
+    const j=await safeJSON('/api/v3/port-call-collaboration/readiness');
+    renderCollaborationReadiness(j,showDetail);return j;
+  }
+  $('#collaboration-readiness')?.addEventListener('click',()=>loadCollaborationReadiness(true));
+  $('#collaboration-contract')?.addEventListener('click',async()=>{
+    const j=collaborationReadiness||await loadCollaborationReadiness(false);
+    $('#collaboration-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);
+  });
+  $('#collaboration-preflight')?.addEventListener('click',async()=>{
+    $('#collaboration-readiness-status').textContent='正在传播延误并核验泊位、引航员、拖轮冲突与六方回执…';
+    try{
+      const sample=collaborationContractSample();
+      const draftResponse=await fetch('/api/v3/port-call-collaboration/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sample)});
+      const draft=await draftResponse.json();if(!draftResponse.ok||!draft.valid)throw new Error(`HTTP ${draftResponse.status}`);
+      const proposalDigest=draft.evidence?.proposal_digest;
+      sample.responses=sample.participants.map(row=>({participant_id:row.participant_id,revision:sample.collaboration_revision,proposal_digest:proposalDigest,disposition:'acknowledged',reason:'reviewed recommendation-only revision',responded_at:'2026-04-11T06:00:00.000Z',source_reference:`ACK.${row.role.toUpperCase()}.R2`}));
+      const response=await fetch('/api/v3/port-call-collaboration/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sample)});
+      const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status}`);
+      const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};
+      $('#collaboration-participants').textContent=`${m.participant_count??'—'} / ${m.required_participant_count??6}`;
+      $('#collaboration-affected').textContent=String(m.affected_milestone_count??'—');
+      $('#collaboration-conflicts-before').textContent=String(m.conflicts_before_replan??'—');
+      $('#collaboration-conflicts-after').textContent=String(m.conflicts_after_replan??'—');
+      $('#collaboration-site-state').textContent=b.site_collaboration_accepted?'证据已验证':'合同通过≠现场协同';
+      $('#collaboration-site-state').style.color=b.site_collaboration_accepted?'#86efac':'#fcd34d';
+      $('#collaboration-readiness-status').textContent=`合同传播通过 · 六方 ${m.participant_count} / ${m.required_participant_count} · 冲突 ${m.conflicts_before_replan} → ${m.conflicts_after_replan} · 非现场协同 · 未修改真实计划 · 无生产控制权`;
+      $('#collaboration-readiness-status').style.color='#86efac';
+      $('#collaboration-detail').textContent=JSON.stringify({run_id:e.run_id,collaboration_revision:e.collaboration_revision,port_call_event_digest:e.port_call_event_digest,proposal_digest:e.proposal_digest,disruptions:e.disruptions,conflicts_before_replan:e.conflicts_before_replan,replan_actions:e.replan_actions,conflicts_after_replan:e.conflicts_after_replan,responses:e.responses,metrics:e.metrics,collaboration_status:e.collaboration_status,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);
+    }catch(error){
+      $('#collaboration-readiness-status').textContent='靠泊协同合同校验失败：'+error.message;
+      $('#collaboration-readiness-status').style.color='#f87171';
+    }
+  });
+
+  // ========== 国际标准互操作与符合性证据 ==========
+  let interoperabilityReadiness=null;
+  function interoperabilityContractSample(){
+    const base=Date.UTC(2026,4,1,0,0,0);
+    const products=[['S-101','2.0.0'],['S-102','3.0.0'],['S-104','2.0.0'],['S-111','2.0.0'],['S-124','2.0.0'],['S-129','2.0.0']];
+    const eventBase={updated_at:new Date(base+3600000).toISOString(),facility_code:'CNSHA1',facility_code_list_provider:'SMDG',location_name:'Contract berth one',is_fyi:false};
+    return {
+      schema_version:'maritime_interoperability_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'INTEROPERABILITY.CONTRACT.202605',
+      source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:new Date(base+20*3600000).toISOString(),evidence_class:'contract_test_only'},
+      bindings:{port_call_event_digest:'a'.repeat(64),collaboration_evidence_digest:'b'.repeat(64)},
+      port_call:{port_call_id:'3910eb91-8791-4699-8029-8bba8cedb6f5',terminal_call_id:'b9f0e5ef-03f7-41bc-884a-87be971cb76a',port_visit_reference:'CNSHA-PORT-VISIT-2026-001',terminal_call_reference:'CNSHA-TERMINAL-CALL-2026-001',sequence_number:1,port_unlocode:'CNSHA',latitude:31.23,longitude:121.48,vessel:{imo_number:'9176187',mmsi:'413123456',name:'CONTRACT VESSEL',type_code:'CONT'}},
+      operational_events:[
+        {...eventBase,event_id:'3d58910e-36d8-4bc1-84f8-5d285b0cf475',service_id:'34b65730-7c01-49ce-a065-46f945eeadcc',event_type:'pilotage',event_phase:'estimated',event_side:'start',event_time:new Date(base+6*3600000).toISOString(),port_call_phase:'inbound',facility_type:'pilot_boarding_place',facility_code:'CN01',location_name:'Contract pilot boarding place',source_reference:'PCS.EVENT.PILOTAGE.EST.R1'},
+        {...eventBase,event_id:'21c11dce-2334-43f8-b609-f3cf699c27d8',service_id:'36f14df3-d53b-4ee1-b601-e8c0bb4fed3f',event_type:'moves',event_phase:'',event_side:'instant',event_time:'',port_call_phase:'',facility_type:'berth',source_reference:'TOS.EVENT.MOVES.R1',move_forecast:{carrier_code:'TEST',carrier_code_list_provider:'SMDG',restow_units:{totalUnits:12},load_units:{totalUnits:{size20Units:80,size40Units:120}},discharge_units:{ladenUnits:{totalUnits:150}}}}
+      ],
+      maritime_single_window:{declaration_type:'general_declaration',arrival_departure_code:'A',submission_reference:'MSW.CONTRACT.ARRIVAL.001',submission_at:new Date(base+3*3600000).toISOString(),values:{IMO0140:'9176187',IMO0142:'CONTRACT VESSEL',IMO0108:'CNSHA',IMO0064:new Date(base+6*3600000).toISOString()}},
+      s100_catalog:products.map((row,index)=>({product_specification:row[0],edition:row[1],dataset_id:`CONTRACT.CNSHA.${row[0]}.001`,producer_code:'TEST',issue_date:new Date(base-86400000).toISOString(),valid_from:new Date(base).toISOString(),valid_to:new Date(base+30*86400000).toISOString(),coverage_bbox:{west:121.0,south:30.5,east:122.0,north:31.5},dataset_sha256:(index+1).toString(16).padStart(64,'0'),official_source:false,source_reference:`S100.CATALOG.${row[0]}.ED${row[1]}`})),
+      external_conformance:[]
+    };
+  }
+  function renderInteroperabilityReadiness(j,showDetail=false){
+    interoperabilityReadiness=j;const boundary=j.boundary||{},artifact=j.configured_artifact||{};
+    $('#interoperability-readiness-status').textContent=boundary.site_interoperability_accepted
+      ? `现场互操作证据已验证 · ${artifact.artifact_id||'版本化证据'} · 报送与适航仍由权威系统负责`
+      : `待接入三类外部报告与现场复核 · ${boundary.reason||'内部映射不能替代外部符合性'}`;
+    $('#interoperability-readiness-status').style.color=boundary.site_interoperability_accepted?'#86efac':'#fcd34d';
+    $('#interoperability-site-state').textContent=boundary.site_interoperability_accepted?'证据已验证':'待接入';
+    $('#interoperability-site-state').style.color=boundary.site_interoperability_accepted?'#86efac':'#fcd34d';
+    $('#interoperability-profiles').textContent=artifact.profile_count??'—';
+    $('#interoperability-gaps').textContent=artifact.semantic_gap_count??'—';
+    if(showDetail) $('#interoperability-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:artifact,boundary},null,2);
+  }
+  async function loadInteroperabilityReadiness(showDetail=false){
+    const j=await safeJSON('/api/v3/maritime-interoperability/readiness');
+    renderInteroperabilityReadiness(j,showDetail);return j;
+  }
+  $('#interoperability-readiness')?.addEventListener('click',()=>loadInteroperabilityReadiness(true));
+  $('#interoperability-contract')?.addEventListener('click',async()=>{
+    const j=interoperabilityReadiness||await loadInteroperabilityReadiness(false);
+    $('#interoperability-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);
+  });
+  $('#interoperability-preflight')?.addEventListener('click',async()=>{
+    $('#interoperability-readiness-status').textContent='正在核对靠泊事件、单一窗口数据元、水文产品版本与统一映射摘要…';
+    try{
+      const response=await fetch('/api/v3/maritime-interoperability/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(interoperabilityContractSample())});
+      const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status}`);
+      const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};
+      $('#interoperability-profiles').textContent=String(m.profile_count??'—');
+      $('#interoperability-events').textContent=String(m.dcsa_event_count??'—');
+      $('#interoperability-imo-elements').textContent=String(m.imo_data_element_count??'—');
+      $('#interoperability-s100-products').textContent=String(m.s100_product_count??'—');
+      $('#interoperability-gaps').textContent=String(m.semantic_gap_count??'—');
+      $('#interoperability-site-state').textContent=b.site_interoperability_accepted?'证据已验证':'合同通过≠外部符合性';
+      $('#interoperability-site-state').style.color=b.site_interoperability_accepted?'#86efac':'#fcd34d';
+      $('#interoperability-readiness-status').textContent=`映射合同通过 · 三类标准 · ${m.dcsa_event_count} 个靠泊事件 · ${m.imo_data_element_count} 个单一窗口数据元 · ${m.s100_product_count} 类水文产品 · 语义缺口 ${m.semantic_gap_count} · 不报送、不导航、无生产控制权`;
+      $('#interoperability-readiness-status').style.color='#86efac';
+      $('#interoperability-detail').textContent=JSON.stringify({run_id:e.run_id,profiles:e.profiles,bindings:e.bindings,mapping_digest:e.mapping_digest,dcsa_events:e.dcsa_events,imo_msw_envelope:e.imo_msw_envelope,s100_catalog_handoff:e.s100_catalog_handoff,internal_conformance_cases:e.internal_conformance_cases,external_conformance:e.external_conformance,metrics:e.metrics,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);
+    }catch(error){
+      $('#interoperability-readiness-status').textContent='标准互操作映射校验失败：'+error.message;
+      $('#interoperability-readiness-status').style.color='#f87171';
+    }
+  });
+
+  // ========== 八类港口预测与不确定性校准 ==========
+  let forecastReadiness=null;
+  function forecastContractSample(){
+    const base=Date.UTC(2026,5,1,0,0,0),count=72;
+    const horizons={vessel_eta_minutes:120,berth_duration_minutes:240,quay_crane_productivity_mph:60,yard_congestion_ratio:180,equipment_failure_probability:360,weather_stoppage_probability:180,regulatory_delay_minutes:240,energy_load_kw:60};
+    const featureNames={
+      vessel_eta_minutes:['distance_nm','speed_knots','channel_wait_minutes','wind_mps','current_knots'],
+      berth_duration_minutes:['container_moves','crane_count','crane_productivity','labor_availability','yard_congestion_ratio'],
+      quay_crane_productivity_mph:['crane_age_years','wind_mps','labor_availability','yard_congestion_ratio','equipment_availability'],
+      yard_congestion_ratio:['yard_occupancy_ratio','gate_queue_trucks','planned_discharge_units','rail_backlog_units','horizontal_transport_availability'],
+      equipment_failure_probability:['runtime_hours','vibration_mm_s','temperature_c','fault_count_24h','maintenance_overdue_hours'],
+      weather_stoppage_probability:['wind_mps','wave_height_m','visibility_m','precipitation_mm_h','lightning_distance_km'],
+      regulatory_delay_minutes:['inspection_load','document_completeness_ratio','dangerous_goods_indicator','authority_queue','exception_count'],
+      energy_load_kw:['vessel_calls','crane_moves','reefer_count','shore_power_kw','yard_occupancy_ratio','ambient_c']
+    };
+    const features=(target,index)=>{const p=index%24,s=Math.sin(2*Math.PI*p/24),c=Math.cos(2*Math.PI*p/24),m=p%7;switch(target){
+      case 'vessel_eta_minutes':return {distance_nm:45+8*s,speed_knots:13+1.5*c,channel_wait_minutes:18+3*m,wind_mps:7+0.35*p,current_knots:-0.8+0.08*(p%11)};
+      case 'berth_duration_minutes':return {container_moves:720+70*s+5*p,crane_count:3+p%4,crane_productivity:27+2*c,labor_availability:0.78+0.02*m,yard_congestion_ratio:0.45+0.015*p};
+      case 'quay_crane_productivity_mph':return {crane_age_years:4+p%9,wind_mps:6+0.4*p,labor_availability:0.80+0.015*m,yard_congestion_ratio:0.40+0.018*p,equipment_availability:0.90+0.008*(p%8)};
+      case 'yard_congestion_ratio':return {yard_occupancy_ratio:0.48+0.012*p,gate_queue_trucks:12+2*(p%10),planned_discharge_units:350+18*p,rail_backlog_units:20+5*m,horizontal_transport_availability:0.76+0.02*c};
+      case 'equipment_failure_probability':return {runtime_hours:1200+25*p,vibration_mm_s:2.1+0.1*(p%6),temperature_c:42+0.5*p,fault_count_24h:p%4===0?1:0,maintenance_overdue_hours:6*(p%5)};
+      case 'weather_stoppage_probability':return {wind_mps:p%6===0?23+0.2*p:7+0.25*p,wave_height_m:p%6===0?3.2:0.8+0.03*p,visibility_m:p%6===0?650:5000-40*p,precipitation_mm_h:p%6===0?12:0.2*(p%5),lightning_distance_km:p%6===0?4:28-0.2*p};
+      case 'regulatory_delay_minutes':return {inspection_load:4+p%8,document_completeness_ratio:0.82+0.007*p,dangerous_goods_indicator:p%5===0?1:0,authority_queue:2+p%6,exception_count:p%4};
+      default:return {vessel_calls:2+p%5,crane_moves:250+15*p,reefer_count:180+7*(p%9),shore_power_kw:p%4<2?1800:0,yard_occupancy_ratio:0.50+0.01*p,ambient_c:25+3*s};
+    }};
+    const observed=(target,f,index)=>{const n=((index%5)-2)*0.15;switch(target){
+      case 'vessel_eta_minutes':return 55+2.2*f.distance_nm-2.5*f.speed_knots+0.45*f.channel_wait_minutes+0.8*f.wind_mps-1.5*f.current_knots+n;
+      case 'berth_duration_minutes':return 210+0.55*f.container_moves-24*f.crane_count-4*f.crane_productivity-65*f.labor_availability+75*f.yard_congestion_ratio+n;
+      case 'quay_crane_productivity_mph':return 36-0.25*f.crane_age_years-0.18*f.wind_mps+8*f.labor_availability-5*f.yard_congestion_ratio+4*f.equipment_availability+n*0.2;
+      case 'yard_congestion_ratio':return 0.08+0.65*f.yard_occupancy_ratio+0.001*f.gate_queue_trucks+0.00008*f.planned_discharge_units+0.0002*f.rail_backlog_units-0.08*f.horizontal_transport_availability+n*0.002;
+      case 'equipment_failure_probability':return f.fault_count_24h;
+      case 'weather_stoppage_probability':return f.wind_mps>=20?1:0;
+      case 'regulatory_delay_minutes':return 8+7*f.inspection_load-25*f.document_completeness_ratio+18*f.dangerous_goods_indicator+5*f.authority_queue+9*f.exception_count+n;
+      default:return 850+95*f.vessel_calls+3.2*f.crane_moves+1.8*f.reefer_count+0.96*f.shore_power_kw+520*f.yard_occupancy_ratio+11*f.ambient_c+n*5;
+    }};
+    const series=Object.keys(featureNames).map(target=>{const horizon=horizons[target],rows=[];for(let index=0;index<count;index+=1){const targetAt=base+index*3600000,issuedAt=targetAt-horizon*60000,f=features(target,index);rows.push({forecast_id:`FORECAST.${target.toUpperCase()}.${String(index).padStart(4,'0')}`,feature_snapshot_at:new Date(issuedAt-300000).toISOString(),issued_at:new Date(issuedAt).toISOString(),target_at:new Date(targetAt).toISOString(),observed_at:new Date(targetAt+900000).toISOString(),features:f,observed_value:observed(target,f,index),source_reference:`SITE.OUTCOME.${target.toUpperCase()}.${String(index).padStart(4,'0')}`});}return {target_id:target,forecast_horizon_minutes:horizon,ridge_alpha:0.01,features:featureNames[target],rows};});
+    return {schema_version:'forecast_uncertainty_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'FORECAST.CALIBRATION.202606',source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:new Date(base+count*3600000+1800000).toISOString(),evidence_class:'contract_test_only'},split:{training_window:{start_at:new Date(base).toISOString(),end_at:new Date(base+23*3600000).toISOString()},calibration_window:{start_at:new Date(base+24*3600000).toISOString(),end_at:new Date(base+47*3600000).toISOString()},test_window:{start_at:new Date(base+48*3600000).toISOString(),end_at:new Date(base+71*3600000).toISOString()}},series};
+  }
+  function renderForecastReadiness(j,showDetail=false){
+    forecastReadiness=j;const boundary=j.boundary||{},artifact=j.configured_artifact||{};
+    $('#forecast-readiness-status').textContent=boundary.site_forecast_service_accepted
+      ? `现场八类预测服务证据已验证 · ${artifact.artifact_id||'版本化证据'} · 仍只提供调度建议`
+      : `待接入预签发预测与后验实测留出证据 · ${boundary.reason||'合同曲线不能替代现场服务水平'}`;
+    $('#forecast-readiness-status').style.color=boundary.site_forecast_service_accepted?'#86efac':'#fcd34d';
+    $('#forecast-site-state').textContent=boundary.site_forecast_service_accepted?'证据已验证':'待接入';
+    $('#forecast-site-state').style.color=boundary.site_forecast_service_accepted?'#86efac':'#fcd34d';
+    $('#forecast-targets').textContent=artifact.target_count??'—';
+    $('#forecast-coverage-80').textContent=artifact.interval_80_pass_count??'—';
+    $('#forecast-coverage-95').textContent=artifact.interval_95_pass_count??'—';
+    if(showDetail) $('#forecast-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:artifact,boundary},null,2);
+  }
+  async function loadForecastReadiness(showDetail=false){const j=await safeJSON('/api/v3/forecast-uncertainty/readiness');renderForecastReadiness(j,showDetail);return j;}
+  $('#forecast-readiness')?.addEventListener('click',()=>loadForecastReadiness(true));
+  $('#forecast-contract')?.addEventListener('click',async()=>{const j=forecastReadiness||await loadForecastReadiness(false);$('#forecast-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);});
+  $('#forecast-preflight')?.addEventListener('click',async()=>{
+    $('#forecast-readiness-status').textContent='正在按签发时点核对特征快照，并拟合训练窗、校准区间和评估留出测试窗…';
+    try{
+      const response=await fetch('/api/v3/forecast-uncertainty/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(forecastContractSample())});
+      const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status}`);
+      const e=j.evidence||{},rows=e.metrics_by_target||[],b=e.boundary||{},counts=e.row_counts||{},first=counts.vessel_eta_minutes||{};
+      const passed80=rows.filter(row=>row.threshold_checks?.coverage_80===true).length,passed95=rows.filter(row=>row.threshold_checks?.coverage_95===true).length,failed=rows.filter(row=>row.status!=='pass').length;
+      $('#forecast-targets').textContent=`${rows.length} / 8`;$('#forecast-window-rows').textContent=`${first.training??'—'} / ${first.calibration??'—'} / ${first.test??'—'}`;$('#forecast-coverage-80').textContent=`${passed80} / 8`;$('#forecast-coverage-95').textContent=`${passed95} / 8`;$('#forecast-failed').textContent=String(failed);
+      $('#forecast-site-state').textContent=b.site_forecast_service_accepted?'证据已验证':'合同通过≠现场服务水平';$('#forecast-site-state').style.color=b.site_forecast_service_accepted?'#86efac':'#fcd34d';
+      $('#forecast-readiness-status').textContent=`留出评估通过 · 八类目标 ${rows.length} / 8 · 百分之八十区间 ${passed80} / 8 · 百分之九十五区间 ${passed95} / 8 · 未通过 ${failed} · 非现场服务水平 · 只建议、不执行`;
+      $('#forecast-readiness-status').style.color=failed===0?'#86efac':'#f87171';
+      $('#forecast-detail').textContent=JSON.stringify({run_id:e.run_id,dataset_sha256:e.dataset_sha256,split:e.split,row_counts:e.row_counts,metrics_by_target:e.metrics_by_target,model_bundle_digest:e.model_bundle_digest,test_receipts_digest:e.test_receipts_digest,calibration_status:e.calibration_status,measured_outcomes:e.measured_outcomes,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);
+    }catch(error){$('#forecast-readiness-status').textContent='预测留出评估失败：'+error.message;$('#forecast-readiness-status').style.color='#f87171';}
+  });
+
+  // ========== 现场实际执行与业务收益归因 ==========
+  let benefitReadiness=null;
+  function benefitContractSample(){
+    const pairCount=12,preBase=Date.UTC(2026,5,1),postBase=Date.UTC(2026,6,1),assignmentReference='ASSIGNMENT.MATCHED.PAIRS.202607',units=[];
+    const outcomes=(pairIndex,group,period)=>{let energy=1000+10*pairIndex,waiting=180+2*pairIndex,utilization=0.75+0.002*pairIndex,throughput=1000+5*pairIndex,downtime=40+0.2*pairIndex,maintenance=5000+20*pairIndex,regulatory=60+pairIndex;if(group==='incumbent'&&period==='post'){energy+=20;waiting+=8;utilization+=0.01;throughput+=20;downtime+=2;maintenance+=100;regulatory+=5;}else if(group==='candidate'&&period==='pre'){energy+=5;waiting-=3;utilization+=0.002;throughput+=5;downtime-=1;maintenance-=50;regulatory-=2;}else if(group==='candidate'&&period==='post'){energy+=5+20-100;waiting+=-3+8-25;utilization+=0.002+0.01+0.025;throughput+=5+20;downtime+=-1+2-8;maintenance+=-50+100-400;regulatory+=-2+5-12;}return {energy_consumption_kwh:energy,tariff_cny_per_kwh:0.8,carbon_factor_kg_per_kwh:0.5,waiting_time_minutes:waiting,berth_productive_minutes:utilization*720,berth_available_minutes:720,throughput_teu:throughput,unplanned_downtime_minutes:downtime,maintenance_cost_cny:maintenance,regulatory_delay_minutes:regulatory};};
+    for(let pairIndex=0;pairIndex<pairCount;pairIndex+=1){const factors={cargo_teu:800+10*pairIndex,vessel_size_teu:10000+100*pairIndex,weather_severity_ratio:0.20+0.01*(pairIndex%10),tide_m:-1+0.1*pairIndex,shift_index:pairIndex%3,equipment_availability_ratio:0.90+0.002*pairIndex};for(const group of ['candidate','incumbent'])for(const period of ['pre','post']){const started=(period==='pre'?preBase:postBase)+pairIndex*86400000,ended=started+43200000,candidatePost=group==='candidate'&&period==='post',suffix=`${String(pairIndex).padStart(3,'0')}.${group.toUpperCase()}.${period.toUpperCase()}`;units.push({pair_id:`PAIR.BENEFIT.${String(pairIndex).padStart(3,'0')}`,unit_id:`UNIT.BENEFIT.${suffix}`,cluster_id:`CLUSTER.BENEFIT.${String(pairIndex).padStart(3,'0')}.${group.toUpperCase()}`,group,period,started_at:new Date(started).toISOString(),ended_at:new Date(ended).toISOString(),assignment_reference:assignmentReference,matching_factors:{...factors},outcomes:outcomes(pairIndex,group,period),source_references:{energy_meter_reference:`METER.${suffix}`,tos_operations_reference:`TOS.${suffix}`,emissions_factor_reference:`EMISSIONS.${suffix}`,maintenance_reference:`CMMS.${suffix}`,regulatory_reference:`REGULATORY.${suffix}`,safety_reference:`SAFETY.${suffix}`},decision:{actual_plan_reference:`PLAN.${suffix}`,execution_receipt_id:`EXECUTION.${suffix}`,executed_at:new Date(started+3600000).toISOString(),candidate_executed:candidatePost,recommendation_receipt_id:candidatePost?`RECOMMENDATION.${suffix}`:'',human_approval_receipt_id:candidatePost?`APPROVAL.${suffix}`:'',recommendation_digest:candidatePost?(pairIndex+1).toString(16).padStart(64,'0'):''},other_intervention_ids:[],safety_incident_count:0});}}
+    return {schema_version:'business_benefit_attribution_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'BENEFIT.ATTRIBUTION.202607',source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:'2026-08-02T00:00:00Z',evidence_class:'contract_test_only'},bindings:{forecast_uncertainty_evidence_digest:'a'.repeat(64),shadow_acceptance_evidence_digest:'b'.repeat(64),execution_acceptance_evidence_digest:'c'.repeat(64),collaboration_evidence_digest:'d'.repeat(64)},design:{method:'matched_difference_in_differences',primary_metric:'energy_cost_cny',protocol_id:'PROTOCOL.BENEFIT.2026.01',protocol_sha256:'e'.repeat(64),analysis_plan_sha256:'f'.repeat(64),protocol_registered_at:'2026-05-01T00:00:00Z',assignment_reference:assignmentReference,assignment_at:'2026-06-30T23:00:00Z',interference_scope:'INDEPENDENT.PORT.CALL.AND.ASSET.CLUSTERS',pre_window:{start_at:'2026-06-01T00:00:00Z',end_at:'2026-06-30T23:59:59Z'},post_window:{start_at:'2026-07-01T00:00:00Z',end_at:'2026-07-31T23:59:59Z'}},units};
+  }
+  function renderBenefitReadiness(j,showDetail=false){
+    benefitReadiness=j;const boundary=j.boundary||{},artifact=j.configured_artifact||{};
+    $('#benefit-readiness-status').textContent=boundary.realized_business_benefit_verified
+      ? `现场收益归因证据已验证 · ${artifact.artifact_id||'版本化证据'} · 声明只适用于已审批场站与窗口`
+      : `待接入实际执行、后验计量和同期对照 · ${boundary.reason||'离线反事实不能替代现场收益'}`;
+    $('#benefit-readiness-status').style.color=boundary.realized_business_benefit_verified?'#86efac':'#fcd34d';
+    $('#benefit-site-state').textContent=boundary.realized_business_benefit_verified?'证据已验证':'待接入';
+    $('#benefit-site-state').style.color=boundary.realized_business_benefit_verified?'#86efac':'#fcd34d';
+    $('#benefit-pairs').textContent=artifact.complete_pair_count??'—';
+    $('#benefit-primary-effect').textContent=Number.isFinite(Number(artifact.primary_relative_effect_percent))?Number(artifact.primary_relative_effect_percent).toFixed(2)+'%':'—';
+    $('#benefit-primary-ci').textContent=Number.isFinite(Number(artifact.primary_ci95_low_percent))?Number(artifact.primary_ci95_low_percent).toFixed(2)+'%':'—';
+    if(showDetail) $('#benefit-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:artifact,boundary},null,2);
+  }
+  async function loadBenefitReadiness(showDetail=false){const j=await safeJSON('/api/v3/business-benefit-attribution/readiness');renderBenefitReadiness(j,showDetail);return j;}
+  $('#benefit-readiness')?.addEventListener('click',()=>loadBenefitReadiness(true));
+  $('#benefit-contract')?.addEventListener('click',async()=>{const j=benefitReadiness||await loadBenefitReadiness(false);$('#benefit-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);});
+  $('#benefit-preflight')?.addEventListener('click',async()=>{
+    $('#benefit-readiness-status').textContent='正在绑定建议、人工批准、实际执行、后验计量与同期对照，并计算成对置信区间…';
+    try{
+      const response=await fetch('/api/v3/business-benefit-attribution/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(benefitContractSample())});
+      const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status}`);
+      const e=j.evidence||{},quality=e.data_quality||{},checks=e.threshold_checks||{},summaries=e.metric_summaries||[],primary=summaries.find(row=>row.metric_id===e.design?.primary_metric)||{},b=e.boundary||{};
+      const effect=Number(primary.mean_benefit_relative_percent),ciLow=Number(primary.ci95_relative_percent?.low),execution=Number(quality.execution_receipt_coverage);
+      $('#benefit-pairs').textContent=String(quality.complete_pair_count??'—');$('#benefit-execution').textContent=Number.isFinite(execution)?(execution*100).toFixed(0)+'%':'—';$('#benefit-primary-effect').textContent=Number.isFinite(effect)?effect.toFixed(2)+'%':'—';$('#benefit-primary-ci').textContent=Number.isFinite(ciLow)?ciLow.toFixed(2)+'%':'—';$('#benefit-throughput').textContent=checks.throughput_noninferiority===true?'通过':'未通过';$('#benefit-concurrent').textContent=String(quality.concurrent_intervention_count??'—');
+      $('#benefit-site-state').textContent=b.realized_business_benefit_verified?'证据已验证':'合同样例≠现场已实现收益';$('#benefit-site-state').style.color=b.realized_business_benefit_verified?'#86efac':'#fcd34d';
+      $('#benefit-readiness-status').textContent=`归因合同通过 · 完整对照 ${quality.complete_pair_count} 组 · 实际执行覆盖 ${(execution*100).toFixed(0)}% · 主指标收益 ${effect.toFixed(2)}% · 置信下限 ${ciLow.toFixed(2)}% · 吞吐非劣通过 · 同期干预 ${quality.concurrent_intervention_count} · 非现场收益声明`;
+      $('#benefit-readiness-status').style.color=e.attribution_status==='pass'?'#86efac':'#f87171';
+      $('#benefit-detail').textContent=JSON.stringify({run_id:e.run_id,dataset_sha256:e.dataset_sha256,bindings:e.bindings,design:e.design,data_quality:e.data_quality,metric_summaries:e.metric_summaries,threshold_checks:e.threshold_checks,attribution_status:e.attribution_status,measured_outcomes:e.measured_outcomes,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);
+    }catch(error){$('#benefit-readiness-status').textContent='业务收益归因失败：'+error.message;$('#benefit-readiness-status').style.color='#f87171';}
+  });
+
+  // ========== 港口全链条跨资源滚动协同 ==========
+  let coordinationReadiness=null;
+  function coordinationContractSample(){
+    const resourceContract={channel_slot:[1,'slot'],berth:[1,'berth'],pilot:[1,'person'],tug:[1,'tug'],quay_crane:[3,'crane'],horizontal_transport:[4,'vehicle'],yard_block:[40,'teu_slot'],gate:[2,'lane'],rail:[1,'train_slot'],shore_power_bess:[6000,'kilowatt'],maintenance_team:[1,'crew']};
+    const baselines={port_arrival:['2026-08-01T06:15:00Z',15],channel_transit:['2026-08-01T06:45:00Z',30],berthing:['2026-08-01T07:30:00Z',30],cargo_operation:['2026-08-01T08:15:00Z',120],yard_transfer:['2026-08-01T10:30:00Z',30],yard_operation:['2026-08-01T11:15:00Z',60],gate_release:['2026-08-01T12:30:00Z',45],rail_release:['2026-08-01T12:30:00Z',45],maintenance:['2026-08-01T12:45:00Z',60]};
+    const requirements={port_arrival:{channel_slot:1},channel_transit:{channel_slot:1,pilot:1,tug:1},berthing:{berth:1},cargo_operation:{berth:1,quay_crane:2,horizontal_transport:4,yard_block:20,shore_power_bess:2500},yard_transfer:{horizontal_transport:2,yard_block:20},yard_operation:{yard_block:20},gate_release:{gate:1},rail_release:{rail:1},maintenance:{quay_crane:1,maintenance_team:1}};
+    const predecessors={port_arrival:[],channel_transit:['port_arrival'],berthing:['channel_transit'],cargo_operation:['berthing'],yard_transfer:['cargo_operation'],yard_operation:['yard_transfer'],gate_release:['yard_operation'],rail_release:['yard_operation'],maintenance:['cargo_operation']};
+    const resources=Object.entries(resourceContract).map(([resource_type,[capacity,capacity_unit]])=>({resource_id:`RESOURCE.0.${resource_type}`,resource_type,capacity,capacity_unit,available_from:'2026-08-01T06:00:00Z',available_to:'2026-08-02T06:00:00Z',owner:`OWNER.0.${resource_type}`,source_reference:`SOURCE.0.${resource_type}`,safety_interlock_reference:`INTERLOCK.0.${resource_type}`}));
+    const endAt=(start,minutes)=>new Date(Date.parse(start)+minutes*60000).toISOString();
+    const tasks=[];
+    for(let chainIndex=0;chainIndex<2;chainIndex+=1){const chain=`CHAIN.${String(chainIndex+1).padStart(2,'0')}`,ids={};Object.keys(baselines).forEach(stage=>{ids[stage]=`TASK.${String(chainIndex+1).padStart(2,'0')}.${stage}`;});for(const [stage,[defaultStart,duration]] of Object.entries(baselines)){const start=stage==='port_arrival'&&chainIndex>0?'2026-08-01T06:30:00Z':defaultStart,need=requirements[stage];tasks.push({task_id:ids[stage],chain_id:chain,stage,priority:chainIndex===0?5:3,earliest_start:start,baseline_start:start,baseline_end:endAt(start,duration),deadline:'2026-08-01T18:00:00Z',duration_minutes:duration,frozen:start<'2026-08-01T06:30:00Z',predecessor_ids:predecessors[stage].map(value=>ids[value]),resource_requirements:need,baseline_allocations:Object.entries(need).map(([resource_type,quantity])=>({resource_id:`RESOURCE.0.${resource_type}`,quantity})),source_reference:`TASK.SOURCE.${chainIndex+1}.${stage}`,forecast_receipt_id:`FORECAST.RECEIPT.${chainIndex+1}.${stage}`,baseline_plan_receipt_id:`BASELINE.RECEIPT.${chainIndex+1}.${stage}`});}}
+    return {schema_version:'end_to_end_coordination_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'COORDINATION.CONTRACT.20260801',planning_revision:1,source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:'2026-08-01T05:45:00Z',evidence_class:'contract_test_only'},bindings:{site_twin_calibration_evidence_digest:'a'.repeat(64),port_call_collaboration_evidence_digest:'b'.repeat(64),forecast_uncertainty_evidence_digest:'c'.repeat(64),execution_acceptance_evidence_digest:'d'.repeat(64),business_benefit_attribution_evidence_digest:'e'.repeat(64)},planning:{plan_id:'SHARED.PLAN.20260801.01',plan_system_reference:'INTEGRATED.PLANNING.REVISION.1',decision_at:'2026-08-01T06:00:00Z',horizon_start:'2026-08-01T06:00:00Z',horizon_end:'2026-08-02T06:00:00Z',time_step_minutes:15,freeze_horizon_minutes:30,handoff_buffer_minutes:15,maximum_reschedule_minutes:180,objective_weights:{vessel_and_cargo_delay:0.35,plan_stability:0.20,energy_peak:0.15,resource_balance:0.15,maintenance_risk:0.15}},resources,tasks,safety_incident_count:0,unresolved_exception_ids:[]};
+  }
+  function renderCoordinationReadiness(j,showDetail=false){
+    coordinationReadiness=j;const boundary=j.boundary||{},artifact=j.configured_artifact||{};
+    $('#coordination-readiness-status').textContent=boundary.site_end_to_end_coordination_accepted
+      ? `现场全链协同证据已验证 · ${artifact.artifact_id||'版本化证据'} · 资源承诺仍由责任系统确认`
+      : `待接入现场统一计划与真实容量 · ${boundary.reason||'局部策略不能替代跨资源联合计划'}`;
+    $('#coordination-readiness-status').style.color=boundary.site_end_to_end_coordination_accepted?'#86efac':'#fcd34d';
+    $('#coordination-site-state').textContent=boundary.site_end_to_end_coordination_accepted?'证据已验证':'待接入';
+    $('#coordination-site-state').style.color=boundary.site_end_to_end_coordination_accepted?'#86efac':'#fcd34d';
+    $('#coordination-chains').textContent=artifact.chain_count??'—';$('#coordination-tasks').textContent=artifact.task_count??'—';$('#coordination-after').textContent=artifact.candidate_conflict_slot_count??'—';
+    if(showDetail)$('#coordination-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:artifact,boundary},null,2);
+  }
+  async function loadCoordinationReadiness(showDetail=false){const j=await safeJSON('/api/v3/end-to-end-coordination/readiness');renderCoordinationReadiness(j,showDetail);return j;}
+  $('#coordination-readiness')?.addEventListener('click',()=>loadCoordinationReadiness(true));
+  $('#coordination-contract')?.addEventListener('click',async()=>{const j=coordinationReadiness||await loadCoordinationReadiness(false);$('#coordination-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);});
+  $('#coordination-preflight')?.addEventListener('click',async()=>{
+    $('#coordination-readiness-status').textContent='正在核对冻结计划、前后工序、十一类容量、原计划回执和预测回执，并生成无副作用候选计划…';
+    try{
+      const response=await fetch('/api/v3/end-to-end-coordination/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(coordinationContractSample())});
+      const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status} · ${JSON.stringify(j.errors||[])}`);
+      const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};
+      $('#coordination-chains').textContent=String(m.chain_count??'—');$('#coordination-tasks').textContent=String(m.task_count??'—');$('#coordination-resources').textContent=`${m.resource_type_coverage_count??'—'} / 11`;$('#coordination-before').textContent=String(m.baseline_conflict_slot_count??'—');$('#coordination-after').textContent=String(m.candidate_conflict_slot_count??'—');$('#coordination-shift').textContent=Number.isFinite(Number(m.maximum_reschedule_minutes))?`${m.maximum_reschedule_minutes} 分钟`:'—';
+      $('#coordination-site-state').textContent=b.site_end_to_end_coordination_accepted?'证据已验证':'合同样例≠现场统一计划';$('#coordination-site-state').style.color=b.site_end_to_end_coordination_accepted?'#86efac':'#fcd34d';
+      $('#coordination-readiness-status').textContent=`滚动排程合同通过 · ${m.chain_count} 条业务链 · ${m.task_count} 项任务 · 十一类资源齐全 · 冲突槽 ${m.baseline_conflict_slot_count} → ${m.candidate_conflict_slot_count} · 最大调整 ${m.maximum_reschedule_minutes} 分钟 · 不修改共享计划、不承诺资源`;
+      $('#coordination-readiness-status').style.color=e.coordination_status==='pass'?'#86efac':'#f87171';
+      $('#coordination-detail').textContent=JSON.stringify({run_id:e.run_id,dataset_sha256:e.dataset_sha256,bindings:e.bindings,baseline_plan_digest:e.baseline_plan_digest,candidate_plan_digest:e.candidate_plan_digest,metrics:e.metrics,threshold_checks:e.threshold_checks,coordination_status:e.coordination_status,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);
+    }catch(error){$('#coordination-readiness-status').textContent='全链滚动排程失败：'+error.message;$('#coordination-readiness-status').style.color='#f87171';}
+  });
+
+  // ========== 二十四小时连续运行与灾备 ==========
+  let continuityReadiness=null;
+  function continuityContractSample(){
+    const components=['api_gateway','decision_service','digital_twin','data_ingestion','message_queue','evidence_store','telemetry_store','operator_ui'],hours=168,base=Date.UTC(2026,6,1),end=base+hours*3600000;
+    const hourly_records=[];for(let index=0;index<hours;index+=1){hourly_records.push({hour_start:new Date(base+index*3600000).toISOString(),collection_receipt_id:`CONTINUITY.COLLECTION.${String(index).padStart(4,'0')}`,components:components.map(component_id=>({component_id,uptime_minutes:60,request_count:1000+index,error_count:0,latency_p95_ms:90+index%5,data_freshness_p95_seconds:12+index%3,audit_events_expected:5,audit_events_delivered:5,source_reference:`OBSERVABILITY.${component_id}.${String(index).padStart(4,'0')}`}))});}
+    const drillLimits={process_restart:[5,0],zone_failover:[15,1],database_restore:[60,15],queue_backlog_recovery:[30,0],credential_rotation:[15,0],safe_degradation:[5,0]};
+    const drills=Object.entries(drillLimits).map(([drill_type,[rto,rpo]],index)=>{const started=base+(24+index)*3600000;return {drill_id:`DRILL.${drill_type}.001`,drill_type,started_at:new Date(started).toISOString(),completed_at:new Date(started+rto*60000).toISOString(),rto_minutes:rto,rpo_minutes:rpo,result:'pass',execution_receipt_id:`DRILL.EXECUTION.${drill_type}.001`,restore_receipt_id:`DRILL.RESTORE.${drill_type}.001`,approved_by:`DRILL.REVIEWER.${drill_type}`};});
+    const backups=[];for(let index=0;index<7;index+=1){backups.push({backup_id:`BACKUP.CONTINUITY.${String(index).padStart(3,'0')}`,created_at:new Date(base+index*86400000+3600000).toISOString(),restore_tested_at:new Date(end+3600000).toISOString(),sha256:(index+1).toString(16).padStart(64,'0'),immutable:true,encrypted:true,restore_receipt_id:`BACKUP.RESTORE.${String(index).padStart(3,'0')}`});}
+    const incidentStart=base+10*3600000;
+    return {schema_version:'production_continuity_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'CONTINUITY.CONTRACT.168H',source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:new Date(end+2*3600000).toISOString(),evidence_class:'contract_test_only'},bindings:{end_to_end_coordination_evidence_digest:'a'.repeat(64),execution_acceptance_evidence_digest:'b'.repeat(64),forecast_uncertainty_evidence_digest:'c'.repeat(64),business_benefit_attribution_evidence_digest:'d'.repeat(64)},window:{start_at:new Date(base).toISOString(),end_at:new Date(end).toISOString(),step_minutes:60},hourly_records,drills,backups,incidents:[{incident_id:'INCIDENT.P2.20260701.001',severity:'P2',detected_at:new Date(incidentStart).toISOString(),acknowledged_at:new Date(incidentStart+5*60000).toISOString(),mitigated_at:new Date(incidentStart+10*60000).toISOString(),recovered_at:new Date(incidentStart+15*60000).toISOString(),closed_at:new Date(incidentStart+30*60000).toISOString(),commander_id:'incident-commander.01',work_order_id:'work-order.20260701.001',root_cause_reference:'root-cause.20260701.001',postmortem_reference:'postmortem.20260701.001'}],changes:[{change_id:'CHANGE.CONTINUITY.202607.001',deployed_at:new Date(base+48*3600000).toISOString(),approval_receipt_id:'CHANGE.APPROVAL.202607.001',canary_receipt_id:'CHANGE.CANARY.202607.001',health_receipt_id:'CHANGE.HEALTH.202607.001',rollback_receipt_id:'CHANGE.ROLLBACK.202607.001',rollback_ready:true}]};
+  }
+  function renderContinuityReadiness(j,showDetail=false){continuityReadiness=j;const b=j.boundary||{},a=j.configured_artifact||{};$('#continuity-readiness-status').textContent=b.site_continuity_accepted?`现场连续运行证据已验证 · ${a.artifact_id||'版本化证据'} · 自动切换权限仍关闭`:`待接入连续服务与恢复证据 · ${b.reason||'健康检查不能替代连续运行证据'}`;$('#continuity-readiness-status').style.color=b.site_continuity_accepted?'#86efac':'#fcd34d';$('#continuity-site-state').textContent=b.field_slo_claim_eligible?'允许限定场站声明':'待接入';$('#continuity-site-state').style.color=b.field_slo_claim_eligible?'#86efac':'#fcd34d';$('#continuity-hours').textContent=a.continuous_hours??'—';$('#continuity-components').textContent=a.component_slo_pass_count??'—';$('#continuity-drills').textContent=a.drill_pass_count??'—';$('#continuity-backups').textContent=a.backup_count??'—';$('#continuity-incidents').textContent=a.closed_incident_count??'—';if(showDetail)$('#continuity-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:a,boundary:b},null,2);}
+  async function loadContinuityReadiness(showDetail=false){const j=await safeJSON('/api/v3/production-continuity/readiness');renderContinuityReadiness(j,showDetail);return j;}
+  $('#continuity-readiness')?.addEventListener('click',()=>loadContinuityReadiness(true));
+  $('#continuity-contract')?.addEventListener('click',async()=>{const j=continuityReadiness||await loadContinuityReadiness(false);$('#continuity-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);});
+  $('#continuity-preflight')?.addEventListener('click',async()=>{$('#continuity-readiness-status').textContent='正在逐小时核对八个组件，并验证事件、每日还原、灰度回退和六类恢复演练…';try{const response=await fetch('/api/v3/production-continuity/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(continuityContractSample())});const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status} · ${JSON.stringify(j.errors||[])}`);const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};$('#continuity-hours').textContent=`${m.continuous_hours} 小时`;$('#continuity-components').textContent=`${m.component_slo_pass_count} / 8`;$('#continuity-drills').textContent=`${m.drill_pass_count} / 6`;$('#continuity-backups').textContent=String(m.restore_tested_backup_count??'—');$('#continuity-incidents').textContent=String(m.closed_incident_count??'—');$('#continuity-site-state').textContent=b.field_slo_claim_eligible?'允许限定场站声明':'合同样例≠现场连续运行';$('#continuity-site-state').style.color=b.field_slo_claim_eligible?'#86efac':'#fcd34d';$('#continuity-readiness-status').textContent=`连续性合同通过 · ${m.continuous_hours} 小时无缺口 · 八个组件服务目标 ${m.component_slo_pass_count} / 8 · 恢复演练 ${m.drill_pass_count} / 6 · 还原验证 ${m.restore_tested_backup_count} 次 · 已关闭事件 ${m.closed_incident_count} · 不形成现场服务承诺`;$('#continuity-readiness-status').style.color=e.continuity_status==='pass'?'#86efac':'#f87171';$('#continuity-detail').textContent=JSON.stringify({run_id:e.run_id,dataset_sha256:e.dataset_sha256,bindings:e.bindings,metrics:e.metrics,component_metrics:e.component_metrics,drill_results:e.drill_results,threshold_checks:e.threshold_checks,continuity_status:e.continuity_status,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);}catch(error){$('#continuity-readiness-status').textContent='连续运行核验失败：'+error.message;$('#continuity-readiness-status').style.color='#f87171';}});
+
+  // ========== 组织责任、异人审批与值班升级 ==========
+  let governanceReadiness=null;
+  function governanceContractSample(){
+    const domains=['data_source_ownership','model_risk','maritime_safety','terminal_operations','marine_services','equipment_controls','energy_management','cybersecurity','incident_command','business_benefit','change_management','executive_accountability'];
+    const workflows=['data_contract_change','model_promotion','integrated_plan_release','actuator_configuration_change','emergency_stop','incident_response','rollback_release','evidence_acceptance','business_claim_release','privileged_access_change'];
+    const shiftRoles=['duty_manager','terminal_operations','maritime_safety','site_reliability','cybersecurity'],shifts=['day','evening','night'],competencyByRole={duty_manager:'incident_command',terminal_operations:'terminal_operations',maritime_safety:'maritime_safety',site_reliability:'site_reliability',cybersecurity:'cyber_incident_response'},personIds=Array.from({length:15},(_,index)=>`person.role-holder.${String(index).padStart(2,'0')}`);
+    const people=personIds.map((person_id,index)=>({person_id,department:`department-${index%8}`,directory_reference:`directory.person.${String(index).padStart(2,'0')}`,active:true,role_codes:[...shiftRoles,'requester','approver','executor','verifier','reviewer']}));
+    const responsibility_assignments=domains.map((domain,index)=>({domain,accountable_id:personIds[index%15],responsible_ids:[personIds[(index+1)%15]],consulted_ids:[personIds[(index+2)%15]],informed_ids:[personIds[(index+3)%15]]}));
+    const approval_workflows=workflows.map((workflow_id,index)=>({workflow_id,requester_id:personIds[index%15],approver_id:personIds[(index+1)%15],executor_id:personIds[(index+2)%15],verifier_id:personIds[(index+3)%15],reviewer_ids:[personIds[(index+4)%15],personIds[(index+5)%15]],authority_scope:`bounded.${workflow_id}`,change_ticket_required:true,emergency_override_allowed:workflow_id==='emergency_stop',production_control_granted:false}));
+    const start=new Date(Date.UTC(2026,6,1)),end=new Date(Date.UTC(2026,6,8)),competencies=[...new Set(Object.values(competencyByRole))],competency_records=[];personIds.forEach((person_id,index)=>competencies.forEach(competency=>competency_records.push({person_id,competency,valid_until:'2027-07-08',evidence_reference:`competency.${String(index).padStart(2,'0')}.${competency}`})));
+    const shift_roster=[];for(let dayIndex=0;dayIndex<7;dayIndex+=1){const rosterDate=new Date(start.getTime()+dayIndex*86400000).toISOString().slice(0,10);shifts.forEach((shift,shiftIndex)=>shiftRoles.forEach((role,roleIndex)=>{const primaryIndex=(shiftIndex*shiftRoles.length+roleIndex)%15;shift_roster.push({date:rosterDate,shift,role,primary_id:personIds[primaryIndex],backup_id:personIds[(primaryIndex+1)%15],handover_receipt_id:`handover.${String(dayIndex).padStart(2,'0')}.${shift}.${role}`});}));}
+    const escalationTargets={P0:[5,10],P1:[15,30],P2:[30,60],P3:[60,240]},escalation_matrix=Object.entries(escalationTargets).map(([severity,[ack,notify]])=>({severity,ack_minutes_max:ack,executive_notification_minutes_max:notify,incident_commander_id:personIds[0],first_escalation_id:personIds[1],second_escalation_id:personIds[2],communication_plan_reference:`communication-plan.${severity}`}));
+    return {schema_version:'operating_model_governance_dataset.v1',site_id:'SITE.CNSHA.CONTRACT',run_id:'OPERATING.MODEL.CONTRACT.7D',source:{source_system:'PORT_DT_CONTRACT_TEST',owner:'PORT_DT_CONTRACT_TEST',license:'contract_test_only_not_authorized',timezone:'Asia/Shanghai',extracted_at:'2026-07-08T01:00:00Z',evidence_class:'contract_test_only'},bindings:{production_continuity_evidence_digest:'a'.repeat(64),end_to_end_coordination_evidence_digest:'b'.repeat(64),execution_acceptance_evidence_digest:'c'.repeat(64),business_benefit_attribution_evidence_digest:'d'.repeat(64)},roster_period:{start_date:'2026-07-01',end_date:'2026-07-08',shifts_per_day:3},people,responsibility_assignments,approval_workflows,competency_records,shift_roster,escalation_matrix};
+  }
+  function renderGovernanceReadiness(j,showDetail=false){governanceReadiness=j;const b=j.boundary||{},a=j.configured_artifact||{};$('#governance-readiness-status').textContent=b.site_operating_model_accepted?`现场组织职责与值守证据已验证 · ${a.artifact_id||'版本化证据'} · 权限仍由现场身份系统授予`:`待接入实名任命、值守与授权证据 · ${b.reason||'静态职责表不能替代现场任命'}`;$('#governance-readiness-status').style.color=b.site_operating_model_accepted?'#86efac':'#fcd34d';$('#governance-site-state').textContent=b.organization_authority_verified?'证据已验证':'待接入';$('#governance-site-state').style.color=b.organization_authority_verified?'#86efac':'#fcd34d';$('#governance-people').textContent=a.active_person_count??'—';$('#governance-domains').textContent=a.responsibility_domain_count??'—';$('#governance-workflows').textContent=a.approval_workflow_count??'—';$('#governance-days').textContent=a.roster_days??'—';$('#governance-assignments').textContent=a.roster_assignment_count??'—';$('#governance-conflicts').textContent=a.segregation_conflict_count??'—';if(showDetail)$('#governance-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,configured_artifact:a,boundary:b},null,2);}
+  async function loadGovernanceReadiness(showDetail=false){const j=await safeJSON('/api/v3/operating-model-governance/readiness');renderGovernanceReadiness(j,showDetail);return j;}
+  $('#governance-readiness')?.addEventListener('click',()=>loadGovernanceReadiness(true));
+  $('#governance-contract')?.addEventListener('click',async()=>{const j=governanceReadiness||await loadGovernanceReadiness(false);$('#governance-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);});
+  $('#governance-preflight')?.addEventListener('click',async()=>{$('#governance-readiness-status').textContent='正在核对十二类责任、十项异人审批、培训资质、七天三班主备和四级升级链…';try{const response=await fetch('/api/v3/operating-model-governance/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(governanceContractSample())});const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status} · ${JSON.stringify(j.errors||[])}`);const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};$('#governance-people').textContent=String(m.active_person_count??'—');$('#governance-domains').textContent=`${m.responsibility_domain_count??'—'} / 12`;$('#governance-workflows').textContent=`${m.approval_workflow_count??'—'} / 10`;$('#governance-days').textContent=`${m.roster_days??'—'} 天`;$('#governance-assignments').textContent=String(m.roster_assignment_count??'—');$('#governance-conflicts').textContent=String(m.segregation_conflict_count??'—');$('#governance-site-state').textContent=b.organization_authority_verified?'证据已验证':'合同样例≠现场正式任命';$('#governance-site-state').style.color=b.organization_authority_verified?'#86efac':'#fcd34d';$('#governance-readiness-status').textContent=`责任治理合同通过 · 实名角色 ${m.active_person_count} 人 · 十二类责任全覆盖 · 十项关键流程异人分权 · ${m.roster_days} 天三班主备 ${m.roster_assignment_count} 班岗 · 分权冲突 ${m.segregation_conflict_count} · 不任命人员、不授予账号`;$('#governance-readiness-status').style.color=e.governance_status==='pass'?'#86efac':'#f87171';$('#governance-detail').textContent=JSON.stringify({run_id:e.run_id,dataset_sha256:e.dataset_sha256,bindings:e.bindings,metrics:e.metrics,threshold_checks:e.threshold_checks,governance_status:e.governance_status,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);}catch(error){$('#governance-readiness-status').textContent='责任治理核验失败：'+error.message;$('#governance-readiness-status').style.color='#f87171';}});
 
   // 首次加载“场景工厂”
   loadScenarios();

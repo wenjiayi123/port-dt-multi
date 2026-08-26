@@ -7,3 +7,5 @@ Changes require an approving maintainer when they affect canonical fields, rewar
 Security reports follow `SECURITY.md`. Conduct that is harassing, deceptive, unsafe, or knowingly misrepresents simulated data as measured data is not accepted. Until a separate Code of Conduct is adopted, maintainers may restrict participation to protect contributors and users.
 
 Decisions with long-term compatibility impact should be recorded in a pull request or architecture decision document. Releases use semantic version tags and should include known limitations, migration notes and artifact provenance.
+
+Site production governance is a separate, evidence-gated responsibility. Named appointments, duty rosters, competency records, escalation chains and access grants remain owned by the site operator and its identity systems; the repository cannot appoint personnel or self-grant authority. The machine-readable acceptance contract is documented in [docs/OPERATING_MODEL_GOVERNANCE.md](docs/OPERATING_MODEL_GOVERNANCE.md).

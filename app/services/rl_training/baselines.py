@@ -77,6 +77,10 @@ class EngineeringCurrentOpsRulePolicy(MPCPolicy):
             )
         if self.action_dim >= 7:
             action = np.concatenate([action, np.zeros(2, dtype=np.float32)])
+        if action.size < self.action_dim:
+            action = np.concatenate(
+                [action, np.zeros(self.action_dim - action.size, dtype=np.float32)]
+            )
         return action, None
 
     def parameters(self) -> dict[str, Any]:
@@ -145,4 +149,79 @@ class LegacyV3PolicyAdapter:
             "inspection_buffer": 0.0,
             "recovery_priority": 0.0,
             "legacy_artifact_modified": False,
+        }
+
+
+class IntegratedCurrentOpsRulePolicy:
+    """Fixed pre-blind-test rule proxy for the V5 integrated contract."""
+
+    def __init__(self, base_policy: EngineeringCurrentOpsRulePolicy) -> None:
+        self.base_policy = base_policy
+        self.v3_prefix = 2 + 7 + 2 * len(FACTOR_COLUMNS)
+        self.regulatory_width = 2 * len(REGULATORY_COLUMNS)
+
+    @staticmethod
+    def _allocation(pressure: float, minimum: float = 0.30) -> float:
+        return float(np.clip(minimum + 0.60 * pressure, 0.05, 0.95))
+
+    def predict(self, observation: Any, deterministic: bool = True):
+        obs = np.asarray(observation, dtype=np.float32).reshape(-1)
+        if obs.size < 59:
+            raise ValueError("integrated current-operations rule requires V5 state observations")
+        base_state_start = self.v3_prefix + self.regulatory_width
+        v3_observation = np.concatenate(
+            [obs[: self.v3_prefix], obs[base_state_start : base_state_start + 4]]
+        )
+        base_action, _state = self.base_policy.predict(
+            v3_observation, deterministic=deterministic
+        )
+        base_action = np.asarray(base_action, dtype=np.float32).reshape(-1)[:5]
+        regulatory_internal = obs[base_state_start + 4 : base_state_start + 8]
+        inspection_buffer = float(
+            np.clip(0.15 + 0.55 * max(regulatory_internal[:3]), 0.0, 0.9)
+        )
+        recovery_priority = float(
+            np.clip(0.10 + 0.65 * regulatory_internal[3], 0.0, 0.9)
+        )
+        gate, intermodal, marine, reefer, maintenance, shore = obs[-6:]
+        allocation_ratios = np.asarray(
+            [
+                self._allocation(gate),
+                self._allocation(intermodal),
+                self._allocation(reefer, 0.45),
+                self._allocation(shore, 0.55),
+                self._allocation(maintenance, 0.45),
+                self._allocation(marine),
+            ],
+            dtype=np.float32,
+        )
+        integrated_raw = 2.0 * allocation_ratios - 1.0
+        action = np.concatenate(
+            [
+                base_action,
+                np.asarray(
+                    [inspection_buffer, recovery_priority], dtype=np.float32
+                ),
+                integrated_raw,
+            ]
+        )
+        return action.astype(np.float32, copy=False), None
+
+    def parameters(self) -> dict[str, Any]:
+        return {
+            "baseline_kind": "predeclared_integrated_current_operations_rule_proxy",
+            "measured_operator_policy": False,
+            "holdout_tuning": False,
+            "base_policy": self.base_policy.parameters(),
+            "controls": [
+                "regulatory_readiness_from_hold_pressure",
+                "gate_capacity_from_backlog_pressure",
+                "intermodal_capacity_from_backlog_pressure",
+                "reefer_service_from_risk_stock",
+                "shore_power_from_unmet_pressure",
+                "maintenance_from_debt",
+                "marine_services_from_backlog_pressure",
+            ],
+            "hard_constraints": "evaluated by the same deterministic V5 gate",
+            "replacement_required": "authorized site SOP replay and operator dispatch logs",
         }

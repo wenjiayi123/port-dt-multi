@@ -493,8 +493,8 @@ Datasets cannot overwrite an existing identifier unless `replace_existing=true` 
   *ESG, compliance, twin fidelity, and safety claims require formal evidence; software output is not legal, financial, or safety certification.*
 - <strong>生产模式门禁 / Production gate</strong>：`PORT_DT_ENV=production` 时 API 需要长密钥、HTTPS CORS、逐密钥限流、请求体上限与安全响应头；数据覆盖、模型晋级/回滚和执行变更另需独立管理员密钥；Swagger 默认关闭。<br>
   *With `PORT_DT_ENV=production`, APIs require strong keys, HTTPS CORS, per-key rate limiting, a request-body cap and security headers; dataset replacement, model promotion/rollback, and execution changes require a separate administrator key; Swagger is disabled.*
-- <strong>现场配置校验 / Site configuration validation</strong>：系统会解析授权孪生图谱、实测校准和影子运行记录，检查审批字段、内容条件、SHA-256 和统一 `site_id`；仅填写文件路径不会启用现场模式。<br>
-  *The service validates the authorized twin graph, measured calibration, and shadow-run records, including approvals, content conditions, SHA-256, and one shared `site_id`; setting a pathname alone does not enable site mode.*
+- <strong>现场配置校验 / Site configuration validation</strong>：系统会解析授权孪生图谱、实测校准、影子运行、执行配置、联锁调试、六方靠泊协同、国际标准互操作、八类预测留出校准、实际执行绑定的业务收益归因、全链跨资源协同、三十天连续运行和四周组织值守记录，检查审批字段、内容条件、安全散列摘要和统一 `site_id`；仅填写文件路径或把执行开关改为开启不会启用现场模式。<br>
+  *The service validates the full technical evidence chain plus thirty-day service continuity and a four-week named operating model, including approvals, content conditions, hashes, duty separation, recovery drills, and one shared site identifier; setting a pathname or enabling a switch alone does not enable site mode.*
 - <strong>标识符安全 / Identifier safety</strong>：训练、评测和模型目录只接受受限标识符，并拒绝路径穿越与符号链接逃逸。<br>
   *Training, evaluation, and model directories accept constrained identifiers and reject path traversal and symlink escape.*
 
@@ -503,6 +503,17 @@ Datasets cannot overwrite an existing identifier unless `replace_existing=true` 
 - [模型治理 / Model governance](MODEL_GOVERNANCE.md)
 - [南向执行安全契约 / Southbound execution](docs/SOUTHBOUND_EXECUTION.md)
 - [现场集成 / Site integration](docs/PRODUCTION_READINESS.md)
+- [港口靠泊事件数据网关 / Port-call event gateway](docs/PORT_CALL_DATA_GATEWAY.md)
+- [港口靠泊六方协同与延误传播 / Port-call collaboration](docs/PORT_CALL_COLLABORATION.md)
+- [国际海事标准互操作与符合性证据 / Maritime interoperability](docs/MARITIME_INTEROPERABILITY.md)
+- [港口多目标预测与不确定性校准 / Forecast uncertainty](docs/FORECAST_UNCERTAINTY.md)
+- [现场实际业务收益归因 / Business-benefit attribution](docs/BUSINESS_BENEFIT_ATTRIBUTION.md)
+- [港口全链条跨资源滚动协同 / End-to-end coordination](docs/END_TO_END_COORDINATION.md)
+- [二十四小时连续运行与灾备 / Production continuity](docs/PRODUCTION_CONTINUITY.md)
+- [组织责任、值守与升级治理 / Operating-model governance](docs/OPERATING_MODEL_GOVERNANCE.md)
+- [现场数字孪生标定闭环 / Site twin calibration](docs/SITE_TWIN_CALIBRATION.md)
+- [现场影子运行与上线验收 / Site shadow acceptance](docs/SITE_SHADOW_ACCEPTANCE.md)
+- [现场执行联锁与受控放行 / Site execution acceptance](docs/SITE_EXECUTION_ACCEPTANCE.md)
 - [故障响应 / Incident response](docs/INCIDENT_RESPONSE_RUNBOOK.md)
 - [安全策略 / Security policy](SECURITY.md)
 
@@ -527,6 +538,14 @@ The default runtime exposes the trusted core only. Legacy engineering simulators
 | `PORT_DT_TWIN_CALIBRATION_PATH` | 现场校准记录<br><sub>Site calibration record</sub> | unset |
 | `PORT_DT_SHADOW_ACCEPTANCE_PATH` | 同站点影子运行记录<br><sub>Same-site shadow-run record</sub> | unset |
 | `PORT_DT_ACTUATOR_CONFIG` | 私有南向执行配置<br><sub>Private southbound execution configuration</sub> | unset |
+| `PORT_DT_EXECUTION_ACCEPTANCE_PATH` | 同站点执行联锁调试与放行证据<br><sub>Same-site execution and interlock commissioning evidence</sub> | unset |
+| `PORT_DT_PORT_CALL_COLLABORATION_PATH` | 同站点六方靠泊协同、延误传播和回执证据<br><sub>Same-site six-party port-call collaboration, delay propagation and receipt evidence</sub> | unset |
+| `PORT_DT_MARITIME_INTEROPERABILITY_PATH` | 同站点港口靠泊、海事单一窗口和通用水文数据模型映射及外部测试证据<br><sub>Same-site port-call, maritime-single-window and S-100 mapping with bound external-test evidence</sub> | unset |
+| `PORT_DT_FORECAST_UNCERTAINTY_PATH` | 同站点八类预测、时间留出评估和区间校准证据<br><sub>Same-site eight-target forecasting, chronological holdout and interval-calibration evidence</sub> | unset |
+| `PORT_DT_BUSINESS_BENEFIT_ATTRIBUTION_PATH` | 同站点实际执行、后验计量、同期对照和三方独立复核收益证据<br><sub>Same-site actual execution, measured outcomes, concurrent comparator and three-party independent benefit review</sub> | unset |
+| `PORT_DT_END_TO_END_COORDINATION_PATH` | 同站点十一类资源、九阶段任务、冻结计划与四方复核的全链协同证据<br><sub>Same-site eleven-resource, nine-stage, freeze-aware and four-party reviewed coordination evidence</sub> | unset |
+| `PORT_DT_PRODUCTION_CONTINUITY_PATH` | 同站点三十天连续服务目标、事件闭环、每日还原与六类恢复演练证据<br><sub>Same-site thirty-day service objectives, incident closure, daily restore and six-drill continuity evidence</sub> | unset |
+| `PORT_DT_OPERATING_MODEL_GOVERNANCE_PATH` | 同站点实名职责、异人审批、四周三班值守、资质与升级链证据<br><sub>Same-site named responsibility, duty separation, four-week roster, competency and escalation evidence</sub> | unset |
 | `PORT_DT_ALLOW_MODEL_PROMOTION` | 允许通过门禁后设置 champion<br><sub>Permit gated promotion to champion</sub> | off |
 
 ## 🗂️ 仓库结构 / Repository map

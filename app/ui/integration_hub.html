@@ -172,9 +172,9 @@
         <div class="impact-kicker">Unified Action Stream</div>
         <div class="live-event-list" id="impactEventList"></div>
         <div class="impact-metrics">
-          <div class="impact-metric"><span>节电</span><b id="impactEnergy">—</b></div>
-          <div class="impact-metric"><span>降碳</span><b id="impactCarbon">—</b></div>
-          <div class="impact-metric"><span>削峰</span><b id="impactPeak">—</b></div>
+          <div class="impact-metric"><span>节电 / 电量证据</span><b id="impactEnergy">—</b></div>
+          <div class="impact-metric"><span>降碳 / 碳排证据</span><b id="impactCarbon">—</b></div>
+          <div class="impact-metric"><span>削峰 / 峰值证据</span><b id="impactPeak">—</b></div>
           <div class="impact-metric"><span>风险</span><b id="impactRisk">WAIT</b></div>
         </div>
       </div>
@@ -976,17 +976,67 @@
     }
     function simulationSummaryFrom(data){
       const result = data?.execution_result?.result || {};
-      return result?.test_metrics?.summary || result?.result?.data?.summary || result?.simulation?.data?.summary || result?.simulation?.result?.summary || null;
+      return result?.test_metrics?.summary || result?.result?.data?.summary || result?.simulation?.data?.summary || result?.simulation?.result?.summary || result?.test_metrics?.metrics || result?.result?.data?.metrics || null;
     }
     function updateImpactMetrics(summary){
       if(!summary) return;
-      const energySaving = -Number(summary.delta_kWh || 0);
-      const carbonSaving = -Number(summary.delta_carbon_kg || 0);
-      const peak = Number(summary.peak_reduction_kW || 0);
-      setText("#impactEnergy", `${energySaving >= 0 ? "+" : ""}${energySaving.toFixed(1)} kWh`);
-      setText("#impactCarbon", `${carbonSaving >= 0 ? "+" : ""}${carbonSaving.toFixed(1)} kg`);
-      setText("#impactPeak", `${peak >= 0 ? "+" : ""}${peak.toFixed(1)} kW`);
-      setText("#impactRisk", summary.dispatch_ready ? "LOW" : "WATCH");
+      const hasRelativeEvidence = Number.isFinite(Number(summary.delta_kWh)) || Number.isFinite(Number(summary.delta_carbon_kg)) || Number.isFinite(Number(summary.peak_reduction_kW));
+      if(hasRelativeEvidence){
+        const energySaving = -Number(summary.delta_kWh || 0);
+        const carbonSaving = -Number(summary.delta_carbon_kg || 0);
+        const peak = Number(summary.peak_reduction_kW || 0);
+        setText("#impactEnergy", `${energySaving >= 0 ? "+" : ""}${energySaving.toFixed(1)} kWh`);
+        setText("#impactCarbon", `${carbonSaving >= 0 ? "+" : ""}${carbonSaving.toFixed(1)} kg`);
+        setText("#impactPeak", `${peak >= 0 ? "+" : ""}${peak.toFixed(1)} kW`);
+      }else{
+        const gridEnergy = Number(summary.grid_energy_kwh);
+        const carbon = Number(summary.carbon_kg);
+        const peak = Number(summary.peak_kw);
+        setText("#impactEnergy", Number.isFinite(gridEnergy) ? `电量 ${(gridEnergy / 1000).toFixed(1)} MWh` : "—");
+        setText("#impactCarbon", Number.isFinite(carbon) ? `碳排 ${(carbon / 1000).toFixed(1)} t` : "—");
+        setText("#impactPeak", Number.isFinite(peak) ? `峰值 ${(peak / 1000).toFixed(1)} MW` : "—");
+      }
+      const guardrailRate = Number(summary.guardrail_violation_rate);
+      const interventionRate = Number(summary.hard_constraint_intervention_rate);
+      const guarded = (Number.isFinite(guardrailRate) && guardrailRate > 0) || (Number.isFinite(interventionRate) && interventionRate > 0);
+      setText("#impactRisk", summary.dispatch_ready === true ? "LOW" : (guarded || summary.dispatch_ready === false ? "WATCH" : "EVAL ONLY"));
+    }
+    function compactPolicyTestReceipt(data){
+      const execution = data?.execution_result || {};
+      const result = execution?.result || {};
+      const evaluation = result?.result?.data || {};
+      const testMetrics = result?.test_metrics || {};
+      const metrics = testMetrics?.metrics || evaluation?.metrics || {};
+      const uncertainty = testMetrics?.uncertainty || evaluation?.uncertainty || {};
+      const metricNames = ["reward","energy_cost","carbon_kg","throughput_teu","peak_kw","grid_energy_kwh","delay_index_mean","service_completion_ratio","guardrail_violation_rate","hard_constraint_intervention_rate"];
+      const selectedMetrics = Object.fromEntries(metricNames.filter(name=>metrics[name] !== undefined).map(name=>[name,metrics[name]]));
+      const selectedUncertainty = Object.fromEntries(metricNames.filter(name=>uncertainty[name]).map(name=>[name,{
+        mean:uncertainty[name].mean,
+        ci_low:uncertainty[name].ci_low,
+        ci_high:uncertainty[name].ci_high,
+        confidence:uncertainty[name].confidence,
+        method:uncertainty[name].method
+      }]));
+      const manifest = result?.latest_policy_artifact?.data?.status?.manifest || {};
+      return {
+        ok:data?.ok === true,
+        updated_at:data?.updated_at,
+        gateway:data?.gateway,
+        action:{id:data?.action?.id,label:data?.action?.label},
+        execution:{status:execution?.status,mode:execution?.mode,executed:execution?.executed},
+        policy:{job_id:result?.job_id || manifest.job_id,algorithm:evaluation?.algorithm || manifest.algorithm,model_sha256:manifest.model_sha256},
+        evaluation:{
+          dataset_id:evaluation?.dataset_id || manifest.dataset_id,
+          dataset_sha256:evaluation?.dataset_sha256 || manifest.dataset_sha256,
+          split:evaluation?.split,
+          episodes:evaluation?.episodes || result?.episodes,
+          metrics:selectedMetrics,
+          uncertainty_95ci:selectedUncertainty,
+          render:{frame_count:testMetrics?.render?.frame_count ?? evaluation?.render?.frame_count ?? 0,training_render_calls:manifest.render_calls_during_training},
+          evaluated_at:evaluation?.evaluated_at
+        },
+        production_boundary:"训练后独立时序留出集评测证据；不是现场业务收益、生产放行或设备执行回执。完整轨迹保留在后端评测接口。"
+      };
     }
     function hidePolicyRecovery(){
       policyRecoveryContext = null;
@@ -1428,7 +1478,7 @@
       setImpactStage("#stageSimulation", "active");
       try{
         const data = await api("/api/assistant/actions/execute", {method:"POST", body:{action_id:"run_policy_test", instruction:"小懿，训练完成后运行策略测试", dry_run:false, source:"integration_hub", horizon_min:Number($("#trainHorizon").value), step_min:5}});
-        setText("#rlPacket", pretty(data));
+        setText("#rlPacket", pretty(compactPolicyTestReceipt(data)));
         const status = data.execution_result?.status || "done";
         updateImpactMetrics(simulationSummaryFrom(data));
         if(status === "executed"){

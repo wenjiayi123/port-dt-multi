@@ -1,0 +1,29 @@
+{
+  "schema": "port-dt-integrated-port-scenario.v1",
+  "scenario_id": "cn_sha_integrated_forward_2026m05_v5",
+  "created_at": "2026-08-26T00:00:00Z",
+  "base_dataset_id": "public_cn_sha_regulatory_forward_2026m05_v4",
+  "output_dataset_id": "public_cn_sha_integrated_forward_2026m05_v5",
+  "parameters": {
+    "truck_teu_share": 0.62,
+    "average_teu_per_truck": 1.65,
+    "rail_teu_share": 0.025,
+    "barge_teu_share": 0.18,
+    "nominal_gate_capacity_trucks_per_hour": 2550.0,
+    "nominal_intermodal_capacity_teu_per_hour": 1450.0,
+    "nominal_shore_power_kw_per_occupied_berth": 7200.0,
+    "channel_chart_depth_m": 16.0,
+    "planning_draft_min_m": 13.2,
+    "planning_draft_max_m": 15.4,
+    "minimum_squat_allowance_m": 0.25,
+    "maximum_squat_allowance_m": 0.85,
+    "dangerous_goods_share_min": 0.025,
+    "dangerous_goods_share_max": 0.12
+  },
+  "evidence_boundary": {
+    "classification": "PUBLIC_FORWARD_REANALYSIS_PLUS_FROZEN_ENGINEERING_PORT_WIDE_SCENARIO",
+    "calibration_warning": "The 2026 public weather and marine rows are an independent forward challenge. Port-wide fields use the frozen V5 formulas declared before this forward evaluation and remain engineering scenario variables, not Shanghai terminal telemetry.",
+    "production_authority": false,
+    "replacement_rule": "Replace fields one-for-one from authorized terminal and maritime systems while retaining the frozen schema, masks and units."
+  }
+}

@@ -235,19 +235,28 @@ def _verified_site_json(env_name: str, *, kind: str) -> Dict[str, Any]:
                 and payload.get("approved_by")
             )
         elif kind == "calibration":
+            from app.services.twin_schema.service import TwinSchemaService
+
+            calibration_validation = TwinSchemaService.validate_calibration(payload)
             kind_ok = bool(
                 payload.get("measured_outcomes") is True
                 and payload.get("validation_status") == "pass"
                 and int(payload.get("validation_rows") or 0) > 0
                 and payload.get("approved_by")
+                and calibration_validation.get("production_gate_eligible") is True
             )
         elif kind == "shadow":
+            from app.services.site_shadow_acceptance import SiteShadowAcceptanceService
+
+            shadow_validation = SiteShadowAcceptanceService.validate_evidence(payload)
             kind_ok = bool(
                 payload.get("measured_incumbent_baseline") is True
                 and payload.get("acceptance_status") == "pass"
-                and int(payload.get("shadow_cycles") or 0) > 0
+                and int(payload.get("shadow_cycles") or 0) >= 35
+                and int(payload.get("operational_days") or 0) >= 7
                 and float(payload.get("guardrail_violation_rate") or 0.0) == 0.0
                 and payload.get("approved_by")
+                and shadow_validation.get("production_gate_eligible") is True
             )
         else:
             kind_ok = False
@@ -306,18 +315,150 @@ def readiness_report() -> Dict[str, Any]:
     checks["twin_graph"] = {**_verified_site_json("PORT_DT_TWIN_GRAPH_PATH", kind="graph"), "required_for_research_api": False}
     checks["site_calibration"] = {**_verified_site_json("PORT_DT_TWIN_CALIBRATION_PATH", kind="calibration"), "required_for_research_api": False}
     checks["shadow_acceptance"] = {**_verified_site_json("PORT_DT_SHADOW_ACCEPTANCE_PATH", kind="shadow"), "required_for_research_api": False}
+    from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
+
+    execution_readiness = SiteExecutionAcceptanceService().readiness()
+    execution_artifacts = execution_readiness["configured_artifacts"]
+    checks["site_execution_acceptance"] = {
+        "ok": execution_readiness["boundary"]["site_execution_accepted"],
+        "status": "verified" if execution_readiness["boundary"]["site_execution_accepted"] else "evidence_incomplete",
+        "env": "PORT_DT_EXECUTION_ACCEPTANCE_PATH",
+        "artifact_id": execution_artifacts.get("evidence_artifact_id"),
+        "sha256": execution_artifacts.get("evidence_sha256"),
+        "site_id": execution_artifacts.get("site_id"),
+        "kind": "execution",
+        "blockers": execution_artifacts.get("blockers") or [],
+        "required_for_research_api": False,
+    }
+    from app.services.port_call_collaboration import PortCallCollaborationService
+
+    collaboration_readiness = PortCallCollaborationService().readiness()
+    collaboration_artifact = collaboration_readiness["configured_artifact"]
+    checks["port_call_collaboration"] = {
+        "ok": collaboration_readiness["boundary"]["site_collaboration_accepted"],
+        "status": "verified" if collaboration_readiness["boundary"]["site_collaboration_accepted"] else "evidence_incomplete",
+        "env": "PORT_DT_PORT_CALL_COLLABORATION_PATH",
+        "artifact_id": collaboration_artifact.get("artifact_id"),
+        "sha256": collaboration_artifact.get("sha256"),
+        "site_id": collaboration_artifact.get("site_id"),
+        "kind": "port_call_collaboration",
+        "blockers": collaboration_artifact.get("blockers") or [],
+        "required_for_research_api": False,
+    }
+    from app.services.maritime_interoperability import MaritimeInteroperabilityService
+
+    interoperability_readiness = MaritimeInteroperabilityService().readiness()
+    interoperability_artifact = interoperability_readiness["configured_artifact"]
+    checks["maritime_interoperability"] = {
+        "ok": interoperability_readiness["boundary"]["site_interoperability_accepted"],
+        "status": "verified" if interoperability_readiness["boundary"]["site_interoperability_accepted"] else "evidence_incomplete",
+        "env": "PORT_DT_MARITIME_INTEROPERABILITY_PATH",
+        "artifact_id": interoperability_artifact.get("artifact_id"),
+        "sha256": interoperability_artifact.get("sha256"),
+        "site_id": interoperability_artifact.get("site_id"),
+        "kind": "maritime_interoperability",
+        "blockers": interoperability_artifact.get("blockers") or [],
+        "required_for_research_api": False,
+    }
+    from app.services.forecast_uncertainty import ForecastUncertaintyService
+
+    forecast_readiness = ForecastUncertaintyService().readiness()
+    forecast_artifact = forecast_readiness["configured_artifact"]
+    checks["forecast_uncertainty"] = {
+        "ok": forecast_readiness["boundary"]["site_forecast_service_accepted"],
+        "status": "verified" if forecast_readiness["boundary"]["site_forecast_service_accepted"] else "evidence_incomplete",
+        "env": "PORT_DT_FORECAST_UNCERTAINTY_PATH",
+        "artifact_id": forecast_artifact.get("artifact_id"),
+        "sha256": forecast_artifact.get("sha256"),
+        "site_id": forecast_artifact.get("site_id"),
+        "kind": "forecast_uncertainty",
+        "blockers": forecast_artifact.get("blockers") or [],
+        "required_for_research_api": False,
+    }
+    from app.services.business_benefit_attribution import BusinessBenefitAttributionService
+
+    benefit_readiness = BusinessBenefitAttributionService().readiness()
+    benefit_artifact = benefit_readiness["configured_artifact"]
+    checks["business_benefit_attribution"] = {
+        "ok": benefit_readiness["boundary"]["realized_business_benefit_verified"],
+        "status": "verified" if benefit_readiness["boundary"]["realized_business_benefit_verified"] else "evidence_incomplete",
+        "env": "PORT_DT_BUSINESS_BENEFIT_ATTRIBUTION_PATH",
+        "artifact_id": benefit_artifact.get("artifact_id"),
+        "sha256": benefit_artifact.get("sha256"),
+        "site_id": benefit_artifact.get("site_id"),
+        "kind": "business_benefit_attribution",
+        "blockers": benefit_artifact.get("blockers") or [],
+        "required_for_research_api": False,
+    }
+    from app.services.end_to_end_coordination import EndToEndCoordinationService
+
+    coordination_readiness = EndToEndCoordinationService().readiness()
+    coordination_artifact = coordination_readiness["configured_artifact"]
+    checks["end_to_end_coordination"] = {
+        "ok": coordination_readiness["boundary"]["site_end_to_end_coordination_accepted"],
+        "status": "verified" if coordination_readiness["boundary"]["site_end_to_end_coordination_accepted"] else "evidence_incomplete",
+        "env": "PORT_DT_END_TO_END_COORDINATION_PATH",
+        "artifact_id": coordination_artifact.get("artifact_id"),
+        "sha256": coordination_artifact.get("sha256"),
+        "site_id": coordination_artifact.get("site_id"),
+        "kind": "end_to_end_coordination",
+        "blockers": coordination_artifact.get("blockers") or [],
+        "required_for_research_api": False,
+    }
+    from app.services.production_continuity import ProductionContinuityService
+
+    continuity_readiness = ProductionContinuityService().readiness()
+    continuity_artifact = continuity_readiness["configured_artifact"]
+    checks["production_continuity"] = {
+        "ok": continuity_readiness["boundary"]["site_continuity_accepted"],
+        "status": "verified" if continuity_readiness["boundary"]["site_continuity_accepted"] else "evidence_incomplete",
+        "env": "PORT_DT_PRODUCTION_CONTINUITY_PATH",
+        "artifact_id": continuity_artifact.get("artifact_id"),
+        "sha256": continuity_artifact.get("sha256"),
+        "site_id": continuity_artifact.get("site_id"),
+        "kind": "production_continuity",
+        "blockers": continuity_artifact.get("blockers") or [],
+        "required_for_research_api": False,
+    }
+    from app.services.operating_model_governance import OperatingModelGovernanceService
+
+    operating_model_readiness = OperatingModelGovernanceService().readiness()
+    operating_model_artifact = operating_model_readiness["configured_artifact"]
+    checks["operating_model_governance"] = {
+        "ok": operating_model_readiness["boundary"]["site_operating_model_accepted"],
+        "status": "verified" if operating_model_readiness["boundary"]["site_operating_model_accepted"] else "evidence_incomplete",
+        "env": "PORT_DT_OPERATING_MODEL_GOVERNANCE_PATH",
+        "artifact_id": operating_model_artifact.get("artifact_id"),
+        "sha256": operating_model_artifact.get("sha256"),
+        "site_id": operating_model_artifact.get("site_id"),
+        "kind": "operating_model_governance",
+        "blockers": operating_model_artifact.get("blockers") or [],
+        "required_for_research_api": False,
+    }
     evidence_site_ids = {
         checks[name].get("site_id")
-        for name in ("twin_graph", "site_calibration", "shadow_acceptance")
+        for name in (
+            "twin_graph", "site_calibration", "shadow_acceptance",
+            "site_execution_acceptance", "port_call_collaboration", "maritime_interoperability", "forecast_uncertainty",
+            "business_benefit_attribution",
+            "end_to_end_coordination",
+            "production_continuity", "operating_model_governance",
+        )
         if checks[name].get("ok")
     }
     checks["site_evidence_consistency"] = {
         "ok": len(evidence_site_ids) == 1 and all(
             checks[name].get("ok")
-            for name in ("twin_graph", "site_calibration", "shadow_acceptance")
+            for name in (
+                "twin_graph", "site_calibration", "shadow_acceptance",
+                "site_execution_acceptance", "port_call_collaboration", "maritime_interoperability", "forecast_uncertainty",
+                "business_benefit_attribution",
+                "end_to_end_coordination",
+                "production_continuity", "operating_model_governance",
+            )
         ),
         "site_ids": sorted(str(item) for item in evidence_site_ids),
-        "requirement": "graph, calibration and shadow acceptance must bind to the same site_id",
+        "requirement": "all technical, continuity and operating-model evidence must bind to the same site_id",
     }
     open_source_ready = all(checks[name]["ok"] for name in ("canonical_dataset", "rl_runtime"))
     production_ready = open_source_ready and all(
@@ -325,7 +466,12 @@ def readiness_report() -> Dict[str, Any]:
         for name in (
             "production_mode", "cors", "api_authentication", "privileged_api_key",
             "tls_termination", "secret_manager", "twin_graph", "site_calibration",
-            "shadow_acceptance", "site_evidence_consistency",
+            "shadow_acceptance", "site_execution_acceptance", "port_call_collaboration", "maritime_interoperability",
+            "forecast_uncertainty",
+            "business_benefit_attribution",
+            "end_to_end_coordination",
+            "production_continuity", "operating_model_governance",
+            "site_evidence_consistency",
         )
     )
     return {
@@ -333,7 +479,7 @@ def readiness_report() -> Dict[str, Any]:
         "open_source_runtime_ready": open_source_ready,
         "production_site_ready": production_ready,
         "checks": checks,
-        "boundary": "production_site_ready requires verified site graph, measured calibration, accepted shadow evidence, production auth/CORS, TLS and secret-manager attestations",
+        "boundary": "production_site_ready requires verified technical evidence, thirty-day continuity with service targets and recovery drills, a four-week named operating model with duty separation and escalation, production auth/CORS, TLS and secret-manager attestations",
     }
 
 

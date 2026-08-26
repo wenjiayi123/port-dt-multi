@@ -387,20 +387,46 @@ class V3RuntimeService:
             "claim_boundary": "Open-loop projection over the current calibrated replay window using the environment service equations; formal multi-seed blind-test evidence remains the release KPI evidence.",
         }
 
-    def series(self, *, horizon_min: int = 360, step_min: int = 1, scenario: str = "strategy") -> dict[str, Any]:
+    def series(
+        self,
+        *,
+        horizon_min: int = 360,
+        step_min: int = 1,
+        scenario: str = "strategy",
+        replay_anchor_position: float | None = None,
+    ) -> dict[str, Any]:
         self._ensure_loaded()
         if self._policy is None:
             return {"available": False, "reason": self._load_error or "runtime policy unavailable", "series": {"p50": [], "p10": [], "p90": []}, "assets": {}}
         state_series_fn = getattr(self.di.telemetry, "port_state_series", None)
         if not callable(state_series_fn):
             return {"available": False, "reason": "telemetry adapter does not expose canonical port states", "series": {"p50": [], "p10": [], "p90": []}, "assets": {}}
-        cache_key = f"{horizon_min}:{step_min}:{scenario}:{int(time.time() // 5)}"
+        anchor_key = "live" if replay_anchor_position is None else f"pinned:{float(replay_anchor_position):.6f}"
+        cache_key = f"{horizon_min}:{step_min}:{scenario}:{anchor_key}:{int(time.time() // 5) if replay_anchor_position is None else 'stable'}"
         if self._cache["key"] == cache_key and self._cache["value"] is not None:
             return self._cache["value"]
-        baseline, asset_forecasts = self._baseline_forecasts(horizon_min, step_min)
+        pinned_state_series_fn = getattr(self.di.telemetry, "port_state_series_at", None)
+        asset_breakdown_fn = getattr(self.di.telemetry, "asset_breakdown", None)
+        if replay_anchor_position is not None and callable(pinned_state_series_fn) and callable(asset_breakdown_fn):
+            states = pinned_state_series_fn(horizon_min, step_min, float(replay_anchor_position))
+            baseline = [
+                {
+                    "ts": row.get("timestamp"),
+                    "p50": float(row.get("base_load_kw") or 0.0),
+                    "p10": float(row.get("base_load_kw") or 0.0),
+                    "p90": float(row.get("base_load_kw") or 0.0),
+                }
+                for row in states
+            ]
+            asset_forecasts: dict[str, list[dict[str, Any]]] = {}
+            for row, base in zip(states, baseline):
+                for asset_id, value in asset_breakdown_fn(row).items():
+                    asset_forecasts.setdefault(str(asset_id), []).append({"ts": base["ts"], "p50": float(value)})
+        else:
+            baseline, asset_forecasts = self._baseline_forecasts(horizon_min, step_min)
+            states = state_series_fn(horizon_min, step_min)
         if not baseline:
             return {"available": False, "reason": "forecast model returned no baseline", "series": {"p50": [], "p10": [], "p90": []}, "assets": {}}
-        states = state_series_fn(horizon_min, step_min)
         count = min(len(states), len(baseline))
         if scenario in {"baseline", "forecast", "forecast_baseline"}:
             output = {

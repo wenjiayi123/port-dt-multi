@@ -37,6 +37,7 @@ class PortOperationsEnv(gym.Env):
         port_profile: Optional[Dict[str, Any]] = None,
         projection_penalty_weight: float = 0.0,
         normalization_slice: Optional[slice] = None,
+        normalization_dataset: Optional[PortDataset] = None,
         training: bool = True,
         record_trace: bool = False,
     ) -> None:
@@ -87,15 +88,16 @@ class PortOperationsEnv(gym.Env):
         self._seed = int(seed)
         # Observation scaling is fitted on the chronological training slice
         # only. Evaluation must not use held-out extrema to normalize itself.
-        normalization_train = normalization_slice or dataset.split()[0]
-        normalization_reference = dataset.values[normalization_train].astype(
+        normalization_source = normalization_dataset or dataset
+        normalization_train = normalization_slice or normalization_source.split()[0]
+        normalization_reference = normalization_source.values[normalization_train].astype(
             np.float32, copy=False
         )
         self._mins = np.nanmin(normalization_reference, axis=0)
         self._maxs = np.nanmax(normalization_reference, axis=0)
         self._spans = np.maximum(self._maxs - self._mins, 1e-6)
-        factor_reference = dataset.factor_values[normalization_train].astype(np.float32, copy=False)
-        factor_mask_reference = dataset.factor_availability[normalization_train].astype(np.float32, copy=False)
+        factor_reference = normalization_source.factor_values[normalization_train].astype(np.float32, copy=False)
+        factor_mask_reference = normalization_source.factor_availability[normalization_train].astype(np.float32, copy=False)
         self._factor_mins = np.zeros(len(FACTOR_COLUMNS), dtype=np.float32)
         self._factor_spans = np.ones(len(FACTOR_COLUMNS), dtype=np.float32)
         for index in range(len(FACTOR_COLUMNS)):

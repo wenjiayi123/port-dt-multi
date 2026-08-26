@@ -18,6 +18,7 @@ from .datasets import (
     DEFAULT_DATA_ROOT,
     FACTOR_COLUMNS,
     NUMERIC_COLUMNS,
+    PORT_WIDE_COLUMNS,
     REGULATORY_COLUMNS,
     PortDataset,
     file_sha256,
@@ -26,11 +27,13 @@ from .datasets import (
 )
 from .environment import PortOperationsEnv, dataset_quality_cadence
 from .regulatory_environment import RegulatoryPortOperationsEnv
+from .integrated_environment import IntegratedPortOperationsEnv
 from .baselines import FCFSNeutralPolicy
 from .mpc import MPCPolicy
 from .model_registry import ModelRegistry
 from .identifiers import resolve_child_dir, validate_identifier
 from .safety import assess_recommendation
+from .business_guardrails import assess_integrated_business_constraints
 from .statistics import bootstrap_summary, summarize_metric_rows
 from .profiles import DEFAULT_PROFILE_ID, list_profiles, load_profile
 
@@ -318,6 +321,43 @@ class TrainingManager:
                     "delay_chain": "inspection_demand_to_hold_to_release_to_recovery_queue",
                     "scenario_boundary": "regulatory factors require site replacement before field claims",
                 },
+                "port_ops_v5": {
+                    "observation_dimensions": IntegratedPortOperationsEnv.OBSERVATION_DIMENSIONS,
+                    "observation_fields": [
+                        "hour_sin", "hour_cos", *NUMERIC_COLUMNS,
+                        *FACTOR_COLUMNS,
+                        *[f"{name}_available" for name in FACTOR_COLUMNS],
+                        *REGULATORY_COLUMNS,
+                        *[f"{name}_available" for name in REGULATORY_COLUMNS],
+                        "soc", "queue_pressure", "last_bess_power", "episode_progress",
+                        "maritime_hold_pressure", "customs_hold_pressure",
+                        "regulatory_hold_work_pressure", "recovery_queue_pressure",
+                        *PORT_WIDE_COLUMNS,
+                        *[f"{name}_available" for name in PORT_WIDE_COLUMNS],
+                        "gate_backlog_pressure", "intermodal_backlog_pressure",
+                        "marine_service_backlog_pressure", "reefer_risk_stock",
+                        "maintenance_debt", "unmet_shore_power_pressure",
+                    ],
+                    "continuous_action_dimensions": IntegratedPortOperationsEnv.ACTION_DIMENSIONS,
+                    "actions": [
+                        "bess_power", "service_factor", "flexible_load",
+                        "berth_priority", "yard_flow", "inspection_buffer",
+                        "recovery_priority", "gate_smoothing",
+                        "intermodal_allocation", "reefer_service",
+                        "shore_power_allocation", "maintenance_reserve",
+                        "marine_service_allocation",
+                    ],
+                    "discrete_action_support": False,
+                    "hard_constraints_outside_rl": [
+                        "regulatory_release", "channel_closure",
+                        "under_keel_clearance", "weather_stop_limits",
+                        "dangerous_goods_segregation", "equipment_interlocks",
+                        "human_approval_and_execution",
+                    ],
+                    "authority": "recommendation_only_no_release_navigation_or_actuator_authority",
+                    "safety_revision": IntegratedPortOperationsEnv.SAFETY_REVISION,
+                    "site_replacement": "all port-wide engineering scenario fields have explicit masks and require authorized site adapters",
+                },
             },
             "training_rendering": "disabled",
             "evaluation_rendering": "trajectory_json_only",
@@ -354,12 +394,15 @@ class TrainingManager:
             or profile.get("environment_version")
             or "port_ops_v1"
         )
-        if environment_version not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4"}:
-            raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3 or port_ops_v4")
+        if environment_version not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4", "port_ops_v5"}:
+            raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3, port_ops_v4 or port_ops_v5")
+        if environment_version == "port_ops_v5" and ALGORITHMS[algorithm].action_space != "continuous":
+            raise ValueError("port_ops_v5 supports continuous algorithms only; the 13-control discrete lattice is intentionally prohibited")
         required_factors = list(profile["factor_requirements"].get("required_for_training") or [])
         factor_coverage = {
             **(quality.get("factor_coverage") or {}),
             **(quality.get("regulatory_factor_coverage") or {}),
+            **(quality.get("port_wide_factor_coverage") or {}),
         }
         unavailable_required = [
             name for name in required_factors
@@ -427,7 +470,14 @@ class TrainingManager:
             10.0,
             max(0.0, float(raw.get("regulatory_delay_penalty_weight") or 0.35)),
         )
-        if environment_version == "port_ops_v4":
+        integrated_reward_weights = {
+            str(name): max(0.0, min(10.0, float(value)))
+            for name, value in dict(raw.get("integrated_reward_weights") or {}).items()
+        }
+        if environment_version == "port_ops_v5":
+            observation_dimensions = IntegratedPortOperationsEnv.OBSERVATION_DIMENSIONS
+            action_dimensions = IntegratedPortOperationsEnv.ACTION_DIMENSIONS
+        elif environment_version == "port_ops_v4":
             observation_dimensions = RegulatoryPortOperationsEnv.OBSERVATION_DIMENSIONS
             action_dimensions = RegulatoryPortOperationsEnv.ACTION_DIMENSIONS
         else:
@@ -471,7 +521,11 @@ class TrainingManager:
             "reward_weights": reward_weights,
             "projection_penalty_weight": projection_penalty_weight,
             "regulatory_delay_penalty_weight": regulatory_delay_penalty_weight,
+            "integrated_reward_weights": integrated_reward_weights,
             "environment_safety_revision": (
+                IntegratedPortOperationsEnv.SAFETY_REVISION
+                if environment_version == "port_ops_v5"
+                else
                 RegulatoryPortOperationsEnv.SAFETY_REVISION
                 if environment_version == "port_ops_v4"
                 else None
@@ -541,16 +595,27 @@ class TrainingManager:
             )
         else:
             train_slice, test_slice = dataset.split(config["test_ratio"])
-        environment_class = (
-            RegulatoryPortOperationsEnv
-            if config.get("environment_version") == "port_ops_v4"
-            else PortOperationsEnv
-        )
-        environment_kwargs = {
-            "regulatory_delay_penalty_weight": float(
-                config.get("regulatory_delay_penalty_weight") or 0.35
-            )
-        } if environment_class is RegulatoryPortOperationsEnv else {}
+        environment_version = config.get("environment_version")
+        if environment_version == "port_ops_v5":
+            environment_class = IntegratedPortOperationsEnv
+            environment_kwargs = {
+                "regulatory_delay_penalty_weight": float(
+                    config.get("regulatory_delay_penalty_weight") or 0.35
+                ),
+                "integrated_reward_weights": dict(
+                    config.get("integrated_reward_weights") or {}
+                ),
+            }
+        elif environment_version == "port_ops_v4":
+            environment_class = RegulatoryPortOperationsEnv
+            environment_kwargs = {
+                "regulatory_delay_penalty_weight": float(
+                    config.get("regulatory_delay_penalty_weight") or 0.35
+                )
+            }
+        else:
+            environment_class = PortOperationsEnv
+            environment_kwargs = {}
         return environment_class(
             dataset,
             train_slice if training else test_slice,
@@ -970,16 +1035,27 @@ class TrainingManager:
             config["test_ratio"], validation_ratio
         )
         selected_slice = validation_slice if split_name == "validation" else test_slice
-        environment_class = (
-            RegulatoryPortOperationsEnv
-            if config.get("environment_version") == "port_ops_v4"
-            else PortOperationsEnv
-        )
-        environment_kwargs = {
-            "regulatory_delay_penalty_weight": float(
-                config.get("regulatory_delay_penalty_weight") or 0.35
-            )
-        } if environment_class is RegulatoryPortOperationsEnv else {}
+        environment_version = config.get("environment_version")
+        if environment_version == "port_ops_v5":
+            environment_class = IntegratedPortOperationsEnv
+            environment_kwargs = {
+                "regulatory_delay_penalty_weight": float(
+                    config.get("regulatory_delay_penalty_weight") or 0.35
+                ),
+                "integrated_reward_weights": dict(
+                    config.get("integrated_reward_weights") or {}
+                ),
+            }
+        elif environment_version == "port_ops_v4":
+            environment_class = RegulatoryPortOperationsEnv
+            environment_kwargs = {
+                "regulatory_delay_penalty_weight": float(
+                    config.get("regulatory_delay_penalty_weight") or 0.35
+                )
+            }
+        else:
+            environment_class = PortOperationsEnv
+            environment_kwargs = {}
         env = environment_class(
             dataset,
             selected_slice,
@@ -1191,7 +1267,7 @@ class TrainingManager:
             inference_soc = float((canonical_state or {}).get("soc", 0.55))
             inference_last_bess = float((canonical_state or {}).get("last_bess_kw", 0.0))
             decoded = env.project_control(raw_action, soc=inference_soc, last_bess_kw=inference_last_bess)
-            return {
+            result = {
                 "job_id": job_id,
                 "algorithm": config["algorithm"],
                 "implementation": ALGORITHMS[config["algorithm"]].implementation,
@@ -1217,6 +1293,16 @@ class TrainingManager:
                 "rendered": False,
                 "predicted_at": utc_now(),
             }
+            if config.get("environment_version") == "port_ops_v5":
+                result["deterministic_business_guardrails"] = (
+                    assess_integrated_business_constraints(
+                        state=canonical_state,
+                        decoded_control=decoded,
+                        demand_cap_kw=config["demand_cap_kw"],
+                        port_profile=config.get("port_profile"),
+                    )
+                )
+            return result
         finally:
             env.close()
 

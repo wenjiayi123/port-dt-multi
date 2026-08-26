@@ -88,6 +88,21 @@ from app.services.monitoring_evidence import MonitoringEvidenceService
 from app.services.future_decision import FutureDecisionService
 from app.services.opsx_evidence import OpsXEvidenceService
 from app.services.external_signals_evidence import ExternalSignalsEvidenceService
+from app.services.port_call_gateway import (
+    PortCallGateway,
+    PortCallGatewayUnavailable,
+    PortCallPayloadRejected,
+)
+from app.services.port_call_collaboration import PortCallCollaborationService
+from app.services.maritime_interoperability import MaritimeInteroperabilityService
+from app.services.forecast_uncertainty import ForecastUncertaintyService
+from app.services.business_benefit_attribution import BusinessBenefitAttributionService
+from app.services.end_to_end_coordination import EndToEndCoordinationService
+from app.services.production_continuity import ProductionContinuityService
+from app.services.operating_model_governance import OperatingModelGovernanceService
+from app.services.site_twin_calibration import SiteTwinCalibrationService
+from app.services.site_shadow_acceptance import SiteShadowAcceptanceService
+from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
 from app.services.mlops_evidence import MLOpsEvidenceService
 from app.services.governance_evidence import GovernanceEvidenceService
 from app.operations import configure_operations, cors_origins, is_production
@@ -330,7 +345,21 @@ energy_intensity = CurvesEnergyIntensity(di)
 peak_risk = CurvesPeakRisk(di)
 realtime_insights = RealtimeInsightsService(di, peak_risk)
 mas_evidence = MASEvidenceService()
-twin_reliability = TwinReliabilityService(di.strategy_runtime, di.telemetry)
+_site_twin_calibration = SiteTwinCalibrationService()
+_site_shadow_acceptance = SiteShadowAcceptanceService()
+_site_execution_acceptance = SiteExecutionAcceptanceService()
+_port_call_collaboration = PortCallCollaborationService()
+_maritime_interoperability = MaritimeInteroperabilityService()
+_forecast_uncertainty = ForecastUncertaintyService()
+_business_benefit_attribution = BusinessBenefitAttributionService()
+_end_to_end_coordination = EndToEndCoordinationService()
+_production_continuity = ProductionContinuityService()
+_operating_model_governance = OperatingModelGovernanceService()
+twin_reliability = TwinReliabilityService(
+    di.strategy_runtime,
+    di.telemetry,
+    site_calibration=_site_twin_calibration,
+)
 yard_lighting_evidence = YardLightingEvidenceService()
 hvac_evidence = HVACEvidenceService()
 shore_bess_evidence = ShoreBESSEvidenceService()
@@ -650,12 +679,14 @@ register_ingest_startup(app, di, interval_sec=30, step_sec=60)
 _tos = TOSClient() if TOSClient else None
 _market = MarketClient() if MarketClient else None
 _ais = AISTideClient() if AISTideClient else None
+_port_call = PortCallGateway()
 external_signals_evidence = ExternalSignalsEvidenceService(
     di.telemetry,
     tos=_tos,
     market=_market,
     ais_tide=_ais,
     schedule=getattr(di, "schedule", None),
+    port_call=_port_call,
 )
 governance_evidence = GovernanceEvidenceService(
     ai_trust_evidence,
@@ -667,6 +698,243 @@ governance_evidence = GovernanceEvidenceService(
 @app.get("/api/v3/external-signals/evidence", tags=["v3-governance"])
 async def v3_external_signals_evidence() -> JSONResponse:
     return JSONResponse(await asyncio.to_thread(external_signals_evidence.build))
+
+
+@app.get("/api/v3/port-call/readiness", tags=["v3-governance"])
+async def v3_port_call_readiness() -> JSONResponse:
+    return JSONResponse(_port_call.readiness())
+
+
+@app.post("/api/v3/port-call/validate", tags=["v3-governance"])
+async def v3_port_call_validate(
+    payload: Dict[str, Any] = Body(..., description="标准靠泊事件数据包；仅校验，不保存、不下发"),
+) -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_port_call.validate_bundle, payload))
+
+
+@app.get("/api/v3/port-call/events", tags=["v3-governance"])
+async def v3_port_call_events(
+    start: str = Query(..., min_length=20, max_length=40, description="开始时间 ISO 8601"),
+    end: str = Query(..., min_length=20, max_length=40, description="结束时间 ISO 8601"),
+    port_unlocode: str = Query(..., min_length=5, max_length=5, pattern="^[A-Za-z]{2}[A-Za-z0-9]{3}$"),
+) -> JSONResponse:
+    try:
+        start_at = _parse_iso(start)
+        end_at = _parse_iso(end)
+        if end_at <= start_at:
+            raise HTTPException(status_code=422, detail="end must be after start")
+        if end_at - start_at > timedelta(days=31):
+            raise HTTPException(status_code=422, detail="port-call query window must not exceed 31 days")
+        result = await asyncio.to_thread(
+            _port_call.fetch_events,
+            start=start_at.isoformat(),
+            end=end_at.isoformat(),
+            port_unlocode=port_unlocode.upper(),
+        )
+        return JSONResponse(result)
+    except HTTPException:
+        raise
+    except PortCallGatewayUnavailable as exc:
+        raise HTTPException(status_code=503, detail="port call gateway is not configured") from exc
+    except PortCallPayloadRejected as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={"message": "configured port-call source failed validation", "validation": exc.result},
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail="port call gateway query failed") from exc
+
+
+@app.get("/api/v3/port-call-collaboration/readiness", tags=["v3-governance"])
+async def v3_port_call_collaboration_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_port_call_collaboration.readiness))
+
+
+@app.post("/api/v3/port-call-collaboration/run", tags=["v3-governance"])
+async def v3_port_call_collaboration_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="六方靠泊协同数据包；浏览器接口只计算延误传播和重排建议，不保存、不审批、不修改真实计划",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _port_call_collaboration.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/maritime-interoperability/readiness", tags=["v3-governance"])
+async def v3_maritime_interoperability_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_maritime_interoperability.readiness))
+
+
+@app.post("/api/v3/maritime-interoperability/run", tags=["v3-governance"])
+async def v3_maritime_interoperability_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="标准互操作映射数据包；浏览器接口只生成字段映射和内部合同结果，不报送主管机关、不授予适航或生产权限",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _maritime_interoperability.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/forecast-uncertainty/readiness", tags=["v3-governance"])
+async def v3_forecast_uncertainty_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_forecast_uncertainty.readiness))
+
+
+@app.post("/api/v3/forecast-uncertainty/run", tags=["v3-governance"])
+async def v3_forecast_uncertainty_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="八类港口预测与区间校准数据包；浏览器接口只拟合并评估合同样例，不保存、不审批、不触发资源承诺或设备指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _forecast_uncertainty.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/business-benefit-attribution/readiness", tags=["v3-governance"])
+async def v3_business_benefit_attribution_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_business_benefit_attribution.readiness))
+
+
+@app.post("/api/v3/business-benefit-attribution/run", tags=["v3-governance"])
+async def v3_business_benefit_attribution_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="成对业务收益归因数据包；浏览器接口只计算合同样例，不保存、不审批、不把离线反事实改称现场收益",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _business_benefit_attribution.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/end-to-end-coordination/readiness", tags=["v3-governance"])
+async def v3_end_to_end_coordination_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_end_to_end_coordination.readiness))
+
+
+@app.post("/api/v3/end-to-end-coordination/run", tags=["v3-governance"])
+async def v3_end_to_end_coordination_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="港口全链条滚动协同计划数据包；浏览器接口只生成候选建议，不保存、不批准、不修改共享计划、不承诺资源或下发设备指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _end_to_end_coordination.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/production-continuity/readiness", tags=["v3-governance"])
+async def v3_production_continuity_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_production_continuity.readiness))
+
+
+@app.post("/api/v3/production-continuity/run", tags=["v3-governance"])
+async def v3_production_continuity_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="连续运行、服务目标、事件、备份恢复和故障演练数据包；浏览器接口只验证合同，不保存、不形成现场服务承诺或自动切换授权",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(_production_continuity.run, payload, source_verified=False)
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/operating-model-governance/readiness", tags=["v3-governance"])
+async def v3_operating_model_governance_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_operating_model_governance.readiness))
+
+
+@app.post("/api/v3/operating-model-governance/run", tags=["v3-governance"])
+async def v3_operating_model_governance_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="组织职责、异人审批、三班值守、资质和升级链数据包；浏览器接口只验证合同，不任命人员、不授予访问权或生产控制权",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(_operating_model_governance.run, payload, source_verified=False)
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/twin-calibration/readiness", tags=["v3-governance"])
+async def v3_twin_calibration_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_site_twin_calibration.readiness))
+
+
+@app.post("/api/v3/twin-calibration/run", tags=["v3-governance"])
+async def v3_twin_calibration_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="现场孪生标定数据包；浏览器接口只计算候选证据，不保存、不审批",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _site_twin_calibration.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/shadow-acceptance/readiness", tags=["v3-governance"])
+async def v3_shadow_acceptance_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_site_shadow_acceptance.readiness))
+
+
+@app.post("/api/v3/shadow-acceptance/run", tags=["v3-governance"])
+async def v3_shadow_acceptance_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="只读影子周期数据包；浏览器接口只计算候选证据，不保存、不审批、不发送设备指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _site_shadow_acceptance.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/execution-acceptance/readiness", tags=["v3-governance"])
+async def v3_execution_acceptance_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_site_execution_acceptance.readiness))
+
+
+@app.post("/api/v3/execution-acceptance/run", tags=["v3-governance"])
+async def v3_execution_acceptance_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="执行配置与联锁调试合同；浏览器接口只校验、不保存、不审批、不下发设备指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _site_execution_acceptance.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
 
 
 @app.get("/api/v3/governance/evidence", tags=["v3-governance"])
@@ -685,6 +953,7 @@ async def system_provenance() -> JSONResponse:
         "market": _market.source_status() if _market and hasattr(_market, "source_status") else {"mode": "unavailable"},
         "ais_tide": _ais.source_status() if _ais and hasattr(_ais, "source_status") else {"mode": "unavailable"},
         "schedule": di.schedule.source_status() if hasattr(getattr(di, "schedule", None), "source_status") else {"mode": "unavailable"},
+        "port_call": _port_call.source_status(),
     }
     live_adapters = all(
         item.get("mode") == "live_rest"
@@ -702,6 +971,16 @@ async def system_provenance() -> JSONResponse:
     runtime_status = await asyncio.to_thread(di.strategy_runtime.status)
     engineering_simulators_enabled = os.getenv("PORT_DT_ENABLE_ENGINEERING_SIMULATORS", "").strip().lower() in {"1", "true", "yes", "on"}
     legacy_rl_enabled = os.getenv("PORT_DT_ENABLE_LEGACY_RL", "").strip().lower() in {"1", "true", "yes", "on"}
+    twin_calibration_readiness = _site_twin_calibration.readiness()
+    shadow_acceptance_readiness = _site_shadow_acceptance.readiness()
+    execution_acceptance_readiness = _site_execution_acceptance.readiness()
+    collaboration_readiness = _port_call_collaboration.readiness()
+    interoperability_readiness = _maritime_interoperability.readiness()
+    forecast_uncertainty_readiness = _forecast_uncertainty.readiness()
+    business_benefit_readiness = _business_benefit_attribution.readiness()
+    coordination_readiness = _end_to_end_coordination.readiness()
+    production_continuity_readiness = _production_continuity.readiness()
+    operating_model_readiness = _operating_model_governance.readiness()
     return JSONResponse(
         {
             "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
@@ -733,7 +1012,37 @@ async def system_provenance() -> JSONResponse:
                     adapters.get("ais_tide", {}).get("ais_mode") == "live_rest"
                     and adapters.get("ais_tide", {}).get("tide_mode") == "live_rest"
                 ),
-                "twin_calibration_configured": bool(os.getenv("PORT_DT_TWIN_CALIBRATION_PATH", "").strip()),
+                "port_call_adapter_live": adapters.get("port_call", {}).get("live_data_verified") is True,
+                "twin_calibration_configured": twin_calibration_readiness["configured_artifact"]["configured"],
+                "twin_calibration_verified": twin_calibration_readiness["configured_artifact"]["verified"],
+                "site_calibrated": twin_calibration_readiness["boundary"]["site_calibrated"],
+                "shadow_acceptance_configured": shadow_acceptance_readiness["configured_artifact"]["configured"],
+                "shadow_acceptance_verified": shadow_acceptance_readiness["configured_artifact"]["verified"],
+                "site_shadow_accepted": shadow_acceptance_readiness["boundary"]["site_shadow_accepted"],
+                "execution_acceptance_configured": execution_acceptance_readiness["configured_artifacts"]["evidence_configured"],
+                "execution_acceptance_verified": execution_acceptance_readiness["configured_artifacts"]["verified"],
+                "site_execution_accepted": execution_acceptance_readiness["boundary"]["site_execution_accepted"],
+                "port_call_collaboration_configured": collaboration_readiness["configured_artifact"]["configured"],
+                "port_call_collaboration_verified": collaboration_readiness["configured_artifact"]["verified"],
+                "site_port_call_collaboration_accepted": collaboration_readiness["boundary"]["site_collaboration_accepted"],
+                "maritime_interoperability_configured": interoperability_readiness["configured_artifact"]["configured"],
+                "maritime_interoperability_verified": interoperability_readiness["configured_artifact"]["verified"],
+                "site_maritime_interoperability_accepted": interoperability_readiness["boundary"]["site_interoperability_accepted"],
+                "forecast_uncertainty_configured": forecast_uncertainty_readiness["configured_artifact"]["configured"],
+                "forecast_uncertainty_verified": forecast_uncertainty_readiness["configured_artifact"]["verified"],
+                "site_forecast_service_accepted": forecast_uncertainty_readiness["boundary"]["site_forecast_service_accepted"],
+                "business_benefit_attribution_configured": business_benefit_readiness["configured_artifact"]["configured"],
+                "business_benefit_attribution_verified": business_benefit_readiness["configured_artifact"]["verified"],
+                "realized_business_benefit_verified": business_benefit_readiness["boundary"]["realized_business_benefit_verified"],
+                "end_to_end_coordination_configured": coordination_readiness["configured_artifact"]["configured"],
+                "end_to_end_coordination_verified": coordination_readiness["configured_artifact"]["verified"],
+                "site_end_to_end_coordination_accepted": coordination_readiness["boundary"]["site_end_to_end_coordination_accepted"],
+                "production_continuity_configured": production_continuity_readiness["configured_artifact"]["configured"],
+                "production_continuity_verified": production_continuity_readiness["configured_artifact"]["verified"],
+                "site_continuity_accepted": production_continuity_readiness["boundary"]["site_continuity_accepted"],
+                "operating_model_governance_configured": operating_model_readiness["configured_artifact"]["configured"],
+                "operating_model_governance_verified": operating_model_readiness["configured_artifact"]["verified"],
+                "site_operating_model_accepted": operating_model_readiness["boundary"]["site_operating_model_accepted"],
             },
             "module_assessment": {
                 "rl_training": "real_algorithm_and_dataset",
@@ -750,6 +1059,14 @@ async def system_provenance() -> JSONResponse:
                 "exec_cockpit": "provenance_verified_snapshot_required",
                 "platform_map": "repository_architecture_config_not_runtime_topology",
                 "execution": "dry_run_and_human_gate_no_default_production_actuator",
+                "port_call_gateway": "strict_event_validation_and_fail_closed_live_adapter",
+                "port_call_collaboration": "six_party_shared_timeline_delay_propagation_and_recommendation_only_resource_replan",
+                "maritime_interoperability": "dcsa_port_call_2_0_imo_msw_and_iho_s100_mapping_with_bound_external_conformance_evidence",
+                "forecast_uncertainty": "eight_target_chronological_train_calibration_test_with_empirical_interval_coverage_and_advisory_only_boundary",
+                "business_benefit_attribution": "execution_bound_preregistered_paired_difference_in_differences_with_measured_outcomes_and_field_claim_gate",
+                "end_to_end_coordination": "eleven_resource_nine_stage_capacity_feasible_freeze_aware_recommendation_only_rolling_plan",
+                "production_continuity": "eight_component_hourly_slo_incident_backup_restore_and_six_drill_evidence_gate",
+                "operating_model_governance": "twelve_domain_ten_workflow_four_eyes_three_shift_roster_and_escalation_evidence_gate",
                 "legacy_rl_routes": "opt_in_enabled" if legacy_rl_enabled else "disabled_by_default",
             },
         }
@@ -1193,7 +1510,7 @@ _RL_PANEL_HTML = r"""
       <button id="btnSim" class="btn" disabled>留出集测试</button>
       <button id="btnVerifyDryRun" class="btn secondary" disabled>检查上线门禁</button>
       <button id="btnDispatch" class="btn secondary" disabled>设备执行仅走南向审批</button>
-      <button id="btnHistory" class="btn ghost" disabled>查看南向能力</button>
+      <button id="btnHistory" class="btn ghost">查看南向能力</button>
       <span id="simHint" class="muted small">请选择左侧一条策略后再点击</span>
     </div>
 
@@ -2248,6 +2565,8 @@ async function loadList(){
 
 async function simulate(options={}){
   if(!selectedId) return;
+  const rowSimulationButtons = $$("#tbl button[data-simid]");
+  rowSimulationButtons.forEach(button=>{ button.disabled = true; });
   $("#btnSim").disabled = true;
   $("#btnDispatch").disabled = true;
   if($("#btnVerifyDryRun")) $("#btnVerifyDryRun").disabled = true;
@@ -2258,7 +2577,7 @@ async function simulate(options={}){
     if(!res.ok) throw new Error(await res.text());
     const data = await res.json();
     lastSimulation = data;
-    const metricText = (value,digits)=>Number.isFinite(Number(value))?Number(value).toFixed(digits):"N/A";
+    const metricText = (value,digits)=>value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value)) ? Number(value).toFixed(digits) : "N/A";
     $("#m_dkwh").textContent = metricText(data.summary?.delta_kWh,3);
     $("#m_dco2").textContent = metricText(data.summary?.delta_carbon_kg,3);
     $("#m_peak").textContent = metricText(data.summary?.peak_reduction_kW,2);
@@ -2286,6 +2605,7 @@ async function simulate(options={}){
     $("#simHint").textContent = "模拟失败，请检查接口日志";
     return null;
   }finally{
+    rowSimulationButtons.forEach(button=>{ button.disabled = false; });
     $("#btnSim").disabled = false;
     if($("#btnVerifyDryRun")) $("#btnVerifyDryRun").disabled = !selectedId;
   }

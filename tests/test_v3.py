@@ -493,8 +493,8 @@ class V3FactsApiTests(unittest.TestCase):
         self.assertFalse(payload["production_site_ready"])
         for name in (
             "api_rate_limit", "request_body_limit", "security_headers",
-            "twin_graph", "site_calibration", "shadow_acceptance",
-            "site_evidence_consistency",
+            "twin_graph", "site_calibration", "shadow_acceptance", "site_execution_acceptance",
+            "port_call_collaboration", "maritime_interoperability", "forecast_uncertainty", "business_benefit_attribution", "end_to_end_coordination", "production_continuity", "operating_model_governance", "site_evidence_consistency",
         ):
             self.assertIn(name, payload["checks"])
         self.assertFalse(payload["checks"]["site_evidence_consistency"]["ok"])
@@ -1308,6 +1308,8 @@ class V3FactsApiTests(unittest.TestCase):
         self.assertEqual(dataset["official_reporting_periods"], 22)
         self.assertEqual(dataset["reanalysis_hours"], 17544)
         self.assertEqual(payload["live_adapter_count"], 0)
+        self.assertEqual(payload["adapter_status"]["port_call"]["mode"], "unavailable")
+        self.assertFalse(payload["adapter_status"]["port_call"]["fallback_simulator"])
         self.assertEqual(len(payload["timeline"]), 24)
         self.assertTrue(all(row["source_timestamp"] for row in payload["timeline"]))
         self.assertGreater(
@@ -1321,6 +1323,8 @@ class V3FactsApiTests(unittest.TestCase):
         self.assertTrue(registry["tide_m"]["model_input"])
         self.assertFalse(registry["tos_schedule"]["model_input"])
         self.assertEqual(registry["ais_tracks"]["availability"], "待接入港口")
+        self.assertEqual(registry["port_call_events"]["availability"], "待接入港口")
+        self.assertFalse(registry["port_call_events"]["decision_context_eligible"])
         self.assertGreaterEqual(len(payload["public_sources"]), 3)
 
     def test_mlops_v3_separates_formal_smoke_and_site_promotion(self):

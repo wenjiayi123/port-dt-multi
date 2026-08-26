@@ -16,6 +16,7 @@ from typing import Any
 
 
 class TwinReliabilityService:
+    _ASSURANCE_REPLAY_POSITION = 0.0
     _EXECUTABLE_STRESS = (
         "high_density_berthing",
         "channel_congestion",
@@ -26,9 +27,10 @@ class TwinReliabilityService:
         "tariff_carbon_spike",
     )
 
-    def __init__(self, runtime: Any, telemetry: Any) -> None:
+    def __init__(self, runtime: Any, telemetry: Any, site_calibration: Any = None) -> None:
         self.runtime = runtime
         self.telemetry = telemetry
+        self.site_calibration = site_calibration
         self._lock = threading.Lock()
         self._cache: dict[str, Any] = {"at": 0.0, "payload": None}
 
@@ -134,6 +136,7 @@ class TwinReliabilityService:
                 horizon_min=120,
                 step_min=10,
                 scenario=scenario_id,
+                replay_anchor_position=self._ASSURANCE_REPLAY_POSITION,
             )
             runs.append(
                 self._summarize_run(
@@ -147,6 +150,18 @@ class TwinReliabilityService:
         source_status_fn = getattr(self.telemetry, "source_status", None)
         source_status = source_status_fn() if callable(source_status_fn) else {}
         envelope = self.runtime.bess_parameters() if status.get("available") else {}
+        calibration_readiness: dict[str, Any] = {}
+        calibration_evidence: dict[str, Any] = {}
+        if self.site_calibration is not None:
+            try:
+                calibration_readiness = self.site_calibration.readiness()
+                if (calibration_readiness.get("boundary") or {}).get("site_calibrated") is True:
+                    calibration_evidence = self.site_calibration.configured_evidence()
+            except (FileNotFoundError, OSError, TypeError, ValueError):
+                calibration_evidence = {}
+        calibration_metrics = calibration_evidence.get("metrics") or {}
+        normalized_mae = self._finite(calibration_metrics.get("normalized_mae"))
+        site_calibrated = bool(calibration_evidence)
         return {
             "available": bool(status.get("available")),
             "schema": "port-dt-v3-twin-reliability.v1",
@@ -159,22 +174,36 @@ class TwinReliabilityService:
             },
             "telemetry": source_status,
             "site_fidelity": {
-                "available": False,
-                "score": None,
-                "reason": "realized site-aligned twin outcomes pending port connection",
-                "status": "pending_port_connection",
+                "available": site_calibrated,
+                "score": max(0.0, 1.0 - normalized_mae) if site_calibrated and normalized_mae is not None else None,
+                "scope": "aggregate_power_twin_independent_validation_only" if site_calibrated else None,
+                "metrics": calibration_metrics if site_calibrated else {},
+                "artifact_id": calibration_evidence.get("artifact_id") if site_calibrated else None,
+                "artifact_sha256": calibration_evidence.get("artifact_sha256") if site_calibrated else None,
+                "evidence_digest": calibration_evidence.get("evidence_digest") if site_calibrated else None,
+                "reason": (
+                    "authorized measured power-twin calibration passed an untouched validation window and independent approval"
+                    if site_calibrated
+                    else "realized site-aligned twin outcomes pending port connection"
+                ),
+                "status": "approved_site_power_calibration" if site_calibrated else "pending_port_connection",
             },
             "forecast_interval_calibration": {
                 "available": False,
                 "coverage_p10_p90": None,
-                "reason": "site realized outcomes and approved calibration window pending port connection",
-                "status": "pending_port_connection",
+                "reason": (
+                    "approved power-twin point calibration does not establish P10/P90 forecast interval coverage"
+                    if site_calibrated
+                    else "site realized outcomes and approved calibration window pending port connection"
+                ),
+                "status": "separate_interval_calibration_required" if site_calibrated else "pending_port_connection",
             },
             "site_error_decomposition": {
-                "available": False,
-                "groups": [],
-                "reason": "asset-group measured outcomes pending port connection",
-                "status": "pending_port_connection",
+                "available": site_calibrated,
+                "groups": ((calibration_evidence.get("error_decomposition") or {}).get("by_asset_group") or []) if site_calibrated else [],
+                "operating_regimes": ((calibration_evidence.get("error_decomposition") or {}).get("by_operating_regime") or []) if site_calibrated else [],
+                "reason": None if site_calibrated else "asset-group measured outcomes pending port connection",
+                "status": "approved_site_validation" if site_calibrated else "pending_port_connection",
             },
             "software_coverage": {
                 "covered": int(coverage.get("runtime_covered") or 0),
@@ -253,6 +282,7 @@ class TwinReliabilityService:
                 horizon_min=120,
                 step_min=10,
                 scenario=selected_scenario,
+                replay_anchor_position=self._ASSURANCE_REPLAY_POSITION,
             )
             payload["selected_replay"] = {
                 **self._summarize_run(

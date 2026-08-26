@@ -62,9 +62,13 @@ class AdapterProvenanceTests(unittest.TestCase):
         multiport = MultiportService().get_summary()
         self.assertFalse(multiport["available"])
         self.assertTrue(multiport["readiness_available"])
-        self.assertEqual(multiport["counts"]["public_benchmark_profiles"], 4)
+        self.assertEqual(multiport["counts"]["public_benchmark_profiles"], 5)
         self.assertIn(
             "cn_sha_regulatory_scenario_v4",
+            {row["profile_id"] for row in multiport["profiles"]},
+        )
+        self.assertIn(
+            "cn_sha_integrated_scenario_v5",
             {row["profile_id"] for row in multiport["profiles"]},
         )
         self.assertIsNone(multiport["counts"]["production_deployments"])

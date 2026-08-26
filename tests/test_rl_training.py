@@ -8,10 +8,12 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import numpy as np
+from fastapi.testclient import TestClient
 
 from app.services.rl_training.datasets import (
     CANONICAL_COLUMNS,
     FACTOR_COLUMNS,
+    PORT_WIDE_COLUMNS,
     REGULATORY_COLUMNS,
     import_dataset,
     load_port_dataset,
@@ -20,8 +22,11 @@ from app.services.rl_training.datasets import (
 )
 from app.services.rl_training.environment import PortOperationsEnv
 from app.services.rl_training.regulatory_environment import RegulatoryPortOperationsEnv
+from app.services.rl_training.integrated_environment import IntegratedPortOperationsEnv
+from app.services.rl_training.business_guardrails import assess_integrated_business_constraints
 from app.services.rl_training.profiles import load_profile
 from app.services.rl_training.trainer import ALGORITHMS
+from app.server import app
 
 
 def rows(count: int = 96):
@@ -83,6 +88,20 @@ class DatasetTests(unittest.TestCase):
                     metadata={"license": "test", "owner": "test", "timezone": "UTC", "intended_use": "test"},
                     data_root=root / "out",
                 )
+
+    def test_v5_hash_gated_evidence_api_exposes_no_production_authority(self):
+        response = TestClient(app).get("/api/rl/integrated-business/evidence")
+        self.assertEqual(response.status_code, 200, response.text)
+        payload = response.json()
+        self.assertEqual(payload["status"], "ADMITTED_OFFLINE_CHAMPION")
+        self.assertFalse(payload["production_authority"])
+        self.assertEqual(payload["report"]["contract"]["observation_dimensions"], 103)
+        self.assertEqual(payload["report"]["contract"]["action_dimensions"], 13)
+        self.assertEqual(payload["training_dataset"]["rows"], 17544)
+        self.assertEqual(payload["forward_dataset"]["rows"], 3624)
+        self.assertEqual(len(payload["selected_model_sha256"]), 64)
+        self.assertEqual(payload["guardrail_replay"]["status"], "PASS")
+        self.assertTrue(all(payload["guardrail_replay"]["challenge_checks"].values()))
 
 
 class EnvironmentTests(unittest.TestCase):
@@ -294,6 +313,149 @@ class EnvironmentTests(unittest.TestCase):
         yard_excess = max(0.0, float(np.float32(0.92)) - 0.92 - 1e-6)
         self.assertEqual(yard_excess, 0.0)
         env.close()
+
+    def test_v5_integrated_observation_action_reward_and_hard_constraint_contract(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            enriched_rows = []
+            for row in rows():
+                enriched_rows.append(
+                    {
+                        **row,
+                        "wind_speed_mps": 4.2,
+                        "wave_height_m": 0.5,
+                        "current_speed_mps": 0.4,
+                        "berth_occupancy_ratio": 0.72,
+                        "yard_occupancy_ratio": 0.68,
+                        "crane_availability_ratio": 0.95,
+                        "equipment_availability_ratio": 0.96,
+                        "channel_congestion_ratio": 0.44,
+                        "pilot_tug_availability_ratio": 0.9,
+                        "closure_flag": 0.0,
+                        "maritime_inspection_ratio": 0.12,
+                        "customs_inspection_ratio": 0.18,
+                        "maritime_detention_ratio": 0.03,
+                        "customs_secondary_check_ratio": 0.12,
+                        "inspection_resource_availability_ratio": 0.85,
+                        "regulatory_release_ratio": 0.82,
+                        "truck_arrivals_per_hour": 100.0,
+                        "gate_queue_trucks": 20.0,
+                        "gate_capacity_ratio": 0.9,
+                        "rail_transfer_demand_teu": 20.0,
+                        "barge_transfer_demand_teu": 30.0,
+                        "intermodal_capacity_ratio": 0.9,
+                        "reefer_occupancy_ratio": 0.7,
+                        "reefer_temperature_risk_ratio": 0.1,
+                        "shore_power_demand_kw": 500.0,
+                        "shore_power_connection_ratio": 0.8,
+                        "equipment_failure_risk_ratio": 0.1,
+                        "maintenance_backlog_ratio": 0.2,
+                        "labor_availability_ratio": 0.95,
+                        "pilotage_demand_vessels": 0.8,
+                        "tug_demand_vessels": 0.9,
+                        "channel_capacity_ratio": 0.8,
+                        "dangerous_goods_workload_ratio": 0.05,
+                        "yard_dwell_time_hours": 48.0,
+                        "planning_vessel_draft_m": 14.8,
+                        "channel_chart_depth_m": 15.0,
+                        "squat_allowance_m": 0.5,
+                        "forecast_uncertainty_ratio": 0.2,
+                    }
+                )
+            write_extended_rows(
+                "port_v5",
+                enriched_rows,
+                {
+                    "provenance_type": "verified_test",
+                    "license": "test",
+                    "owner": "test",
+                    "timezone": "UTC",
+                    "intended_use": "test",
+                    "environment_version": "port_ops_v5",
+                },
+                root,
+            )
+            dataset = load_port_dataset("port_v5", root)
+            train, _ = dataset.split()
+            env = IntegratedPortOperationsEnv(
+                dataset,
+                train,
+                training=True,
+                episode_steps=12,
+                demand_cap_kw=4000.0,
+                port_profile=load_profile("cn_sha_integrated_scenario_v5"),
+            )
+            observation, _ = env.reset(seed=3, options={"start_index": 0})
+            self.assertEqual(
+                observation.shape,
+                (RegulatoryPortOperationsEnv.OBSERVATION_DIMENSIONS + 2 * len(PORT_WIDE_COLUMNS) + 6,),
+            )
+            self.assertEqual(env.action_space.shape, (13,))
+            _, reward, _, _, info = env.step(np.zeros(13, dtype=np.float32))
+            self.assertTrue(math.isfinite(reward))
+            self.assertTrue(all(info["port_wide_factor_availability"].values()))
+            self.assertFalse(info["marine_window_open"])
+            self.assertTrue(info["hard_constraint_intervention"])
+            self.assertEqual(
+                info["integrated_authority"],
+                "recommendation_only_no_release_navigation_or_actuator_authority",
+            )
+            projected = env.project_control(
+                np.zeros(13, dtype=np.float32), soc=0.55, last_bess_kw=0.0
+            )
+            self.assertIn("maintenance_reserve_ratio", projected)
+            self.assertEqual(projected["safety_revision"], env.SAFETY_REVISION)
+            with self.assertRaisesRegex(ValueError, "continuous-only"):
+                IntegratedPortOperationsEnv(
+                    dataset,
+                    train,
+                    action_mode="discrete",
+                    port_profile=load_profile("cn_sha_integrated_scenario_v5"),
+                )
+
+    def test_v5_non_rl_guardrail_blocks_under_keel_and_safety_tradeoffs(self):
+        profile = load_profile("cn_sha_integrated_scenario_v5")
+        state = {
+            "tide_m": -0.5,
+            "channel_chart_depth_m": 15.0,
+            "planning_vessel_draft_m": 14.8,
+            "squat_allowance_m": 0.5,
+            "closure_flag": 0.0,
+            "pilot_tug_availability_ratio": 0.9,
+            "channel_capacity_ratio": 0.8,
+            "wind_speed_mps": 4.0,
+            "wave_height_m": 0.5,
+            "yard_occupancy_ratio": 0.9,
+            "dangerous_goods_workload_ratio": 0.08,
+            "reefer_temperature_risk_ratio": 0.8,
+            "equipment_failure_risk_ratio": 0.75,
+            "base_load_kw": 2000.0,
+            "shore_power_demand_kw": 500.0,
+            "shore_power_connection_ratio": 0.8,
+            "forecast_uncertainty_ratio": 0.7,
+        }
+        control = {
+            "bess_kw": 0.0,
+            "flexible_load_command": 0.0,
+            "yard_flow_command": 0.2,
+            "reefer_service_ratio": 0.2,
+            "maintenance_reserve_ratio": 0.2,
+            "shore_power_allocation_ratio": 0.5,
+            "marine_service_allocation_ratio": 0.8,
+        }
+        result = assess_integrated_business_constraints(
+            state=state,
+            decoded_control=control,
+            demand_cap_kw=4000.0,
+            port_profile=profile,
+        )
+        self.assertEqual(result["status"], "blocked")
+        codes = {item["code"] for item in result["violations"]}
+        self.assertIn("UNDER_KEEL_CLEARANCE", codes)
+        self.assertIn("DANGEROUS_GOODS_YARD_LIMIT", codes)
+        self.assertIn("REEFER_SAFETY_RESERVE", codes)
+        self.assertIn("MAINTENANCE_SAFETY_RESERVE", codes)
+        self.assertFalse(result["dispatch_allowed"])
 
 
 if __name__ == "__main__":

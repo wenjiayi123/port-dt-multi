@@ -38,6 +38,7 @@ class RegulatoryPortOperationsEnv(PortOperationsEnv):
         projection_penalty_weight: float = 0.0,
         regulatory_delay_penalty_weight: float = 0.35,
         normalization_slice: Optional[slice] = None,
+        normalization_dataset: Optional[PortDataset] = None,
         training: bool = True,
         record_trace: bool = False,
     ) -> None:
@@ -55,6 +56,7 @@ class RegulatoryPortOperationsEnv(PortOperationsEnv):
             port_profile=port_profile,
             projection_penalty_weight=projection_penalty_weight,
             normalization_slice=normalization_slice,
+            normalization_dataset=normalization_dataset,
             training=training,
             record_trace=record_trace,
         )
@@ -69,11 +71,12 @@ class RegulatoryPortOperationsEnv(PortOperationsEnv):
         self.segment_regulatory_availability = dataset.regulatory_availability[
             data_slice
         ].astype(np.float32, copy=True)
-        normalization_train = normalization_slice or dataset.split()[0]
-        regulatory_reference = dataset.regulatory_values[normalization_train].astype(
+        normalization_source = normalization_dataset or dataset
+        normalization_train = normalization_slice or normalization_source.split()[0]
+        regulatory_reference = normalization_source.regulatory_values[normalization_train].astype(
             np.float32, copy=False
         )
-        regulatory_mask_reference = dataset.regulatory_availability[
+        regulatory_mask_reference = normalization_source.regulatory_availability[
             normalization_train
         ].astype(np.float32, copy=False)
         self._regulatory_mins = np.zeros(len(REGULATORY_COLUMNS), dtype=np.float32)
@@ -86,7 +89,7 @@ class RegulatoryPortOperationsEnv(PortOperationsEnv):
                 self._regulatory_spans[index] = max(
                     float(np.max(observed) - np.min(observed)), 1e-6
                 )
-        train_values = dataset.values[normalization_train].astype(np.float32, copy=False)
+        train_values = normalization_source.values[normalization_train].astype(np.float32, copy=False)
         self._reference_arrivals = max(0.05, float(np.mean(train_values[:, 2])))
         self._reference_throughput = max(1.0, float(np.mean(train_values[:, 1])))
         limits = self.port_profile["control_limits"]

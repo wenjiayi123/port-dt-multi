@@ -18,11 +18,18 @@ class ExternalSignalsEvidenceService:
         market: Any = None,
         ais_tide: Any = None,
         schedule: Any = None,
+        port_call: Any = None,
         root: Path | None = None,
     ) -> None:
         self.root = root or Path(__file__).resolve().parents[2]
         self.telemetry = telemetry
-        self.adapters = {"tos": tos, "market": market, "ais_tide": ais_tide, "schedule": schedule}
+        self.adapters = {
+            "tos": tos,
+            "market": market,
+            "ais_tide": ais_tide,
+            "schedule": schedule,
+            "port_call": port_call,
+        }
         self.report_path = self.root / "evidence" / "v3" / "shanghai_public_advantage_v3.json"
 
     @staticmethod
@@ -40,6 +47,8 @@ class ExternalSignalsEvidenceService:
         report = json.loads(self.report_path.read_text(encoding="utf-8"))
         dataset = report.get("dataset") or {}
         source_status = {name: self._status(adapter) for name, adapter in self.adapters.items()}
+        port_call_status = source_status.get("port_call") or {}
+        port_call_live = bool(port_call_status.get("live_data_verified"))
         telemetry_status = self._status(self.telemetry)
         rows = self.telemetry.port_state_series(24 * 60, 60) if hasattr(self.telemetry, "port_state_series") else []
         timeline = []
@@ -67,6 +76,15 @@ class ExternalSignalsEvidenceService:
             {"id": "throughput_teu", "name": "吞吐", "availability": "public_replay", "evidence_class": "official_aggregate_anchor_distributed", "model_input": True, "unit": "TEU/h"},
             {"id": "tos_schedule", "name": "TOS/WMS船期与作业指令", "availability": "待接入港口", "evidence_class": "unavailable", "model_input": False, "unit": None},
             {"id": "ais_tracks", "name": "AIS船位/航迹/ETA", "availability": "待接入港口", "evidence_class": "unavailable", "model_input": False, "unit": None},
+            {
+                "id": "port_call_events",
+                "name": "标准靠泊事件时间线",
+                "availability": "live_rest" if port_call_live else "待接入港口",
+                "evidence_class": "authorized_live_api" if port_call_live else "unavailable",
+                "model_input": False,
+                "decision_context_eligible": port_call_live,
+                "unit": "event",
+            },
             {"id": "live_market", "name": "实时/日前市场与DR", "availability": "待接入港口", "evidence_class": "unavailable", "model_input": False, "unit": None},
         ]
         public_sources = []
@@ -91,6 +109,7 @@ class ExternalSignalsEvidenceService:
             "boundary": {
                 "public_replay_available": bool(timeline),
                 "live_external_data_verified": False,
+                "port_call_live_verified": port_call_live,
                 "production_authority": False,
                 "site_status": "待接入港口",
                 "reason": "当前可用信号来自上海官方汇总、公开气象/海洋再分析及明示衍生字段；TOS、AIS与实时市场没有现场授权连接。",
@@ -129,6 +148,14 @@ class ExternalSignalsEvidenceService:
                 "tos_required": ["voyage/call_id", "vessel/IMO/MMSI", "ETA/ETB/ETD", "berth", "move plan", "priority", "revision", "event time"],
                 "ais_required": ["MMSI/IMO", "position", "SOG/COG", "nav status", "message time", "provider latency/coverage"],
                 "market_required": ["day-ahead/real-time price", "contract demand", "demand charge", "DR event", "carbon/REC/grid factor", "publication time/revision"],
+                "port_call_required": [
+                    "schema_version/site_id/source governance",
+                    "port_call_id and IMO/MMSI identity",
+                    "estimated/requested/planned/actual phase",
+                    "arrival/pilotage/towage/mooring/berth/cargo/bunkering/departure event",
+                    "event time/source update time/revision/source reference",
+                    "terminal or berth location for terminal events",
+                ],
                 "gates": ["schema/version", "UTC monotonicity", "freshness SLA", "missing/duplicate/late rate", "source license", "hash/snapshot", "cross-source reconciliation", "fail-closed on stale data"],
             },
         }

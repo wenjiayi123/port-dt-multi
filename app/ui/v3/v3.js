@@ -98,8 +98,8 @@ function renderImpact(view='rl'){
     metrics.innerHTML='<div class="skeleton wide"></div>';
     fetch('/health/ready',{cache:'no-store'}).then(response=>response.json()).then(payload=>{
       if(generation!==impactRenderGeneration) return;
-      const labels={canonical_dataset:'公开基准数据',rl_runtime:'RL 运行时',cors:'CORS 白名单',api_authentication:'API 身份认证',privileged_api_key:'管理员密钥',api_rate_limit:'API 限流',request_body_limit:'请求体上限',security_headers:'安全响应头',production_mode:'生产模式',tls_termination:'TLS 终止声明',secret_manager:'密钥管理声明',twin_graph:'授权孪生图谱',site_calibration:'实测校准证据',shadow_acceptance:'影子运行验收',site_evidence_consistency:'现场证据一致性'};
-      const siteChecks=new Set(['twin_graph','site_calibration','shadow_acceptance','site_evidence_consistency']);
+      const labels={canonical_dataset:'公开基准数据',rl_runtime:'RL 运行时',cors:'CORS 白名单',api_authentication:'API 身份认证',privileged_api_key:'管理员密钥',api_rate_limit:'API 限流',request_body_limit:'请求体上限',security_headers:'安全响应头',production_mode:'生产模式',tls_termination:'TLS 终止声明',secret_manager:'密钥管理声明',twin_graph:'授权孪生图谱',site_calibration:'实测校准证据',shadow_acceptance:'影子运行验收',site_execution_acceptance:'执行联锁验收',port_call_collaboration:'靠泊六方协同',site_evidence_consistency:'现场证据一致性'};
+      const siteChecks=new Set(['twin_graph','site_calibration','shadow_acceptance','site_execution_acceptance','port_call_collaboration','site_evidence_consistency']);
       const developmentDeferred=new Set(['cors','api_authentication','privileged_api_key']);
       const productionMode=payload.checks?.production_mode?.ok===true;
       $('impactStatus').textContent=payload.production_site_ready?'PRODUCTION SITE READY':'PRODUCTION ADMISSION CLOSED';
@@ -179,11 +179,12 @@ function renderImpact(view='rl'){
   $('impactBoundary').textContent='所有金额、碳排和效率数字必须同时携带数据来源、协议与现场替换边界。';
 }
 
+let detailRequestToken=0;
 function openDrawer({kicker,title,lead,body}){
   $('detailKicker').textContent=kicker; $('detailTitle').textContent=title; $('detailLead').textContent=lead; $('detailBody').innerHTML=body;
   $('detailBackdrop').hidden=false; document.body.classList.add('drawer-open'); $('detailClose').focus();
 }
-function closeDrawer(){ $('detailBackdrop').hidden=true; document.body.classList.remove('drawer-open'); }
+function closeDrawer(){ detailRequestToken+=1; $('detailBackdrop').hidden=true; document.body.classList.remove('drawer-open'); }
 function trainingTrace(trace){
   const points=trace?.points||[]; if(points.length<2) return '';
   if(trace.reward_available===false){
@@ -196,6 +197,7 @@ function trainingTrace(trace){
 }
 
 async function openAlgorithmEvidence(algorithmId){
+  const requestToken=++detailRequestToken;
   const response=await fetch(`/api/v3/algorithms/${encodeURIComponent(algorithmId)}/evidence`,{cache:'no-store'}); if(!response.ok) throw new Error(`algorithm evidence ${response.status}`);
   const row=await response.json();
   const historicalRows=(row.historical_evidence?.runs||[]).map(run=>`<tr><td>${escapeHTML(run.dataset_id)}</td><td>${escapeHTML(run.environment_version||'v1')}</td><td>${escapeHTML(run.seed??'controller')}</td><td>${fmt.format(run.total_steps||0)}</td><td><code>${escapeHTML(run.job_id)}</code></td><td>${metricValue('throughput_teu',run.metrics?.throughput_teu)}</td><td>${metricValue('delay_index_mean',run.metrics?.delay_index_mean)}</td><td>${metricValue('energy_cost',run.metrics?.energy_cost)}</td><td>${metricValue('carbon_kg',run.metrics?.carbon_kg)}</td></tr>`).join('');
@@ -205,10 +207,12 @@ async function openAlgorithmEvidence(algorithmId){
     const metricRows=Object.entries(profile.metrics||{}).filter(([name])=>metricNames[name]).map(([name,summary])=>`<tr><td>${escapeHTML(metricNames[name]||name)}</td><td>${metricValue(name,summary.mean)} ${escapeHTML(metricUnits[name]||'')}</td><td>${metricValue(name,summary.ci_low)} ～ ${metricValue(name,summary.ci_high)}</td></tr>`).join('');
     return `<section class="detail-section"><div class="detail-section-head"><h3>${profile.id==='default_port_profile'?'默认港口目标':escapeHTML(profile.id)}</h3><b>${profile.formal_runs} RUNS · SEEDS ${escapeHTML(profile.seeds.join(', '))}</b></div><div class="detail-chips"><span>${row.trainable?fmt.format(profile.minimum_optimizer_steps)+' optimizer steps':'确定性控制器'}</span><span>10 blind episodes</span><span>训练渲染 ${profile.render_calls_during_training===0?'0 次':'异常'}</span></div>${trainingTrace(trace)}<table class="metric-table"><thead><tr><th>指标</th><th>均值</th><th>95% bootstrap CI</th></tr></thead><tbody>${metricRows||'<tr><td colspan="3">暂无正式指标</td></tr>'}</tbody></table><details><summary>作业、奖励与模型哈希</summary><pre>${escapeHTML(JSON.stringify({job_ids:profile.job_ids,model_sha256:profile.model_sha256,reward_weights:profile.reward_weights},null,2))}</pre></details></section>`;
   }).join('');
+  if(requestToken!==detailRequestToken) return;
   openDrawer({kicker:`${row.family.toUpperCase()} / ${row.id.toUpperCase()}`,title:row.name,lead:`${row.description} · ${row.implementation}`,body:`<div class="detail-facts"><span>动作空间<b>${row.action_space==='continuous'?'连续':'离散'}</b></span><span>V3 正式运行<b>${row.formal_runs}</b></span><span>历史正式运行<b>${row.historical_formal_runs}</b></span><span>训练渲染<b>关闭</b></span></div>${profiles||'<div class="detail-empty">尚无满足正式门禁的 V3 训练结果。</div>'}${historical}<p class="detail-boundary">${escapeHTML(row.claim_boundary)}</p>`});
 }
 
 function openCapabilityDetail(capabilityId){
+  detailRequestToken+=1;
   const row=(overviewData?.capabilities||[]).find(item=>item.id===capabilityId); if(!row) return;
   const depth=row.depth||{};
   const list=(title,items)=>`<section class="detail-list"><h3>${title}</h3><ul>${(items||[]).map(item=>`<li>${escapeHTML(item)}</li>`).join('')}</ul></section>`;
@@ -217,11 +221,13 @@ function openCapabilityDetail(capabilityId){
   openDrawer({kicker:`BUSINESS DOMAIN / ${row.id.toUpperCase()}`,title:row.name,lead:`${depth.implementation_label||stateNames[row.state]} · ${row.engine}`,body:`<div class="detail-grid">${list('执行状态与真实输出来源',execution)}${list('可调用运行接口',depth.runtime_endpoints)}${list('状态输入',depth.state_inputs)}${list('决策输出',depth.decision_outputs)}${list('硬约束与失效安全',depth.hard_constraints)}${list('训练后 / 现场验收指标',depth.acceptance_metrics)}${list('代码与 SHA-256 证据',artifactRows)}${list('阻止现场准入的缺口',depth.site_blockers)}</div><section class="site-replace"><span>SITE DATA REPLACEMENT</span><p>${escapeHTML(row.site_replacement)}</p></section><p class="detail-boundary">公开数据阶段仅验证软件、仿真、监测或离线策略链；无独立优化器的域明确标注，现场字段缺失时不产生生产控制权。</p>`});
 }
 function openGateDetail(gateId){
+  detailRequestToken+=1;
   const row=(overviewData?.deployment_gates||[]).find(item=>item.id===gateId); if(!row) return;
   const list=(title,items)=>`<section class="detail-list"><h3>${title}</h3><ul>${(items||[]).map(item=>`<li>${escapeHTML(item)}</li>`).join('')}</ul></section>`;
   openDrawer({kicker:`DEPLOYMENT GATE / ${row.id.toUpperCase()}`,title:row.name,lead:row.state==='software_ready'?'软件能力已具备，现场证据仍需审批。':'现场部署前必须完成，未通过即失效安全。',body:`<div class="detail-grid">${list('所需证据',row.required_evidence)}${list('通过条件',row.pass_criteria)}</div><section class="site-replace"><span>FAIL-CLOSED ACTION</span><p>${escapeHTML(row.failure_action)}</p></section>`});
 }
 function openPortLineage(datasetId){
+  detailRequestToken+=1;
   const row=(readinessData?.ports||[]).find(item=>item.dataset_id===datasetId); if(!row) return;
   const chips=(title,items)=>`<section class="detail-list"><h3>${title}</h3><ul>${(items||[]).map(item=>`<li>${escapeHTML(item)}</li>`).join('')||'<li>无</li>'}</ul></section>`;
   const sources=(row.sources||[]).map(source=>`<li><b>${escapeHTML(source.publisher||'公开来源')}</b>${source.url?`<a href="${escapeHTML(source.url)}" target="_blank" rel="noreferrer">打开原始公开链接 ↗</a>`:'<span>来源地址见数据卡</span>'}</li>`).join('');

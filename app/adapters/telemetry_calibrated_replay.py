@@ -172,17 +172,22 @@ class CalibratedReplayTelemetry:
             "episode_progress": 0.0,
         }
 
-    def port_state_series(self, horizon_min: int, step_min: int) -> List[Dict[str, Any]]:
+    def _port_state_series_from_position(
+        self,
+        horizon_min: int,
+        step_min: int,
+        *,
+        start: float,
+        wall_anchor: datetime,
+    ) -> List[Dict[str, Any]]:
         steps = max(1, int(horizon_min) // max(1, int(step_min)))
-        start = self._position()
-        now = datetime.now(timezone.utc)
         rows: list[dict[str, Any]] = []
         for index in range(steps):
             # Dataset cadence is hourly; interpolate source states at requested minutes.
             state = self._interpolated_row(start + (index + 1) * max(1, int(step_min)) / 60.0)
             source = datetime.fromisoformat(str(state["source_timestamp"]).replace("Z", "+00:00"))
             state.update(
-                timestamp=(now + timedelta(minutes=(index + 1) * max(1, int(step_min)))).isoformat(),
+                timestamp=(wall_anchor + timedelta(minutes=(index + 1) * max(1, int(step_min)))).isoformat(),
                 hour=source.hour + source.minute / 60.0,
                 soc=0.55,
                 queue=max(0.0, _finite(state.get("throughput_teu")) * _ratio(state.get("channel_congestion_ratio"))),
@@ -191,6 +196,28 @@ class CalibratedReplayTelemetry:
             )
             rows.append(state)
         return rows
+
+    def port_state_series(self, horizon_min: int, step_min: int) -> List[Dict[str, Any]]:
+        return self._port_state_series_from_position(
+            horizon_min,
+            step_min,
+            start=self._position(),
+            wall_anchor=datetime.now(timezone.utc),
+        )
+
+    def port_state_series_at(
+        self,
+        horizon_min: int,
+        step_min: int,
+        source_position: float,
+    ) -> List[Dict[str, Any]]:
+        """Return a pinned public-replay window for reproducible assurance tests."""
+        return self._port_state_series_from_position(
+            horizon_min,
+            step_min,
+            start=float(source_position),
+            wall_anchor=datetime(2026, 1, 1, tzinfo=timezone.utc),
+        )
 
     def get_recent_power(self, asset_id: str) -> List[Dict[str, Any]]:
         if asset_id not in self._assets and asset_id != "port-grid-aggregate":

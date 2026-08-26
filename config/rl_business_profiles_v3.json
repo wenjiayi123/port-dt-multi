@@ -50,6 +50,40 @@
         "guardrail_violation_rate_max": 0.0
       },
       "claim_boundary": "Predeclared engineering regulatory stress scenario only. It is not a Shanghai maritime/customs field KPI, and release/dispatch authority remains with authorized officials and operators."
+    },
+    "integrated_business_value_v5": {
+      "name": "港口全链业务价值与安全均衡",
+      "reward_weights": {
+        "cost": 0.12,
+        "carbon": 0.10,
+        "peak": 0.10,
+        "safety": 0.30,
+        "delay": 0.38
+      },
+      "regulatory_delay_penalty_weight": 0.65,
+      "integrated_reward_weights": {
+        "gate_congestion": 0.24,
+        "intermodal_backlog": 0.18,
+        "reefer_risk": 0.32,
+        "shore_power_unserved": 0.14,
+        "maintenance_risk": 0.28,
+        "marine_services_delay": 0.24,
+        "dangerous_goods_safety": 0.5,
+        "under_keel_clearance": 0.65,
+        "forecast_uncertainty": 0.1,
+        "integrated_peak": 0.22
+      },
+      "admission_constraints": {
+        "integrated_business_score_relative_to_fcfs_min": 0.02,
+        "gate_queue_truck_hours_relative_to_fcfs_max": 0.0,
+        "intermodal_backlog_teu_hours_relative_to_fcfs_max": 0.0,
+        "marine_service_wait_vessel_hours_relative_to_fcfs_max": 0.0,
+        "reefer_risk_index_relative_to_fcfs_max": 0.0,
+        "maintenance_risk_index_relative_to_fcfs_max": 0.0,
+        "dangerous_goods_risk_index_relative_to_fcfs_max": 0.0,
+        "guardrail_violation_rate_max": 0.0
+      },
+      "claim_boundary": "Public aggregate and public reanalysis plus a predeclared replaceable engineering scenario. Business admission is offline only; field claims require authorized source replacement, calibration, shadow operation and independent approval."
     }
   }
 }
