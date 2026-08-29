@@ -1,5 +1,14 @@
+<h1 align="center">港航数字孪生 AI 决策调度双端系统</h1>
+
 <p align="center">
-  <img src="docs/assets/hero.svg" alt="Port DT Multi — Auditable Port AI Lifecycle Platform" width="100%" />
+  <strong>TwinPort AI DualOps</strong><br />
+  <em>Port &amp; Maritime Digital Twin AI Decision &amp; Dispatch System</em>
+</p>
+
+<h3 align="center">独立研发者 / Independent Developer：温家懿 · Wen Jiayi</h3>
+
+<p align="center">
+  <img src="docs/assets/hero.svg" alt="港航数字孪生 AI 决策调度双端系统" width="100%" />
 </p>
 
 <p align="center">
@@ -12,90 +21,34 @@
 </p>
 
 <p align="center">
-  <strong>可审计港口 AI 生命周期平台：从数据来源、数字孪生、真实训练和留出评测，到模型治理、受控干预与证据回放。</strong><br />
-  <em>An auditable port-AI lifecycle platform spanning provenance, digital twins, real training, held-out evaluation, model governance, bounded intervention, and evidence replay.</em>
+  <strong>面向港口与航运现场的 Web 指挥中心 + Flutter 移动端，将实时孪生、预测、RL/MPC 决策、小懿AI协同、人工审批与操作追踪组成同一运营闭环。</strong><br />
+  <em>A dual-end Web and Flutter system unifying live twins, forecasting, RL/MPC decisions, Xiaoyi AI collaboration, human approval, and traceable operations.</em>
 </p>
 
-## V3.1 · Multi-port public reference training and Shanghai target training
+## 项目介绍 / Project introduction
 
-V3 保留全部历史基准并新增一条更严格的证据链：洛杉矶六分钟公开观测承担高频对照训练，新加坡官方聚合数据保留长周期覆盖，上海新数据包则把交通运输部 22 个吞吐锚点与洋山附近 17,544 小时公开再分析对齐并独立训练。当前权重未跨港继承，因此不宣称迁移学习。尚未公开的 TOS、岸桥、堆场、AGV 和闸口字段始终标记为工程派生或不可用，等现场数据按契约替换。
+**港航数字孪生 AI 决策调度双端系统**是一套面向港口生产、能源、设备与安全协同的可运行工程平台。Web 端用于集团/码头指挥、数字孪生、策略试验与模型治理；Flutter 移动端面向一线巡检、告警处置、任务确认与交接班。两端共享同一后端合同、模型产物和审计链，避免“大屏是一套数、现场又是另一套结论”。
 
-V3 keeps every historical benchmark and adds a stricter evidence track: Los Angeles six-minute public observations provide high-frequency reference training, Singapore official aggregates retain long-horizon coverage, and a Shanghai package combines 22 Ministry of Transport throughput anchors with 17,544 hourly public reanalysis observations near Yangshan for independent target-domain training. We do not claim transfer learning because weights are not inherited across ports. Missing TOS, crane, yard, AGV and gate fields remain explicit engineering derivatives or unavailable factors until site replacement.
+It is an executable engineering platform for coordinated port production, energy, equipment, and safety operations. The Web command center covers twin visualization, policy experiments, dispatch review, and model governance; the Flutter client supports frontline inspection, alert handling, task confirmation, and shift handover. Both clients consume the same backend contracts, model artifacts, and audit trail.
 
-Open the new evidence-driven decision center after startup: <http://127.0.0.1:8000/v3>
-
-| V3 fact | Current contract |
+| 项目维度 / Dimension | 当前能力 / Current capability |
 |---|---|
-| Algorithm coverage | 10 executable RL methods + MPC + neutral FCFS |
-| Time isolation | 70% train / 10% validation / 20% untouched blind test |
-| Shanghai target package | 17,544 hours + 22 official reporting anchors; SHA-256 pinned |
-| Advantage claim | Version-pinned five-metric comparison; validation selects the algorithm, then 3 seeds × ≥10,000 steps × 10 untouched blind windows report the result |
-| Selected SAC blind-test result | Weighted advantage **+3.98%** (95% CI **+2.71% to +4.91%**); throughput **+9.63%** and delay improvement **+19.30%** versus neutral FCFS |
-| Equivalent-throughput value | Cost/TEU **+4.53%** and carbon/TEU **+4.57%** improvement; annualized values are mechanical 48-hour extrapolations, not audited group savings |
-| Causal environment | `port_ops_v3` couples service/allocation gains to operational electric load; cross-version comparison is rejected |
-| 3D runtime chain | Continuous calibrated public replay → fitted Ridge P10/P50/P90 → hash-verified SAC inference → control projection and software safety envelope |
-| Offline visual runtime | Repository-bundled ECharts + zero-CDN perspective Canvas twin; a first clone keeps charts, assets and three-state linkage without public JS CDNs |
-| Scenario coverage | 9/10 offline executable or fail-closed classes; cyber/actuator faults remain site-adapter and hardware-in-the-loop work |
-| Clickable evidence | Six business-value views; every controller exposes optimizer traces, runs, seeds, steps, KPI means/95% CIs, job/model hashes; every port exposes source lineage; every business domain exposes state, action, hard constraints, site KPIs and code paths |
-| Production authority | Disabled until site mapping, calibration, shadow operation and human approval pass |
-| Historical evidence | Append-only; V1/V2 registry, bundles and run manifests are retained |
+| 双端协同 / Dual-end workflow | Web 指挥中心 + Flutter 一线移动端，同源数据、同模型版本、同任务与审计 ID |
+| 业务覆盖 / Operations | 泊位船期、场桥、暖通、岸电+储能、场内储能、堆场照明、安全、ESG 与 OpsX |
+| AI 决策 / AI decisions | 10 类可执行 RL 算法 + MPC + FCFS，配套时序留出评测、多种子统计、安全投影和准入门 |
+| 小懿AI / Xiaoyi AI | 基于当前孪生、预测、模型、异常和准入状态执行态势、解释、分诊、预演与交接班任务 |
+| 落地边界 / Deployment boundary | 公开数据与校准回放用于开发和评测；接港时按数据契约替换 TOS、PLC、BMS/BA 等适配器，配置未通过校验时不执行现场指令 |
 
-### V3.2 · 小懿AI 数字孪生任务副驾
-
-小懿现在不再只是页面悬浮问答。它在回答前由后端组装一份带 SHA-256 的运行上下文：公开数据校准回放、数据质量、Ridge P10/P50/P90 预测、选中 SAC 模型/数据哈希、异常、PSI 漂移、准入门和缺失现场因子。前端可一键发起“当前态势、未来风险、策略解释、告警分诊、交接班、执行预演”六类任务。
-
-真实调用不由一个“Online”文案代替：服务必须同时通过 `/health` 和 OpenAPI `POST /api/chat` 能力校验，每次任务都显示 `true_xiaoyi_called`、执行 provider/model、耗时与上下文接地校验。如果小懿只复述提示词或没有引用足够的当前运行锚点，前端仍如实标明已调用，但一线答案改由后端证据护栏生成。交接班默认只预览，人工确认后才追加审计留痕；所有路径均保持 `production_authority=false`。
-
-按默认端口启动后打开：<http://127.0.0.1:8000/ops-copilot?mission=situation>。如需真实调用独立小懿服务，请将 `XIAOYI_AI_BASE_URL` 指向其实际监听端口；当前仓库不将另一个项目的本机绝对路径写入开源默认配置。
-
-### 五个专项 V3.1 证据轨 / Five asset-specific V3.1 evidence tracks
-
-五个专项 V3.1 晋级策略均为**带安全投影的教师策略蒸馏**：网络通过教师动作的均方误差学习，再用固定验证集的奖励、业务与安全门禁选检查点。V3.1 岸电/场内储能中的 Stable-Baselines3 PPO 只承担策略网络与确定性推理载体。V3.2 岸电追加实验则真实执行了 3 种子 × 30,000 个 PPO 环境步，但因成本、碳、峰值综合门未通过而拒绝晋级；场内储能的新增纯电网侧档案继续采用验证选模和 2026 前向验收。全港 `port_ops_v3` 的 10 类算法仍是独立的真实环境交互式 RL 训练，各证据轨不混称。
-
-| 专项模块 | 后端合同与盲测 | 当前公开/工程场景结果 | 不越界声明 |
-|---|---|---|---|
-| 岸电储能 | 34 状态 / 2 动作 / 8 奖励项 / 12 硬约束；3/3 种子收敛，20 个盲测窗 | 成本 **-0.648%**、峰值 **-1.436%**，但碳 **+0.219%**；碳门禁明确阻断 | 公开数据工程场景；不是上海港实测节省或碳核证 |
-| 场内储能 | 40 状态 / 2 动作 / 9 奖励项 / 15 硬约束；3/3 种子收敛，20 个盲测窗 | 成本 **-3.440%**、峰值 **-0.021%**、碳 **-0.008%**、工程事件履约 **100%** | DR/备用事件是工程日历，不是市场结算记录 |
-| 暖通空调 | 30 状态 / 3 动作 / 8 奖励项 / 12 硬约束；3/3 种子收敛，8 个盲测窗 | 成本 **-2.698%**、能耗 **-2.862%**、峰值 **-1.984%**、碳 **-2.860%**，冷量满足 **100%** | 5,760 行时序工程回放；待接 BMS/BA、冷机和末端实测点位 |
-| 场桥 | 36 状态 / 2 动作 / 9 奖励项 / 16 硬约束；3/3 种子收敛，8 个盲测窗 | 成本 **-3.148%**、能耗 **-3.714%**、碳 **-3.711%**，作业量与 SLA 保持 **100%** | 92,160 条设备记录与 8,559 个作业是可复现工程遥测；待接 TOS/PLC |
-| 堆场照明 | 42 状态 / 3 动作 / 10 奖励项 / 17 硬约束；3/3 种子收敛，5 个盲测窗 | 成本 **-1.770%**、能耗 **-2.175%**、峰值 **-1.207%**，最低/关键照度合规 **100%** | 公开气象/港口信号增强工程回放；待接照度计、网关与回执 |
-
-每个百分比都来自所列模块的时序隔离盲测，不是前端定时器。前端按钮可继续下钻到原始检查点、收敛判据、状态/动作/奖励/约束、模型哈希、历史运行、失败门禁和待接现场字段。年化金额与碳量仅是固定场景的机械外推，代码和界面均保持 `claim_eligible=false`、`production_authority=false`。
-
-### V3.2 · 业务价值追加训练与前向门禁
-
-V3.2 没有把“继续训练”理解为必须制造更大的数字。候选先在既有训练/验证段选模，随后才打开独立的 2026 年 1–5 月上海公开前向包；失败候选写入追加式证据但不替换冠军。前向包包含交通运输部 4 个累计吞吐量锚点与洋山附近 3,624 小时公开再分析/模型记录，数据集 SHA-256 为 `616fe7cde24695f0d19118c64d1e5c534f9adee47a886b33b6003e7e372bb06a`。它仍不是码头表计或设备遥测。
-
-| 模块 | V3.2 动作 | 验收结果 | 当前决定 |
-|---|---|---|---|
-| 堆场照明 | 复核可行动作与照度安全教师上限 | 演员与教师验证成本仅差 0.000027 个百分点；继续调暗只增加投影依赖 | 不重训，保留 V3.1 冠军 |
-| 暖通空调 | 扩展到安全层已有的低负荷 650 Pa 静压边界；3 新种子训练 | 成本/能耗/碳改善至 3.262%/3.553%/3.549%，但峰值 1.973% 未过预设 2.0% 门 | 候选留痕，不晋级 |
-| 岸电储能 | V3.1 热启动后执行 90,000 个真实 PPO 环境步 | 0/3 种子同时满足成本、碳、峰值非劣 | 拒绝综合候选，经济档案保留且碳门继续阻断 |
-| 场内储能 | 禁用无公开结算证据的 DR/备用收入；3 新种子重训 | 2026 前向 3/3 通过：成本 0.0109%–0.0356%、碳 0.0058%–0.0225%、峰值 0.0378%–0.4934% | 新增纯电网侧保守档案，不覆盖历史工程事件场景 |
-
-前端每个相关模块新增“查看V3.2增训结论”按钮，可直接查看晋级/拒绝原因、训练步数/样本数、前向指标范围、模型哈希和声明边界。完整机器可读证据位于 [`evidence/v3/value_improvement_v32.json`](evidence/v3/value_improvement_v32.json)，2026 数据卡见 [`docs/DATASET_CARD_public_cn_sha_forward_2026m05_v1.md`](docs/DATASET_CARD_public_cn_sha_forward_2026m05_v1.md)。所有金额仍是工程场景机械年化，不是集团财务实绩。
-
-五个专项模块还各自展示两项可审计的蒸馏过程指标：教师动作模仿损失与蒸馏检查点的固定验证集平均回报。后者不是训练时的 PPO/SAC 奖励。前端直接读取追加式 `seed_*/metrics.jsonl`，合计展示 114 个持久化检查点（岸电 27、场内储能 24、暖通 24、场桥 21、照明 21）；三条彩色线是三个随机种子的原始轨迹，粗白线只是同 epoch 算术均值。过程图明确记录 `retrained_for_display=false`、`interpolated_points=false`、`frontend_random_noise=false`，点击“查看蒸馏/验证判据”可核对训练类型、文件路径、记录数和 SHA-256。
-
-为补足“能看到奖励函数收敛过程”的可审计证据，每个专项模块还新增一张高密度奖励图。`scripts/export_checkpoint_reward_replay.py` 不重新训练模型，而是逐一加载上述 114 个保存检查点，在固定验证集首个相同窗口做确定性无渲染回放，每 10 个环境步聚合一次真实奖励，并减去同种子、同场景块的 epoch-1 奖励。五个模块共展示 2,832 个奖励块（岸电 459、场内储能 408、暖通 936、场桥 819、照明 210）；彩色细线保留三种子波动，发光白线显示同检查点均值。该证据明确标记为后训练检查点回放（`training_time_log=false`），不会冒充历史上未保存的逐优化步奖励，也不读取封存盲测；原始奖励、模型路径、检查点 SHA-256 和声明边界均可由“查看收敛判据”按钮下钻核对。
-
-Detailed evidence: [V3 technical map](docs/V3_TECHNICAL_EVIDENCE.md) · [runtime data/model contract](docs/V3_RUNTIME_DATA_CONTRACT.md) · [HR technical audit](docs/V3_HR_TECHNICAL_AUDIT.md) · [Shanghai dataset card](docs/DATASET_CARD_public_cn_sha_hourly_v3.md) · [site-data replacement contract](docs/SITE_DATA_REPLACEMENT_CONTRACT_V3.md).
-
-V3.2 adds a paired strong-baseline gate. The selected three-seed SAC ensemble is compared on the same ten chronological blind windows with FCFS neutral control, a fixed transparent engineering SOP proxy, and receding-horizon MPC. SAC retains a strict advantage over FCFS but does not beat the engineering proxy or MPC on the fixed weighted objective, so production and group-savings admission remain closed. The proxy is not presented as measured incumbent Shanghai operations; site SOP and timestamped action/outcome logs must replace it.
-
-The twelve business-domain cards also disclose execution depth. Nine domains currently expose a model, sandbox, safety/workflow, evidence or transfer output; gate/rail/barge, reefer and maintenance are explicitly marked as simulation-contract, coupled-factor or monitoring-only domains with no independent optimizer. Every card exposes runtime APIs, code hashes, site blockers and its fail-closed fallback; all twelve remain production-pending.
+> **一句话闭环：**公开数据/现场数据 → 数字孪生 → 预测与 RL/MPC 策略 → 软件安全包络 → 人工审批 → 双端任务执行/回放 → 操作记录。
 
 <p align="center">
-  <strong>研发作者：</strong>温家懿 · <strong>Research Author:</strong> Wen Jiayi
-</p>
-
-<p align="center">
+  <a href="#项目介绍--project-introduction">项目介绍 / Introduction</a> ·
   <a href="#-系统全景--system-at-a-glance">系统全景 / Overview</a> ·
-  <a href="#-快速开始--quick-start">快速开始 / Quick start</a> ·
   <a href="#-真实训练与评测--real-training--evaluation">训练与评测 / Evaluation</a> ·
+  <a href="#-版本演进与训练结果--version-evolution--training-results">版本与训练 / Versions</a> ·
+  <a href="#-快速开始--quick-start">快速开始 / Quick start</a> ·
   <a href="#-数据与接港契约--data--port-adapter-contract">数据契约 / Data</a> ·
-  <a href="#-安全和治理边界--safety--governance-boundaries">安全治理 / Safety</a> ·
-  <a href="docs/OPEN_SOURCE_READINESS_AUDIT.md">开源审计 / Audit</a>
+  <a href="#-安全和治理边界--safety--governance-boundaries">安全治理 / Safety</a>
 </p>
 
 <table>
@@ -121,11 +74,11 @@ The twelve business-domain cards also disclose execution depth. Nine domains cur
 
 ---
 
-## 为什么是 Port DT Multi？ / Why Port DT Multi?
+## 工程定位与核心能力 / Engineering positioning & core capabilities
 
-港口 AI 项目真正困难的部分，不是再画一张驾驶舱，而是让“数据从哪里来、算法究竟跑了什么、评测是否泄漏、策略为何允许进入下一道门、执行到底有没有发生”能够被复核。Port DT Multi 把这些问题组织成一条可本地运行、可替换数据源、可留存证据的工程主链。
+港航 AI 项目真正困难的部分，不是再画一张驾驶舱，而是让“数据从哪里来、算法究竟跑了什么、评测是否泄漏、策略为何允许进入下一道门、执行到底有没有发生”能够被复核。本系统把这些问题组织成一条可本地运行、可替换数据源、可留存证据的工程主链。
 
-The hard part of port AI is not another dashboard. It is making data origin, algorithm execution, leakage control, promotion criteria, action authority, and final evidence independently reviewable. Port DT Multi turns those concerns into a local, replaceable, evidence-producing engineering workflow.
+The hard part of port and maritime AI is not another dashboard. It is making data origin, algorithm execution, leakage control, promotion criteria, action authority, and final evidence independently reviewable. This system turns those concerns into a local, replaceable, evidence-producing engineering workflow.
 
 | 能力域 / Domain | 已实现 / Implemented | 可审计证据 / Evidence |
 |---|---|---|
@@ -223,6 +176,16 @@ For port replacement, `port_ops_v2` exposes 37 observations (base state, twelve 
 
 V3 formal evidence uses `port_ops_v3`, which retains the 37D/5D contract while causally charging service-intensity, berth-priority and yard-flow gains to operational electric load. This prevents a policy from manufacturing a throughput gain without the corresponding energy consequence. V1/V2 manifests remain immutable historical evidence and are never mixed into a V3 comparison.
 
+### V4 · 海事/海关检查连锁延误韧性 / Regulatory-delay resilience
+
+`port_ops_v4` 以增量合同扩展为 **53 维状态 / 7 维建议动作**：新增海事检查、海关查验、严重缺陷滞留、二次查验、监管资源可用度、放行率及“检查中—待放行—放行后追赶”内部队列；新动作仅用于预留检查窗口与放行后恢复优先级，不能改变执法结论或签发放行。旧 `port_ops_v1/v2/v3` 模型、报告和指标保持原样，V3 策略通过中性适配器在 V4 中运行时两个新增动作固定为 0。
+
+正式增量训练使用 17,544 小时上海公开基础包叠加预声明监管压力情景，执行 **3 个种子 × 20,000 SAC 环境步**，训练不渲染、验证集选模。候选模型锁定后，另用 2026-01-01 至 2026-05-31 的 3,624 小时前向数据做 20 个成对 48 小时挑战，该数据禁止选模和调参。相对“未感知监管的 V3 工程 SOP 代理”，监管延误 TEU·小时平均降低 **58.95%（95% CI 52.14%–65.13%）**，服务完成率相对提升 **12.55%（11.00%–14.09%）**，单位 TEU 成本改善 **9.23%（8.43%–10.06%）**，单位 TEU 碳排放改善 **9.99%（9.31%–10.64%）**，安全违规率为 0。第一轮因电池终端修正后的斜率越界而 `BLOCKED`，修复后重新训练的通过证据追加保留；两轮均未替换旧冠军，`production_authority=false`。
+
+这些数字是 `OUT_OF_PERIOD_FORWARD_ENGINEERING_STRESS_CHALLENGE_NOT_FIELD_KPI`，不是上海海事局、海关或码头现场 KPI。检查选择率、时长和资源能力必须由经授权的监管/TOS/船舶事件替换后，才能进行影子验证。机器可读证据：[`evidence/v4/regulatory_delay/latest.json`](evidence/v4/regulatory_delay/latest.json)；接口：`GET /api/rl/regulatory-resilience/evidence`；数据卡：[`docs/DATASET_CARD_public_cn_sha_regulatory_scenario_v4.md`](docs/DATASET_CARD_public_cn_sha_regulatory_scenario_v4.md)。
+
+`port_ops_v4` adds a 53-state/7-action contract for maritime inspections, customs checks, detention/secondary checks, authority-resource availability, release state, and downstream recovery queues. The two new actions reserve terminal readiness and prioritize post-release recovery only; they do not alter official findings or release decisions. After three-seed SAC training, the locked candidate improves regulatory-delay TEU-hours by 58.95% (95% CI 52.14%–65.13%) against a regulator-unaware V3 engineering proxy on a 2026 out-of-period forward engineering challenge, with zero guardrail violations. This is not field performance or production authority.
+
 <p align="center">
   <img src="docs/assets/rl-training-console-real-backend.png" alt="Real backend RL training console with Los Angeles public dataset, profile-bound objective weights, optimizer parameters, progress source, and test-only replay control" width="96%" />
   <br />
@@ -292,30 +255,100 @@ The three additional tracks are backend-owned evidence flows rather than timer-g
 
 Portable evaluation summaries live in [`evidence/rl`](evidence/rl/README.md). Short runs remain labelled `RL_SMOKE_WIRING_ONLY`; formal RL evidence requires `RL_HELD_OUT_EVALUATION` plus the dataset fingerprint, model hash, optimizer steps, seed, holdout windows, and 95% intervals. Model binaries stay out of Git and are reproducible with the documented command.
 
-## 📊 固定业务KPI对照 / Fixed business KPI evidence
+## 📊 可复现业务 KPI 对照 / Reproducible business KPI benchmark
 
 Web端提供 `/api/rl/business-benchmark`，只展示经过数据、配置和计算代码 SHA-256 校验的固定反事实报告。`public_port_ops_v1` 以 MPA 新加坡 2020–2025 月度集装箱吞吐量和集装箱船到港量为官方锚点，构造 52,608 条连续小时驱动记录，并按 35,064 train / 8,784 validation / 8,760 test 时序隔离；最终测试相对“静态 FCFS + 固定能源时刻表”得到：
 
 The Web endpoint `/api/rl/business-benchmark` exposes only the pinned counterfactual report whose data, configuration, and computation code pass SHA-256 verification. `public_port_ops_v1` anchors 52,608 consecutive hourly driver records to official MPA Singapore monthly container throughput and container-vessel arrivals for 2020–2025, then applies a chronological 35,064 train / 8,784 validation / 8,760 test split. Against static FCFS plus a fixed energy schedule, the sealed test produces:
 
-| 指标 / Metric | 精确测试结果 / Exact test result | 简历整数口径 / Rounded resume claim |
+| 指标 / Metric | 精确测试结果 / Exact test result | 摘要值 / Rounded result |
 |---|---:|---:|
 | 泊位有效利用率 / Effective berth utilization | 83.63% → 91.09%，+7.45 个百分点 / percentage points | 相对 / relative +9% |
 | 平均待泊时间 / Mean waiting time | 5.90 h → 4.90 h，-16.94% | -17% |
 | 情景用电成本 / Scenario energy cost | 26.83M → 23.66M，-11.80% | -12% |
 
-吞吐量保持一致；每天未恢复的柔性负荷与 BESS 期末电量按固定参考价结算，避免跨日借能或通过欠供制造节省。365 个完整测试日进行 2,000 次成对 bootstrap，三项指标的 95% 区间分别为 8.89%–8.97%、16.92%–16.97% 和 11.79%–11.84%；27 组预声明参数敏感性亦保存于报告。上述数字是公开输入驱动的数字孪生情景结果，不是港口实测 KPI、现场 A/B 或财务审计结论。完整公式、参数和边界见 [业务KPI基准](docs/BUSINESS_KPI_BENCHMARK.md) 与 [简历证据页](docs/RESUME_CLAIMS_WEB.md)。
+吞吐量保持一致；每天未恢复的柔性负荷与 BESS 期末电量按固定参考价结算，避免跨日借能或通过欠供制造节省。365 个完整测试日进行 2,000 次成对 bootstrap，三项指标的 95% 区间分别为 8.89%–8.97%、16.92%–16.97% 和 11.79%–11.84%；27 组预声明参数敏感性亦保存于报告。上述数字是公开输入驱动的数字孪生情景结果，不是港口实测 KPI、现场 A/B 或财务审计结论。完整公式、参数和适用范围见[业务 KPI 基准](docs/BUSINESS_KPI_BENCHMARK.md)。
 
-Throughput is held constant. Unrestored flexible load and terminal BESS state of charge are settled daily at a fixed reference price to prevent cross-day energy borrowing or artificial savings through under-supply. Across 365 complete test days, 2,000 paired bootstrap resamples yield 95% intervals of 8.89%–8.97%, 16.92%–16.97%, and 11.79%–11.84%; the report also retains 27 predeclared parameter-sensitivity cases. These are public-input-driven digital-twin scenario results—not measured terminal KPIs, an online A/B test, or a financial audit. See the [business KPI benchmark](docs/BUSINESS_KPI_BENCHMARK.md) and [resume evidence page](docs/RESUME_CLAIMS_WEB.md) for formulas, parameters, and boundaries.
+Throughput is held constant. Unrestored flexible load and terminal BESS state of charge are settled daily at a fixed reference price to prevent cross-day energy borrowing or artificial savings through under-supply. Across 365 complete test days, 2,000 paired bootstrap resamples yield 95% intervals of 8.89%–8.97%, 16.92%–16.97%, and 11.79%–11.84%; the report also retains 27 predeclared parameter-sensitivity cases. These are public-input-driven digital-twin scenario results—not measured terminal KPIs, an online A/B test, or a financial audit. See the [business KPI benchmark](docs/BUSINESS_KPI_BENCHMARK.md) for formulas, parameters, and scope.
 
-Flutter 移动端通过同一 FastAPI 的 `/api/mobile/*` 契约读取候选、提交人工表态、获取回执并上传审计，不是另一套独立后端。500项固定闭环操作验证了重复提交、冲突幂等键、越权生产下发与审计链，详见 [双端架构](docs/SHARED_WEB_MOBILE_ARCHITECTURE.md)、[移动闭环基准](docs/MOBILE_WORKFLOW_BENCHMARK.md)和[双端简历证据](docs/RESUME_CLAIMS_DUAL_FRONTEND.md)。
+Flutter 移动端通过同一 FastAPI 的 `/api/mobile/*` 契约读取候选、提交人工表态、获取回执并上传审计，不是另一套独立后端。500 项闭环操作验证了重复提交、冲突幂等键、越权生产下发与审计链，详见[双端架构](docs/SHARED_WEB_MOBILE_ARCHITECTURE.md)和[移动闭环基准](docs/MOBILE_WORKFLOW_BENCHMARK.md)。
 
-The Flutter frontend uses the same FastAPI `/api/mobile/*` contract to read candidates, submit human decisions, obtain receipts, and upload audit evidence; it is not a separate backend. A fixed suite of 500 closed-loop operations checks duplicate submissions, conflicting idempotency keys, unauthorized production dispatch, and the audit chain. See the [dual-frontend architecture](docs/SHARED_WEB_MOBILE_ARCHITECTURE.md), [mobile workflow benchmark](docs/MOBILE_WORKFLOW_BENCHMARK.md), and [dual-frontend resume evidence](docs/RESUME_CLAIMS_DUAL_FRONTEND.md).
+The Flutter frontend uses the same FastAPI `/api/mobile/*` contract to read candidates, submit human decisions, obtain receipts, and upload audit events; it is not a separate backend. A suite of 500 closed-loop operations checks duplicate submissions, conflicting idempotency keys, unauthorized production dispatch, and the audit chain. See the [dual-frontend architecture](docs/SHARED_WEB_MOBILE_ARCHITECTURE.md) and [mobile workflow benchmark](docs/MOBILE_WORKFLOW_BENCHMARK.md).
 
 ```bash
 python -m scripts.business_kpi_benchmark --verify
-python -m scripts.release_check
 ```
+
+## 🧬 版本演进与训练结果 / Version evolution & training results
+
+### V3.1 · Multi-port public reference training and Shanghai target training
+
+V3 保留全部历史基准并新增一条更严格的证据链：洛杉矶六分钟公开观测承担高频对照训练，新加坡官方聚合数据保留长周期覆盖，上海新数据包则把交通运输部 22 个吞吐锚点与洋山附近 17,544 小时公开再分析对齐并独立训练。当前权重未跨港继承，因此不宣称迁移学习。尚未公开的 TOS、岸桥、堆场、AGV 和闸口字段始终标记为工程派生或不可用，等现场数据按契约替换。
+
+V3 keeps every historical benchmark and adds a stricter evidence track: Los Angeles six-minute public observations provide high-frequency reference training, Singapore official aggregates retain long-horizon coverage, and a Shanghai package combines 22 Ministry of Transport throughput anchors with 17,544 hourly public reanalysis observations near Yangshan for independent target-domain training. We do not claim transfer learning because weights are not inherited across ports. Missing TOS, crane, yard, AGV and gate fields remain explicit engineering derivatives or unavailable factors until site replacement.
+
+Open the new evidence-driven decision center after startup: <http://127.0.0.1:8000/v3>
+
+| V3 fact | Current contract |
+|---|---|
+| Algorithm coverage | 10 executable RL methods + MPC + neutral FCFS |
+| Time isolation | 70% train / 10% validation / 20% untouched blind test |
+| Shanghai target package | 17,544 hours + 22 official reporting anchors; SHA-256 pinned |
+| Advantage claim | Version-pinned five-metric comparison; validation selects the algorithm, then 3 seeds × ≥10,000 steps × 10 untouched blind windows report the result |
+| Selected SAC blind-test result | Weighted advantage **+2.95%** (95% CI **+1.68% to +4.00%**); throughput **+8.40%** (95% CI **+3.56% to +11.47%**) and delay improvement **+16.77%** (95% CI **+9.78% to +21.38%**) versus neutral FCFS |
+| Equivalent-throughput value | Cost/TEU **+4.11%** (95% CI **+2.33% to +5.03%**) and carbon/TEU **+3.90%** (95% CI **+1.49% to +5.54%**) improvement; annualized values are mechanical 48-hour extrapolations, not audited group savings |
+| Causal environment | `port_ops_v3` couples service/allocation gains to operational electric load; cross-version comparison is rejected |
+| 3D runtime chain | Continuous calibrated public replay → fitted Ridge P10/P50/P90 → hash-verified SAC inference → control projection and software safety envelope |
+| Offline visual runtime | Repository-bundled ECharts + zero-CDN perspective Canvas twin; a first clone keeps charts, assets and three-state linkage without public JS CDNs |
+| Scenario coverage | 9/10 offline executable or fail-closed classes; cyber/actuator faults remain site-adapter and hardware-in-the-loop work |
+| Clickable evidence | Six business-value views; every controller exposes optimizer traces, runs, seeds, steps, KPI means/95% CIs, job/model hashes; every port exposes source lineage; every business domain exposes state, action, hard constraints, site KPIs and code paths |
+| Production authority | Disabled until site mapping, calibration, shadow operation and human approval pass |
+| Historical evidence | Append-only; V1/V2 registry, bundles and run manifests are retained |
+
+### V3.2 · 小懿AI 数字孪生任务副驾
+
+小懿现在不再只是页面悬浮问答。它在回答前由后端组装一份带 SHA-256 的运行上下文：公开数据校准回放、数据质量、Ridge P10/P50/P90 预测、选中 SAC 模型/数据哈希、异常、PSI 漂移、准入门和缺失现场因子。前端可一键发起“当前态势、未来风险、策略解释、告警分诊、交接班、执行预演”六类任务。
+
+真实调用不由一个“Online”文案代替：服务必须同时通过 `/health` 和 OpenAPI `POST /api/chat` 能力校验，每次任务都显示 `true_xiaoyi_called`、执行 provider/model、耗时与上下文接地校验。如果小懿只复述提示词或没有引用足够的当前运行锚点，前端仍如实标明已调用，但一线答案改由后端证据护栏生成。交接班默认只预览，人工确认后才追加审计留痕；所有路径均保持 `production_authority=false`。
+
+按默认端口启动后打开：<http://127.0.0.1:8000/ops-copilot?mission=situation>。如需调用独立小懿服务，请将 `XIAOYI_AI_BASE_URL` 指向其实际监听端口；默认配置不包含其他项目的本机绝对路径。
+
+### 五个专项 V3.1 评测 / Five asset-specific V3.1 evaluations
+
+五个专项 V3.1 晋级策略均为**带安全投影的教师策略蒸馏**：网络通过教师动作的均方误差学习，再用固定验证集的奖励、业务与安全门禁选检查点。V3.1 岸电/场内储能中的 Stable-Baselines3 PPO 只承担策略网络与确定性推理载体。V3.2 岸电追加实验则真实执行了 3 种子 × 30,000 个 PPO 环境步，但因成本、碳、峰值综合门未通过而拒绝晋级；场内储能的新增纯电网侧档案继续采用验证选模和 2026 前向验收。全港 `port_ops_v3` 的 10 类算法仍是独立的真实环境交互式 RL 训练，各证据轨不混称。
+
+| 专项模块 | 后端合同与盲测 | 当前公开/工程场景结果 | 不越界声明 |
+|---|---|---|---|
+| 岸电储能 | 34 状态 / 2 动作 / 8 奖励项 / 12 硬约束；3/3 种子收敛，20 个盲测窗 | 成本 **-0.648%**、峰值 **-1.436%**，但碳 **+0.219%**；碳门禁明确阻断 | 公开数据工程场景；不是上海港实测节省或碳核证 |
+| 场内储能 | 40 状态 / 2 动作 / 9 奖励项 / 15 硬约束；3/3 种子收敛，20 个盲测窗 | 成本 **-3.440%**、峰值 **-0.021%**、碳 **-0.008%**、工程事件履约 **100%** | DR/备用事件是工程日历，不是市场结算记录 |
+| 暖通空调 | 30 状态 / 3 动作 / 8 奖励项 / 12 硬约束；3/3 种子收敛，8 个盲测窗 | 成本 **-2.698%**、能耗 **-2.862%**、峰值 **-1.984%**、碳 **-2.860%**，冷量满足 **100%** | 5,760 行时序工程回放；待接 BMS/BA、冷机和末端实测点位 |
+| 场桥 | 36 状态 / 2 动作 / 9 奖励项 / 16 硬约束；3/3 种子收敛，8 个盲测窗 | 成本 **-3.148%**、能耗 **-3.714%**、碳 **-3.711%**，作业量与 SLA 保持 **100%** | 92,160 条设备记录与 8,559 个作业是可复现工程遥测；待接 TOS/PLC |
+| 堆场照明 | 42 状态 / 3 动作 / 10 奖励项 / 17 硬约束；3/3 种子收敛，5 个盲测窗 | 成本 **-1.770%**、能耗 **-2.175%**、峰值 **-1.207%**，最低/关键照度合规 **100%** | 公开气象/港口信号增强工程回放；待接照度计、网关与回执 |
+
+每个百分比都来自所列模块的时序隔离盲测，不是前端定时器。前端按钮可继续下钻到原始检查点、收敛判据、状态/动作/奖励/约束、模型哈希、历史运行、失败门禁和待接现场字段。年化金额与碳量仅是固定场景的机械外推，代码和界面均保持 `claim_eligible=false`、`production_authority=false`。
+
+### V3.2 · 业务价值追加训练与前向门禁
+
+V3.2 没有把“继续训练”理解为必须制造更大的数字。候选先在既有训练/验证段选模，随后才打开独立的 2026 年 1–5 月上海公开前向包；失败候选写入追加式证据但不替换冠军。前向包包含交通运输部 4 个累计吞吐量锚点与洋山附近 3,624 小时公开再分析/模型记录，数据集 SHA-256 为 `616fe7cde24695f0d19118c64d1e5c534f9adee47a886b33b6003e7e372bb06a`。它仍不是码头表计或设备遥测。
+
+| 模块 | V3.2 动作 | 验收结果 | 当前决定 |
+|---|---|---|---|
+| 堆场照明 | 复核可行动作与照度安全教师上限 | 演员与教师验证成本仅差 0.000027 个百分点；继续调暗只增加投影依赖 | 不重训，保留 V3.1 冠军 |
+| 暖通空调 | 扩展到安全层已有的低负荷 650 Pa 静压边界；3 新种子训练 | 成本/能耗/碳改善至 3.262%/3.553%/3.549%，但峰值 1.973% 未过预设 2.0% 门 | 候选留痕，不晋级 |
+| 岸电储能 | V3.1 热启动后执行 90,000 个真实 PPO 环境步 | 0/3 种子同时满足成本、碳、峰值非劣 | 拒绝综合候选，经济档案保留且碳门继续阻断 |
+| 场内储能 | 禁用无公开结算证据的 DR/备用收入；3 新种子重训 | 2026 前向 3/3 通过：成本 0.0109%–0.0356%、碳 0.0058%–0.0225%、峰值 0.0378%–0.4934% | 新增纯电网侧保守档案，不覆盖历史工程事件场景 |
+
+前端每个相关模块新增“查看V3.2增训结论”按钮，可直接查看晋级/拒绝原因、训练步数/样本数、前向指标范围、模型哈希和声明边界。完整机器可读证据位于 [`evidence/v3/value_improvement_v32.json`](evidence/v3/value_improvement_v32.json)，2026 数据卡见 [`docs/DATASET_CARD_public_cn_sha_forward_2026m05_v1.md`](docs/DATASET_CARD_public_cn_sha_forward_2026m05_v1.md)。所有金额仍是工程场景机械年化，不是集团财务实绩。
+
+五个专项模块还各自展示两项可审计的蒸馏过程指标：教师动作模仿损失与蒸馏检查点的固定验证集平均回报。后者不是训练时的 PPO/SAC 奖励。前端直接读取追加式 `seed_*/metrics.jsonl`，合计展示 114 个持久化检查点（岸电 27、场内储能 24、暖通 24、场桥 21、照明 21）；三条彩色线是三个随机种子的原始轨迹，粗白线只是同 epoch 算术均值。过程图明确记录 `retrained_for_display=false`、`interpolated_points=false`、`frontend_random_noise=false`，点击“查看蒸馏/验证判据”可核对训练类型、文件路径、记录数和 SHA-256。
+
+为补足“能看到奖励函数收敛过程”的可审计证据，每个专项模块还新增一张高密度奖励图。`scripts/export_checkpoint_reward_replay.py` 不重新训练模型，而是逐一加载上述 114 个保存检查点，在固定验证集首个相同窗口做确定性无渲染回放，每 10 个环境步聚合一次真实奖励，并减去同种子、同场景块的 epoch-1 奖励。五个模块共展示 2,832 个奖励块（岸电 459、场内储能 408、暖通 936、场桥 819、照明 210）；彩色细线保留三种子波动，发光白线显示同检查点均值。该证据明确标记为后训练检查点回放（`training_time_log=false`），不会冒充历史上未保存的逐优化步奖励，也不读取封存盲测；原始奖励、模型路径、检查点 SHA-256 和声明边界均可由“查看收敛判据”按钮下钻核对。
+
+Technical references: [V3 technical map](docs/V3_TECHNICAL_EVIDENCE.md) · [runtime data/model contract](docs/V3_RUNTIME_DATA_CONTRACT.md) · [implementation reference](docs/V3_IMPLEMENTATION_REFERENCE.md) · [Shanghai dataset card](docs/DATASET_CARD_public_cn_sha_hourly_v3.md) · [site-data replacement contract](docs/SITE_DATA_REPLACEMENT_CONTRACT_V3.md).
+
+V3.2 adds a paired strong-baseline gate. The selected three-seed SAC ensemble is compared on the same ten chronological blind windows with FCFS neutral control, a fixed transparent engineering SOP proxy, and receding-horizon MPC. SAC retains a strict advantage over FCFS but does not beat the engineering proxy or MPC on the fixed weighted objective, so production and group-savings admission remain closed. The proxy is not presented as measured incumbent Shanghai operations; site SOP and timestamped action/outcome logs must replace it.
+
+The twelve business-domain cards also disclose execution depth. Nine domains currently expose a model, sandbox, safety/workflow, evidence or transfer output; gate/rail/barge, reefer and maintenance are explicitly marked as simulation-contract, coupled-factor or monitoring-only domains with no independent optimizer. Every card exposes runtime APIs, code hashes, site blockers and its fail-closed fallback; all twelve remain production-pending.
 
 ## 🚀 快速开始 / Quick start
 
@@ -342,6 +375,11 @@ python -m pip install -r requirements.txt
 python -m uvicorn app.server:app --host 127.0.0.1 --port 8000
 ```
 
+Linux 容器和 CI 使用 `requirements-linux.lock` / `requirements-ci.lock` 与
+`--require-hashes` 校验每个发行包；`requirements.txt` 保留为跨平台开发入口。
+The Linux container and CI verify every distribution hash through the checked-in
+lock files; `requirements.txt` remains the cross-platform development input.
+
 打开 / Open:
 
 - V3 决策中枢 / V3 Decision Center: <http://127.0.0.1:8000/v3>
@@ -360,9 +398,9 @@ docker build -t port-dt-multi:3.2.0 .
 docker run --rm -p 127.0.0.1:8000:8000 port-dt-multi:3.2.0
 ```
 
-容器会打包 V3 页面、公开数据、模型哈希、历史训练证据、数据卡和复现实验脚本；CI 会实际构建镜像，并检查 `/health/ready`、V3 总览、运行策略和模块证据接口。容器默认以非 root 用户运行，且仍使用开发/研究边界。生产配置请从 [.env.example](.env.example) 和 [生产就绪清单](docs/PRODUCTION_READINESS.md) 开始。
+容器包含 V3 页面、公开数据、模型登记、数据卡和实验脚本；CI 会构建镜像并检查 `/health/ready`、V3 总览和运行策略接口。容器默认以非 root 用户运行，配置项见 [.env.example](.env.example)。
 
-The image packages the V3 UI, public datasets, model hashes, historical training evidence, dataset cards and reproduction scripts. CI builds the image and verifies readiness, V3 overview, runtime-policy and module-evidence endpoints. The container runs as a non-root user and retains the research/integration boundary. Start production hardening from [.env.example](.env.example) and the [production-readiness checklist](docs/PRODUCTION_READINESS.md).
+The image includes the V3 UI, public datasets, model registry, dataset cards, and experiment scripts. CI builds the image and checks `/health/ready`, the V3 overview, and runtime-policy endpoints. The container runs as a non-root user; configuration options are documented in [.env.example](.env.example).
 
 ## 🧪 启动一次训练 / Run one experiment
 
@@ -455,8 +493,8 @@ Datasets cannot overwrite an existing identifier unless `replace_existing=true` 
   *ESG, compliance, twin fidelity, and safety claims require formal evidence; software output is not legal, financial, or safety certification.*
 - <strong>生产模式门禁 / Production gate</strong>：`PORT_DT_ENV=production` 时 API 需要长密钥、HTTPS CORS、逐密钥限流、请求体上限与安全响应头；数据覆盖、模型晋级/回滚和执行变更另需独立管理员密钥；Swagger 默认关闭。<br>
   *With `PORT_DT_ENV=production`, APIs require strong keys, HTTPS CORS, per-key rate limiting, a request-body cap and security headers; dataset replacement, model promotion/rollback, and execution changes require a separate administrator key; Swagger is disabled.*
-- <strong>现场证据验真 / Site evidence verification</strong>：生产自检会解析授权孪生图谱、实测校准和影子运行验收 JSON，检查审批字段、内容条件、SHA-256 和统一 `site_id`；仅配置路径不能通过。<br>
-  *Production readiness parses the authorized twin graph, measured calibration and shadow-acceptance JSON, checking approvals, content conditions, SHA-256 and one shared `site_id`; a configured pathname alone cannot pass.*
+- <strong>现场配置校验 / Site configuration validation</strong>：系统会解析授权孪生图谱、实测校准、影子运行、执行配置、联锁调试、六方靠泊协同、国际标准互操作、八类预测留出校准、实际执行绑定的业务收益归因、全链跨资源协同、三十天连续运行和四周组织值守记录，检查审批字段、内容条件、安全散列摘要和统一 `site_id`；仅填写文件路径或把执行开关改为开启不会启用现场模式。<br>
+  *The service validates the full technical evidence chain plus thirty-day service continuity and a four-week named operating model, including approvals, content conditions, hashes, duty separation, recovery drills, and one shared site identifier; setting a pathname or enabling a switch alone does not enable site mode.*
 - <strong>标识符安全 / Identifier safety</strong>：训练、评测和模型目录只接受受限标识符，并拒绝路径穿越与符号链接逃逸。<br>
   *Training, evaluation, and model directories accept constrained identifiers and reject path traversal and symlink escape.*
 
@@ -464,7 +502,18 @@ Datasets cannot overwrite an existing identifier unless `replace_existing=true` 
 
 - [模型治理 / Model governance](MODEL_GOVERNANCE.md)
 - [南向执行安全契约 / Southbound execution](docs/SOUTHBOUND_EXECUTION.md)
-- [生产就绪 / Production readiness](docs/PRODUCTION_READINESS.md)
+- [现场集成 / Site integration](docs/PRODUCTION_READINESS.md)
+- [港口靠泊事件数据网关 / Port-call event gateway](docs/PORT_CALL_DATA_GATEWAY.md)
+- [港口靠泊六方协同与延误传播 / Port-call collaboration](docs/PORT_CALL_COLLABORATION.md)
+- [国际海事标准互操作与符合性证据 / Maritime interoperability](docs/MARITIME_INTEROPERABILITY.md)
+- [港口多目标预测与不确定性校准 / Forecast uncertainty](docs/FORECAST_UNCERTAINTY.md)
+- [现场实际业务收益归因 / Business-benefit attribution](docs/BUSINESS_BENEFIT_ATTRIBUTION.md)
+- [港口全链条跨资源滚动协同 / End-to-end coordination](docs/END_TO_END_COORDINATION.md)
+- [二十四小时连续运行与灾备 / Production continuity](docs/PRODUCTION_CONTINUITY.md)
+- [组织责任、值守与升级治理 / Operating-model governance](docs/OPERATING_MODEL_GOVERNANCE.md)
+- [现场数字孪生标定闭环 / Site twin calibration](docs/SITE_TWIN_CALIBRATION.md)
+- [现场影子运行与上线验收 / Site shadow acceptance](docs/SITE_SHADOW_ACCEPTANCE.md)
+- [现场执行联锁与受控放行 / Site execution acceptance](docs/SITE_EXECUTION_ACCEPTANCE.md)
 - [故障响应 / Incident response](docs/INCIDENT_RESPONSE_RUNBOOK.md)
 - [安全策略 / Security policy](SECURITY.md)
 
@@ -483,12 +532,20 @@ The default runtime exposes the trusted core only. Legacy engineering simulators
 | 变量 / Variable | 作用 / Purpose | 默认 / Default |
 |---|---|---|
 | `PORT_DT_ENABLE_ENGINEERING_SIMULATORS` | 旧 Dashlets / OpsX / PortX 等界面联调模拟器<br><sub>Legacy Dashlets/OpsX/PortX UI-integration simulators</sub> | off |
-| `PORT_DT_ENABLE_LEGACY_RL` | 旧 RL 模块只读查看，不用于结论<br><sub>Read-only legacy RL view, excluded from claims</sub> | off |
+| `PORT_DT_ENABLE_LEGACY_RL` | 旧 RL 模块只读查看，不计入当前基准<br><sub>Read-only legacy RL view, excluded from current benchmarks</sub> | off |
 | `PORT_DT_ENABLE_DESKTOP_INTEGRATIONS` | 小懿/航行模拟器本机联动<br><sub>Local Xiaoyi/sailing-simulator integration</sub> | off |
 | `PORT_DT_TWIN_GRAPH_PATH` | 现场孪生实体关系图<br><sub>Site twin entity graph</sub> | unset |
-| `PORT_DT_TWIN_CALIBRATION_PATH` | 现场校准证据<br><sub>Site calibration evidence</sub> | unset |
-| `PORT_DT_SHADOW_ACCEPTANCE_PATH` | 同站点影子运行验收<br><sub>Same-site shadow acceptance evidence</sub> | unset |
+| `PORT_DT_TWIN_CALIBRATION_PATH` | 现场校准记录<br><sub>Site calibration record</sub> | unset |
+| `PORT_DT_SHADOW_ACCEPTANCE_PATH` | 同站点影子运行记录<br><sub>Same-site shadow-run record</sub> | unset |
 | `PORT_DT_ACTUATOR_CONFIG` | 私有南向执行配置<br><sub>Private southbound execution configuration</sub> | unset |
+| `PORT_DT_EXECUTION_ACCEPTANCE_PATH` | 同站点执行联锁调试与放行证据<br><sub>Same-site execution and interlock commissioning evidence</sub> | unset |
+| `PORT_DT_PORT_CALL_COLLABORATION_PATH` | 同站点六方靠泊协同、延误传播和回执证据<br><sub>Same-site six-party port-call collaboration, delay propagation and receipt evidence</sub> | unset |
+| `PORT_DT_MARITIME_INTEROPERABILITY_PATH` | 同站点港口靠泊、海事单一窗口和通用水文数据模型映射及外部测试证据<br><sub>Same-site port-call, maritime-single-window and S-100 mapping with bound external-test evidence</sub> | unset |
+| `PORT_DT_FORECAST_UNCERTAINTY_PATH` | 同站点八类预测、时间留出评估和区间校准证据<br><sub>Same-site eight-target forecasting, chronological holdout and interval-calibration evidence</sub> | unset |
+| `PORT_DT_BUSINESS_BENEFIT_ATTRIBUTION_PATH` | 同站点实际执行、后验计量、同期对照和三方独立复核收益证据<br><sub>Same-site actual execution, measured outcomes, concurrent comparator and three-party independent benefit review</sub> | unset |
+| `PORT_DT_END_TO_END_COORDINATION_PATH` | 同站点十一类资源、九阶段任务、冻结计划与四方复核的全链协同证据<br><sub>Same-site eleven-resource, nine-stage, freeze-aware and four-party reviewed coordination evidence</sub> | unset |
+| `PORT_DT_PRODUCTION_CONTINUITY_PATH` | 同站点三十天连续服务目标、事件闭环、每日还原与六类恢复演练证据<br><sub>Same-site thirty-day service objectives, incident closure, daily restore and six-drill continuity evidence</sub> | unset |
+| `PORT_DT_OPERATING_MODEL_GOVERNANCE_PATH` | 同站点实名职责、异人审批、四周三班值守、资质与升级链证据<br><sub>Same-site named responsibility, duty separation, four-week roster, competency and escalation evidence</sub> | unset |
 | `PORT_DT_ALLOW_MODEL_PROMOTION` | 允许通过门禁后设置 champion<br><sub>Permit gated promotion to champion</sub> | off |
 
 ## 🗂️ 仓库结构 / Repository map
@@ -518,9 +575,9 @@ python -m unittest discover -s tests -v
 python -m scripts.rl_smoke_test --steps 64
 ```
 
-当前发布门禁执行完整单元测试，并用 64 步烟雾实验真实执行 10 类 RL、MPC 与 FCFS；正式比较证据另要求每种 RL 至少 3 个随机种子和每次 10,000 个已观测优化步。CI 还执行依赖漏洞审计；公开后启用 CodeQL、Dependency Review、OpenSSF Scorecard、SBOM 与源码证明。
+完整单元测试会运行 64 步烟雾实验，覆盖 10 类 RL、MPC 与 FCFS；正式比较另要求每种 RL 至少 3 个随机种子和每次 10,000 个已观测优化步。CI 同时执行依赖漏洞审计、CodeQL、Dependency Review、OpenSSF Scorecard、SBOM 与源码证明。
 
-The current gate runs the complete unit-test suite and a 64-step smoke experiment that genuinely executes ten RL methods, MPC, and FCFS. Formal comparisons separately require at least three seeds and 10,000 observed optimizer steps per RL method. CI also audits installed dependencies; public-only workflows add CodeQL, Dependency Review, OpenSSF Scorecard, SBOM generation, and source attestations.
+The complete unit-test suite includes a 64-step smoke experiment covering ten RL methods, MPC, and FCFS. Formal comparisons separately require at least three seeds and 10,000 observed optimizer steps per RL method. CI also runs dependency auditing, CodeQL, Dependency Review, OpenSSF Scorecard, SBOM generation, and source attestations.
 
 ## 🤝 参与项目 / Contributing
 
@@ -529,6 +586,32 @@ The current gate runs the complete unit-test suite and a 64-step smoke experimen
 Contributions should be provenance-aware, reproducible, and explicit about safety impact. Read the [contribution guide](CONTRIBUTING.md), [governance](GOVERNANCE.md), [code of conduct](CODE_OF_CONDUCT.md), and [support policy](SUPPORT.md). The pull-request template asks for data, evaluation, rollback, and verification evidence.
 
 安全问题请不要提交公开 Issue；请使用 GitHub Private Vulnerability Reporting。/ Do not disclose vulnerabilities in public issues; use GitHub Private Vulnerability Reporting.
+
+## 学术顾问与致谢 / Academic Advisor & Acknowledgements
+
+### [Hamid Reza Karimi 教授 / Prof. Dr. Hamid Reza Karimi](https://www.ae-info.org/ae/Member/Karimi_Hamid_Reza)
+
+- **米兰理工大学机械工程系应用力学教授**
+  （Professor of Applied Mechanics, Department of Mechanical Engineering, Politecnico di Milano）
+- **欧洲科学院院士**
+  （Ordinary Member of Academia Europaea, MAE）
+- **欧洲科学与艺术院院士**
+  （Member of the European Academy of Sciences and Arts, MEASA）
+- **欧洲科学院院士**
+  （Member of the European Academy of Sciences, MEurASc）
+- **国家人工智能科学院院士**
+  （Member of the National Academy of Artificial Intelligence, MNAAI）
+- **国际声学与振动研究所杰出会士**
+  （Distinguished Fellow of the International Institute of Acoustics and Vibration, DFIIAV）
+- **国际状态监测学会会士**
+  （Fellow of the International Society for Condition Monitoring, FISCM）
+- **亚太人工智能学会会士**
+  （Fellow of the Asia-Pacific Artificial Intelligence Association, FAAIA）
+- **国际声学与振动研究所理事**
+  （Member of the Board of Directors of the International Institute of Acoustics and Vibration, IIAV）
+
+> 谨向 Karimi 教授为本项目提供的学术支持与指导致以诚挚谢意。
+> *With sincere appreciation to Professor Karimi for his academic support and guidance on this project.*
 
 ## 📄 许可证与引用 / License & citation
 

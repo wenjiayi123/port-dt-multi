@@ -13,7 +13,7 @@ class BusinessKpiBenchmarkTests(unittest.TestCase):
             {"train": 35064, "validation": 8784, "test": 8760},
         )
         self.assertEqual(
-            report["resume_claims_rounded_percent"],
+            report["summary_metrics_rounded_percent"],
             {
                 "berth_utilization_relative_improvement_percent": 9.0,
                 "average_waiting_time_reduction_percent": 17.0,

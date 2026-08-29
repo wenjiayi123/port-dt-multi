@@ -2,7 +2,7 @@
   if (window.__xiaoyiSpriteInstalled) return;
   window.__xiaoyiSpriteInstalled = true;
 
-  const SPRITE_VERSION = "2026-08-13-mission-control-v3";
+  const SPRITE_VERSION = "2026-08-14-evidence-context-v3";
   // V3 resets legacy drag coordinates that may place the assistant over the
   // realtime control rail after the dashboard layout upgrade.
   const STORAGE_KEY = "xiaoyi_sprite_position_v3";
@@ -97,6 +97,7 @@
       .xiaoyi-sprite-close{width:28px;height:28px;border-radius:9px;border:1px solid rgba(148,163,184,.22);background:#0b1426;color:#cfe0ff;cursor:pointer;font-weight:900}
       .xiaoyi-sprite-log{margin-top:10px;padding:10px;border-radius:12px;border:1px solid rgba(148,163,184,.16);background:rgba(9,20,38,.76);font-size:12px;line-height:1.6;color:#cfe0ff;min-height:54px;white-space:pre-line}
       .xiaoyi-sprite-engine{display:flex;gap:6px;align-items:center;margin-top:9px;color:#86efac;font-size:10px;font-weight:850}.xiaoyi-sprite-engine::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 9px currentColor}.xiaoyi-sprite-engine.warn{color:#fbbf24}
+      .xiaoyi-sprite-context{margin-top:7px;padding:8px 9px;border-radius:9px;border:1px solid rgba(96,165,250,.18);background:rgba(7,17,31,.62);color:#a9c9e8;font-size:10px;font-weight:760;line-height:1.45;overflow-wrap:anywhere;white-space:pre-line}.xiaoyi-sprite-context.blocked{border-color:rgba(251,191,36,.26);color:#fcd98d}
       .xiaoyi-sprite-missions{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:9px}.xiaoyi-sprite-mission{min-height:34px;border:1px solid rgba(96,165,250,.24);border-radius:9px;background:#0b1a30;color:#cfe8ff;font-size:11px;font-weight:800;cursor:pointer}.xiaoyi-sprite-mission:hover{border-color:#22d3ee;color:#fff}
       .xiaoyi-sprite-form{display:grid;gap:8px;margin-top:10px}
       .xiaoyi-sprite-input{width:100%;min-height:72px;resize:vertical;border:1px solid rgba(96,165,250,.30);border-radius:12px;background:#07111f;color:#eaf2ff;padding:10px;outline:none;font:inherit;font-size:13px;line-height:1.45}
@@ -131,6 +132,7 @@
         </div>
         <div class="xiaoyi-sprite-log">${defaultMessage}</div>
         <div class="xiaoyi-sprite-engine warn">正在校验真实小懿调用链</div>
+        <div class="xiaoyi-sprite-context">正在读取 V3 运行证据与上下文回执…</div>
         <div class="xiaoyi-sprite-missions">
           <button type="button" class="xiaoyi-sprite-mission" data-mission="situation">当前态势</button>
           <button type="button" class="xiaoyi-sprite-mission" data-mission="forecast">未来风险</button>
@@ -292,6 +294,31 @@
     }
   }
 
+  async function refreshOperationalContext(root){
+    const box = root.querySelector(".xiaoyi-sprite-context");
+    if(!box) return;
+    try{
+      const response = await fetch("/api/copilot/context?mission=situation&asset_id=qc-01", {cache:"no-store"});
+      if(!response.ok) throw new Error(String(response.status));
+      const data = await response.json();
+      const signals = Array.isArray(data.signals) ? data.signals : [];
+      const signalValue = id => signals.find(item=>item.id === id)?.value;
+      const gate = String(signalValue("monitoring_gate") || "unavailable");
+      const blocked = gate === "block_to_safe_baseline";
+      const gateText = blocked ? "准入门阻断" : (gate === "review" ? "人工复核" : "离线分析可用");
+      const source = signalValue("telemetry_source") || "来源待校验";
+      const policy = signalValue("policy") || "模型待校验";
+      const digest = String(data.context_sha256 || "").slice(0, 12) || "无回执";
+      box.classList.toggle("blocked", blocked);
+      box.textContent = `证据回执 · ${source} · ${policy} · ${gateText}\n上下文 ${digest} · 无生产控制权`;
+      box.title = `context_sha256=${data.context_sha256 || "unavailable"}`;
+    }catch(_){
+      box.classList.add("blocked");
+      box.textContent = "V3 上下文暂不可读 · 不生成生产建议";
+      box.title = "context endpoint unavailable";
+    }
+  }
+
   function isSailingAction(data){
     const id = data?.will_execute?.action_id || data?.action?.id || "";
     return data?.action?.linked_system === "sailing_simulator"
@@ -370,6 +397,9 @@
     applyStoredPosition(root);
     protectNavigationFromStoredPosition(root);
     installDrag(root, orb);
+    orb?.addEventListener("click", ()=>{
+      if(root.classList.contains("open")) refreshOperationalContext(root);
+    });
     root.querySelector(".xiaoyi-sprite-close")?.addEventListener("click", ()=>root.classList.remove("open"));
     root.querySelector("[data-open-full]")?.addEventListener("click", ()=>{
       const command = (root.querySelector(".xiaoyi-sprite-input")?.value || "").trim();
@@ -377,6 +407,7 @@
     });
     root.querySelectorAll("[data-mission]").forEach(button => button.addEventListener("click", ()=>openMission(button.dataset.mission)));
     refreshEngineStatus(root);
+    refreshOperationalContext(root);
     form?.addEventListener("submit", (ev)=>{
       ev.preventDefault();
       handleCommand(root);

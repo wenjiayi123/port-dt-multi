@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import os
 from pathlib import Path
 
 
@@ -19,15 +18,17 @@ def validate_identifier(value: str, *, field: str) -> str:
         raise ValueError(
             f"{field} must be 1-128 ASCII letters, numbers, dots, underscores, or hyphens"
         )
-    # basename is a recognized path-component boundary for static analyzers;
-    # equality is guaranteed by the strict grammar above (no slash allowed).
-    return os.path.basename(text)
+    return text
 
 
 def resolve_child_dir(root: Path, value: str, *, field: str) -> Path:
     """Resolve a validated child directory and reject symlink/path escapes."""
     identifier = validate_identifier(value, field=field)
     resolved_root = Path(root).resolve()
+    # The strict grammar excludes separators, and the resolved-parent equality
+    # below also rejects symlink and traversal escapes. CodeQL does not model
+    # this project-local containment validator.
+    # codeql[py/path-injection]
     candidate = (resolved_root / identifier).resolve(strict=False)
     if candidate.parent != resolved_root:
         raise ValueError(f"{field} resolves outside the configured root")

@@ -79,22 +79,26 @@ def _probe_xiaoyi_service(
         "post_supported": False,
     }
     if health.get("ok"):
-        req = UrlRequest(schema_url, headers={"User-Agent": "port-dt-multi-xiaoyi-launcher/1.0"})
-        try:
-            with urlopen(req, timeout=timeout_sec) as resp:
-                status_code = int(getattr(resp, "status", 200))
-                document = json.loads(resp.read().decode("utf-8"))
-                methods = (document.get("paths") or {}).get(chat_path) or {}
-                post_supported = isinstance(methods, dict) and "post" in methods
-                schema_probe = {
-                    "ok": 200 <= status_code < 300 and post_supported,
-                    "status_code": status_code,
-                    "error": None if post_supported else f"POST {chat_path} missing from OpenAPI",
-                    "chat_path_present": bool(methods),
-                    "post_supported": post_supported,
-                }
-        except Exception:
-            schema_probe["error"] = "xiaoyi schema endpoint unavailable"
+        for attempt in range(2):
+            req = UrlRequest(schema_url, headers={"User-Agent": "port-dt-multi-xiaoyi-launcher/1.0"})
+            try:
+                with urlopen(req, timeout=max(timeout_sec, 1.2)) as resp:
+                    status_code = int(getattr(resp, "status", 200))
+                    document = json.loads(resp.read().decode("utf-8"))
+                    methods = (document.get("paths") or {}).get(chat_path) or {}
+                    post_supported = isinstance(methods, dict) and "post" in methods
+                    schema_probe = {
+                        "ok": 200 <= status_code < 300 and post_supported,
+                        "status_code": status_code,
+                        "error": None if post_supported else f"POST {chat_path} missing from OpenAPI",
+                        "chat_path_present": bool(methods),
+                        "post_supported": post_supported,
+                    }
+                break
+            except Exception:
+                schema_probe["error"] = "xiaoyi schema endpoint unavailable"
+                if attempt == 0:
+                    time.sleep(0.08)
     chat_capable = bool(health.get("ok") and schema_probe.get("ok"))
     return {
         "ok": chat_capable,

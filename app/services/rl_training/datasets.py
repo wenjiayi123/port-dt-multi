@@ -4,7 +4,7 @@ import csv
 import hashlib
 import json
 import math
-import os
+import re
 import shutil
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -39,6 +39,38 @@ FACTOR_COLUMNS = (
     "pilot_tug_availability_ratio",
     "closure_flag",
 )
+REGULATORY_COLUMNS = (
+    "maritime_inspection_ratio",
+    "customs_inspection_ratio",
+    "maritime_detention_ratio",
+    "customs_secondary_check_ratio",
+    "inspection_resource_availability_ratio",
+    "regulatory_release_ratio",
+)
+PORT_WIDE_COLUMNS = (
+    "truck_arrivals_per_hour",
+    "gate_queue_trucks",
+    "gate_capacity_ratio",
+    "rail_transfer_demand_teu",
+    "barge_transfer_demand_teu",
+    "intermodal_capacity_ratio",
+    "reefer_occupancy_ratio",
+    "reefer_temperature_risk_ratio",
+    "shore_power_demand_kw",
+    "shore_power_connection_ratio",
+    "equipment_failure_risk_ratio",
+    "maintenance_backlog_ratio",
+    "labor_availability_ratio",
+    "pilotage_demand_vessels",
+    "tug_demand_vessels",
+    "channel_capacity_ratio",
+    "dangerous_goods_workload_ratio",
+    "yard_dwell_time_hours",
+    "planning_vessel_draft_m",
+    "channel_chart_depth_m",
+    "squat_allowance_m",
+    "forecast_uncertainty_ratio",
+)
 DEFAULT_DATA_ROOT = Path("data/rl/datasets")
 COLUMN_UNITS = {
     "base_load_kw": "kW",
@@ -60,6 +92,34 @@ COLUMN_UNITS = {
     "reefer_load_kw": "kW",
     "pilot_tug_availability_ratio": "ratio",
     "closure_flag": "binary",
+    "maritime_inspection_ratio": "ratio",
+    "customs_inspection_ratio": "ratio",
+    "maritime_detention_ratio": "ratio",
+    "customs_secondary_check_ratio": "ratio",
+    "inspection_resource_availability_ratio": "ratio",
+    "regulatory_release_ratio": "ratio",
+    "truck_arrivals_per_hour": "truck/hour",
+    "gate_queue_trucks": "truck",
+    "gate_capacity_ratio": "ratio",
+    "rail_transfer_demand_teu": "TEU/sampling_interval",
+    "barge_transfer_demand_teu": "TEU/sampling_interval",
+    "intermodal_capacity_ratio": "ratio",
+    "reefer_occupancy_ratio": "ratio",
+    "reefer_temperature_risk_ratio": "ratio",
+    "shore_power_demand_kw": "kW",
+    "shore_power_connection_ratio": "ratio",
+    "equipment_failure_risk_ratio": "ratio",
+    "maintenance_backlog_ratio": "ratio",
+    "labor_availability_ratio": "ratio",
+    "pilotage_demand_vessels": "vessel/sampling_interval",
+    "tug_demand_vessels": "vessel/sampling_interval",
+    "channel_capacity_ratio": "ratio",
+    "dangerous_goods_workload_ratio": "ratio",
+    "yard_dwell_time_hours": "hour",
+    "planning_vessel_draft_m": "m",
+    "channel_chart_depth_m": "m",
+    "squat_allowance_m": "m",
+    "forecast_uncertainty_ratio": "ratio",
 }
 PHYSICAL_BOUNDS = {
     "base_load_kw": (0.0, None),
@@ -81,9 +141,38 @@ PHYSICAL_BOUNDS = {
     "reefer_load_kw": (0.0, None),
     "pilot_tug_availability_ratio": (0.0, 1.0),
     "closure_flag": (0.0, 1.0),
+    "maritime_inspection_ratio": (0.0, 1.0),
+    "customs_inspection_ratio": (0.0, 1.0),
+    "maritime_detention_ratio": (0.0, 1.0),
+    "customs_secondary_check_ratio": (0.0, 1.0),
+    "inspection_resource_availability_ratio": (0.0, 1.0),
+    "regulatory_release_ratio": (0.0, 1.0),
+    "truck_arrivals_per_hour": (0.0, None),
+    "gate_queue_trucks": (0.0, None),
+    "gate_capacity_ratio": (0.0, 1.0),
+    "rail_transfer_demand_teu": (0.0, None),
+    "barge_transfer_demand_teu": (0.0, None),
+    "intermodal_capacity_ratio": (0.0, 1.0),
+    "reefer_occupancy_ratio": (0.0, 1.0),
+    "reefer_temperature_risk_ratio": (0.0, 1.0),
+    "shore_power_demand_kw": (0.0, None),
+    "shore_power_connection_ratio": (0.0, 1.0),
+    "equipment_failure_risk_ratio": (0.0, 1.0),
+    "maintenance_backlog_ratio": (0.0, 1.0),
+    "labor_availability_ratio": (0.0, 1.0),
+    "pilotage_demand_vessels": (0.0, None),
+    "tug_demand_vessels": (0.0, None),
+    "channel_capacity_ratio": (0.0, 1.0),
+    "dangerous_goods_workload_ratio": (0.0, 1.0),
+    "yard_dwell_time_hours": (0.0, None),
+    "planning_vessel_draft_m": (0.0, 40.0),
+    "channel_chart_depth_m": (0.0, 100.0),
+    "squat_allowance_m": (0.0, 5.0),
+    "forecast_uncertainty_ratio": (0.0, 1.0),
 }
 REQUIRED_GOVERNANCE_METADATA = ("provenance_type", "license", "owner", "timezone", "intended_use")
 _DESCRIPTION_CACHE: Dict[str, tuple[int, int, Dict[str, Any]]] = {}
+_DATASET_ID = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 
 
 def utc_now() -> str:
@@ -91,16 +180,18 @@ def utc_now() -> str:
 
 
 def safe_dataset_id(value: str) -> str:
-    cleaned = "".join(ch.lower() if ch.isalnum() else "_" for ch in str(value)).strip("_")
-    while "__" in cleaned:
-        cleaned = cleaned.replace("__", "_")
-    if not cleaned or len(cleaned) > 64:
-        raise ValueError("dataset_id must contain 1-64 letters, numbers, or separators")
-    return os.path.basename(cleaned)
+    identifier = str(value or "").strip().lower()
+    if not _DATASET_ID.fullmatch(identifier):
+        raise ValueError("dataset_id must be 1-64 lowercase ASCII letters, numbers, underscores, or hyphens")
+    return identifier
 
 
 def file_sha256(path: Path) -> str:
     digest = hashlib.sha256()
+    # The callers pass code-owned or root-contained artifact paths. CodeQL does
+    # not model our identifier/root-containment validators, so this sink is an
+    # audited false positive rather than an unbounded caller path.
+    # codeql[py/path-injection]
     with path.open("rb") as stream:
         for block in iter(lambda: stream.read(1024 * 1024), b""):
             digest.update(block)
@@ -119,6 +210,18 @@ class PortDataset:
     )
     factor_availability: np.ndarray = field(
         default_factory=lambda: np.empty((0, len(FACTOR_COLUMNS)), dtype=np.float32)
+    )
+    regulatory_values: np.ndarray = field(
+        default_factory=lambda: np.empty((0, len(REGULATORY_COLUMNS)), dtype=np.float32)
+    )
+    regulatory_availability: np.ndarray = field(
+        default_factory=lambda: np.empty((0, len(REGULATORY_COLUMNS)), dtype=np.float32)
+    )
+    port_wide_values: np.ndarray = field(
+        default_factory=lambda: np.empty((0, len(PORT_WIDE_COLUMNS)), dtype=np.float32)
+    )
+    port_wide_availability: np.ndarray = field(
+        default_factory=lambda: np.empty((0, len(PORT_WIDE_COLUMNS)), dtype=np.float32)
     )
 
     @property
@@ -182,6 +285,8 @@ class PortDataset:
             "rows": self.rows,
             "columns": list(CANONICAL_COLUMNS),
             "optional_factor_columns": list(FACTOR_COLUMNS),
+            "optional_regulatory_columns": list(REGULATORY_COLUMNS),
+            "optional_port_wide_columns": list(PORT_WIDE_COLUMNS),
             "train_rows": train_slice.stop - train_slice.start,
             "validation_rows": validation_slice.stop - validation_slice.start,
             "test_rows": test_slice.stop - test_slice.start,
@@ -265,6 +370,70 @@ def dataset_quality_report(dataset: PortDataset) -> Dict[str, Any]:
             "constant": bool(observed.size and np.ptp(observed) <= 1e-12),
             "optional": True,
         }
+    regulatory_coverage: Dict[str, float] = {}
+    regulatory_values = dataset.regulatory_values
+    regulatory_availability = dataset.regulatory_availability
+    if regulatory_values.shape != (dataset.rows, len(REGULATORY_COLUMNS)):
+        regulatory_values = np.zeros((dataset.rows, len(REGULATORY_COLUMNS)), dtype=np.float32)
+    if regulatory_availability.shape != (dataset.rows, len(REGULATORY_COLUMNS)):
+        regulatory_availability = np.zeros((dataset.rows, len(REGULATORY_COLUMNS)), dtype=np.float32)
+    for index, column in enumerate(REGULATORY_COLUMNS):
+        available = regulatory_availability[:, index] > 0.5
+        coverage = float(np.mean(available)) if available.size else 0.0
+        regulatory_coverage[column] = coverage
+        observed = regulatory_values[available, index].astype(np.float64)
+        lower, upper = PHYSICAL_BOUNDS[column]
+        violations = 0
+        if observed.size:
+            violations += int(np.sum(observed < lower)) if lower is not None else 0
+            violations += int(np.sum(observed > upper)) if upper is not None else 0
+        physical_violations += violations
+        columns[column] = {
+            "unit": COLUMN_UNITS[column],
+            "coverage_ratio": coverage,
+            "available_rows": int(np.sum(available)),
+            "min": float(np.min(observed)) if observed.size else None,
+            "max": float(np.max(observed)) if observed.size else None,
+            "mean": float(np.mean(observed)) if observed.size else None,
+            "std": float(np.std(observed)) if observed.size else None,
+            "physical_bounds": {"min": lower, "max": upper},
+            "physical_violation_count": violations,
+            "constant": bool(observed.size and np.ptp(observed) <= 1e-12),
+            "optional": True,
+            "scenario_only": True,
+        }
+    port_wide_coverage: Dict[str, float] = {}
+    port_wide_values = dataset.port_wide_values
+    port_wide_availability = dataset.port_wide_availability
+    if port_wide_values.shape != (dataset.rows, len(PORT_WIDE_COLUMNS)):
+        port_wide_values = np.zeros((dataset.rows, len(PORT_WIDE_COLUMNS)), dtype=np.float32)
+    if port_wide_availability.shape != (dataset.rows, len(PORT_WIDE_COLUMNS)):
+        port_wide_availability = np.zeros((dataset.rows, len(PORT_WIDE_COLUMNS)), dtype=np.float32)
+    for index, column in enumerate(PORT_WIDE_COLUMNS):
+        available = port_wide_availability[:, index] > 0.5
+        coverage = float(np.mean(available)) if available.size else 0.0
+        port_wide_coverage[column] = coverage
+        observed = port_wide_values[available, index].astype(np.float64)
+        lower, upper = PHYSICAL_BOUNDS[column]
+        violations = 0
+        if observed.size:
+            violations += int(np.sum(observed < lower)) if lower is not None else 0
+            violations += int(np.sum(observed > upper)) if upper is not None else 0
+        physical_violations += violations
+        columns[column] = {
+            "unit": COLUMN_UNITS[column],
+            "coverage_ratio": coverage,
+            "available_rows": int(np.sum(available)),
+            "min": float(np.min(observed)) if observed.size else None,
+            "max": float(np.max(observed)) if observed.size else None,
+            "mean": float(np.mean(observed)) if observed.size else None,
+            "std": float(np.std(observed)) if observed.size else None,
+            "physical_bounds": {"min": lower, "max": upper},
+            "physical_violation_count": violations,
+            "constant": bool(observed.size and np.ptp(observed) <= 1e-12),
+            "optional": True,
+            "site_replaceable": True,
+        }
     missing_metadata = [name for name in REQUIRED_GOVERNANCE_METADATA if not dataset.metadata.get(name)]
     errors: List[str] = []
     warnings: List[str] = []
@@ -313,6 +482,12 @@ def dataset_quality_report(dataset: PortDataset) -> Dict[str, Any]:
         "factor_coverage": factor_coverage,
         "available_factor_count": available_factor_count,
         "factor_count": len(FACTOR_COLUMNS),
+        "regulatory_factor_coverage": regulatory_coverage,
+        "available_regulatory_factor_count": sum(value > 0 for value in regulatory_coverage.values()),
+        "regulatory_factor_count": len(REGULATORY_COLUMNS),
+        "port_wide_factor_coverage": port_wide_coverage,
+        "available_port_wide_factor_count": sum(value > 0 for value in port_wide_coverage.values()),
+        "port_wide_factor_count": len(PORT_WIDE_COLUMNS),
         "evidence": {
             "tier": evidence_tier,
             "measured_columns": measured_columns,
@@ -360,12 +535,19 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
     resolved = safe_dataset_id(dataset_id)
     path = data_root / f"{resolved}.csv"
     meta_path = data_root / f"{resolved}.meta.json"
+    # `resolved` passed the strict one-component grammar in safe_dataset_id.
+    # codeql[py/path-injection]
     if not path.exists():
         raise FileNotFoundError(f"dataset not found: {resolved}")
     timestamps: List[str] = []
     rows: List[List[float]] = []
     factor_rows: List[List[float]] = []
     factor_masks: List[List[float]] = []
+    regulatory_rows: List[List[float]] = []
+    regulatory_masks: List[List[float]] = []
+    port_wide_rows: List[List[float]] = []
+    port_wide_masks: List[List[float]] = []
+    # codeql[py/path-injection]
     with path.open("r", encoding="utf-8-sig", newline="") as stream:
         reader = csv.DictReader(stream)
         missing = [name for name in CANONICAL_COLUMNS if name not in (reader.fieldnames or [])]
@@ -389,10 +571,36 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
                 factor_mask.append(1.0)
             factor_rows.append(factor_row)
             factor_masks.append(factor_mask)
+            regulatory_row: List[float] = []
+            regulatory_mask: List[float] = []
+            for column in REGULATORY_COLUMNS:
+                raw = row.get(column)
+                if raw is None or str(raw).strip() == "":
+                    regulatory_row.append(0.0)
+                    regulatory_mask.append(0.0)
+                    continue
+                regulatory_row.append(_finite_number(raw, column, line))
+                regulatory_mask.append(1.0)
+            regulatory_rows.append(regulatory_row)
+            regulatory_masks.append(regulatory_mask)
+            port_wide_row: List[float] = []
+            port_wide_mask: List[float] = []
+            for column in PORT_WIDE_COLUMNS:
+                raw = row.get(column)
+                if raw is None or str(raw).strip() == "":
+                    port_wide_row.append(0.0)
+                    port_wide_mask.append(0.0)
+                    continue
+                port_wide_row.append(_finite_number(raw, column, line))
+                port_wide_mask.append(1.0)
+            port_wide_rows.append(port_wide_row)
+            port_wide_masks.append(port_wide_mask)
     if len(rows) < 48:
         raise ValueError(f"dataset {resolved} needs at least 48 chronological rows; got {len(rows)}")
     metadata: Dict[str, Any] = {}
+    # codeql[py/path-injection]
     if meta_path.exists():
+        # codeql[py/path-injection]
         metadata = json.loads(meta_path.read_text(encoding="utf-8"))
     metadata.update(
         {
@@ -411,6 +619,10 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
         metadata,
         np.asarray(factor_rows, dtype=np.float32),
         np.asarray(factor_masks, dtype=np.float32),
+        np.asarray(regulatory_rows, dtype=np.float32),
+        np.asarray(regulatory_masks, dtype=np.float32),
+        np.asarray(port_wide_rows, dtype=np.float32),
+        np.asarray(port_wide_masks, dtype=np.float32),
     )
 
 
@@ -469,11 +681,16 @@ def import_dataset(
     target = data_root / f"{resolved}.csv"
     meta_path = data_root / f"{resolved}.meta.json"
     replace_existing = supplied_metadata.pop("replace_existing", False) is True
+    # Both targets use a strict one-component dataset ID under data_root.
+    # codeql[py/path-injection]
     if (target.exists() or meta_path.exists()) and not replace_existing:
         raise FileExistsError(f"dataset already exists: {resolved}; set metadata.replace_existing=true explicitly to replace it")
     tmp = data_root / f".{resolved}.importing.csv"
     row_count = 0
     try:
+        # API imports supply a server-created NamedTemporaryFile; `tmp` uses the
+        # strict dataset component under the configured dataset root.
+        # codeql[py/path-injection]
         with source_path.open("r", encoding="utf-8-sig", newline="") as src, tmp.open(
             "w", encoding="utf-8", newline=""
         ) as dst:
@@ -482,9 +699,10 @@ def import_dataset(
             missing = [source for source in mapping.values() if source not in source_fields]
             if missing:
                 raise ValueError(f"source CSV missing mapped columns: {', '.join(missing)}")
+            optional_columns = (*FACTOR_COLUMNS, *REGULATORY_COLUMNS, *PORT_WIDE_COLUMNS)
             factor_mapping = {
                 name: str(supplied_mapping.get(name, name))
-                for name in FACTOR_COLUMNS
+                for name in optional_columns
                 if name in supplied_mapping or name in source_fields
             }
             writer_fields = (*CANONICAL_COLUMNS, *factor_mapping.keys())
@@ -520,8 +738,10 @@ def import_dataset(
                 row_count += 1
         if row_count < 48:
             raise ValueError(f"dataset {resolved} needs at least 48 chronological rows; got {row_count}")
+        # codeql[py/path-injection]
         tmp.replace(target)
     finally:
+        # codeql[py/path-injection]
         tmp.unlink(missing_ok=True)
     meta = {
         "dataset_id": resolved,
@@ -532,6 +752,7 @@ def import_dataset(
         "source_filename": source_path.name,
         **supplied_metadata,
     }
+    # codeql[py/path-injection]
     meta_path.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
     return load_port_dataset(resolved, data_root).describe()
 
@@ -578,7 +799,7 @@ def write_extended_rows(
     data_root.mkdir(parents=True, exist_ok=True)
     path = data_root / f"{resolved}.csv"
     tmp = data_root / f".{resolved}.building.csv"
-    fieldnames = (*CANONICAL_COLUMNS, *FACTOR_COLUMNS)
+    fieldnames = (*CANONICAL_COLUMNS, *FACTOR_COLUMNS, *REGULATORY_COLUMNS, *PORT_WIDE_COLUMNS)
     with tmp.open("w", encoding="utf-8", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fieldnames)
         writer.writeheader()
@@ -588,7 +809,7 @@ def write_extended_rows(
             output.update(
                 {
                     name: row.get(name, "")
-                    for name in FACTOR_COLUMNS
+                    for name in (*FACTOR_COLUMNS, *REGULATORY_COLUMNS, *PORT_WIDE_COLUMNS)
                 }
             )
             timestamp = _parse_timestamp(output["timestamp"], line)
@@ -597,7 +818,7 @@ def write_extended_rows(
             previous_timestamp = timestamp
             for column in NUMERIC_COLUMNS:
                 _finite_number(output[column], column, line)
-            for column in FACTOR_COLUMNS:
+            for column in (*FACTOR_COLUMNS, *REGULATORY_COLUMNS, *PORT_WIDE_COLUMNS):
                 if output[column] == "" or output[column] is None:
                     continue
                 _finite_number(output[column], column, line)

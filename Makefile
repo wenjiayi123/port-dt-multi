@@ -1,6 +1,6 @@
 PYTHON ?= .venv312/bin/python
 
-.PHONY: test business-benchmark business-verify release-check run
+.PHONY: test business-benchmark business-verify privacy-scan release-check run
 
 test:
 	$(PYTHON) -m unittest discover -s tests -v
@@ -11,7 +11,10 @@ business-benchmark:
 business-verify:
 	$(PYTHON) -m scripts.business_kpi_benchmark --verify
 
-release-check:
+privacy-scan:
+	$(PYTHON) scripts/public_privacy_scan.py
+
+release-check: privacy-scan
 	$(PYTHON) -m scripts.release_check
 
 run:

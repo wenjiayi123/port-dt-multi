@@ -13,8 +13,8 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
     PORT_DT_SERVER_PORT=8000
 
 WORKDIR /opt/port-dt-multi
-COPY requirements.txt ./
-RUN python -m pip install --no-cache-dir -r requirements.txt \
+COPY requirements-linux.lock ./
+RUN python -m pip install --no-cache-dir --require-hashes -r requirements-linux.lock \
     && useradd --create-home --uid 10001 portdt
 
 COPY --chown=portdt:portdt app ./app

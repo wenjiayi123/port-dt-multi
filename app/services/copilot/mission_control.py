@@ -340,13 +340,28 @@ class XiaoyiMissionControl:
         peak_text = f"{float(peak):,.0f} kW" if peak is not None else "暂无可用预测"
         risk_text = f"{float(probability) * 100:.1f}%" if probability is not None else "未计算"
         gate = str(monitoring.get("admission_decision") or "unavailable")
+        gate_text = {
+            "block_to_safe_baseline": "阻断并回退安全基线",
+            "review": "需要人工复核",
+            "pass_offline_analysis_only": "仅通过离线分析门",
+            "unavailable": "当前不可用",
+        }.get(gate, gate)
+        source_mode = str((context.get("source") or {}).get("mode") or "unavailable")
+        source_text = {
+            "calibrated_public_replay_simulator": "公开数据校准连续回放",
+            "public_data_calibrated_replay": "公开数据校准回放",
+            "unavailable": "当前不可用",
+        }.get(source_mode, source_mode)
+        fallback = str(monitoring.get("fallback") or "保持上一稳定策略或 FCFS/MPC 安全基线")
+        if not fallback.startswith("保持"):
+            fallback = "保持" + fallback
         return (
             f"当前结论\n针对“{query}”，当前策略不应直接进入生产。数据是"
-            f"{(context.get('source') or {}).get('mode')}，不是现场实测；准入门为 {gate}。\n\n"
+            f"{source_text}，不是现场实测；准入门为“{gate_text}”。\n\n"
             f"后端依据\n未来窗口P50峰值 {peak_text}，越限概率 {risk_text}；"
             f"回放漂移 PSI={monitoring.get('drift_psi')}；模型 {str(policy.get('algorithm') or 'unavailable').upper()}，"
-            f"硬约束={'通过' if policy.get('hard_guardrail_passed') else '未通过或不可用'}，但生产控制权为 false。\n\n"
-            f"建议检查\n1. 保持{monitoring.get('fallback')}。2. 核对合同需量与现场预测实绩。"
+            f"硬约束={'通过' if policy.get('hard_guardrail_passed') else '未通过或不可用'}，当前无生产控制权。\n\n"
+            f"建议检查\n1. {fallback}。\n2. 核对合同需量与现场预测实绩。\n"
             "3. 接入TOS/VTS、PLC/BMS/EMS回读及告警工单回执。\n\n"
             "可预演动作\n仅允许固定输入的dry-run、留出集复核和安全基线对比。\n\n"
             "必须人工确认\n现场负责人确认数据新鲜度、约束参数、回退方案和执行权限后，才能进入下一准入阶段。"

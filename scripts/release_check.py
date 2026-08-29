@@ -1,4 +1,4 @@
-"""Fail closed when checked-in business KPI or RL release evidence is stale."""
+"""Verify checked-in business KPI and RL reports against their source inputs."""
 
 from __future__ import annotations
 
@@ -22,14 +22,18 @@ REQUIRED = (
     "Dockerfile",
     "SECURITY.md",
     "requirements.txt",
+    "requirements-linux.in",
+    "requirements-linux.lock",
+    "requirements-ci.in",
+    "requirements-ci.lock",
     ".dockerignore",
     "THIRD_PARTY_NOTICES.md",
     "MODEL_GOVERNANCE.md",
     "docs/BUSINESS_KPI_BENCHMARK.md",
-    "docs/RESUME_CLAIMS_WEB.md",
+    "docs/WEB_METRICS.md",
     "docs/SHARED_WEB_MOBILE_ARCHITECTURE.md",
     "docs/MOBILE_WORKFLOW_BENCHMARK.md",
-    "docs/RESUME_CLAIMS_DUAL_FRONTEND.md",
+    "docs/DUAL_FRONTEND_METRICS.md",
     "config/business_kpi_benchmark_v1.json",
     "config/mobile_workflow_benchmark_v1.json",
     "data/rl/business_kpi_benchmark_v1.json",
@@ -49,7 +53,7 @@ REQUIRED = (
     "docs/SITE_DATA_REPLACEMENT_CONTRACT_V3.md",
     "docs/PRODUCTION_READINESS.md",
     "docs/V3_TECHNICAL_EVIDENCE.md",
-    "docs/V3_HR_TECHNICAL_AUDIT.md",
+    "docs/V3_IMPLEMENTATION_REFERENCE.md",
     "data/public_sources/shanghai_port_mot_2024_2025.json",
     "data/public_sources/shanghai_yangshan_reanalysis_2024_2025.csv",
     "data/public_sources/shanghai_port_mot_2026_forward.json",
@@ -59,7 +63,10 @@ REQUIRED = (
     "data/rl/datasets/public_cn_sha_forward_2026m05_v1.csv",
     "data/rl/datasets/public_cn_sha_forward_2026m05_v1.meta.json",
     "config/ports/cn_sha_public_benchmark_v3.json",
+    "config/ports/cn_sha_regulatory_scenario_v4.json",
     "config/v3_advantage_benchmark.json",
+    "config/regulatory_delay_scenario_v4.json",
+    "config/regulatory_delay_forward_challenge_v4.json",
     "config/rl_business_profiles_v3.json",
     "evidence/v3/shanghai_public_advantage_v3.json",
     "evidence/v3/shanghai_public_advantage_v3.md",
@@ -99,6 +106,31 @@ REQUIRED = (
     "evidence/v3/runtime/selected_sac_v3.config.json",
     "evidence/v3/runtime/runtime_model.json",
     "evidence/v3/runtime/runtime_model.sha256",
+    "app/services/rl_training/regulatory_environment.py",
+    "data/rl/datasets/public_cn_sha_regulatory_scenario_v4.csv",
+    "data/rl/datasets/public_cn_sha_regulatory_scenario_v4.meta.json",
+    "data/rl/datasets/public_cn_sha_regulatory_forward_2026m05_v4.csv",
+    "data/rl/datasets/public_cn_sha_regulatory_forward_2026m05_v4.meta.json",
+    "docs/DATASET_CARD_public_cn_sha_regulatory_scenario_v4.md",
+    "scripts/build_regulatory_delay_scenario_v4.py",
+    "scripts/train_regulatory_resilience_v4.py",
+    "scripts/evaluate_regulatory_resilience_forward_v4.py",
+    "evidence/v4/regulatory_delay/latest.json",
+    "app/services/rl_training/integrated_environment.py",
+    "app/services/rl_training/business_guardrails.py",
+    "config/integrated_port_scenario_v5.json",
+    "config/integrated_port_forward_scenario_v5.json",
+    "config/ports/cn_sha_integrated_scenario_v5.json",
+    "data/rl/datasets/public_cn_sha_integrated_scenario_v5.csv",
+    "data/rl/datasets/public_cn_sha_integrated_scenario_v5.meta.json",
+    "data/rl/datasets/public_cn_sha_integrated_forward_2026m05_v5.csv",
+    "data/rl/datasets/public_cn_sha_integrated_forward_2026m05_v5.meta.json",
+    "scripts/build_integrated_port_operations_v5.py",
+    "scripts/train_integrated_port_business_v5.py",
+    "scripts/verify_integrated_business_guardrails_v5.py",
+    "evidence/v5/integrated_business/latest.json",
+    "evidence/v5/integrated_business/offline_champion.json",
+    "evidence/v5/deterministic_guardrails/latest.json",
     "data/rl/runs/rl-20260813T063524662Z/config.json",
     "data/rl/runs/rl-20260813T063524662Z/status.json",
     "data/rl/runs/rl-20260813T063524662Z/manifest.json",
@@ -236,6 +268,20 @@ def verify_container_contract(errors: list[str]) -> None:
                 f"{vulnerable_pin}"
             )
     ci_workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    linux_lock = (ROOT / "requirements-linux.lock").read_text(encoding="utf-8")
+    ci_lock = (ROOT / "requirements-ci.lock").read_text(encoding="utf-8")
+    for name, lock in (("Linux", linux_lock), ("CI", ci_lock)):
+        if "--hash=sha256:" not in lock:
+            errors.append(f"{name} dependency lock does not contain distribution hashes")
+    for package in ("torch==2.13.0", "stable-baselines3==2.9.0", "sb3-contrib==2.9.0"):
+        if package not in linux_lock:
+            errors.append(f"Linux dependency lock omits the supported RL runtime: {package}")
+    if "pip-audit==2.10.1" not in ci_lock:
+        errors.append("CI dependency lock omits the vulnerability auditor")
+    if "--require-hashes -r requirements-linux.lock" not in dockerfile:
+        errors.append("Docker dependency installation does not require locked hashes")
+    if "--require-hashes -r requirements-ci.lock" not in ci_workflow:
+        errors.append("CI dependency installation does not require locked hashes")
     if "| python" in ci_workflow:
         errors.append("CI contains a download-then-execute style curl pipeline")
     codeql_workflow = (ROOT / ".github/workflows/codeql.yml").read_text(encoding="utf-8")
@@ -371,6 +417,168 @@ def verify_portable_evidence(
         errors.append("Shanghai portable evidence lacks neutral FCFS baseline")
 
 
+def verify_regulatory_resilience_evidence(errors: list[str]) -> None:
+    """Fail closed unless V4 selection, model and forward evidence agree by hash."""
+    evidence_root = (ROOT / "evidence/v4/regulatory_delay").resolve()
+    latest_path = evidence_root / "latest.json"
+    if not latest_path.is_file():
+        return
+    pointer = json.loads(latest_path.read_text(encoding="utf-8"))
+    if pointer.get("status") != "ADMITTED_OFFLINE_SCENARIO_CANDIDATE":
+        errors.append("V4 regulatory candidate is not admitted")
+    if pointer.get("production_authority") is not False:
+        errors.append("V4 regulatory pointer grants production authority")
+
+    payloads: dict[str, dict] = {}
+    for label, path_key, hash_key in (
+        ("selection", "report_path", "report_sha256"),
+        ("forward", "forward_challenge_path", "forward_challenge_sha256"),
+    ):
+        candidate = (ROOT / str(pointer.get(path_key) or "")).resolve()
+        if not candidate.is_relative_to(evidence_root) or not candidate.is_file():
+            errors.append(f"V4 regulatory {label} evidence path is invalid")
+            continue
+        observed = hashlib.sha256(candidate.read_bytes()).hexdigest()
+        if observed != pointer.get(hash_key):
+            errors.append(f"V4 regulatory {label} evidence hash mismatch")
+            continue
+        payloads[label] = json.loads(candidate.read_text(encoding="utf-8"))
+
+    model_path = (ROOT / str(pointer.get("selected_model_path") or "")).resolve()
+    model_root = (ROOT / "data/rl/runs").resolve()
+    if not model_path.is_relative_to(model_root) or not model_path.is_file():
+        errors.append("V4 selected model path is invalid")
+    elif hashlib.sha256(model_path.read_bytes()).hexdigest() != pointer.get(
+        "selected_model_sha256"
+    ):
+        errors.append("V4 selected model hash mismatch")
+
+    selection = payloads.get("selection") or {}
+    if selection:
+        contract = selection.get("contract") or {}
+        admission = selection.get("admission") or {}
+        legacy = selection.get("legacy_preservation") or {}
+        if contract.get("observation_dimensions") != 53:
+            errors.append("V4 observation contract is not 53-dimensional")
+        if contract.get("action_dimensions") != 7:
+            errors.append("V4 action contract is not 7-dimensional")
+        if admission.get("passed") is not True:
+            errors.append("V4 selection admission did not pass")
+        if admission.get("model_promoted") is not False:
+            errors.append("V4 selection unexpectedly promoted a model")
+        if admission.get("production_authority") is not False:
+            errors.append("V4 selection grants production authority")
+        if legacy.get("preserved") is not True:
+            errors.append("V4 selection did not preserve legacy artifacts")
+
+    forward = payloads.get("forward") or {}
+    if forward:
+        forward_dataset = forward.get("forward_dataset") or {}
+        protocol = forward.get("protocol") or {}
+        admission = forward.get("admission") or {}
+        candidate_metrics = forward.get("candidate_metrics") or {}
+        if forward.get("status") != "PASS":
+            errors.append("V4 independent forward challenge did not pass")
+        if forward_dataset.get("candidate_selection_allowed") is not False:
+            errors.append("V4 forward dataset permits candidate selection")
+        if protocol.get("candidate_selection_or_tuning") is not False:
+            errors.append("V4 forward protocol permits candidate tuning")
+        if admission.get("passed") is not True:
+            errors.append("V4 forward admission did not pass")
+        if admission.get("model_promoted") is not False:
+            errors.append("V4 forward challenge unexpectedly promoted a model")
+        if admission.get("production_authority") is not False:
+            errors.append("V4 forward challenge grants production authority")
+        if float(candidate_metrics.get("guardrail_violation_rate") or 0.0) != 0.0:
+            errors.append("V4 forward challenge has guardrail violations")
+
+
+def verify_integrated_business_evidence(errors: list[str]) -> None:
+    """Verify the V5 offline champion, independent forward data and hard gate."""
+    evidence_root = (ROOT / "evidence/v5/integrated_business").resolve()
+    champion_path = evidence_root / "offline_champion.json"
+    if not champion_path.is_file():
+        errors.append("V5 offline champion pointer is missing")
+        return
+    champion = json.loads(champion_path.read_text(encoding="utf-8"))
+    if champion.get("status") != "ADMITTED_OFFLINE_CHAMPION":
+        errors.append("V5 integrated policy is not an admitted offline champion")
+    if champion.get("production_authority") is not False:
+        errors.append("V5 offline champion grants production authority")
+    report_path = (ROOT / str(champion.get("report_path") or "")).resolve()
+    if not report_path.is_relative_to(evidence_root) or not report_path.is_file():
+        errors.append("V5 champion report path is invalid")
+        return
+    if hashlib.sha256(report_path.read_bytes()).hexdigest() != champion.get(
+        "report_sha256"
+    ):
+        errors.append("V5 champion report hash mismatch")
+        return
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    contract = report.get("contract") or {}
+    admission = report.get("admission") or {}
+    final_dataset = report.get("final_evaluation_dataset") or {}
+    if contract.get("observation_dimensions") != 103:
+        errors.append("V5 observation contract is not 103-dimensional")
+    if contract.get("action_dimensions") != 13:
+        errors.append("V5 action contract is not 13-dimensional")
+    if admission.get("passed") is not True:
+        errors.append("V5 integrated business admission did not pass")
+    if admission.get("production_authority") is not False:
+        errors.append("V5 integrated business evidence grants production authority")
+    checks = admission.get("checks") or {}
+    if not checks or not all(value is True for value in checks.values()):
+        errors.append("V5 integrated business admission checks are incomplete")
+    if final_dataset.get("independent_forward_challenge") is not True:
+        errors.append("V5 final evaluation is not an independent forward challenge")
+    if final_dataset.get("never_used_for_training_validation_or_selection") is not True:
+        errors.append("V5 forward data was not sealed from selection")
+    score = champion.get("business_score") or {}
+    if float(score.get("ci_low") or 0.0) <= 0.02:
+        errors.append("V5 integrated business score lower confidence bound is not above 2%")
+    metrics = champion.get("champion_metrics") or {}
+    if float(metrics.get("guardrail_violation_rate") or 0.0) != 0.0:
+        errors.append("V5 offline champion has guardrail violations")
+    if float(metrics.get("terminal_soc_error") or 0.0) > 0.000001:
+        errors.append("V5 offline champion does not restore terminal SOC")
+
+    model_path = (ROOT / str(champion.get("selected_model_path") or "")).resolve()
+    model_root = (ROOT / "data/rl/runs").resolve()
+    if not model_path.is_relative_to(model_root) or not model_path.is_file():
+        errors.append("V5 selected model path is invalid")
+    elif hashlib.sha256(model_path.read_bytes()).hexdigest() != champion.get(
+        "selected_model_sha256"
+    ):
+        errors.append("V5 selected model hash mismatch")
+    for identifier_key, hash_key in (
+        ("dataset_id", "dataset_sha256"),
+        ("final_evaluation_dataset_id", "final_evaluation_dataset_sha256"),
+    ):
+        try:
+            dataset = load_port_dataset(str(champion.get(identifier_key) or ""))
+            if dataset.fingerprint != champion.get(hash_key):
+                errors.append(f"V5 dataset hash mismatch: {identifier_key}")
+        except Exception as exc:
+            errors.append(f"V5 dataset verification failed for {identifier_key}: {exc}")
+
+    guardrail_pointer_path = ROOT / "evidence/v5/deterministic_guardrails/latest.json"
+    guardrail_pointer = json.loads(
+        guardrail_pointer_path.read_text(encoding="utf-8")
+    )
+    if guardrail_pointer.get("status") != "PASS":
+        errors.append("V5 deterministic business guardrail replay did not pass")
+    guardrail_root = guardrail_pointer_path.parent.resolve()
+    guardrail_report = (
+        ROOT / str(guardrail_pointer.get("report_path") or "")
+    ).resolve()
+    if not guardrail_report.is_relative_to(guardrail_root) or not guardrail_report.is_file():
+        errors.append("V5 deterministic guardrail report path is invalid")
+    elif hashlib.sha256(guardrail_report.read_bytes()).hexdigest() != guardrail_pointer.get(
+        "report_sha256"
+    ):
+        errors.append("V5 deterministic guardrail report hash mismatch")
+
+
 def main() -> int:
     errors: list[str] = []
     report: dict = {}
@@ -378,6 +586,8 @@ def main() -> int:
     for relative in REQUIRED:
         if not (ROOT / relative).is_file():
             errors.append(f"missing release evidence: {relative}")
+    verify_regulatory_resilience_evidence(errors)
+    verify_integrated_business_evidence(errors)
     mission_api = (ROOT / "app/services/copilot/api.py").read_text(encoding="utf-8")
     mission_ui = (ROOT / "app/ui/ops_copilot.html").read_text(encoding="utf-8")
     for marker in (
@@ -423,14 +633,14 @@ def main() -> int:
             errors.append("Xiaoyi Q-style character asset fingerprint changed")
     try:
         report = load_verified_report()
-        claims = report.get("resume_claims_rounded_percent") or {}
+        claims = report.get("summary_metrics_rounded_percent") or {}
         expected = {
             "berth_utilization_relative_improvement_percent": 9.0,
             "average_waiting_time_reduction_percent": 17.0,
             "scenario_energy_cost_reduction_percent": 12.0,
         }
         if claims != expected:
-            errors.append(f"resume KPI claims changed: {claims}")
+            errors.append(f"summary KPI metrics changed: {claims}")
         if report.get("dataset", {}).get("split_sizes") != {
             "train": 35064,
             "validation": 8784,

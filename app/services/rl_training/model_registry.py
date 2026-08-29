@@ -19,6 +19,8 @@ def _now() -> str:
 
 def _read(path: Path, default: Any) -> Any:
     try:
+        # Registry callers use fixed files or resolve_child_dir containment.
+        # codeql[py/path-injection]
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception:
         return default

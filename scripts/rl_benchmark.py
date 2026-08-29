@@ -89,6 +89,10 @@ def main() -> None:
             if business_profile is not None:
                 config["business_profile_id"] = args.business_profile
                 config["reward_weights"] = business_profile["reward_weights"]
+                if business_profile.get("regulatory_delay_penalty_weight") is not None:
+                    config["regulatory_delay_penalty_weight"] = business_profile[
+                        "regulatory_delay_penalty_weight"
+                    ]
             started = TRAINING_MANAGER.start(config)
             status = wait(started["job_id"], args.timeout)
             if status.get("status") != "COMPLETED":

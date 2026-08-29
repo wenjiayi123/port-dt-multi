@@ -17,6 +17,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.009278926998376846,
       "yard_flow_command": 0.032511577010154724,
@@ -41,7 +44,8 @@
         "carbon": 0.3692123849224459,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 0.3574903831483524
+        "delay": 0.3574903831483524,
+        "projection": 0.0
       },
       "reward": -0.2945850558463184,
       "action": [
@@ -68,6 +72,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.0028534072916954756,
       "yard_flow_command": 0.034021370112895966,
@@ -92,7 +99,8 @@
         "carbon": 0.3649958713046186,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 0.721455229820247
+        "delay": 0.721455229820247,
+        "projection": 0.0
       },
       "reward": -0.39353760359193973,
       "action": [
@@ -119,6 +127,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.0019485772354528308,
       "yard_flow_command": 0.0330769345164299,
@@ -143,7 +154,8 @@
         "carbon": 0.36255112513795845,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 1.0846612250802115
+        "delay": 1.0846612250802115,
+        "projection": 0.0
       },
       "reward": -0.4928132722087669,
       "action": [
@@ -170,6 +182,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.011351611465215683,
       "yard_flow_command": 0.02845332957804203,
@@ -194,7 +209,8 @@
         "carbon": 0.3603992722144309,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 1.453493479605398
+        "delay": 1.453493479605398,
+        "projection": 0.0
       },
       "reward": -0.5522719511945994,
       "action": [
@@ -221,6 +237,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.018695183098316193,
       "yard_flow_command": 0.02817660942673683,
@@ -245,7 +264,8 @@
         "carbon": 0.3604253254752025,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 1.8218726140897112
+        "delay": 1.8218726140897112,
+        "projection": 0.0
       },
       "reward": -0.6545992523640106,
       "action": [
@@ -272,6 +292,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.027590731158852577,
       "yard_flow_command": 0.023251479491591454,
@@ -296,7 +319,8 @@
         "carbon": 0.3624113959456959,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 2.178442148136546
+        "delay": 2.178442148136546,
+        "projection": 0.0
       },
       "reward": -0.7209754964153359,
       "action": [
@@ -323,6 +347,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.030320748686790466,
       "yard_flow_command": 0.021372275426983833,
@@ -347,7 +374,8 @@
         "carbon": 0.3661495074646741,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 2.509841291481222
+        "delay": 2.509841291481222,
+        "projection": 0.0
       },
       "reward": -0.8143731583943177,
       "action": [
@@ -374,6 +402,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.030765049159526825,
       "yard_flow_command": 0.01906641200184822,
@@ -398,7 +429,8 @@
         "carbon": 0.37120345552367545,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 2.8152930943307735
+        "delay": 2.8152930943307735,
+        "projection": 0.0
       },
       "reward": -0.9011034116612291,
       "action": [
@@ -425,6 +457,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.029590604826807976,
       "yard_flow_command": 0.01667432114481926,
@@ -449,7 +484,8 @@
         "carbon": 0.377353892365386,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 3.0929968559802985
+        "delay": 3.0929968559802985,
+        "projection": 0.0
       },
       "reward": -0.9806809482249524,
       "action": [
@@ -476,6 +512,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.026970211416482925,
       "yard_flow_command": 0.014242617413401604,
@@ -500,7 +539,8 @@
         "carbon": 0.3841581002627891,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 3.335724079753556
+        "delay": 3.335724079753556,
+        "projection": 0.0
       },
       "reward": -1.0509382096527327,
       "action": [
@@ -527,6 +567,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.02553868666291237,
       "yard_flow_command": 0.013873441144824028,
@@ -551,7 +594,8 @@
         "carbon": 0.3908740070941241,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 3.5625957301028235
+        "delay": 3.5625957301028235,
+        "projection": 0.0
       },
       "reward": -1.1171657908804102,
       "action": [
@@ -578,6 +622,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.023302020505070686,
       "yard_flow_command": 0.01395916473120451,
@@ -602,7 +649,8 @@
         "carbon": 0.3963996385218331,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 3.794994524395397
+        "delay": 3.794994524395397,
+        "projection": 0.0
       },
       "reward": -1.184648452457024,
       "action": [
@@ -629,6 +677,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.016363579779863358,
       "yard_flow_command": 0.016096290200948715,
@@ -653,7 +704,8 @@
         "carbon": 0.3996527392817159,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 4.054442410658252
+        "delay": 4.054442410658252,
+        "projection": 0.0
       },
       "reward": -1.295762832158487,
       "action": [
@@ -680,6 +732,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.011170190759003162,
       "yard_flow_command": 0.01658637449145317,
@@ -704,7 +759,8 @@
         "carbon": 0.4006486255066386,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 4.3559289882272205
+        "delay": 4.3559289882272205,
+        "projection": 0.0
       },
       "reward": -1.381498647012246,
       "action": [
@@ -731,6 +787,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.004585150629281998,
       "yard_flow_command": 0.016950948163866997,
@@ -755,7 +814,8 @@
         "carbon": 0.400758445749526,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 4.678587218185603
+        "delay": 4.678587218185603,
+        "projection": 0.0
       },
       "reward": -1.4725362900357524,
       "action": [
@@ -782,6 +842,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.00039001298137009144,
       "yard_flow_command": 0.01888989470899105,
@@ -806,7 +869,8 @@
         "carbon": 0.4005273241184461,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 5.0411879158667405
+        "delay": 5.0411879158667405,
+        "projection": 0.0
       },
       "reward": -1.5745932379451717,
       "action": [
@@ -833,6 +897,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.003321073716506362,
       "yard_flow_command": 0.0212995745241642,
@@ -857,7 +924,8 @@
         "carbon": 0.3975749076340429,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 5.511265606324093
+        "delay": 5.511265606324093,
+        "projection": 0.0
       },
       "reward": -1.7053209457287077,
       "action": [
@@ -884,6 +952,9 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": false,
+      "action_projection_correction_kw": 0.0,
+      "action_projection_severity": 0.0,
+      "action_projection_reasons": [],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.006550791673362255,
       "yard_flow_command": 0.021933946758508682,
@@ -908,7 +979,8 @@
         "carbon": 0.39675231775202463,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 5.951732111432989
+        "delay": 5.951732111432989,
+        "projection": 0.0
       },
       "reward": -1.8280655526747496,
       "action": [
@@ -935,6 +1007,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 903.831375,
+      "action_projection_severity": 0.22595784,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.009526804089546204,
       "yard_flow_command": 0.023162420839071274,
@@ -959,7 +1036,8 @@
         "carbon": 0.4065100952291542,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 6.491758185076115
+        "delay": 6.491758185076115,
+        "projection": 0.22595784
       },
       "reward": -1.9783780837881102,
       "action": [
@@ -986,6 +1064,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 982.197326,
+      "action_projection_severity": 0.24554933,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.012536663562059402,
       "yard_flow_command": 0.024466577917337418,
@@ -1010,7 +1093,8 @@
         "carbon": 0.4028809004723268,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 7.067866578897212
+        "delay": 7.067866578897212,
+        "projection": 0.24554933
       },
       "reward": -2.140625628052357,
       "action": [
@@ -1037,6 +1121,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 984.705738,
+      "action_projection_severity": 0.24617643,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.014547877945005894,
       "yard_flow_command": 0.026386914774775505,
@@ -1061,7 +1150,8 @@
         "carbon": 0.3973160502280221,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 7.7192749850655105
+        "delay": 7.7192749850655105,
+        "projection": 0.24617643
       },
       "reward": -2.3210576469849915,
       "action": [
@@ -1088,6 +1178,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1006.679999,
+      "action_projection_severity": 0.25167,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.015379143878817558,
       "yard_flow_command": 0.028673242777585983,
@@ -1112,7 +1207,8 @@
         "carbon": 0.3907688225276198,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 8.478727960520107
+        "delay": 8.478727960520107,
+        "projection": 0.25167
       },
       "reward": -2.5310688009826525,
       "action": [
@@ -1139,6 +1235,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1069.069904,
+      "action_projection_severity": 0.26726748,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.016179755330085754,
       "yard_flow_command": 0.0335247777402401,
@@ -1163,7 +1264,8 @@
         "carbon": 0.3857655623753735,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 9.28734100461393
+        "delay": 9.28734100461393,
+        "projection": 0.26726748
       },
       "reward": -2.8011628426965283,
       "action": [
@@ -1190,6 +1292,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1115.612082,
+      "action_projection_severity": 0.27890302,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.010122939944267273,
       "yard_flow_command": 0.0384398028254509,
@@ -1214,7 +1321,8 @@
         "carbon": 0.38170871706768056,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 10.157058845710747
+        "delay": 10.157058845710747,
+        "projection": 0.27890302
       },
       "reward": -3.041673077725308,
       "action": [
@@ -1241,6 +1349,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1155.466186,
+      "action_projection_severity": 0.28886655,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.0035387463867664337,
       "yard_flow_command": 0.04167535528540611,
@@ -1265,7 +1378,8 @@
         "carbon": 0.3781688347707843,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 11.06060856500106
+        "delay": 11.06060856500106,
+        "projection": 0.28886655
       },
       "reward": -3.2916552659797707,
       "action": [
@@ -1292,6 +1406,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1184.306067,
+      "action_projection_severity": 0.29607652,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.002074619522318244,
       "yard_flow_command": 0.04228321090340614,
@@ -1316,7 +1435,8 @@
         "carbon": 0.376114419586402,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 11.932005224699523
+        "delay": 11.932005224699523,
+        "projection": 0.29607652
       },
       "reward": -3.5332071227390824,
       "action": [
@@ -1343,6 +1463,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1199.958853,
+      "action_projection_severity": 0.29998971,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.006754713598638773,
       "yard_flow_command": 0.04141717776656151,
@@ -1367,7 +1492,8 @@
         "carbon": 0.37461997152539245,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 12.798806086083895
+        "delay": 12.798806086083895,
+        "projection": 0.29998971
       },
       "reward": -3.773688849835449,
       "action": [
@@ -1394,6 +1520,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1172.524081,
+      "action_projection_severity": 0.29313102,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.014742548577487469,
       "yard_flow_command": 0.036271095275878906,
@@ -1418,7 +1549,8 @@
         "carbon": 0.3735936490277629,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 13.533194242044408
+        "delay": 13.533194242044408,
+        "projection": 0.29313102
       },
       "reward": -3.9350029513158953,
       "action": [
@@ -1445,6 +1577,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1161.953133,
+      "action_projection_severity": 0.29048828,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.018269354477524757,
       "yard_flow_command": 0.03321493789553642,
@@ -1469,7 +1606,8 @@
         "carbon": 0.3748758344039135,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 14.121789815352995
+        "delay": 14.121789815352995,
+        "projection": 0.29048828
       },
       "reward": -4.099392309023281,
       "action": [
@@ -1496,6 +1634,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1090.390495,
+      "action_projection_severity": 0.27259762,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.02860935404896736,
       "yard_flow_command": 0.02992747537791729,
@@ -1520,7 +1663,8 @@
         "carbon": 0.3704209666936607,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 15.19897476491484
+        "delay": 15.19897476491484,
+        "projection": 0.27259762
       },
       "reward": -4.365457269407795,
       "action": [
@@ -1547,6 +1691,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1077.994453,
+      "action_projection_severity": 0.26949861,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.03192228078842163,
       "yard_flow_command": 0.027869444340467453,
@@ -1571,7 +1720,8 @@
         "carbon": 0.37401989418203657,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 15.506921521040791
+        "delay": 15.506921521040791,
+        "projection": 0.26949861
       },
       "reward": -4.452327807619491,
       "action": [
@@ -1598,6 +1748,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1067.17841,
+      "action_projection_severity": 0.2667946,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.03284715116024017,
       "yard_flow_command": 0.025104116648435593,
@@ -1622,7 +1777,8 @@
         "carbon": 0.379037137836487,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 15.571442852774888
+        "delay": 15.571442852774888,
+        "projection": 0.2667946
       },
       "reward": -4.471546201628228,
       "action": [
@@ -1649,6 +1805,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1067.251853,
+      "action_projection_severity": 0.26681296,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.03252667933702469,
       "yard_flow_command": 0.022870490327477455,
@@ -1673,7 +1834,8 @@
         "carbon": 0.3837101530529689,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 15.58108140277516
+        "delay": 15.58108140277516,
+        "projection": 0.26681296
       },
       "reward": -4.475440338590337,
       "action": [
@@ -1700,6 +1862,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1075.883852,
+      "action_projection_severity": 0.26897096,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.029970834031701088,
       "yard_flow_command": 0.020214088261127472,
@@ -1724,7 +1891,8 @@
         "carbon": 0.3910009561276632,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 15.288005607433751
+        "delay": 15.288005607433751,
+        "projection": 0.26897096
       },
       "reward": -4.395430464566897,
       "action": [
@@ -1751,6 +1919,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1106.226009,
+      "action_projection_severity": 0.2765565,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.027656616643071175,
       "yard_flow_command": 0.01932322420179844,
@@ -1775,7 +1948,8 @@
         "carbon": 0.399142007587023,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 14.893356657556696
+        "delay": 14.893356657556696,
+        "projection": 0.2765565
       },
       "reward": -4.287361239692246,
       "action": [
@@ -1802,6 +1976,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1143.863014,
+      "action_projection_severity": 0.28596575,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.025763437151908875,
       "yard_flow_command": 0.020072266459465027,
@@ -1826,7 +2005,8 @@
         "carbon": 0.40545571984127726,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 14.579164830568985
+        "delay": 14.579164830568985,
+        "projection": 0.28596575
       },
       "reward": -4.201469192651768,
       "action": [
@@ -1853,6 +2033,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1205.859171,
+      "action_projection_severity": 0.30146479,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.018708346411585808,
       "yard_flow_command": 0.02302507869899273,
@@ -1877,7 +2062,8 @@
         "carbon": 0.4104911373133799,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 14.338759616721717
+        "delay": 14.338759616721717,
+        "projection": 0.30146479
       },
       "reward": -4.173122621885996,
       "action": [
@@ -1904,6 +2090,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1211.157602,
+      "action_projection_severity": 0.3027894,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.013695767149329185,
       "yard_flow_command": 0.023300014436244965,
@@ -1928,7 +2119,8 @@
         "carbon": 0.41275585284549404,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 14.204043505487299
+        "delay": 14.204043505487299,
+        "projection": 0.3027894
       },
       "reward": -4.137204801010688,
       "action": [
@@ -1955,6 +2147,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1201.062135,
+      "action_projection_severity": 0.30026553,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": 0.007197611033916473,
       "yard_flow_command": 0.023470532149076462,
@@ -1979,7 +2176,8 @@
         "carbon": 0.4130445130075477,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 14.216275541612486
+        "delay": 14.216275541612486,
+        "projection": 0.30026553
       },
       "reward": -4.141808309426501,
       "action": [
@@ -2006,6 +2204,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1171.08904,
+      "action_projection_severity": 0.29277226,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.00029003169038333,
       "yard_flow_command": 0.023537661880254745,
@@ -2030,7 +2233,8 @@
         "carbon": 0.41160737139514303,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 14.362255530816661
+        "delay": 14.362255530816661,
+        "projection": 0.29277226
       },
       "reward": -4.18324556013324,
       "action": [
@@ -2057,6 +2261,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1151.382964,
+      "action_projection_severity": 0.28784574,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.0038332566618919373,
       "yard_flow_command": 0.02649283967912197,
@@ -2081,7 +2290,8 @@
         "carbon": 0.4075654010855291,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 14.818794098372633
+        "delay": 14.818794098372633,
+        "projection": 0.28784574
       },
       "reward": -4.310604736323269,
       "action": [
@@ -2108,6 +2318,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1101.325206,
+      "action_projection_severity": 0.2753313,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.006522876676172018,
       "yard_flow_command": 0.027901794761419296,
@@ -2132,7 +2347,8 @@
         "carbon": 0.40489000494368893,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 15.260033346625551
+        "delay": 15.260033346625551,
+        "projection": 0.2753313
       },
       "reward": -4.434048123813296,
       "action": [
@@ -2159,6 +2375,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1047.729598,
+      "action_projection_severity": 0.2619324,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.009203199297189713,
       "yard_flow_command": 0.028594864532351494,
@@ -2183,7 +2404,8 @@
         "carbon": 0.401444277050913,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 15.809199397965529
+        "delay": 15.809199397965529,
+        "projection": 0.2619324
       },
       "reward": -4.587211366636872,
       "action": [
@@ -2210,6 +2432,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1013.573211,
+      "action_projection_severity": 0.2533933,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.011849510483443737,
       "yard_flow_command": 0.029484204947948456,
@@ -2234,7 +2461,8 @@
         "carbon": 0.39703751405974663,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 16.501418978606253
+        "delay": 16.501418978606253,
+        "projection": 0.2533933
       },
       "reward": -4.7798020223150175,
       "action": [
@@ -2261,6 +2489,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1002.000264,
+      "action_projection_severity": 0.25050007,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.013896724209189415,
       "yard_flow_command": 0.030819207429885864,
@@ -2285,7 +2518,8 @@
         "carbon": 0.39180290357448133,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 17.36588813700788
+        "delay": 17.36588813700788,
+        "projection": 0.25050007
       },
       "reward": -5.0200143338005105,
       "action": [
@@ -2312,6 +2546,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1008.976327,
+      "action_projection_severity": 0.25224408,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.015169625170528889,
       "yard_flow_command": 0.03204692155122757,
@@ -2336,7 +2575,8 @@
         "carbon": 0.38607038436653834,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 18.406689458488938
+        "delay": 18.406689458488938,
+        "projection": 0.25224408
       },
       "reward": -5.3091143902285625,
       "action": [
@@ -2363,6 +2603,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1060.673516,
+      "action_projection_severity": 0.26516838,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.01754724234342575,
       "yard_flow_command": 0.03522418066859245,
@@ -2387,7 +2632,8 @@
         "carbon": 0.3812667736885432,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 19.600541880652475
+        "delay": 19.600541880652475,
+        "projection": 0.26516838
       },
       "reward": -5.6866196760480685,
       "action": [
@@ -2414,6 +2660,11 @@
       "guardrail_violation": false,
       "terminal_soc_error": 0.0,
       "action_projection_applied": true,
+      "action_projection_correction_kw": 1106.023602,
+      "action_projection_severity": 0.2765059,
+      "action_projection_reasons": [
+        "terminal_soc_reachability"
+      ],
       "environment_version": "port_ops_v3",
       "berth_priority": -0.011544179171323776,
       "yard_flow_command": 0.040111005306243896,
@@ -2438,7 +2689,8 @@
         "carbon": 0.37738336066213624,
         "peak": 0.0,
         "safety": 0.0,
-        "delay": 20.8959445800145
+        "delay": 20.8959445800145,
+        "projection": 0.2765059
       },
       "reward": -6.046419236049772,
       "action": [

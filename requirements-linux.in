@@ -1,0 +1,8 @@
+-r requirements.txt
+
+# Linux/container training runtime. These duplicate the supported-platform
+# markers in requirements.txt so lock generation is deterministic even when
+# maintained from an Intel Mac that intentionally skips native Torch.
+torch==2.13.0
+stable-baselines3==2.9.0
+sb3-contrib==2.9.0

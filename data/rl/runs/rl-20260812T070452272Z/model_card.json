@@ -8,7 +8,7 @@
     "seed": 242,
     "status": "EVALUATED",
     "created_at": "2026-08-12T07:04:52.273544Z",
-    "updated_at": "2026-08-12T07:05:18.828622Z",
+    "updated_at": "2026-08-26T10:38:14.570418Z",
     "implementation": "stable_baselines3.A2C",
     "artifact": {
       "artifact_id": "model.zip",
@@ -34,6 +34,12 @@
         "queue_end_teu": 133722.7640041663,
         "weather_blocked_steps": 0.0,
         "projection_count": 30.1,
+        "projection_correction_kw": 32420.781416199996,
+        "projection_severity": 8.105195350999999,
+        "projection_grid_cap_count": 0.0,
+        "projection_soc_bound_count": 0.0,
+        "projection_terminal_reachability_count": 30.1,
+        "projection_power_bound_count": 0.0,
         "resource_factor_sum": 27.410419412349,
         "service_factor_sum": 47.2686439,
         "terminal_soc_error": 0.0,
@@ -44,13 +50,85 @@
         "bess_equivalent_full_cycles": 0.24423006853699994,
         "weather_block_rate": 0.0,
         "action_projection_rate": 0.6270833333333334,
+        "action_projection_correction_kw_mean": 675.4329461708332,
+        "action_projection_severity_mean": 0.16885823647916665,
+        "action_projection_grid_cap_rate": 0.0,
+        "action_projection_soc_bound_rate": 0.0,
+        "action_projection_terminal_reachability_rate": 0.6270833333333334,
+        "action_projection_power_bound_rate": 0.0,
         "operational_resource_factor_mean": 0.5710504044239375,
         "service_factor_mean": 0.9847634145833333,
         "delay_index_mean": 10.31507443426658,
         "guardrail_violation_rate": 0.0
       },
       "uncertainty": {
+        "action_projection_correction_kw_mean": {
+          "n": 10,
+          "mean": 675.4329461708332,
+          "std": 14.21181433405338,
+          "median": 676.3825167395833,
+          "ci_low": 667.2147006178647,
+          "ci_high": 683.6654793081249,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_grid_cap_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_power_bound_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
         "action_projection_rate": {
+          "n": 10,
+          "mean": 0.6270833333333334,
+          "std": 0.011825962754115578,
+          "median": 0.625,
+          "ci_low": 0.6208333333333333,
+          "ci_high": 0.6333333333333334,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_severity_mean": {
+          "n": 10,
+          "mean": 0.16885823647916665,
+          "std": 0.0035529534758062414,
+          "median": 0.1690956295833333,
+          "ci_low": 0.16680367503593752,
+          "ci_high": 0.1709163695630208,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_soc_bound_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_terminal_reachability_rate": {
           "n": 10,
           "mean": 0.6270833333333334,
           "std": 0.011825962754115578,
@@ -204,7 +282,73 @@
           "method": "percentile_bootstrap_of_mean",
           "resamples": 2000
         },
+        "projection_correction_kw": {
+          "n": 10,
+          "mean": 32420.781416199996,
+          "std": 682.1670880345631,
+          "median": 32466.360803499992,
+          "ci_low": 32026.305629657505,
+          "ci_high": 32815.94300678999,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
         "projection_count": {
+          "n": 10,
+          "mean": 30.1,
+          "std": 0.5676462121975466,
+          "median": 30.0,
+          "ci_low": 29.8,
+          "ci_high": 30.4,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_grid_cap_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_power_bound_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_severity": {
+          "n": 10,
+          "mean": 8.105195350999999,
+          "std": 0.1705417668386996,
+          "median": 8.116590219999999,
+          "ci_low": 8.006576401725,
+          "ci_high": 8.203985739024997,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_soc_bound_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_terminal_reachability_count": {
           "n": 10,
           "mean": 30.1,
           "std": 0.5676462121975466,
@@ -348,7 +492,7 @@
           "resamples": 2000
         }
       },
-      "evaluated_at": "2026-08-12T07:05:18.730134Z"
+      "evaluated_at": "2026-08-26T10:38:14.437268Z"
     }
   },
   "intended_use": "offline port operations decision support and held-out evaluation",
@@ -905,5 +1049,5 @@
     "software guardrails do not replace PLC/BMS interlocks or operator authority",
     "results require multiple seeds before comparative claims"
   ],
-  "generated_at": "2026-08-12T07:05:18.892809Z"
+  "generated_at": "2026-08-26T10:38:14.663831Z"
 }

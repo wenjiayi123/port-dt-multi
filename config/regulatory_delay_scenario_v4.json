@@ -1,0 +1,57 @@
+{
+  "schema": "port-dt-regulatory-delay-scenario.v1",
+  "scenario_id": "cn_sha_regulatory_stress_v4",
+  "created_at": "2026-08-21T00:00:00Z",
+  "base_dataset_id": "public_cn_sha_hourly_v3",
+  "output_dataset_id": "public_cn_sha_regulatory_scenario_v4",
+  "seed": 20260821,
+  "parameters": {
+    "maritime_inspection_ratio": {
+      "base": 0.06,
+      "operational_pressure_gain": 0.1,
+      "stress_pulse_probability": 0.12,
+      "stress_pulse_gain": 0.08,
+      "maximum": 0.32
+    },
+    "customs_inspection_ratio": {
+      "base": 0.09,
+      "yard_pressure_gain": 0.14,
+      "stress_pulse_probability": 0.16,
+      "stress_pulse_gain": 0.1,
+      "maximum": 0.4
+    },
+    "maritime_detention_ratio": {
+      "global_psc_reference": 0.03,
+      "stress_pulse_probability": 0.05,
+      "stress_pulse_gain": 0.07,
+      "maximum": 0.16
+    },
+    "customs_secondary_check_ratio": {
+      "engineering_base": 0.08,
+      "yard_pressure_gain": 0.12,
+      "stress_pulse_probability": 0.08,
+      "stress_pulse_gain": 0.1,
+      "maximum": 0.3
+    },
+    "inspection_resource_availability_ratio": {
+      "base": 0.94,
+      "operational_pressure_loss": 0.22,
+      "minimum": 0.55
+    },
+    "regulatory_release_ratio": {
+      "base": 0.93,
+      "detention_loss": 0.55,
+      "secondary_check_loss": 0.32,
+      "minimum": 0.45
+    }
+  },
+  "evidence_boundary": {
+    "classification": "PREDECLARED_ENGINEERING_STRESS_SCENARIO_NOT_FIELD_KPI",
+    "official_process_sources": [
+      "https://www.imo.org/en/ourwork/iiis/pages/port%20state%20control.aspx",
+      "https://www.imo.org/en/mediacentre/meetingsummaries/pages/iii-11th-session.aspx",
+      "https://online.customs.gov.cn/static/pages/guides/000629018001/000629018001.html"
+    ],
+    "calibration_warning": "Inspection selection, duration, customs escalation and local release capacity are not Shanghai terminal measurements. Replace these parameters with authorized maritime, customs, TOS and vessel-call event data before field use."
+  }
+}

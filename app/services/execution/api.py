@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 
 from app.adapters.actuators import Command, PortSouthboundGateway
 from app.services.rl_training.trainer import TRAINING_MANAGER
+from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
 
 
 router = APIRouter(prefix="/api/actuators", tags=["site-actuators"])
@@ -38,6 +39,8 @@ def _result(result: Any) -> JSONResponse:
 @router.get("/capabilities")
 async def actuator_capabilities() -> JSONResponse:
     data = gateway.cfg.data
+    config_validation = SiteExecutionAcceptanceService.validate_actuator_config(data)
+    execution_readiness = SiteExecutionAcceptanceService().readiness()
     routes = data.get("routing") or {}
     channels = sorted({
         str(route.get("channel") or "unavailable")
@@ -48,18 +51,32 @@ async def actuator_capabilities() -> JSONResponse:
     token_env = str((data.get("security") or {}).get("confirmation_token_env") or "PORT_DT_SECOND_CHANNEL_TOKEN")
     return JSONResponse({
         "enabled": data.get("enabled") is True,
-        "mode": "site_configured" if data.get("enabled") is True else "fail_closed",
+        "mode": (
+            "site_execution_accepted"
+            if execution_readiness["boundary"]["site_execution_accepted"]
+            else "configured_candidate"
+            if data.get("enabled") is True and config_validation["valid"]
+            else "fail_closed"
+        ),
         "reason": data.get("reason") if data.get("enabled") is not True else None,
         "config_source": "PORT_DT_ACTUATOR_CONFIG" if os.getenv("PORT_DT_ACTUATOR_CONFIG") else "unconfigured_default",
         "whitelisted_asset_count": len(data.get("whitelist") or {}),
         "configured_channels": channels,
         "site_constraint_names": sorted((data.get("constraints") or {}).keys()),
+        "actuator_config_valid": config_validation["valid"],
+        "actuator_config_production_eligible": config_validation["production_gate_eligible"],
+        "actuator_config_errors": config_validation["errors"],
+        "site_execution_accepted": execution_readiness["boundary"]["site_execution_accepted"],
+        "execution_acceptance_status": execution_readiness["boundary"]["site_status"],
         "second_channel_secret_configured": len(os.getenv(token_env, "")) >= 32,
         "two_person_confirmation_required": True,
         "requester_confirmer_must_differ": True,
         "audit_evidence": "atomic_json_mode_0600",
         "rollback_endpoint_available": True,
-        "policy": "every command is staged for a different human confirmer; no one-request execution",
+        "verified_readback_required": True,
+        "independent_interlock_required": True,
+        "command_ttl_seconds": int((data.get("security") or {}).get("command_ttl_seconds") or 0),
+        "policy": "every command is short-lived and staged for a different human confirmer; production also requires bound commissioning, readback, interlock and rollback evidence",
     })
 
 

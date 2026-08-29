@@ -249,8 +249,8 @@ async def mobile_status() -> JSONResponse:
                 "dataset_sha256": business["dataset"]["sha256"],
                 "test_rows": business["test"]["rows"],
                 "test_period": business["dataset"]["test_period"],
-                "claims_percent": business[
-                    "resume_claims_rounded_percent"
+                "summary_metrics_percent": business[
+                    "summary_metrics_rounded_percent"
                 ],
                 "berth_utilization_point_gain": round(
                     (
@@ -293,7 +293,7 @@ async def mobile_situation() -> JSONResponse:
         if int(item["rows"]) == 24
     ][-12:]
     audit = STORE.verify()
-    claims = business["resume_claims_rounded_percent"]
+    claims = business["summary_metrics_rounded_percent"]
     return JSONResponse(
         {
             "stabilityLevel": "stable" if audit["valid"] else "critical",

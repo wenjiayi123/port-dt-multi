@@ -24,7 +24,7 @@ class MPCPolicy:
         charge_efficiency: float = 0.96,
     ) -> None:
         self.horizon = max(2, int(horizon))
-        self.action_dim = 5 if int(action_dim) >= 5 else 3
+        self.action_dim = 7 if int(action_dim) >= 7 else 5 if int(action_dim) >= 5 else 3
         self.episode_steps = max(4, int(episode_steps))
         self.soc_min = float(soc_min)
         self.soc_max = float(soc_max)
@@ -120,6 +120,8 @@ class MPCPolicy:
             soc=soc,
             progress=progress,
         )
-        if self.action_dim == 5:
-            action = np.concatenate([action, np.zeros(2, dtype=np.float32)])
+        if self.action_dim > 3:
+            action = np.concatenate(
+                [action, np.zeros(self.action_dim - 3, dtype=np.float32)]
+            )
         return action, None

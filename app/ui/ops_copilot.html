@@ -351,24 +351,11 @@
       return await r.json();
     }
     function wait(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
-    function charDelay(ch){
-      if(ch === "\n") return 95;
-      if("。！？；.!?;".includes(ch)) return 80;
-      if("，、,:：".includes(ch)) return 42;
-      return 16;
-    }
     async function typeText(selector, text, runId){
       const node = $(selector);
-      node.textContent = "";
-      node.classList.add("typing");
-      for(const ch of String(text || "")){
-        if(runId !== answerRunId) return false;
-        node.textContent += ch;
-        await wait(charDelay(ch));
-      }
-      if(runId === answerRunId){
-        node.classList.remove("typing");
-      }
+      if(runId !== answerRunId) return false;
+      node.classList.remove("typing");
+      node.textContent = String(text || "");
       return true;
     }
     function levelClass(level){
@@ -541,8 +528,8 @@
       $("#llmMetric").textContent = "小懿AI";
       $("#modeMetric").textContent = "训练引导";
       renderRlTrainingPlan(data);
-      setProgress(56, "小懿已生成推荐参数，正在逐字输出...");
-      $("#askBtn").textContent = "逐字输出中...";
+      setProgress(56, "小懿已生成推荐参数，正在校验完整回答...");
+      $("#askBtn").textContent = "校验完整回答中...";
       await typeText("#operatorNote", rlTrainingAnswer(data), runId);
       if(runId !== answerRunId) return true;
       $("#answerStamp").textContent = `第 ${generationCount} 次生成 · RL 指令引导 · ${new Date().toLocaleTimeString("zh-CN",{hour12:false})}`;
@@ -605,7 +592,7 @@
       $("#ctxRisk").textContent = `Risk ${s.risk_level || "WATCH"}`;
       $("#liveHeadline").textContent = `Context ${String(data.context_sha256 || "").slice(0,12)} · ${data.status || "ready"}`;
       $("#liveSub").textContent = `小懿调用=${!!llm.true_xiaoyi_called} · 接地校验=${!!grounding.passed} · 生产权限=false`;
-      $("#askBtn").textContent = "逐字输出中...";
+      $("#askBtn").textContent = "校验完整回答中...";
       return await typeText("#operatorNote", s.operator_note || "已生成运营副驾答案。", runId);
     }
     function applyQueryParams(){
@@ -680,7 +667,7 @@
         if(runId !== answerRunId) return;
         window.clearInterval(timer);
         const doneAt = new Date().toLocaleTimeString("zh-CN",{hour12:false});
-        setProgress(92, "小懿答案已就绪，正在逐字输出 / Typing answer");
+        setProgress(92, "小懿答案已就绪，正在一次性展示完整回答 / Showing verified answer");
         const finished = await renderBrief(data, runId);
         if(finished && runId === answerRunId){
           setProgress(100, `完成 / Copilot answer ready · ${doneAt}`);

@@ -39,6 +39,8 @@ data/rl/runs/*
 !data/rl/runs/rl-20260812T070452272Z/**
 !data/rl/runs/rl-20260812T074531393Z/
 !data/rl/runs/rl-20260812T074531393Z/**
+!data/rl/runs/rl-20260821T065745532Z/
+!data/rl/runs/rl-20260821T065745532Z/**
 data/rl/benchmarks.json
 data/rl/model_registry.json
 data/rl/model_registry_audit.jsonl
@@ -106,13 +108,15 @@ soft_copyright_materials/
 *.zip
 
 # Clone-safe V3 runtime policy selected by the checked-in runtime manifest.
-# Other training/model archives remain local-only.
+# V4 also publishes only the selected regulatory-resilience seed; other
+# training/model archives remain local-only.
 !evidence/v3/runtime/selected_sac_v3.zip
 !data/rl/runs/rl-20260813T063524662Z/model.zip
 !data/rl/runs/rl-20260813T064228701Z/model.zip
 !data/rl/runs/rl-20260812T065606173Z/model.zip
 !data/rl/runs/rl-20260812T070320120Z/model.zip
 !data/rl/runs/rl-20260812T070452272Z/model.zip
+!data/rl/runs/rl-20260821T065745532Z/model.zip
 !evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_*/selected_model.zip
 !evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_*/selected_model.zip
 !evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_*/selected_model.zip

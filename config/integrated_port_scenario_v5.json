@@ -1,0 +1,29 @@
+{
+  "schema": "port-dt-integrated-port-scenario.v1",
+  "scenario_id": "cn_sha_integrated_business_v5",
+  "created_at": "2026-08-26T00:00:00Z",
+  "base_dataset_id": "public_cn_sha_regulatory_scenario_v4",
+  "output_dataset_id": "public_cn_sha_integrated_scenario_v5",
+  "parameters": {
+    "truck_teu_share": 0.62,
+    "average_teu_per_truck": 1.65,
+    "rail_teu_share": 0.025,
+    "barge_teu_share": 0.18,
+    "nominal_gate_capacity_trucks_per_hour": 2550.0,
+    "nominal_intermodal_capacity_teu_per_hour": 1450.0,
+    "nominal_shore_power_kw_per_occupied_berth": 7200.0,
+    "channel_chart_depth_m": 16.0,
+    "planning_draft_min_m": 13.2,
+    "planning_draft_max_m": 15.4,
+    "minimum_squat_allowance_m": 0.25,
+    "maximum_squat_allowance_m": 0.85,
+    "dangerous_goods_share_min": 0.025,
+    "dangerous_goods_share_max": 0.12
+  },
+  "evidence_boundary": {
+    "classification": "PUBLIC_AGGREGATE_REANALYSIS_PLUS_PREDECLARED_ENGINEERING_PORT_WIDE_SCENARIO",
+    "calibration_warning": "Only inherited official aggregate throughput and public weather/marine reanalysis are public observations. Gate, intermodal, reefer, shore-power, maintenance, marine-resource, dangerous-goods and vessel-design fields are deterministic engineering scenario variables and are not Shanghai terminal telemetry.",
+    "production_authority": false,
+    "replacement_rule": "Replace fields one-for-one from authorized terminal operating, gate appointment, port community, railway, barge, reefer monitoring, shore-power, computerized maintenance, vessel-call, hydrographic and dangerous-goods systems; retain names, units, masks and chronological split policy."
+  }
+}

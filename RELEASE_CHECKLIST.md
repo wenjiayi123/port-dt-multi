@@ -1,4 +1,4 @@
-# Release checklist / 发布清单
+# Maintainer checklist / 维护清单
 
 - [ ] Version, changelog and citation metadata agree.
 - [ ] Compile, the complete unit-test suite and twelve-controller smoke test pass on a clean checkout.

@@ -8,7 +8,7 @@
     "seed": 42,
     "status": "EVALUATED",
     "created_at": "2026-08-12T07:45:31.393762Z",
-    "updated_at": "2026-08-12T12:25:28.648356Z",
+    "updated_at": "2026-08-26T10:40:47.507522Z",
     "implementation": "port_dt.FCFSNeutralPolicy",
     "artifact": {
       "artifact_id": null,
@@ -34,6 +34,12 @@
         "queue_end_teu": 131623.42832518482,
         "weather_blocked_steps": 0.0,
         "projection_count": 0.0,
+        "projection_correction_kw": 0.0,
+        "projection_severity": 0.0,
+        "projection_grid_cap_count": 0.0,
+        "projection_soc_bound_count": 0.0,
+        "projection_terminal_reachability_count": 0.0,
+        "projection_power_bound_count": 0.0,
         "resource_factor_sum": 27.410419412349,
         "service_factor_sum": 48.0,
         "terminal_soc_error": 0.0,
@@ -44,13 +50,85 @@
         "bess_equivalent_full_cycles": 0.0,
         "weather_block_rate": 0.0,
         "action_projection_rate": 0.0,
+        "action_projection_correction_kw_mean": 0.0,
+        "action_projection_severity_mean": 0.0,
+        "action_projection_grid_cap_rate": 0.0,
+        "action_projection_soc_bound_rate": 0.0,
+        "action_projection_terminal_reachability_rate": 0.0,
+        "action_projection_power_bound_rate": 0.0,
         "operational_resource_factor_mean": 0.5710504044239375,
         "service_factor_mean": 1.0,
         "delay_index_mean": 10.163468426143904,
         "guardrail_violation_rate": 0.0
       },
       "uncertainty": {
+        "action_projection_correction_kw_mean": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_grid_cap_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_power_bound_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
         "action_projection_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_severity_mean": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_soc_bound_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_terminal_reachability_rate": {
           "n": 10,
           "mean": 0.0,
           "std": 0.0,
@@ -204,7 +282,73 @@
           "method": "percentile_bootstrap_of_mean",
           "resamples": 2000
         },
+        "projection_correction_kw": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
         "projection_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_grid_cap_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_power_bound_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_severity": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_soc_bound_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_terminal_reachability_count": {
           "n": 10,
           "mean": 0.0,
           "std": 0.0,
@@ -348,7 +492,7 @@
           "resamples": 2000
         }
       },
-      "evaluated_at": "2026-08-12T12:25:28.497141Z"
+      "evaluated_at": "2026-08-26T10:40:47.352536Z"
     }
   },
   "intended_use": "offline port operations decision support and held-out evaluation",
@@ -905,5 +1049,5 @@
     "software guardrails do not replace PLC/BMS interlocks or operator authority",
     "results require multiple seeds before comparative claims"
   ],
-  "generated_at": "2026-08-12T12:25:28.734637Z"
+  "generated_at": "2026-08-26T10:40:47.617993Z"
 }

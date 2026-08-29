@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, Iterable
@@ -10,6 +11,8 @@ from typing import Any, Dict, Iterable
 
 APP_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_MODEL_ROOT = APP_ROOT / "twin_models"
+SITE_CALIBRATION_EVIDENCE_SCHEMA = "site_twin_calibration_evidence.v2"
+_SHA256 = re.compile(r"^[a-f0-9]{64}$")
 
 
 def _sha256(path: Path) -> str:
@@ -148,7 +151,88 @@ class TwinSchemaService:
                 errors.append(f"metric and threshold {name} must be numeric")
         if any(value is False for value in threshold_checks.values()):
             errors.append("one or more calibration acceptance thresholds failed")
-        return {"valid": not errors, "errors": errors, "threshold_checks": threshold_checks, "evidence_type": "site_supplied_calibration"}
+        evidence_v2 = payload.get("schema_version") == SITE_CALIBRATION_EVIDENCE_SCHEMA
+        production_gate_eligible = False
+        if evidence_v2:
+            for name in (
+                "site_id",
+                "dataset_id",
+                "training_window",
+                "training_rows",
+                "validation_rows",
+                "threshold_checks",
+                "error_decomposition",
+                "data_quality",
+                "boundary",
+                "evidence_digest",
+            ):
+                if payload.get(name) in (None, "", [], {}):
+                    errors.append("missing field: " + name)
+            if not _SHA256.fullmatch(str(payload.get("dataset_sha256") or "")):
+                errors.append("dataset_sha256 must be a lowercase SHA-256 digest")
+            training_window = payload.get("training_window") or {}
+            try:
+                train_start = datetime.fromisoformat(str(training_window["start_at"]).replace("Z", "+00:00"))
+                train_end = datetime.fromisoformat(str(training_window["end_at"]).replace("Z", "+00:00"))
+                validation_start = datetime.fromisoformat(str(window["start_at"]).replace("Z", "+00:00"))
+                validation_end = datetime.fromisoformat(str(window["end_at"]).replace("Z", "+00:00"))
+                if train_start.tzinfo is None or train_end.tzinfo is None or validation_start.tzinfo is None or validation_end.tzinfo is None:
+                    raise ValueError("timezone missing")
+                if train_end >= validation_start or train_end <= train_start or validation_end <= validation_start:
+                    errors.append("training and validation windows must be chronological and non-overlapping")
+            except (KeyError, TypeError, ValueError):
+                errors.append("training_window and validation_window must contain timezone-aware timestamps")
+            try:
+                if int(payload.get("training_rows") or 0) < 48:
+                    errors.append("training_rows must be at least 48")
+                if int(payload.get("validation_rows") or 0) < 24:
+                    errors.append("validation_rows must be at least 24")
+            except (TypeError, ValueError):
+                errors.append("training_rows and validation_rows must be integers")
+            provided_checks = payload.get("threshold_checks") or {}
+            if provided_checks != threshold_checks:
+                errors.append("threshold_checks do not match metrics and thresholds")
+            expected_status = "pass" if threshold_checks and all(threshold_checks.values()) else "fail"
+            if payload.get("validation_status") != expected_status:
+                errors.append("validation_status does not match threshold results")
+            digest_payload = dict(payload)
+            provided_digest = str(digest_payload.pop("evidence_digest", ""))
+            canonical = json.dumps(
+                digest_payload,
+                ensure_ascii=False,
+                sort_keys=True,
+                separators=(",", ":"),
+            )
+            if hashlib.sha256(canonical.encode("utf-8")).hexdigest() != provided_digest:
+                errors.append("evidence_digest does not match calibration content")
+            boundary = payload.get("boundary") or {}
+            if boundary.get("dispatch_allowed") is not False or boundary.get("production_authority") is not False:
+                errors.append("calibration evidence cannot grant dispatch or production authority")
+            source = payload.get("source") or {}
+            provenance = payload.get("provenance") or {}
+            approved_contract = bool(
+                payload.get("approved") is True
+                and payload.get("measured_outcomes") is True
+                and payload.get("approved_by")
+                and source.get("evidence_class") == "authorized_site_export"
+                and provenance.get("change_ticket")
+                and str(payload.get("approved_by")).strip().lower()
+                != str(source.get("owner") or "").strip().lower()
+                and boundary.get("site_calibrated") is True
+                and boundary.get("measured_outcomes_verified") is True
+                and boundary.get("independent_validation_passed") is True
+                and boundary.get("independent_approval_verified") is True
+            )
+            if payload.get("approved") is True and not approved_contract:
+                errors.append("approved calibration requires authorized measured outcomes, change ticket and approval boundary")
+            production_gate_eligible = bool(not errors and approved_contract)
+        return {
+            "valid": not errors,
+            "errors": errors,
+            "threshold_checks": threshold_checks,
+            "evidence_type": "site_calibration_evidence_v2" if evidence_v2 else "legacy_site_supplied_calibration",
+            "production_gate_eligible": production_gate_eligible,
+        }
 
     def configured_calibration(self) -> Dict[str, Any]:
         raw_path = os.getenv("PORT_DT_TWIN_CALIBRATION_PATH", "").strip()

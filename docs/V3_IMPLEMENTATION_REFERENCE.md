@@ -1,10 +1,12 @@
-# V3 technical-depth and business-coverage audit
+# V3 implementation and integration reference
 
-This audit is the reviewer index for V3. It links claims to executable code, persisted evidence and explicit production boundaries. It does not convert public-data offline results into a terminal or group KPI.
+This document maps the V3 implementation to executable code, persisted reports,
+and site-integration requirements. Public-data offline results are not terminal
+or group KPIs.
 
 ## Review matrix
 
-| Dimension | V3 implementation | Inspectable evidence | Remaining site gate |
+| Dimension | V3 implementation | Inspectable records | Site requirement |
 |---|---|---|---|
 | Public-data provenance | Shanghai official throughput anchors, Yangshan public weather/marine reanalysis, Los Angeles high-frequency public reference and Singapore long-horizon official aggregates | Dataset cards, source snapshots, SHA-256 metadata, `/api/v3/data-readiness` | Authorized TOS/VTS/EMS/PLC data |
 | RL breadth | SAC, PPO, TD3, DQN, A2C, TQC, QR-DQN, TRPO, Recurrent PPO and ARS | Per-run config/model/manifest/optimizer history, clickable algorithm cards | Hyperparameter freeze and site replay |
@@ -21,7 +23,7 @@ This audit is the reviewer index for V3. It links claims to executable code, per
 | Historical integrity | V1/V2 runs, portable bundles and fixed business benchmarks stay append-only; V3 exports optimizer/validation/model-hash evidence for clone-safe display | local registry plus `evidence/rl`, `evidence/v3`, V3 report assertions | None; release check prevents silent replacement |
 | V3.2 value admission | Four non-yard-crane modules are re-audited under explicit cost/carbon/peak/service/safety gates; failed candidates remain visible instead of being promoted | `evidence/v3/value_improvement_v32.json`, candidate reports, 2026 forward challenge and per-module **查看V3.2增训结论** buttons | Public-offline value only; field commissioning still requires authorized data and acceptance |
 
-## Reviewer click path
+## Interface walkthrough
 
 1. Open `/v3` and select all policy-value tabs, especially **安全稳健性**, **强基线对照**, **孪生可靠性** and **部署自检**.
 2. Open any algorithm card with **查看训练指标** to inspect runs, seeds, optimizer steps, 95% intervals, job IDs and reward weights.
@@ -33,7 +35,7 @@ This audit is the reviewer index for V3. It links claims to executable code, per
 8. In **部署自检**, confirm that an open-source clone is runnable while production remains closed. Merely setting file paths cannot pass: graph, measured calibration and shadow acceptance are parsed, SHA-256 recorded and bound to one `site_id`.
 9. On `/`, open Yard Lighting, HVAC, Shore+BESS and Site BESS in turn, then click **查看V3.2增训结论**. The panel shows the admitted or rejected decision, exact business metrics, training volume, evidence paths and claim boundary returned by the backend.
 
-## Honest limits
+## Scope
 
 - The five asset-specific admitted candidates are constraint-projected teacher-actor distillation policies. Their imitation loss and checkpoint validation reward are inspectable, but they are not PPO/SAC policy-gradient reward logs; environment-reward fine-tunes remain admission-gated. The ten `port_ops_v3` RL methods are a separate interactive-training evidence track.
 - Shanghai throughput is official aggregate data; it is not terminal event telemetry.
