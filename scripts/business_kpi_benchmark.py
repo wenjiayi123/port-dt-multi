@@ -62,7 +62,7 @@ def render_markdown(report: dict) -> str:
 | 平均待泊时间 | {baseline["average_waiting_hours"]:.3f} h | {policy["average_waiting_hours"]:.3f} h | -{improvements["average_waiting_time_reduction_percent"]:.2f}% |
 | 情景用电成本 | {baseline["scenario_energy_cost"]:,.2f} | {policy["scenario_energy_cost"]:,.2f} | -{improvements["scenario_energy_cost_reduction_percent"]:.2f}% |
 
-简历可写为：**在参数预声明的数字孪生情景对照中，泊位有效利用率提升 {berth_point_gain:.2f} 个百分点（相对 +{report["resume_claims_rounded_percent"]["berth_utilization_relative_improvement_percent"]:.0f}%）、平均待泊时间缩短 {report["resume_claims_rounded_percent"]["average_waiting_time_reduction_percent"]:.0f}%、情景用电成本降低 {report["resume_claims_rounded_percent"]["scenario_energy_cost_reduction_percent"]:.0f}%**。
+摘要指标：**在参数预声明的数字孪生情景对照中，泊位有效利用率提升 {berth_point_gain:.2f} 个百分点（相对 +{report["summary_metrics_rounded_percent"]["berth_utilization_relative_improvement_percent"]:.0f}%）、平均待泊时间缩短 {report["summary_metrics_rounded_percent"]["average_waiting_time_reduction_percent"]:.0f}%、情景用电成本降低 {report["summary_metrics_rounded_percent"]["scenario_energy_cost_reduction_percent"]:.0f}%**。
 
 ## 稳定性
 
@@ -123,7 +123,7 @@ def main() -> int:
     write_json(arguments.output, report)
     MARKDOWN.write_text(render_markdown(report), encoding="utf-8")
     write_daily_csv(report)
-    print(json.dumps(report["resume_claims_rounded_percent"], ensure_ascii=False))
+    print(json.dumps(report["summary_metrics_rounded_percent"], ensure_ascii=False))
     return 0 if report["release_gate"]["passed"] else 1
 
 

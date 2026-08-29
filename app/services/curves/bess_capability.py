@@ -47,17 +47,16 @@ class CurvesBessCapability:
                 "params": params,
             }
 
-        up_mwh, down_mwh = self._accumulate_energy(
-            data.get("charge_cap_kw", []),
-            data.get("discharge_cap_kw", []),
-            step_min,
-        )
-
         ts = data.get("ts", [])
         n = len(ts)
         soc = data.get("soc_pct", [params["soc_init_pct"]] * n)
         soc_min = [float(params["soc_min_pct"])] * len(ts)
         soc_max = [float(params["soc_max_pct"])] * len(ts)
+        terminal_soc = float(soc[-1]) if soc else float(params["soc_init_pct"])
+        # Available energy is SOC/headroom constrained; integrating an
+        # instantaneous power-capability line would overstate MWh flexibility.
+        up_mwh = max(0.0, terminal_soc - float(params["soc_min_pct"])) / 100.0 * float(params["energy_mwh"])
+        down_mwh = max(0.0, float(params["soc_max_pct"]) - terminal_soc) / 100.0 * float(params["energy_mwh"])
 
         return {
             "mode": mode,
@@ -108,6 +107,16 @@ class CurvesBessCapability:
             "soc_min_pct": float(soc_min_pct),
             "soc_max_pct": float(soc_max_pct),
         }
+        runtime = getattr(self.di, "strategy_runtime", None)
+        runtime_params = getattr(runtime, "bess_parameters", None) if runtime is not None else None
+        if callable(runtime_params):
+            try:
+                configured = runtime_params() or {}
+                for key in out:
+                    if configured.get(key) is not None:
+                        out[key] = float(configured[key])
+            except Exception:
+                pass
         try:
             assets = None
             energy = getattr(self.di, "energy", None)
@@ -156,6 +165,17 @@ class CurvesBessCapability:
         return None
 
     def _try_rl_engine(self, asset_id: str, horizon_min: int, step_min: int) -> Optional[Dict[str, Any]]:
+        runtime = getattr(self.di, "strategy_runtime", None)
+        fn = getattr(runtime, "bess_capability", None) if runtime is not None else None
+        if callable(fn):
+            try:
+                rows = fn(asset_id=asset_id, horizon_min=horizon_min, step_min=step_min) or []
+                normalized = self._normalize_capability(rows)
+                if normalized:
+                    normalized["source"] = "selected_hash_verified_policy_runtime"
+                    return normalized
+            except Exception:
+                pass
         paths = [
             ("rl_model", "bess_energy", "rl_engine"),
             ("services", "rl_model", "bess_energy", "rl_engine"),

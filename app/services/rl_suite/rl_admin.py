@@ -9,12 +9,24 @@ BASE = Path(__file__).resolve().parent              # .../app/services
 MODEL_ROOT = (BASE / "rl_model").resolve()
 DEFAULT_MODEL = "agv_charge"
 
+def _registered_artifact_dirs() -> dict[str, Path]:
+    if not MODEL_ROOT.is_dir():
+        return {}
+    return {
+        model_dir.name: (model_dir / "artifacts").resolve()
+        for model_dir in MODEL_ROOT.iterdir()
+        if model_dir.is_dir() and (model_dir / "artifacts").is_dir()
+    }
+
 def _art_dir(model: str) -> Path:
-    return (MODEL_ROOT / model / "artifacts").resolve()
+    artifact_dir = _registered_artifact_dirs().get(str(model))
+    if artifact_dir is None:
+        raise HTTPException(status_code=404, detail="registered RL model not found")
+    return artifact_dir
 
 def _safe_in(dirpath: Path, fp: Path) -> bool:
     try:
-        return str(fp.resolve()).startswith(str(dirpath.resolve()))
+        return fp.resolve().is_relative_to(dirpath.resolve())
     except Exception:
         return False
 
@@ -88,27 +100,46 @@ async def metrics_clear(model: str = DEFAULT_MODEL):
         bak = fp.with_suffix(".jsonl.bak." + datetime.datetime.utcnow().strftime("%Y%m%d%H%M%S"))
         fp.rename(bak)
     fp.write_text("", encoding="utf-8")
-    return JSONResponse({"ok": True, "message": "cleared", "file": str(fp)})
+    return JSONResponse({"ok": True, "message": "cleared", "artifact_id": fp.name})
 
 # ---- 1.3 产物上传（zip/jsonl/png）与列出文件 ----
 @router.post("/artifacts/upload")
 async def artifacts_upload(model: str = DEFAULT_MODEL, file: UploadFile = File(...)):
     art = _art_dir(model); art.mkdir(parents=True, exist_ok=True)
-    name = file.filename or "upload.bin"
+    original_name = file.filename or "upload.bin"
+    name = os.path.basename(original_name)
+    if name != original_name or "/" in original_name or "\\" in original_name or name in {"", ".", ".."}:
+        raise HTTPException(status_code=400, detail="invalid flat artifact filename")
     data = await file.read()
+    if len(data) > 32 * 1024 * 1024:
+        raise HTTPException(status_code=413, detail="artifact exceeds 32 MiB limit")
     if name.lower().endswith(".zip"):
         try:
             with zipfile.ZipFile(io.BytesIO(data)) as zf:
-                zf.extractall(art)
-            return JSONResponse({"ok": True, "message": "zip extracted", "dir": str(art)})
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"zip error: {e}")
+                members = [item for item in zf.infolist() if not item.is_dir()]
+                if len(members) > 100 or sum(item.file_size for item in members) > 128 * 1024 * 1024:
+                    raise HTTPException(status_code=413, detail="archive expansion limit exceeded")
+                for member in members:
+                    member_name = os.path.basename(member.filename)
+                    if member.filename != member_name or "/" in member.filename or "\\" in member.filename or member_name in {"", ".", ".."}:
+                        raise HTTPException(status_code=400, detail="archive must contain flat safe filenames")
+                    if Path(member_name).suffix.lower() not in {".json", ".jsonl", ".csv", ".png", ".zip", ".bin"}:
+                        raise HTTPException(status_code=415, detail="archive member type is not allowed")
+                    destination = art / member_name
+                    with zf.open(member) as source, destination.open("wb") as target:
+                        target.write(source.read())
+            return JSONResponse({"ok": True, "message": "zip extracted", "artifacts": [item.filename for item in members]})
+        except HTTPException:
+            raise
+        except (zipfile.BadZipFile, RuntimeError):
+            raise HTTPException(status_code=400, detail="invalid artifact archive")
     else:
-        # 允许覆盖同名文件
+        if Path(name).suffix.lower() not in {".json", ".jsonl", ".csv", ".png", ".bin"}:
+            raise HTTPException(status_code=415, detail="artifact type is not allowed")
         dst = art / name
         with open(dst, "wb") as f:
             f.write(data)
-        return JSONResponse({"ok": True, "file": str(dst)})
+        return JSONResponse({"ok": True, "artifact_id": dst.name})
 
 @router.get("/artifacts/list")
 async def artifacts_list(model: str = DEFAULT_MODEL):
@@ -225,4 +256,4 @@ async def train_status(model: str = DEFAULT_MODEL):
             n = sum(1 for _ in open(fp, "r", encoding="utf-8", errors="ignore"))
         except Exception:
             n = 0
-    return JSONResponse({"running": running, "rows": n, "file": str(fp)})
+    return JSONResponse({"running": running, "rows": n, "artifact_id": fp.name})

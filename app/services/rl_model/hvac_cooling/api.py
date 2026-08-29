@@ -58,7 +58,7 @@ BASE_DIR = os.path.dirname(__file__)
 ARTIFACT_DIR = os.path.join(BASE_DIR, "artifacts")
 STATE_PATH = os.path.join(ARTIFACT_DIR, "hvac_cooling_state.json")
 DEFAULT_OUT = os.path.join(ARTIFACT_DIR, "policy_evaluate_history.jsonl")
-POLICY_BIN = os.path.join(BASE_DIR, "policy.bin")         # IQL 策略权重（JSON）
+POLICY_BIN = os.path.join(BASE_DIR, "policy.bin")         # 版本化导出策略（当前为 offline SAC JSON）
 POLICY_META = os.path.join(BASE_DIR, "policy_meta.json")  # 可选的补充元数据
 
 DEFAULT_RESIDUAL_DELTA = {
@@ -83,6 +83,21 @@ HEADER_CANDIDATES = {
     "zone_temp_max": ["zone_temp_max", "区域最高温", "T_zone_max"],
     "zone_rh_max": ["zone_rh_max", "区域最高湿度", "RH_zone_max"],
 }
+SAC_FEATURE_NAMES = [
+    "ambient_temp_C", "ambient_rh_pct", "wetbulb_C", "occ_index", "dayofweek", "hourofday",
+    "is_weekend", "cooling_load_kw", "n_chillers_on", "plr", "chws_sp_C", "avg_sat_C",
+    "chiller_power_kw", "chw_pumps_kw", "cw_pumps_kw", "tower_fans_kw", "plant_power_kw",
+    "price_yuan_per_kwh", "ef_kg_per_kwh", "cost_yuan_per_step", "carbon_kg_per_step",
+]
+for _sac_feature in SAC_FEATURE_NAMES:
+    HEADER_CANDIDATES.setdefault(_sac_feature, [_sac_feature])
+# Keep the generic planner aliases aligned with the checked-in training replay.
+HEADER_CANDIDATES["PCC_kW"].append("plant_power_kw")
+HEADER_CANDIDATES["CHWS_C"].append("chws_sp_C")
+HEADER_CANDIDATES["SAT_C"].append("avg_sat_C")
+HEADER_CANDIDATES["DB_C"].append("ambient_temp_C")
+HEADER_CANDIDATES["WB_C"].append("wetbulb_C")
+HEADER_CANDIDATES["RH_pct"].append("ambient_rh_pct")
 PRICE_HEADER_CANDS = {"ts": ["ts", "timestamp", "time", "datetime"], "price_yuan_per_kwh": ["price", "elec_price_yuan_per_kWh", "yuan_per_kWh", "电价", "rmb_per_kwh"]}
 EF_HEADER_CANDS    = {"ts": ["ts", "timestamp", "time", "datetime"], "ef_kg_per_kwh":     ["ef", "kgco2_per_kWh", "ef_kg_per_kwh", "排放因子kg/kWh"]}
 WEATHER_HEADER_CANDS = {"ts": ["ts", "timestamp", "time", "datetime"], "DB_C": ["db", "dry_bulb_C", "DB_C"], "WB_C": ["wb", "wet_bulb_C", "WB_C"], "RH_pct": ["rh", "RH_pct", "relative_humidity_pct"]}
@@ -410,19 +425,69 @@ class IQLPolicy:
             out[k] = float(x[i]) if i < len(x) else 0.0
         return out
 
+
+class SACPolicy:
+    """Pure-numpy loader for the JSON policy emitted by ``rl_engine.export_policy``."""
+
+    def __init__(self, policy_path: str = POLICY_BIN):
+        with open(policy_path, "r", encoding="utf-8") as stream:
+            payload = json.load(stream)
+        if str(payload.get("algo") or "").lower() != "sac":
+            raise RuntimeError("exported policy is not SAC")
+        self.payload = payload
+        self.feature_names = list((payload.get("state") or {}).get("feature_names") or [])
+        self.median = np.asarray((payload.get("state") or {}).get("median") or [], dtype=float)
+        self.scale = np.asarray((payload.get("state") or {}).get("scale") or [], dtype=float)
+        if len(self.feature_names) == 0 or len(self.feature_names) != len(self.median):
+            raise RuntimeError("invalid SAC normalization contract")
+        weights = payload.get("weights") or {}
+        required = (
+            "body.0.weight", "body.0.bias", "body.2.weight", "body.2.bias", "mu.weight", "mu.bias"
+        )
+        if not all(key in weights for key in required):
+            raise RuntimeError("incomplete SAC actor weights")
+        self.weights = {key: np.asarray(value, dtype=float) for key, value in weights.items()}
+        self.action_meta = payload.get("action_meta") or {}
+
+    def forward(self, features: Dict[str, Any]) -> Dict[str, float]:
+        raw = np.asarray([safe_float(features.get(name), 0.0) for name in self.feature_names], dtype=float)
+        normalized = (raw - self.median) / np.maximum(self.scale, 1e-6)
+        max_abs = float(np.max(np.abs(normalized)))
+        if max_abs > 8.0:
+            raise RuntimeError(f"SAC input out of distribution: max_abs={max_abs:.3f}")
+        x = np.maximum(0.0, np.dot(self.weights["body.0.weight"], normalized) + self.weights["body.0.bias"])
+        x = np.maximum(0.0, np.dot(self.weights["body.2.weight"], x) + self.weights["body.2.bias"])
+        mu = np.dot(self.weights["mu.weight"], x) + self.weights["mu.bias"]
+        action = float(np.tanh(mu.reshape(-1)[0]))
+        return {
+            "action": action,
+            "dCHWS": action * safe_float(self.action_meta.get("chws_scale"), 0.75),
+            "dSAT": safe_float(self.action_meta.get("sat_fixed_residual"), 0.0),
+            "dSP": safe_float(self.action_meta.get("sp_fixed_residual"), 0.0),
+            "normalized_abs_max": max_abs,
+        }
+
 # ---------- 残差策略（IQL 优先，启发式兜底） ----------
 class ResidualPolicy:
     def __init__(self, delta: Dict[str, float]):
         self.delta = delta or DEFAULT_RESIDUAL_DELTA
         self.backend = "heuristic_fallback"
+        self.sac: Optional[SACPolicy] = None
         self.iql: Optional[IQLPolicy] = None
-        # 尝试加载 IQL 策略
+        self.last_audit: Dict[str, Any] = {"backend": self.backend, "policy_loaded": False}
+        # Current artifacts are SAC JSON. Keep the old IQL loader only for backward compatibility.
         try:
-            self.iql = IQLPolicy(POLICY_BIN, POLICY_META)
-            self.backend = "IQL"
+            self.sac = SACPolicy(POLICY_BIN)
+            self.backend = "SAC"
+        except Exception:
+            self.sac = None
+        try:
+            if self.sac is None:
+                self.iql = IQLPolicy(POLICY_BIN, POLICY_META)
+                self.backend = "IQL"
         except Exception:
             self.iql = None
-            self.backend = "heuristic_fallback"
+        self.last_audit = {"backend": self.backend, "policy_loaded": self.backend != "heuristic_fallback"}
 
     def decide(self, context: Dict[str, Any]) -> Dict[str, float]:
         ref = context.get("ref", {})
@@ -436,6 +501,30 @@ class ResidualPolicy:
         sp_ref  = safe_float(ref.get("SP_set"), 800.0)
         dr_mode = bool(context.get("dr_mode", False))
         demand_tight = bool(context.get("demand_tight", False))
+
+        if self.sac is not None and isinstance(context.get("state_features"), dict):
+            try:
+                y = self.sac.forward(context["state_features"])
+                scale = 0.5 if (dr_mode or demand_tight) else 1.0
+                self.last_audit = {
+                    "backend": "SAC",
+                    "policy_loaded": True,
+                    "policy_admitted": True,
+                    "raw_action": y["action"],
+                    "normalized_abs_max": y["normalized_abs_max"],
+                }
+                return {
+                    "dCHWS": float(np.clip(y["dCHWS"], -self.delta["CHWS_C"], self.delta["CHWS_C"]) * scale),
+                    "dSAT": float(np.clip(y["dSAT"], -self.delta["SAT_C"], self.delta["SAT_C"]) * scale),
+                    "dSP": float(np.clip(y["dSP"], -self.delta["SP_Pa"], self.delta["SP_Pa"]) * scale),
+                }
+            except Exception as exc:
+                self.last_audit = {
+                    "backend": "SAC",
+                    "policy_loaded": True,
+                    "policy_admitted": False,
+                    "reason": str(exc),
+                }
 
         # IQL 推理（若可用）
         if self.iql is not None:
@@ -613,6 +702,8 @@ def run_decide_once(data_dir: str, out_path: str) -> Dict[str, Any]:
     residual = ResidualPolicy(planner.delta)
     ctx = {"ref": ref0, "price": ref0.get("price", 0.8), "ef": ref0.get("ef", 0.7),
            "db_C": db, "rh_pct": rh, "dr_mode": False, "demand_tight": dem_ctx["demand_tight"]}
+    if tel_rows:
+        ctx["state_features"] = tel_rows[-1]
     d = residual.decide(ctx)
 
     proposed = {"CHWS_set": float(np.clip(ref0["CHWS_set"] + d["dCHWS"], planner.min_chws, planner.max_chws)),
@@ -632,7 +723,7 @@ def run_decide_once(data_dir: str, out_path: str) -> Dict[str, Any]:
         "inputs": {"pcc_kw_now": pcc_kw_now, "db_C": db, "wb_C": wb, "rh_pct": rh, "dew_point_C": round(dp, 2), "demand_window": dem_ctx},
         "reference": ref0, "residual": d, "proposed": proposed, "masks": reasons,
         "final_action": final_targets, "command_payload": cmd_payload, "source_files": data["paths"],
-        "audit": {"version": 2, "from": "api.decide", "rl_backend": residual.backend}
+        "audit": {"version": 3, "from": "api.decide", "rl_backend": residual.backend, "inference": residual.last_audit}
     }
     append_jsonl(out_path, record)
     return record

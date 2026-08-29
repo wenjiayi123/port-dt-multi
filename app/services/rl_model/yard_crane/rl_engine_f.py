@@ -463,7 +463,8 @@ class Trainer:
                 if it % max(1,sleep_every) == 0: time.sleep(max(0, sleep_sec))
                 if it >= steps: break
             if it >= steps: break
-        return {"dataset": paths}
+        policy_path = self._save_policy(stage="iql_offline")
+        return {"dataset": paths, "policy_path": policy_path}
 
     # ---------- TD3+BC 预训练 ----------
     def train_offline_td3bc(self, steps: int = 30000, batch: int = 512, policy_delay: int = 2, log_every: int = 200, sleep_every: int = 1000, sleep_sec: int = 60) -> Dict[str, Any]:
@@ -480,7 +481,11 @@ class Trainer:
                 if it % max(1,sleep_every) == 0: time.sleep(max(0, sleep_sec))
                 if it >= steps: break
             if it >= steps: break
-        return {"dataset": paths}
+        self.iql.policy.W = self.td3bc.pi.W.copy()
+        self.iql.policy.b = self.td3bc.pi.b.copy()
+        self.iql.policy.log_std = self.td3bc.pi.log_std.copy()
+        policy_path = self._save_policy(stage="td3bc_offline")
+        return {"dataset": paths, "policy_path": policy_path}
 
     # ---------- 在线 Safe-SAC 微调 ----------
     def online_finetune(self, algo_from: str = "iql", env_steps: int = 2000, batch_size: int = 64, log_every: int = 100, sleep_every: int = 1000, sleep_sec: int = 60) -> Dict[str, Any]:
@@ -542,6 +547,7 @@ class Trainer:
 
     # ---------- 评估 ----------
     def evaluate_policy(self, steps: Optional[int] = None) -> Dict[str, Any]:
+        self._load_policy()
         steps = steps or self.horizon
         def policy_fn(obs: Dict[str, Any]) -> Dict[str, Any]:
             phi = self.fm.obs_to_phi(obs); a = self.iql.policy.mean_action(phi)
@@ -571,6 +577,25 @@ class Trainer:
         meta = {"stage":stage, "dt_min":self.dt_min, "horizon":self.horizon, "saved_at":int(time.time()), "ctx_keys": list(self.ctx.keys())}
         with open(pol_meta, "w", encoding="utf-8") as f: f.write(json.dumps(meta, ensure_ascii=False))
         _mirror_to_static(DEFAULT_JSONL, STATIC_JSONL)
+        return pol_bin
+
+    def _load_policy(self, path: Optional[str] = None) -> str:
+        pol_bin = path or os.path.join(os.path.dirname(__file__), "policy.bin")
+        if not os.path.exists(pol_bin) or os.path.getsize(pol_bin) == 0:
+            raise RuntimeError("yard crane policy artifact is missing or empty")
+        with open(pol_bin, "r", encoding="utf-8") as f:
+            obj = json.load(f)
+        W = np.asarray(obj["W"], dtype=np.float64)
+        b = np.asarray(obj["b"], dtype=np.float64)
+        log_std = np.asarray(obj["log_std"], dtype=np.float64)
+        if W.shape != self.iql.policy.W.shape:
+            raise ValueError(f"policy W shape mismatch: {W.shape} != {self.iql.policy.W.shape}")
+        if b.shape != self.iql.policy.b.shape or log_std.shape != self.iql.policy.log_std.shape:
+            raise ValueError("policy vector shape mismatch")
+        self.iql.policy.W = W
+        self.iql.policy.b = b
+        self.iql.policy.log_std = log_std
+        self.iql.policy.min_std_ratio = float(obj.get("min_std_ratio", self.iql.policy.min_std_ratio))
         return pol_bin
 
 # -------------------------

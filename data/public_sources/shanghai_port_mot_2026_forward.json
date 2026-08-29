@@ -1,0 +1,55 @@
+{
+  "schema": "port-dt-public-port-anchors.v1",
+  "port_code": "CNSHA",
+  "port_name": "Shanghai Port",
+  "publisher": "Ministry of Transport of the People's Republic of China",
+  "unit": "10000_teu",
+  "coverage": "Shanghai coastal port aggregate container throughput",
+  "accessed_at": "2026-08-13",
+  "observations": [
+    {
+      "period": "2026-01/02",
+      "cumulative_teu_10000": 941,
+      "year_on_year_percent": 5.8,
+      "publication_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202603/t20260326_4202506.html",
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202603/P020260326339006875433.xlsx",
+      "source_sha256": "6a4cf7772471af70841dfb8eb13a1be4c4e55d040a513f58c03200c000074943",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2026-03",
+      "cumulative_teu_10000": 1411,
+      "year_on_year_percent": 6.8,
+      "publication_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202604/t20260421_4204095.html",
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202604/P020260421643708024684.xlsx",
+      "source_sha256": "f0a735d7f90882654efe51073f520a2ed2c34d1c81ee67edb5c1304409c7a5c8",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2026-04",
+      "cumulative_teu_10000": 1896,
+      "year_on_year_percent": 7.0,
+      "publication_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202605/t20260526_4206309.html",
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202605/P020260526567675203146.xlsx",
+      "source_sha256": "e41f46bf7d7f175233b22b9f4787ca9f49c2cac4c3eb9da3cacb486c06e5cc61",
+      "source_kind": "official_cumulative_publication"
+    },
+    {
+      "period": "2026-05",
+      "cumulative_teu_10000": 2375,
+      "year_on_year_percent": 6.2,
+      "publication_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202606/t20260629_4208434.html",
+      "source_url": "https://xxgk.mot.gov.cn/jigou/zhghs/202606/P020260629644747630010.xlsx",
+      "source_sha256": "bc81c244f871e56a4267ee38776c60a030503e35da14b99419ef090c17278ae3",
+      "source_kind": "official_cumulative_publication"
+    }
+  ],
+  "derivation_boundary": {
+    "official_observations": 4,
+    "forward_window": "2026-01-01T00:00:00Z/2026-05-31T23:00:00Z",
+    "monthly_increments": "March-May values are differences between successive official cumulative publications.",
+    "first_two_months": "January-February remain one official two-month aggregate; no individual January or February observation is invented.",
+    "hourly_values": "Hourly throughput is a deterministic allocation constrained to each official reporting-period total, not terminal telemetry.",
+    "operational_limit": "The public source does not contain terminal power, equipment state, tariff, carbon or control-action telemetry. Those fields remain declared engineering derivatives and cannot be cited as Shanghai site measurements."
+  }
+}

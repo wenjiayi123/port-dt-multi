@@ -1,4 +1,7 @@
 {
+  "schema_version": "site_actuator_config.v2",
+  "site_id": "REPLACE_WITH_AUTHORIZED_SITE_ID",
+  "mode": "authorized_site",
   "enabled": false,
   "reason": "Replace all example values, configure secrets, validate site constraints, then set enabled=true",
   "whitelist": {
@@ -8,7 +11,10 @@
     "asset": {
       "BESS-SITE-01": {
         "channel": "http",
-        "endpoint": "https://ems.example.invalid/api/v1"
+        "endpoint": "https://ems.example.invalid/api/v1",
+        "interlock_id": "REPLACE_WITH_INDEPENDENT_INTERLOCK_ID",
+        "readback_mode": "signed_gateway_receipt",
+        "rollback_supported": true
       }
     },
     "type": {}
@@ -25,7 +31,11 @@
   "security": {
     "confirmation_token_env": "PORT_DT_SECOND_CHANNEL_TOKEN",
     "require_two_channel": true,
-    "require_constraints": true
+    "require_constraints": true,
+    "require_verified_readback": true,
+    "require_independent_interlock": true,
+    "require_rollback": true,
+    "command_ttl_seconds": 120
   },
   "constraints": {
     "asset": {

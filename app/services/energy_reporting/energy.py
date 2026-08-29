@@ -334,6 +334,18 @@ class EnergyService:
 
         # ------- 平均碳强度（g/kWh） -------
         avg_ci = self._avg_carbon_intensity(asset_ids)
+        carbon_factor_source = "asset_reporting"
+        if avg_ci is None:
+            state_fn = getattr(self.telemetry, "current_port_state", None)
+            try:
+                state = state_fn() if callable(state_fn) else {}
+                factor_kg = state.get("carbon_kg_per_kwh") if isinstance(state, dict) else None
+                avg_ci = float(factor_kg) * 1000.0 if factor_kg is not None else None
+                if avg_ci is not None and not math.isfinite(avg_ci):
+                    avg_ci = None
+            except (TypeError, ValueError):
+                avg_ci = None
+            carbon_factor_source = "calibrated_port_state" if avg_ci is not None else "pending_port_connection"
 
         # ------- 设备利用率（%） -------
         util_pct = self._avg_utilization_percent(asset_ids)
@@ -350,11 +362,20 @@ class EnergyService:
             "by_asset": elec_payload.get("by_asset", []),
             "tou_share": {k: (float(round(v, 6)) if v is not None else None) for k, v in tou_share.items()},
             "avg_carbon_intensity_g_per_kwh": round(avg_ci, 1) if avg_ci is not None else None,
+            "carbon_factor_source": carbon_factor_source,
             "method": method,
         }
 
+        source_status_fn = getattr(self.telemetry, "source_status", None)
+        try:
+            source_status = source_status_fn() if callable(source_status_fn) else {}
+        except Exception:
+            source_status = {}
+        measured = bool(source_status.get("measured"))
+
         payload = {
             "available": True,
+            "latest_telemetry_at": latest.isoformat(),
             "range": {"start": midnight.isoformat(), "end": now.isoformat(), "hours": round(hours, 3)},
             "electricity": electricity,
             "oil": {"available": False, "liters": None, "kgCO2e": None},
@@ -364,13 +385,24 @@ class EnergyService:
                 "kgCO2e_per_TEU": round(total_kg / teu, 6) if total_kg is not None else None,
             },
             "utilization_percent": round(util_pct, 2) if util_pct is not None else None,
+            "data_status": {
+                "mode": source_status.get("mode") or "unverified",
+                "measured": measured,
+                "production": bool(source_status.get("production")),
+                "time_warp": source_status.get("time_warp"),
+                "replacement_contract": source_status.get("replacement_contract"),
+                "today_semantics": "site_metered_wall_clock_day" if measured else "wall_clock_day_projection_from_calibrated_replay_simulator",
+            },
             "assumptions": {
                 "integral_threshold_min": float(min_integral_coverage_min),
                 "integral_coverage_ratio": round(coverage_ratio, 3),
                 "integral_avg_coverage_min": round(avg_cov_min, 3),
                 "tou_horizon_min": int(horizon_min),
                 "tou_step_min": int(step_min),
-                "note": "oil/gas 当前留白；TOU 占比基于未来预测，仅用于展示。",
+                "teu_source": "user_supplied_engineering_input",
+                "pue_status": "pending_port_cooling_and_it_meter_connection",
+                "scope_boundary": "electricity_only; oil/gas and site PUE pending port connection",
+                "note": "TOU 占比来自 Ridge 未来曲线；非现场实测时，墙钟日能耗由公开校准模拟器近窗均值外推。",
             },
         }
         return payload

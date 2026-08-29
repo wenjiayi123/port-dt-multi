@@ -1,0 +1,11 @@
+{
+  "schema": "port-dt-bess-grid-only-latest.v1",
+  "run_id": "bess-energy-v32-grid-only-balanced-20260813T090000Z",
+  "status": "GRID_ONLY_PROFILE_FORWARD_PASS",
+  "report_path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/report.json",
+  "forward_evidence_path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/forward_challenge_2026.json",
+  "forward_evidence_sha256": "a860a021761927f3470cdc5e96954dbece1bda75def2fd8bece5be082584045b",
+  "updated_at": "2026-08-13T08:55:28.329251Z",
+  "model_path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_171/selected_model.zip",
+  "model_sha256": "9f1c866ca9163313beefb7c979ea63e79aa2f0326d70798ffd7ae987d72b0d38"
+}

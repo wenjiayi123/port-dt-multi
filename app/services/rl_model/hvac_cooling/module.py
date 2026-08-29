@@ -177,6 +177,9 @@ class CoolingRLModule:
             "dr_mode": False,                    # 预留 DR 信号注入
             "demand_tight": dem_ctx["demand_tight"],
         }
+        telemetry_rows = self.data.get("telemetry") or []
+        if telemetry_rows:
+            ctx["state_features"] = telemetry_rows[-1]
         d = self.residual.decide(ctx)
 
         proposed = {
@@ -220,7 +223,7 @@ class CoolingRLModule:
             "command_payload": cmd_payload,      # 轻量聚合（BAS PID handoff）
             "write_jobs": write_jobs,            # adapter 会消费这个数组真正下发
             "source_files": self.data.get("paths", {}),
-            "audit": {"version": 1, "from": "module.decide"}
+            "audit": {"version": 3, "from": "module.decide", "rl_backend": self.residual.backend, "inference": self.residual.last_audit}
         }
         append_jsonl(self.out_path, rec)
         return rec

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -16,6 +17,10 @@ from .trainer import TRAINING_MANAGER
 
 
 router = APIRouter(prefix="/api/rl", tags=["rl-training-real"])
+REPO_ROOT = Path(__file__).resolve().parents[3]
+REGULATORY_EVIDENCE_ROOT = REPO_ROOT / "evidence/v4/regulatory_delay"
+INTEGRATED_EVIDENCE_ROOT = REPO_ROOT / "evidence/v5/integrated_business"
+INTEGRATED_GUARDRAIL_ROOT = REPO_ROOT / "evidence/v5/deterministic_guardrails"
 
 
 @router.get("/engine/capabilities")
@@ -117,8 +122,222 @@ async def evaluate_training(job_id: str, payload: Optional[Dict[str, Any]] = Bod
 
 
 @router.get("/benchmarks/summary")
-async def benchmark_summary(dataset_id: Optional[str] = None) -> JSONResponse:
-    return JSONResponse(TRAINING_MANAGER.benchmark_summary(dataset_id))
+async def benchmark_summary(
+    dataset_id: Optional[str] = None,
+    environment_version: Optional[str] = None,
+    business_profile_id: Optional[str] = None,
+) -> JSONResponse:
+    return JSONResponse(
+        TRAINING_MANAGER.benchmark_summary(
+            dataset_id,
+            environment_version=environment_version,
+            business_profile_id=business_profile_id,
+        )
+    )
+
+
+@router.get("/regulatory-resilience/evidence")
+async def regulatory_resilience_evidence() -> JSONResponse:
+    """Return hash-gated V4 evidence without exposing local absolute paths."""
+    pointer_path = REGULATORY_EVIDENCE_ROOT / "latest.json"
+    if not pointer_path.exists():
+        raise HTTPException(
+            status_code=404, detail="regulatory resilience evidence is unavailable"
+        )
+    pointer = json.loads(pointer_path.read_text(encoding="utf-8"))
+    report_path = (REPO_ROOT / str(pointer.get("report_path") or "")).resolve()
+    evidence_root = REGULATORY_EVIDENCE_ROOT.resolve()
+    if not report_path.is_relative_to(evidence_root) or not report_path.is_file():
+        raise HTTPException(status_code=409, detail="regulatory evidence pointer is invalid")
+    observed_sha256 = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    if observed_sha256 != pointer.get("report_sha256"):
+        raise HTTPException(
+            status_code=409, detail="regulatory evidence hash gate failed"
+        )
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    legacy = dict(report.get("legacy_preservation") or {})
+    legacy.pop("sha256_before", None)
+    legacy.pop("sha256_after", None)
+    report["legacy_preservation"] = legacy
+
+    forward_path_value = str(pointer.get("forward_challenge_path") or "")
+    if not forward_path_value:
+        raise HTTPException(
+            status_code=409, detail="independent forward challenge is unavailable"
+        )
+    forward_path = (REPO_ROOT / forward_path_value).resolve()
+    if not forward_path.is_relative_to(evidence_root) or not forward_path.is_file():
+        raise HTTPException(
+            status_code=409, detail="forward challenge pointer is invalid"
+        )
+    forward_sha256 = hashlib.sha256(forward_path.read_bytes()).hexdigest()
+    if forward_sha256 != pointer.get("forward_challenge_sha256"):
+        raise HTTPException(
+            status_code=409, detail="forward challenge hash gate failed"
+        )
+    forward_challenge = json.loads(forward_path.read_text(encoding="utf-8"))
+    if forward_challenge.get("status") != "PASS":
+        raise HTTPException(
+            status_code=409, detail="independent forward challenge is blocked"
+        )
+    return JSONResponse(
+        {
+            "schema": "port-dt-regulatory-resilience-api.v2",
+            "status": report.get("status"),
+            "report_sha256": observed_sha256,
+            "evidence_path": str(report_path.relative_to(REPO_ROOT)),
+            "forward_challenge_status": forward_challenge.get("status"),
+            "forward_challenge_sha256": forward_sha256,
+            "forward_challenge_path": str(forward_path.relative_to(REPO_ROOT)),
+            "production_authority": False,
+            "report": report,
+            "forward_challenge": forward_challenge,
+        }
+    )
+
+
+@router.get("/integrated-business/evidence")
+async def integrated_business_evidence() -> JSONResponse:
+    """Return the hash-gated V5 offline champion and deterministic gate proof."""
+    champion_path = INTEGRATED_EVIDENCE_ROOT / "offline_champion.json"
+    guardrail_pointer_path = INTEGRATED_GUARDRAIL_ROOT / "latest.json"
+    if not champion_path.is_file() or not guardrail_pointer_path.is_file():
+        raise HTTPException(
+            status_code=404, detail="integrated business evidence is unavailable"
+        )
+    champion = json.loads(champion_path.read_text(encoding="utf-8"))
+    if (
+        champion.get("status") != "ADMITTED_OFFLINE_CHAMPION"
+        or champion.get("production_authority") is not False
+    ):
+        raise HTTPException(status_code=409, detail="integrated champion is blocked")
+    report_path = (REPO_ROOT / str(champion.get("report_path") or "")).resolve()
+    evidence_root = INTEGRATED_EVIDENCE_ROOT.resolve()
+    if not report_path.is_relative_to(evidence_root) or not report_path.is_file():
+        raise HTTPException(
+            status_code=409, detail="integrated evidence pointer is invalid"
+        )
+    report_sha256 = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    if report_sha256 != champion.get("report_sha256"):
+        raise HTTPException(
+            status_code=409, detail="integrated evidence hash gate failed"
+        )
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    admission = report.get("admission") or {}
+    if admission.get("passed") is not True or admission.get(
+        "production_authority"
+    ) is not False:
+        raise HTTPException(
+            status_code=409, detail="integrated business admission is blocked"
+        )
+    training = report.get("training") or {}
+    if training.get("selected_job_id") != champion.get("selected_job_id"):
+        raise HTTPException(
+            status_code=409, detail="integrated selected job binding failed"
+        )
+
+    model_path = (
+        REPO_ROOT / str(champion.get("selected_model_path") or "")
+    ).resolve()
+    model_root = (REPO_ROOT / "data/rl/runs").resolve()
+    if (
+        not model_path.is_relative_to(model_root)
+        or not model_path.is_file()
+        or hashlib.sha256(model_path.read_bytes()).hexdigest()
+        != champion.get("selected_model_sha256")
+    ):
+        raise HTTPException(
+            status_code=409, detail="integrated champion model hash gate failed"
+        )
+
+    dataset_root = (REPO_ROOT / "data/rl/datasets").resolve()
+    verified_datasets: Dict[str, Dict[str, Any]] = {}
+    for label, report_key, id_key, sha_key in (
+        ("training", "dataset", "dataset_id", "dataset_sha256"),
+        (
+            "forward",
+            "final_evaluation_dataset",
+            "final_evaluation_dataset_id",
+            "final_evaluation_dataset_sha256",
+        ),
+    ):
+        dataset_evidence = report.get(report_key) or {}
+        artifact_path = (
+            REPO_ROOT / str(dataset_evidence.get("artifact") or "")
+        ).resolve()
+        expected_sha256 = champion.get(sha_key)
+        if (
+            dataset_evidence.get("dataset_id") != champion.get(id_key)
+            or dataset_evidence.get("sha256") != expected_sha256
+            or not artifact_path.is_relative_to(dataset_root)
+            or not artifact_path.is_file()
+            or hashlib.sha256(artifact_path.read_bytes()).hexdigest()
+            != expected_sha256
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail=f"integrated {label} dataset hash gate failed",
+            )
+        verified_datasets[label] = {
+            "dataset_id": champion.get(id_key),
+            "sha256": expected_sha256,
+            "rows": int(dataset_evidence.get("rows") or 0),
+        }
+    report["legacy_preservation"] = {
+        "checked_artifact_count": int(
+            (report.get("legacy_preservation") or {}).get(
+                "checked_artifact_count"
+            )
+            or 0
+        ),
+        "preserved": (report.get("legacy_preservation") or {}).get(
+            "preserved"
+        )
+        is True,
+    }
+
+    guardrail_pointer = json.loads(
+        guardrail_pointer_path.read_text(encoding="utf-8")
+    )
+    guardrail_report_path = (
+        REPO_ROOT / str(guardrail_pointer.get("report_path") or "")
+    ).resolve()
+    guardrail_root = INTEGRATED_GUARDRAIL_ROOT.resolve()
+    if (
+        guardrail_pointer.get("status") != "PASS"
+        or not guardrail_report_path.is_relative_to(guardrail_root)
+        or not guardrail_report_path.is_file()
+        or hashlib.sha256(guardrail_report_path.read_bytes()).hexdigest()
+        != guardrail_pointer.get("report_sha256")
+    ):
+        raise HTTPException(
+            status_code=409, detail="deterministic business guardrail proof failed"
+        )
+    guardrail_report = json.loads(
+        guardrail_report_path.read_text(encoding="utf-8")
+    )
+    return JSONResponse(
+        {
+            "schema": "port-dt-integrated-business-api.v1",
+            "status": champion["status"],
+            "report_sha256": report_sha256,
+            "selected_job_id": champion.get("selected_job_id"),
+            "selected_model_sha256": champion.get("selected_model_sha256"),
+            "business_score": champion.get("business_score"),
+            "training_dataset": verified_datasets["training"],
+            "forward_dataset": verified_datasets["forward"],
+            "guardrail_replay": {
+                "status": guardrail_pointer.get("status"),
+                "report_sha256": guardrail_pointer.get("report_sha256"),
+                "rows_replayed": guardrail_pointer.get("rows_replayed"),
+                "challenge_checks": (
+                    guardrail_report.get("challenge_suite") or {}
+                ).get("checks"),
+            },
+            "production_authority": False,
+            "report": report,
+        }
+    )
 
 
 @router.get("/models")
@@ -142,6 +361,8 @@ async def get_model(job_id: str) -> JSONResponse:
 @router.get("/models/{job_id}/readiness")
 async def model_readiness(job_id: str) -> JSONResponse:
     try:
+        # run_dir validates one path component and enforces root containment.
+        # codeql[py/path-injection]
         config = json.loads((TRAINING_MANAGER.run_dir(job_id) / "config.json").read_text(encoding="utf-8"))
         benchmark = TRAINING_MANAGER.benchmark_summary(config.get("dataset_id"))
         return JSONResponse(TRAINING_MANAGER.model_registry().readiness(job_id, benchmark))
@@ -152,6 +373,7 @@ async def model_readiness(job_id: str) -> JSONResponse:
 @router.post("/models/{job_id}/alias")
 async def set_model_alias(job_id: str, payload: Dict[str, Any] = Body(...)) -> JSONResponse:
     try:
+        # codeql[py/path-injection]
         config = json.loads((TRAINING_MANAGER.run_dir(job_id) / "config.json").read_text(encoding="utf-8"))
         benchmark = TRAINING_MANAGER.benchmark_summary(config.get("dataset_id"))
         return JSONResponse(TRAINING_MANAGER.model_registry().set_alias(
@@ -192,10 +414,15 @@ async def get_evaluation(job_id: str) -> JSONResponse:
         raise HTTPException(status_code=404, detail=f"unknown training job: {job_id}") from exc
     path = run_dir / "evaluation.json"
     trace_path = run_dir / "evaluation_trajectory.json"
+    # `run_dir` is already validated and both filenames are fixed constants.
+    # codeql[py/path-injection]
     if not path.exists():
         raise HTTPException(status_code=404, detail="evaluation has not been run")
+    # codeql[py/path-injection]
     payload = json.loads(path.read_text(encoding="utf-8"))
+    # codeql[py/path-injection]
     if trace_path.exists():
+        # codeql[py/path-injection]
         payload["render"] = json.loads(trace_path.read_text(encoding="utf-8"))
     return JSONResponse(payload)
 

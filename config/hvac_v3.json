@@ -1,0 +1,58 @@
+{
+  "schema": "port-dt-hvac-v3-safe-config.v1",
+  "version": "V3.1",
+  "dataset": {
+    "telemetry_path": "app/services/rl_model/hvac_cooling/data/hvac_telemetry.csv",
+    "load_forecast_path": "app/services/rl_model/hvac_cooling/data/load_forecast.csv",
+    "weather_forecast_path": "app/services/rl_model/hvac_cooling/data/weather_forecast.csv",
+    "plant_map_path": "app/services/rl_model/hvac_cooling/data/plant_efficiency_map.csv",
+    "plant_master_path": "app/services/rl_model/hvac_cooling/data/plant_master.json",
+    "evidence_tier": "checked_in_engineering_emulator_replay",
+    "measured": false,
+    "expected_interval_minutes": 15,
+    "minimum_rows": 5000
+  },
+  "split": {
+    "train_ratio": 0.70,
+    "validation_ratio": 0.10,
+    "blind_test_ratio": 0.20
+  },
+  "counterfactual": {
+    "ahu_fan_fraction_of_plant_power": 0.08,
+    "chiller_saving_per_chws_c": 0.018,
+    "chiller_saving_per_sat_c": 0.008,
+    "chw_pump_saving_per_chws_c": 0.01,
+    "fan_pressure_exponent": 2.2,
+    "demand_charge_cny_per_kw_window": 8.0,
+    "carbon_shadow_price_cny_per_kg": 0.04,
+    "source": "explicit_conservative_engineering_sensitivity_not_site_calibration"
+  },
+  "action": {
+    "chws_residual_c": [-0.5, 0.75],
+    "sat_residual_c": [-0.6, 0.6],
+    "static_pressure_residual_pa": [-100.0, 100.0],
+    "reference_static_pressure_pa": 800.0
+  },
+  "training": {
+    "seeds": [53, 153, 253],
+    "episode_steps": 384,
+    "teacher_trajectories_per_seed": 12,
+    "epochs": 70,
+    "validation_every_epochs": 10,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "network": [64, 64]
+  },
+  "convergence_gate": {
+    "fixed_validation_windows": 4,
+    "loss_reduction_min": 0.85,
+    "tail_relative_range_max": 0.01
+  },
+  "business_gate": {
+    "cost_reduction_percent_min": 1.0,
+    "energy_reduction_percent_min": 1.0,
+    "peak_reduction_percent_min": 0.5,
+    "cooling_satisfaction_rate_min": 0.999,
+    "guardrail_violation_rate_max": 0.0
+  }
+}

@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import Any, Dict
 
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException, Query
 from .service import RLOpsService
 
 router = APIRouter()
@@ -36,8 +36,9 @@ def verify_policy(payload: Dict[str, Any] = Body(default={"strategy_id": "demo"}
 
 # --- 可观测性 ---
 @router.get("/signals", summary="RL 可观测性黄金信号")
-def signals() -> Dict[str, Any]:
-    return _svc.signals()
+def signals(algorithm: str | None = Query(None)) -> Dict[str, Any]:
+    normalized = algorithm.strip().lower() if algorithm else None
+    return _svc.signals(normalized or None)
 
 # --- 实验 ---
 @router.get("/experiments", summary="实验/策略列表")

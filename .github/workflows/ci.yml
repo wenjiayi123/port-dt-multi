@@ -17,11 +17,9 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
+          cache-dependency-path: requirements-ci.lock
       - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -r requirements.txt
-          python -m pip install pip-audit==2.10.1
+        run: python -m pip install --require-hashes -r requirements-ci.lock
       - name: Dependency vulnerability audit
         run: python -m pip_audit --local
       - name: Compile Python
@@ -34,3 +32,30 @@ jobs:
           python -m scripts.release_check
       - name: Five-controller smoke test
         run: python -m scripts.rl_smoke_test --steps 64
+
+  container:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Build reproducible V3 research image
+        run: docker build --build-arg PORT_DT_VERSION=3.2.0 -t port-dt-multi:ci .
+      - name: Verify container runtime and portable V3 evidence
+        run: |
+          docker run --detach --name port-dt-multi-ci --publish 127.0.0.1:8000:8000 port-dt-multi:ci
+          trap 'docker logs port-dt-multi-ci || true; docker rm --force port-dt-multi-ci || true' EXIT
+          for attempt in $(seq 1 60); do
+            if curl --fail --silent http://127.0.0.1:8000/health/ready >/tmp/port-dt-ready.json; then
+              break
+            fi
+            sleep 2
+          done
+          curl --fail --silent --output /tmp/port-dt-ready-final.json http://127.0.0.1:8000/health/ready
+          python -m json.tool /tmp/port-dt-ready-final.json
+          curl --fail --silent --output /tmp/port-dt-overview.json http://127.0.0.1:8000/api/v3/overview
+          python -m json.tool /tmp/port-dt-overview.json >/dev/null
+          curl --fail --silent --output /tmp/port-dt-runtime.json http://127.0.0.1:8000/api/v3/runtime/status
+          python -m json.tool /tmp/port-dt-runtime.json >/dev/null
+          curl --fail --silent --output /tmp/port-dt-hvac.json http://127.0.0.1:8000/api/v3/modules/hvac/evidence
+          python -m json.tool /tmp/port-dt-hvac.json >/dev/null
+          test "$(docker inspect --format '{{.Config.User}}' port-dt-multi-ci)" = "portdt"

@@ -120,6 +120,37 @@ class ForecastService:
     factors: Optional[Any] = None
     schedule: Optional[Any] = None
 
+    def _stability_cap(self, asset_id: str, values: np.ndarray) -> Tuple[float, str]:
+        """Return a traceable physical/data envelope for recursive inference.
+
+        A recursively evaluated autoregression can be numerically valid while
+        leaving the operating range it was fitted on. Prefer the registered
+        engineering asset rating; otherwise use a robust envelope derived only
+        from the observed history. This is an inference guard, not a substitute
+        prediction or a site-calibration claim.
+        """
+        rated_kw: Optional[float] = None
+        try:
+            for asset in self.telemetry.list_assets() or []:
+                if str(asset.get("id")) != str(asset_id):
+                    continue
+                candidate = float(asset.get("rated_kw"))
+                if np.isfinite(candidate) and candidate > 0:
+                    rated_kw = candidate
+                break
+        except Exception:
+            rated_kw = None
+        observed_max = float(np.max(values))
+        median = float(np.median(values))
+        mad = float(np.median(np.abs(values - median)))
+        q99 = float(np.quantile(values, 0.99))
+        robust_cap = max(observed_max * 1.15, q99 + max(6.0 * mad, 0.15 * max(q99, 1.0)))
+        if rated_kw is not None:
+            # Never clip a source point merely because an engineering registry
+            # is stale; surface that mismatch through data-quality monitoring.
+            return max(rated_kw, observed_max * 1.01), "registered_asset_rating"
+        return robust_cap, "robust_observed_history_envelope"
+
     def forecast_load(
         self,
         asset_ids: List[str],
@@ -151,12 +182,17 @@ class ForecastService:
 
             coefficients, lag, residual_q10, residual_q90 = fitted
             window = list(values[-lag:])
+            stability_cap_kw, stability_guard = self._stability_cap(asset_id, values)
             last_timestamp = timestamps[-1] if timestamps else datetime.now(timezone.utc)
             rows: List[Dict[str, Any]] = []
             for index in range(points):
                 features = _feature(window[-lag:], len(values) + index - lag, len(values) + points)
                 multiplier = _explicit_multiplier(drivers, index)
-                p50 = max(0.0, float(features @ coefficients) * multiplier)
+                unconstrained_p50 = float(features @ coefficients) * multiplier
+                if not np.isfinite(unconstrained_p50):
+                    unconstrained_p50 = stability_cap_kw
+                p50 = min(stability_cap_kw, max(0.0, unconstrained_p50))
+                guard_applied = abs(p50 - unconstrained_p50) > 1e-9
                 timestamp = last_timestamp + timedelta(minutes=(index + 1) * effective_step_min)
                 row: Dict[str, Any] = {
                     "ts": timestamp.isoformat(),
@@ -165,10 +201,13 @@ class ForecastService:
                     "model": "ridge_autoregression",
                     "model_step_min": effective_step_min,
                     "scenario": scenario,
+                    "stability_guard": stability_guard,
+                    "stability_cap_kw": round(stability_cap_kw, 6),
+                    "guard_applied": guard_applied,
                 }
                 if return_quantiles and residual_q10 != residual_q90:
-                    row["p10"] = round(max(0.0, p50 + residual_q10), 6)
-                    row["p90"] = round(max(0.0, p50 + residual_q90), 6)
+                    row["p10"] = round(min(stability_cap_kw, max(0.0, p50 + residual_q10)), 6)
+                    row["p90"] = round(min(stability_cap_kw, max(0.0, p50 + residual_q90)), 6)
                 rows.append(row)
                 window.append(p50)
             output[asset_id] = rows

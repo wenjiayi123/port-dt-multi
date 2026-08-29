@@ -429,7 +429,7 @@ def build_report(
             }
         )
     rounding = config["claim_rounding"]
-    resume_claims = {
+    summary_metrics = {
         metric: round(float(value), int(rounding[metric]))
         for metric, value in test["improvements"].items()
     }
@@ -486,7 +486,7 @@ def build_report(
             },
             "runs": sensitivity_runs,
         },
-        "resume_claims_rounded_percent": resume_claims,
+        "summary_metrics_rounded_percent": summary_metrics,
         "attribution": {
             "berth_utilization_and_waiting": (
                 "The reported berth and waiting differences are mechanically "
@@ -509,11 +509,11 @@ def build_report(
             "zh": (
                 "在固定公开数据驱动、参数预声明的数字孪生情景对照中，"
                 "相对静态FCFS与固定能源时刻表，协调情景使泊位利用率相对提升"
-                f"{resume_claims['berth_utilization_relative_improvement_percent']:.0f}%，"
+                f"{summary_metrics['berth_utilization_relative_improvement_percent']:.0f}%，"
                 "平均待泊时间缩短"
-                f"{resume_claims['average_waiting_time_reduction_percent']:.0f}%，"
+                f"{summary_metrics['average_waiting_time_reduction_percent']:.0f}%，"
                 "情景用电成本降低"
-                f"{resume_claims['scenario_energy_cost_reduction_percent']:.0f}%。"
+                f"{summary_metrics['scenario_energy_cost_reduction_percent']:.0f}%。"
             )
         },
         "evidence_boundary": config["evidence_boundary"],
@@ -546,5 +546,5 @@ def load_verified_report(
             "business benchmark evidence changed: " + ", ".join(errors)
         )
     if report.get("release_gate", {}).get("passed") is not True:
-        raise ValueError("business benchmark release gate is not PASS")
+        raise ValueError("business benchmark integrity check is not PASS")
     return report

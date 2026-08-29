@@ -9,6 +9,8 @@ import json  # [3]
 from typing import Any, Dict, List  # [4]
 import os  # [3a]
 
+from app.services.rl_training.profiles import list_profiles
+
 class MultiportService:  # [6]
     """
     提供“多港口 / 多场景一体化管理”的汇总数据。
@@ -53,7 +55,7 @@ class MultiportService:  # [6]
             data = None  # [42]
 
         if not isinstance(data, dict) or "ports" not in data:
-            return {"available": False, "updated_at": None, "ports": [], "reason": "multi-port snapshot is missing or invalid"}
+            return self._readiness_summary("multi-port snapshot is missing or invalid")
 
         metadata = data.get("_provenance")
         sidecar = self._data_file.with_suffix(".meta.json")
@@ -63,18 +65,65 @@ class MultiportService:  # [6]
             except Exception:
                 metadata = None
         if not isinstance(metadata, dict) or metadata.get("provenance_type") not in {"public", "port_export", "audited"} or not metadata.get("source_url"):
-            return {
-                "available": False,
-                "updated_at": None,
-                "ports": [],
-                "reason": "multi-port snapshot lacks auditable provenance metadata",
-            }
+            return self._readiness_summary(
+                "multi-port snapshot lacks auditable provenance metadata"
+            )
 
         # 3) 轻度校验与规范化
         data = self._normalize(data)  # [49]
         data["available"] = True
         data["_provenance"] = metadata
         return data  # [50]
+
+    def _readiness_summary(self, reason: str) -> Dict[str, Any]:
+        """Expose reusable integration profiles without claiming a deployment."""
+        profiles = []
+        for profile in list_profiles():
+            if profile.get("valid") is False:
+                continue
+            requirements = profile.get("factor_requirements") or {}
+            profiles.append(
+                {
+                    "profile_id": profile.get("profile_id"),
+                    "name": profile.get("name"),
+                    "port_code": profile.get("port_code"),
+                    "calibration_status": profile.get("calibration_status"),
+                    "environment_version": profile.get("environment_version"),
+                    "control_authority": profile.get("control_authority"),
+                    "required_for_training": list(
+                        requirements.get("required_for_training") or []
+                    ),
+                    "required_for_site_claim": list(
+                        requirements.get("required_for_site_claim") or []
+                    ),
+                    "source_boundary": profile.get("source_boundary"),
+                }
+            )
+        public_profiles = [
+            item for item in profiles if item.get("port_code") != "REFERENCE"
+        ]
+        return {
+            "available": False,
+            "readiness_available": bool(profiles),
+            "updated_at": None,
+            "ports": [],
+            "profiles": profiles,
+            "counts": {
+                "registered_profiles": len(profiles),
+                "public_benchmark_profiles": len(public_profiles),
+                "production_deployments": None,
+            },
+            "migration_controls": [
+                "端口画像与字段可用性掩码",
+                "数据集/模型/配置哈希",
+                "未知数据集拒绝",
+                "校准、影子运行、审批与回滚",
+            ],
+            "site_status": "pending_port_connection",
+            "reason": reason,
+            "_source": "rl_port_profile_registry",
+            "data_class": "repository_transfer_readiness_not_production_deployment",
+        }
 
     # ----------------- 内部实现 -----------------
 

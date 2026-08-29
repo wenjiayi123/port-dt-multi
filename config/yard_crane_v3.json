@@ -1,0 +1,58 @@
+{
+  "schema": "port-dt-yard-crane-v3-safe-config.v1",
+  "version": "V3.1",
+  "dataset": {
+    "data_dir": "app/services/rl_model/yard_crane/data",
+    "evidence_tier": "checked_in_engineering_emulator_replay",
+    "measured": false,
+    "expected_interval_minutes": 15,
+    "minimum_aggregate_rows": 5000,
+    "expected_cranes": 16,
+    "expected_yard_blocks": 12
+  },
+  "split": {
+    "train_ratio": 0.70,
+    "validation_ratio": 0.10,
+    "blind_test_ratio": 0.20
+  },
+  "action": {
+    "power_cap_residual_pct": [-0.18, 0.05],
+    "idle_timeout_residual_min": [-5.0, 3.0],
+    "power_cap_ramp_per_15min": 0.08,
+    "idle_timeout_ramp_min_per_15min": 3.0,
+    "capacity_reserve_ratio": 0.05
+  },
+  "counterfactual": {
+    "active_power_elasticity_to_cap": 0.18,
+    "idle_power_elasticity_to_cap": 0.80,
+    "idle_power_elasticity_per_timeout_min": 0.025,
+    "minimum_idle_power_ratio": 0.68,
+    "demand_charge_cny_per_kw_window": 5.0,
+    "carbon_shadow_price_cny_per_kg": 0.04,
+    "annual_operating_hours": 8760,
+    "source": "explicit_conservative_engineering_sensitivity_not_site_calibration"
+  },
+  "training": {
+    "seeds": [61, 161, 261],
+    "episode_steps": 384,
+    "teacher_trajectories_per_seed": 12,
+    "epochs": 60,
+    "validation_every_epochs": 10,
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "network": [64, 64]
+  },
+  "convergence_gate": {
+    "fixed_validation_windows": 4,
+    "loss_reduction_min": 0.80,
+    "tail_relative_range_max": 0.012
+  },
+  "business_gate": {
+    "cost_reduction_percent_min": 2.0,
+    "energy_reduction_percent_min": 2.0,
+    "peak_reduction_percent_min": 0.5,
+    "moves_satisfaction_rate_min": 0.999,
+    "job_sla_satisfaction_rate_min": 0.999,
+    "guardrail_violation_rate_max": 0.0
+  }
+}

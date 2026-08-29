@@ -1,0 +1,4 @@
+-r requirements-linux.in
+
+# CI-only scanner; the runtime image does not need this package.
+pip-audit==2.10.1

@@ -1,0 +1,110 @@
+{
+  "dataset_id": "public_cn_sha_forward_2026m05_v1",
+  "title": "Shanghai 2026 official aggregate + Yangshan public forward reanalysis",
+  "created_at": "2026-08-13T08:19:52.413451Z",
+  "provenance_type": "public_official_aggregate_plus_public_reanalysis_and_declared_derivatives",
+  "evidence_tier": "public_forward_challenge_not_site_telemetry",
+  "owner": "port-dt-multi maintainers",
+  "timezone": "UTC",
+  "intended_use": "single-use temporal forward challenge after candidate selection on the 2024-2025 training/validation split",
+  "license": "PRC Ministry of Transport public information; Open-Meteo attribution and upstream model terms; code MIT",
+  "port_profile_id": "cn_sha_public_benchmark_v3",
+  "environment_version": "port_ops_v3_forward_challenge",
+  "measured_columns": [],
+  "official_aggregate_columns": [
+    "throughput_teu"
+  ],
+  "public_reanalysis_columns": [
+    "ambient_c",
+    "wind_speed_mps",
+    "wave_height_m",
+    "tide_m",
+    "current_speed_mps"
+  ],
+  "derived_columns": [
+    "hourly_throughput_teu_distribution",
+    "vessel_arrivals",
+    "base_load_kw",
+    "price_per_kwh",
+    "carbon_kg_per_kwh",
+    "berth_occupancy_ratio",
+    "yard_occupancy_ratio",
+    "crane_availability_ratio",
+    "equipment_availability_ratio",
+    "channel_congestion_ratio",
+    "reefer_load_kw",
+    "pilot_tug_availability_ratio",
+    "closure_flag"
+  ],
+  "unavailable_factors": [
+    "visibility_km",
+    "terminal_metering",
+    "equipment_control_actions",
+    "site_tariff",
+    "site_carbon_intensity"
+  ],
+  "independent_source_observations": 3628,
+  "source_observation_counts": {
+    "official_port_reporting_periods": 4,
+    "aligned_public_reanalysis_hours": 3624
+  },
+  "snapshot": {
+    "artifact_id": "shanghai_yangshan_reanalysis_2026_01_05.csv",
+    "sha256": "472cfc1d70ac8c4e41a7d434919928d1407c417bcbffee25ece17fb80ef13883",
+    "rows": 3624,
+    "refresh_result": {
+      "rows": 3624,
+      "sha256": "472cfc1d70ac8c4e41a7d434919928d1407c417bcbffee25ece17fb80ef13883",
+      "null_counts": {},
+      "weather_grid": {
+        "latitude": 30.5,
+        "longitude": 122.0
+      },
+      "marine_grid": {
+        "latitude": 30.625,
+        "longitude": 122.04167
+      }
+    }
+  },
+  "sources": [
+    {
+      "publisher": "Ministry of Transport of the People's Republic of China",
+      "role": "official_Shanghai_container_throughput_forward_anchors",
+      "artifact_id": "shanghai_port_mot_2026_forward.json",
+      "sha256": "6701dd32ab25faf08b9c6d434fd42483b33ea9f35f67aba1c780f897f9bc660a",
+      "publication_urls": [
+        "https://xxgk.mot.gov.cn/jigou/zhghs/202603/t20260326_4202506.html",
+        "https://xxgk.mot.gov.cn/jigou/zhghs/202604/t20260421_4204095.html",
+        "https://xxgk.mot.gov.cn/jigou/zhghs/202605/t20260526_4206309.html",
+        "https://xxgk.mot.gov.cn/jigou/zhghs/202606/t20260629_4208434.html"
+      ],
+      "source_urls": [
+        "https://xxgk.mot.gov.cn/jigou/zhghs/202603/P020260326339006875433.xlsx",
+        "https://xxgk.mot.gov.cn/jigou/zhghs/202604/P020260421643708024684.xlsx",
+        "https://xxgk.mot.gov.cn/jigou/zhghs/202605/P020260526567675203146.xlsx",
+        "https://xxgk.mot.gov.cn/jigou/zhghs/202606/P020260629644747630010.xlsx"
+      ],
+      "accessed_at": "2026-08-13"
+    },
+    {
+      "publisher": "Open-Meteo / Copernicus ERA5",
+      "role": "hourly_public_weather_reanalysis_near_Yangshan",
+      "url": "https://archive-api.open-meteo.com/v1/archive",
+      "license_url": "https://open-meteo.com/en/license",
+      "accessed_at": "2026-08-13"
+    },
+    {
+      "publisher": "Open-Meteo marine model aggregation",
+      "role": "hourly_public_marine_model_near_Yangshan",
+      "url": "https://marine-api.open-meteo.com/v1/marine",
+      "license_url": "https://open-meteo.com/en/license",
+      "accessed_at": "2026-08-13"
+    }
+  ],
+  "split_policy": {
+    "role": "forward_challenge_only",
+    "candidate_selection_allowed": false,
+    "shuffle": false
+  },
+  "warning": "Not Shanghai terminal telemetry. Aggregate throughput and environmental model data cannot validate site power/control economics; equipment-level results remain engineering replay until authorized field data passes calibration and shadow-operation gates."
+}

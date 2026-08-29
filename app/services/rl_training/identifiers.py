@@ -25,6 +25,10 @@ def resolve_child_dir(root: Path, value: str, *, field: str) -> Path:
     """Resolve a validated child directory and reject symlink/path escapes."""
     identifier = validate_identifier(value, field=field)
     resolved_root = Path(root).resolve()
+    # The strict grammar excludes separators, and the resolved-parent equality
+    # below also rejects symlink and traversal escapes. CodeQL does not model
+    # this project-local containment validator.
+    # codeql[py/path-injection]
     candidate = (resolved_root / identifier).resolve(strict=False)
     if candidate.parent != resolved_root:
         raise ValueError(f"{field} resolves outside the configured root")

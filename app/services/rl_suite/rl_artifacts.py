@@ -17,12 +17,27 @@ MODEL_ID = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 
 
 def _art_dir(model: str) -> Path:
-    if not MODEL_ID.fullmatch(str(model)):
+    if not MODEL_ID.fullmatch(str(model)) or not MODEL_ROOT.is_dir():
         raise HTTPException(status_code=404, detail="artifact model not found")
-    p = (MODEL_ROOT / model / "artifacts").resolve()
-    if not p.is_relative_to(MODEL_ROOT.resolve()):
+    registered = {
+        child.name: (child / "artifacts").resolve()
+        for child in MODEL_ROOT.iterdir()
+        if child.is_dir() and (child / "artifacts").is_dir()
+    }
+    artifact_dir = registered.get(str(model))
+    if artifact_dir is None:
         raise HTTPException(status_code=404, detail="artifact model not found")
-    return p
+    return artifact_dir
+
+def _registered_artifact(dirpath: Path, requested: str) -> Path | None:
+    if not dirpath.is_dir():
+        return None
+    files = {
+        item.relative_to(dirpath).as_posix(): item.resolve()
+        for item in dirpath.rglob("*")
+        if item.is_file()
+    }
+    return files.get(str(requested).lstrip("/"))
 
 def _safe_in(dirpath: Path, fp: Path) -> bool:
     try:
@@ -32,16 +47,16 @@ def _safe_in(dirpath: Path, fp: Path) -> bool:
 
 @router.get("/artifacts/{path:path}")
 async def get_artifact_default(path: str):
-    fp = (DEFAULT_ART / path).resolve()
-    if not fp.is_file() or not _safe_in(DEFAULT_ART, fp):
+    fp = _registered_artifact(DEFAULT_ART, path)
+    if fp is None:
         raise HTTPException(status_code=404, detail="artifact not found")
     return FileResponse(fp)
 
 @router.get("/model/{model}/artifacts/{path:path}")
 async def get_artifact_by_model(model: str, path: str):
     art = _art_dir(model)
-    fp = (art / path).resolve()
-    if not fp.is_file() or not _safe_in(art, fp):
+    fp = _registered_artifact(art, path)
+    if fp is None:
         raise HTTPException(status_code=404, detail="artifact not found")
     return FileResponse(fp)
 

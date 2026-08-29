@@ -226,8 +226,11 @@ class CurvesEconomicBenefit:
         demand_avg_window_min: int = 15,
         use_drivers: bool = True,
     ) -> Dict[str, Any]:
+        # Strategy value must compare a fitted forecast baseline with the
+        # hash-verified learned-policy output, never two locally-scaled curves.
+        base_mode = "forecast" if mode == "sim" else mode
         base = self.curves.aggregate(
-            mode=mode,
+            mode=base_mode,
             horizon_min=horizon_min,
             step_min=step_min,
             limit=limit,

@@ -133,7 +133,10 @@ class MobileWorkflowTests(unittest.TestCase):
         self.assertEqual(baselines.status_code, 200)
         self.assertEqual(
             [item["id"] for item in baselines.json()["items"]],
-            ["sac", "ppo", "td3", "dqn", "a2c", "tqc", "mpc"],
+            [
+                "sac", "ppo", "td3", "dqn", "a2c", "tqc", "qrdqn", "trpo",
+                "recurrent_ppo", "ars", "mpc", "fcfs",
+            ],
         )
         self.assertEqual(
             baselines.json()["dataset"]["dataset_id"],

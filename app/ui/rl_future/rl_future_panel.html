@@ -12,7 +12,7 @@
     <div>
       <div class="eyebrow"><span class="pulse-dot"></span> RL Cyber Command · Future Decision Deck</div>
       <h1>港口 AI 决策舱</h1>
-      <p>离线工程推演界面：从 FastAPI 读取数字孪生场景快照，生成候选策略并完成反事实模拟、硬约束校验与审计回执。页面不连接港口生产控制系统，也不把情景数据展示为实时运营数据。</p>
+      <p>离线证据推演界面：从 FastAPI 读取数字孪生场景快照，对照正式盲测候选证据并完成硬约束校验与审计回执。页面不连接港口生产控制系统，也不把情景数据展示为实时运营数据。</p>
     </div>
     <div class="header-actions">
       <a class="ghost-link" href="/#strategy-exec-module">返回主平台</a>
@@ -40,7 +40,7 @@
         <div class="telemetry-row">
           <div><span>硬约束通过率</span><strong id="stabilityValue">--</strong></div>
           <div><span>决策状态</span><strong id="riskValue">WAIT</strong></div>
-          <div><span>候选可信度</span><strong id="trustValue">--</strong></div>
+          <div><span>证据区间</span><strong id="trustValue">--</strong></div>
         </div>
       </article>
 
@@ -61,12 +61,12 @@
 
     <section class="mission-grid">
       <article class="holo-card wide-card">
-        <div class="panel-head"><span>04 · Counterfactual Simulator</span><b>WHAT-IF</b></div>
+        <div class="panel-head"><span>04 · Formal Evidence Comparator</span><b>BLIND TEST</b></div>
         <div class="timeline" id="timeline"></div>
         <div class="counter-grid" id="counterGrid">
-          <div class="counter-item"><span>候选 A</span><strong>等待后端结果</strong><em>尚未执行反事实仿真</em></div>
-          <div class="counter-item"><span>候选 B</span><strong>等待后端结果</strong><em>尚未执行反事实仿真</em></div>
-          <div class="counter-item"><span>候选 C</span><strong>等待后端结果</strong><em>尚未执行反事实仿真</em></div>
+          <div class="counter-item"><span>候选 A</span><strong>等待后端结果</strong><em>尚未读取配对盲测参照</em></div>
+          <div class="counter-item"><span>候选 B</span><strong>等待后端结果</strong><em>尚未读取配对盲测参照</em></div>
+          <div class="counter-item"><span>候选 C</span><strong>等待后端结果</strong><em>尚未读取配对盲测参照</em></div>
         </div>
       </article>
 
@@ -120,7 +120,7 @@
         <div>
           <div class="simulation-kicker"><span></span> FUTURE RUN · COUNTERFACTUAL COMMAND</div>
           <h2 id="simulationTitle">港口策略推演指挥台</h2>
-          <p>态势重读 → 候选生成 → 反事实模拟 → 守护栏校验 → 审计回执</p>
+          <p>态势重读 → 正式盲测参照 → 证据对比 → 守护栏校验 → 审计回执</p>
         </div>
         <div class="simulation-head-meta">
           <div><span>运行编号</span><strong id="runIdValue">等待生成</strong></div>
@@ -131,7 +131,7 @@
       <div class="simulation-stage-rail" id="simulationStages" aria-label="推演进度">
         <div class="run-stage pending" data-stage="situation"><span>01</span><b>态势锁定</b><em>WAIT</em></div>
         <div class="run-stage pending" data-stage="candidates"><span>02</span><b>候选生成</b><em>WAIT</em></div>
-        <div class="run-stage pending" data-stage="counterfactual"><span>03</span><b>反事实模拟</b><em>WAIT</em></div>
+        <div class="run-stage pending" data-stage="counterfactual"><span>03</span><b>证据对比</b><em>WAIT</em></div>
         <div class="run-stage pending" data-stage="guardrails"><span>04</span><b>守护栏校验</b><em>WAIT</em></div>
         <div class="run-stage pending" data-stage="receipt"><span>05</span><b>审计回执</b><em>WAIT</em></div>
       </div>
@@ -178,7 +178,7 @@
               <h3 id="decisionLabel">推演进行中</h3>
               <p id="decisionReason">系统正在读取态势并生成反事实证据，完成前不会进入任何执行步骤。</p>
               <div class="decision-receipt">
-                <span>推荐策略 <b id="recommendedStrategy">等待计算</b></span>
+                <span>安全参照 <b id="recommendedStrategy">等待计算</b></span>
                 <span>证据摘要 <b id="evidenceDigest">等待生成</b></span>
               </div>
             </div>
@@ -193,7 +193,7 @@
     </section>
   </div>
 
-  <script src="rl_future.js?v=evidence_driven_v2"></script>
+  <script src="rl_future.js?v=evidence_driven_v4"></script>
   <script src="/ui/adapters/bilingual_ui.js?v=20260715-zh-headings-v5"></script>
 </body>
 </html>

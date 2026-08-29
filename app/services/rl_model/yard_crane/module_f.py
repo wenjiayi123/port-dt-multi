@@ -40,9 +40,9 @@ STATIC_JSONL = os.path.join(
 
 # 列名候选（不区分大小写）
 COLS = {
-    "ts": ["ts", "timestamp", "time", "datetime", "utc", "time_utc"],
+    "ts": ["ts", "timestamp", "time", "datetime", "utc", "time_utc", "end_time_utc", "start_time_utc"],
     "crane_id": ["crane_id", "id", "unit_id"],
-    "block_id": ["block_id", "block"],
+    "block_id": ["block_id", "block", "yard_block"],
     "power_kW": ["power_kw", "power_kW", "p_kw", "p"],
     "speed_pct": ["speed_pct", "speed%", "speed", "freq_pct"],
     "temp_motor_C": ["temp_motor_c", "motor_temp_c", "temp_motor", "tmotor_c"],
@@ -51,13 +51,13 @@ COLS = {
     "start_stop": ["start_stop_event", "start_stop", "startstop"],
     "regen_kWh": ["regen_kwh", "regen_kWh", "kwh_regen"],
 
-    "boxes_done": ["boxes_done", "boxes", "cnt_boxes"],
+    "boxes_done": ["boxes_done", "boxes", "cnt_boxes", "moves", "moves_planned"],
     "cycle_time_s": ["cycle_time_s", "cyc_time_s", "cycle_s"],
     "distance_m": ["distance_m", "dist_m", "distance"],
     "queue_len": ["queue_len", "q_len", "len_q"],
     "wait_time_s": ["wait_time_s", "wait_s", "w_s"],
 
-    "queue_p50": ["queue_len_p50", "q_p50"],
+    "queue_p50": ["queue_len_p50", "q_p50", "arrivals_p50_per_step"],
     "queue_p90": ["queue_len_p90", "q_p90"],
     "arrive_p50": ["arrival_rate_p50", "arrive_p50"],
 
@@ -285,7 +285,7 @@ def _load_cranes_master() -> Dict[str, CraneMaster]:
     headers, rows = _read_csv(path)
     idx = {
         "crane_id": _find(headers, COLS["crane_id"]),
-        "type": headers.index("type") if "type" in [h.lower() for h in headers] else None,
+        "type": _find(headers, ["crane_type", "type"]),
         "block_id": _find(headers, COLS["block_id"]),
         "idle_auto_off_min": headers.index("idle_auto_off_min") if "idle_auto_off_min" in [h.lower() for h in headers] else None,
         "min_on_min": headers.index("min_on_min") if "min_on_min" in [h.lower() for h in headers] else None,

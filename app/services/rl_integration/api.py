@@ -109,10 +109,53 @@ def _probe_http(url: str, timeout_sec: float = 0.55) -> Dict[str, Any]:
             status_code = int(getattr(resp, "status", 200))
             ok = 200 <= status_code < 300
             return {"ok": ok, "status_code": status_code, "error": None}
-    except URLError as exc:
-        return {"ok": False, "status_code": None, "error": str(getattr(exc, "reason", exc))}
-    except Exception as exc:
-        return {"ok": False, "status_code": None, "error": str(exc)}
+    except URLError:
+        return {"ok": False, "status_code": None, "error": "integration endpoint unavailable"}
+    except Exception:
+        return {"ok": False, "status_code": None, "error": "integration probe failed"}
+
+
+def _probe_xiaoyi_service(
+    base_url: str,
+    health_path: str,
+    chat_path: str,
+    timeout_sec: float = 0.8,
+) -> Dict[str, Any]:
+    """Reject a health-only service unless it also exposes POST /api/chat."""
+    health_url = base_url.rstrip("/") + health_path
+    health = _probe_http(health_url, timeout_sec=timeout_sec)
+    schema_url = base_url.rstrip("/") + "/openapi.json"
+    schema: Dict[str, Any] = {
+        "ok": False,
+        "status_code": None,
+        "error": "health check failed",
+        "post_supported": False,
+    }
+    if health.get("ok"):
+        req = UrlRequest(schema_url, headers={"User-Agent": "port-dt-multi-rl-integration/1.0"})
+        try:
+            with urlopen(req, timeout=timeout_sec) as resp:
+                status_code = int(getattr(resp, "status", 200))
+                document = json.loads(resp.read().decode("utf-8"))
+                methods = (document.get("paths") or {}).get(chat_path) or {}
+                post_supported = isinstance(methods, dict) and "post" in methods
+                schema = {
+                    "ok": 200 <= status_code < 300 and post_supported,
+                    "status_code": status_code,
+                    "error": None if post_supported else f"POST {chat_path} missing from OpenAPI",
+                    "post_supported": post_supported,
+                }
+        except Exception:
+            schema["error"] = "integration schema endpoint unavailable"
+    chat_capable = bool(health.get("ok") and schema.get("ok"))
+    return {
+        "ok": chat_capable,
+        "chat_capable": chat_capable,
+        "identity": "xiaoyi_chat_service" if chat_capable else "health_only_not_xiaoyi",
+        "reason": None if chat_capable else (schema.get("error") or health.get("error")),
+        "health": health,
+        "schema": schema,
+    }
 
 
 def _path_status(path_value: str) -> Dict[str, Any]:
@@ -159,12 +202,22 @@ async def rl_integration_health(request: Request) -> JSONResponse:
 
     xiaoyi_base_url = str(xiaoyi_cfg.get("base_url", "")).rstrip("/")
     xiaoyi_health_path = str(xiaoyi_cfg.get("health_path", "/health"))
+    xiaoyi_chat_path = str(xiaoyi_cfg.get("chat_path", "/api/chat"))
     xiaoyi_health_url = xiaoyi_base_url + xiaoyi_health_path
-    xiaoyi_probe = _probe_http(xiaoyi_health_url) if desktop_enabled else {
-        "ok": False, "status_code": None, "error": "desktop integrations disabled"
+    xiaoyi_probe = _probe_xiaoyi_service(
+        xiaoyi_base_url,
+        xiaoyi_health_path,
+        xiaoyi_chat_path,
+    ) if desktop_enabled else {
+        "ok": False,
+        "chat_capable": False,
+        "identity": "disabled",
+        "reason": "desktop integrations disabled",
+        "health": {"ok": False, "status_code": None, "error": "desktop integrations disabled"},
+        "schema": {"ok": False, "status_code": None, "error": "desktop integrations disabled"},
     }
     xiaoyi_project = _path_status(str(xiaoyi_cfg.get("project_path", "")))
-    xiaoyi_online = bool(xiaoyi_probe["ok"])
+    xiaoyi_online = bool(xiaoyi_probe.get("chat_capable"))
 
     rl_routes = {
         "/rl-panel": _route_exists(request, "/rl-panel", {"GET"}),
@@ -186,6 +239,7 @@ async def rl_integration_health(request: Request) -> JSONResponse:
         "/api/sailing/status": _route_exists(request, "/api/sailing/status", {"GET"}),
         "/api/sailing/launch": _route_exists(request, "/api/sailing/launch", {"POST"}),
         "/api/sailing/actions/execute": _route_exists(request, "/api/sailing/actions/execute", {"POST"}),
+        "/api/sailing/logs": _route_exists(request, "/api/sailing/logs", {"GET"}),
     }
     rl_online = all(rl_routes.values())
 
@@ -205,18 +259,25 @@ async def rl_integration_health(request: Request) -> JSONResponse:
         "xiaoyi_ai": {
             "name": xiaoyi_cfg.get("name", "小懿AI"),
             "online": xiaoyi_online,
-            "label": "小懿在线" if xiaoyi_online else "小懿未启动",
+            "label": "小懿在线" if xiaoyi_online else "小懿未在线 · 后端证据兜底",
             "base_url": xiaoyi_base_url,
             "health_url": xiaoyi_health_url,
-            "chat_url": xiaoyi_base_url + str(xiaoyi_cfg.get("chat_path", "/api/chat")),
+            "chat_url": xiaoyi_base_url + xiaoyi_chat_path,
+            "chat_capable": xiaoyi_online,
+            "identity_check": xiaoyi_probe.get("identity"),
             "project": xiaoyi_project,
             "start_command_configured": bool(xiaoyi_cfg.get("start_command")),
-            "status_code": xiaoyi_probe.get("status_code"),
-            "error": xiaoyi_probe.get("error"),
+            "status_code": (xiaoyi_probe.get("health") or {}).get("status_code"),
+            "error": xiaoyi_probe.get("reason"),
+            "probe": xiaoyi_probe,
             "routes": {
                 "/api/xiaoyi/status": _route_exists(request, "/api/xiaoyi/status", {"GET"}),
                 "/api/xiaoyi/launch": _route_exists(request, "/api/xiaoyi/launch", {"POST"}),
             },
+            "desktop_control_available": bool(
+                desktop_enabled
+                and _route_exists(request, "/api/xiaoyi/launch", {"POST"})
+            ),
         },
         "rl_interface": {
             "name": "RL接口",
@@ -228,7 +289,11 @@ async def rl_integration_health(request: Request) -> JSONResponse:
         "sailing_simulator": {
             "name": sailing_cfg.get("name", "航行模拟器"),
             "launchable": sailing_launchable,
-            "label": "航行模拟器可启动" if sailing_launchable else "航行模拟器不可启动",
+            "label": (
+                "航行桌面联动未启用"
+                if not desktop_enabled
+                else ("航行模拟器可启动" if sailing_launchable else "航行模拟器不可启动")
+            ),
             "project_root": sailing_root,
             "project_file": sailing_project,
             "godot_executable": godot_executable,
@@ -237,7 +302,14 @@ async def rl_integration_health(request: Request) -> JSONResponse:
                 "/api/sailing/status": _route_exists(request, "/api/sailing/status", {"GET"}),
                 "/api/sailing/launch": _route_exists(request, "/api/sailing/launch", {"POST"}),
                 "/api/sailing/actions/execute": _route_exists(request, "/api/sailing/actions/execute", {"POST"}),
+                "/api/sailing/logs": _route_exists(request, "/api/sailing/logs", {"GET"}),
             },
+            "desktop_control_available": bool(
+                desktop_enabled
+                and sailing_launchable
+                and _route_exists(request, "/api/sailing/launch", {"POST"})
+                and _route_exists(request, "/api/sailing/actions/execute", {"POST"})
+            ),
         },
     }
 

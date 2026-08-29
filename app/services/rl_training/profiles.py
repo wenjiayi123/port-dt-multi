@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Mapping
 from zoneinfo import ZoneInfo
 
-from .datasets import FACTOR_COLUMNS
+from .datasets import FACTOR_COLUMNS, PORT_WIDE_COLUMNS, REGULATORY_COLUMNS
 from .identifiers import validate_identifier
 
 
@@ -25,6 +25,8 @@ DEFAULT_PROFILE: Dict[str, Any] = {
         "bess_capacity_kwh": 2500.0,
         "bess_power_kw": 900.0,
         "demand_cap_kw": 3500.0,
+        "operational_load_fraction": 0.35,
+        "allocation_load_fraction": 0.08,
     },
     "control_limits": {
         "soc_min": 0.12,
@@ -34,6 +36,14 @@ DEFAULT_PROFILE: Dict[str, Any] = {
         "flexible_load_fraction": 0.60,
         "berth_priority_limit": 1.0,
         "yard_flow_limit": 1.0,
+        "inspection_buffer_limit": 1.0,
+        "recovery_priority_limit": 1.0,
+        "gate_smoothing_limit": 1.0,
+        "intermodal_allocation_limit": 1.0,
+        "reefer_service_limit": 1.0,
+        "shore_power_allocation_limit": 1.0,
+        "maintenance_reserve_limit": 1.0,
+        "marine_service_allocation_limit": 1.0,
     },
     "objectives": {
         "cost": 0.25,
@@ -60,6 +70,29 @@ DEFAULT_PROFILE: Dict[str, Any] = {
         "visibility_stop_km": None,
         "wave_stop_m": None,
     },
+    "regulatory_operations": {
+        "maritime_inspection_capacity_vessels_per_hour": 0.22,
+        "customs_inspection_capacity_vessels_per_hour": 0.28,
+        "inspection_buffer_capacity_gain": 0.55,
+        "inspection_buffer_service_reserve_fraction": 0.05,
+        "recovery_service_capacity_gain": 0.12,
+        "inspection_readiness_load_fraction": 0.015,
+        "recovery_load_fraction": 0.025,
+    },
+    "integrated_operations": {
+        "gate_service_trucks_per_hour": 160.0,
+        "rail_barge_service_teu_per_hour": 110.0,
+        "marine_service_vessels_per_hour": 1.2,
+        "reefer_risk_recovery_rate": 0.18,
+        "maintenance_recovery_rate": 0.12,
+        "shore_power_service_efficiency": 0.96,
+        "shore_power_avoided_carbon_kg_per_kwh": 0.62,
+        "required_under_keel_clearance_m": 1.0,
+        "dangerous_goods_yard_occupancy_limit": 0.85,
+        "high_reefer_risk_ratio": 0.65,
+        "high_equipment_failure_risk_ratio": 0.60,
+        "forecast_uncertainty_review_ratio": 0.55,
+    },
 }
 
 
@@ -77,8 +110,8 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
     merged = _merge(DEFAULT_PROFILE, profile)
     profile_id = validate_identifier(merged.get("profile_id"), field="profile_id")
     merged["profile_id"] = profile_id
-    if merged.get("environment_version") not in {"port_ops_v1", "port_ops_v2"}:
-        raise ValueError("environment_version must be port_ops_v1 or port_ops_v2")
+    if merged.get("environment_version") not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4", "port_ops_v5"}:
+        raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3, port_ops_v4 or port_ops_v5")
     if merged.get("control_authority") != "recommendation_only":
         raise ValueError("open-source port profiles must keep control_authority=recommendation_only")
     port_code = str(merged.get("port_code") or "").strip().upper()
@@ -102,6 +135,11 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         if value <= 0:
             raise ValueError(f"profile assets.{name} must be positive")
         assets[name] = value
+    for name in ("operational_load_fraction", "allocation_load_fraction"):
+        value = float(assets[name])
+        if not 0 <= value <= 1:
+            raise ValueError(f"profile assets.{name} must be in [0, 1]")
+        assets[name] = value
     limits = merged["control_limits"]
     numeric_limits = (
         "soc_min",
@@ -111,6 +149,14 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         "flexible_load_fraction",
         "berth_priority_limit",
         "yard_flow_limit",
+        "inspection_buffer_limit",
+        "recovery_priority_limit",
+        "gate_smoothing_limit",
+        "intermodal_allocation_limit",
+        "reefer_service_limit",
+        "shore_power_allocation_limit",
+        "maintenance_reserve_limit",
+        "marine_service_allocation_limit",
     )
     for name in numeric_limits:
         limits[name] = float(limits[name])
@@ -122,6 +168,14 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         "flexible_load_fraction",
         "berth_priority_limit",
         "yard_flow_limit",
+        "inspection_buffer_limit",
+        "recovery_priority_limit",
+        "gate_smoothing_limit",
+        "intermodal_allocation_limit",
+        "reefer_service_limit",
+        "shore_power_allocation_limit",
+        "maintenance_reserve_limit",
+        "marine_service_allocation_limit",
     ):
         if not 0 <= limits[name] <= 1:
             raise ValueError(f"profile control_limits.{name} must be in [0, 1]")
@@ -139,7 +193,7 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
     requirements = merged["factor_requirements"]
     for scope in ("required_for_training", "required_for_site_claim"):
         factors = list(requirements.get(scope) or [])
-        unknown = sorted(set(factors) - set(FACTOR_COLUMNS))
+        unknown = sorted(set(factors) - set((*FACTOR_COLUMNS, *REGULATORY_COLUMNS, *PORT_WIDE_COLUMNS)))
         if unknown:
             raise ValueError(
                 f"profile factor_requirements.{scope} contains unknown factors: "
@@ -152,6 +206,47 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         if value is not None and float(value) <= 0:
             raise ValueError(f"profile weather_limits.{name} must be positive or null")
         weather_limits[name] = None if value is None else float(value)
+    regulatory = merged["regulatory_operations"]
+    for name in (
+        "maritime_inspection_capacity_vessels_per_hour",
+        "customs_inspection_capacity_vessels_per_hour",
+    ):
+        regulatory[name] = float(regulatory[name])
+        if regulatory[name] <= 0:
+            raise ValueError(f"profile regulatory_operations.{name} must be positive")
+    for name in (
+        "inspection_buffer_capacity_gain",
+        "inspection_buffer_service_reserve_fraction",
+        "recovery_service_capacity_gain",
+        "inspection_readiness_load_fraction",
+        "recovery_load_fraction",
+    ):
+        regulatory[name] = float(regulatory[name])
+        if not 0 <= regulatory[name] <= 1:
+            raise ValueError(f"profile regulatory_operations.{name} must be in [0, 1]")
+    integrated = merged["integrated_operations"]
+    for name in (
+        "gate_service_trucks_per_hour",
+        "rail_barge_service_teu_per_hour",
+        "marine_service_vessels_per_hour",
+        "required_under_keel_clearance_m",
+    ):
+        integrated[name] = float(integrated[name])
+        if integrated[name] <= 0:
+            raise ValueError(f"profile integrated_operations.{name} must be positive")
+    for name in (
+        "reefer_risk_recovery_rate",
+        "maintenance_recovery_rate",
+        "shore_power_service_efficiency",
+        "shore_power_avoided_carbon_kg_per_kwh",
+        "dangerous_goods_yard_occupancy_limit",
+        "high_reefer_risk_ratio",
+        "high_equipment_failure_risk_ratio",
+        "forecast_uncertainty_review_ratio",
+    ):
+        integrated[name] = float(integrated[name])
+        if not 0 <= integrated[name] <= 1:
+            raise ValueError(f"profile integrated_operations.{name} must be in [0, 1]")
     return merged
 
 
@@ -160,8 +255,11 @@ def load_profile(profile_id: str, profile_root: Path = DEFAULT_PROFILE_ROOT) -> 
     if resolved == DEFAULT_PROFILE_ID:
         return validate_profile(DEFAULT_PROFILE)
     path = profile_root / f"{resolved}.json"
+    # `resolved` is one validated path component and profile_root is configured.
+    # codeql[py/path-injection]
     if not path.exists():
         raise FileNotFoundError(f"port profile not found: {resolved}")
+    # codeql[py/path-injection]
     payload = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(payload, dict):
         raise ValueError(f"port profile must be a JSON object: {resolved}")

@@ -1,0 +1,98 @@
+{
+  "seed": 243,
+  "curve": [
+    {
+      "timesteps": 5000,
+      "validation": {
+        "cost_reduction_vs_no_bess_percent": -0.07293740609166705,
+        "carbon_reduction_vs_no_bess_percent": -0.07702653274709374,
+        "peak_reduction_vs_no_bess_percent": -0.42991524701834066,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "projection_rate": 0.8519345238095238
+      },
+      "validation_reward_mean": -6.667428308251674,
+      "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_5000.zip"
+    },
+    {
+      "timesteps": 10000,
+      "validation": {
+        "cost_reduction_vs_no_bess_percent": -0.04510172921478542,
+        "carbon_reduction_vs_no_bess_percent": -0.04268914638439114,
+        "peak_reduction_vs_no_bess_percent": -0.1644418916264197,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "projection_rate": 0.8846726190476191
+      },
+      "validation_reward_mean": -5.936738076806926,
+      "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_10000.zip"
+    },
+    {
+      "timesteps": 15000,
+      "validation": {
+        "cost_reduction_vs_no_bess_percent": -0.021648625574531007,
+        "carbon_reduction_vs_no_bess_percent": -0.02723791042398685,
+        "peak_reduction_vs_no_bess_percent": -0.17498989696990194,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "projection_rate": 0.9553571428571428
+      },
+      "validation_reward_mean": -5.593755602950704,
+      "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_15000.zip"
+    },
+    {
+      "timesteps": 20000,
+      "validation": {
+        "cost_reduction_vs_no_bess_percent": -0.07224021966964567,
+        "carbon_reduction_vs_no_bess_percent": -0.01884936980481844,
+        "peak_reduction_vs_no_bess_percent": -0.21587690715350064,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "projection_rate": 0.9955357142857143
+      },
+      "validation_reward_mean": -6.923452727131286,
+      "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_20000.zip"
+    },
+    {
+      "timesteps": 25000,
+      "validation": {
+        "cost_reduction_vs_no_bess_percent": -0.02358823279631593,
+        "carbon_reduction_vs_no_bess_percent": -0.02367018911653085,
+        "peak_reduction_vs_no_bess_percent": -0.22887944742110164,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "projection_rate": 0.9888392857142858
+      },
+      "validation_reward_mean": -5.943085268498985,
+      "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_25000.zip"
+    },
+    {
+      "timesteps": 30000,
+      "validation": {
+        "cost_reduction_vs_no_bess_percent": -0.020157004364735144,
+        "carbon_reduction_vs_no_bess_percent": -0.023089358075980077,
+        "peak_reduction_vs_no_bess_percent": -0.24446267424277626,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "projection_rate": 0.9836309523809523
+      },
+      "validation_reward_mean": -4.77045555327053,
+      "checkpoint": "evidence/v3/shore_bess/runs/shore-bess-v32-balanced-20260813T084500Z/seed_243/ppo_step_30000.zip"
+    }
+  ],
+  "validation_candidate": null,
+  "validation_admitted": false,
+  "render_calls_during_training": 0
+}

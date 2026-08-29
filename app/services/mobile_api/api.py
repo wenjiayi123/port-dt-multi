@@ -19,7 +19,7 @@ from app.services.mobile_api.workflow import (
     MobileWorkflowStore,
     utc_now,
 )
-from app.services.rl_training.trainer import TRAINING_MANAGER
+from app.services.rl_training.trainer import ALGORITHMS, TRAINING_MANAGER
 
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -242,15 +242,15 @@ async def mobile_status() -> JSONResponse:
             "backend_id": "port-dt-multi",
             "frontends": ["web", "flutter_mobile"],
             "shared_backend_verified": True,
-            "algorithms": ["sac", "ppo", "td3", "dqn", "a2c", "tqc", "mpc"],
+            "algorithms": list(ALGORITHMS),
             "business_benchmark": {
                 "benchmark_id": business["benchmark_id"],
                 "dataset_id": business["dataset"]["dataset_id"],
                 "dataset_sha256": business["dataset"]["sha256"],
                 "test_rows": business["test"]["rows"],
                 "test_period": business["dataset"]["test_period"],
-                "claims_percent": business[
-                    "resume_claims_rounded_percent"
+                "summary_metrics_percent": business[
+                    "summary_metrics_rounded_percent"
                 ],
                 "berth_utilization_point_gain": round(
                     (
@@ -293,7 +293,7 @@ async def mobile_situation() -> JSONResponse:
         if int(item["rows"]) == 24
     ][-12:]
     audit = STORE.verify()
-    claims = business["resume_claims_rounded_percent"]
+    claims = business["summary_metrics_rounded_percent"]
     return JSONResponse(
         {
             "stabilityLevel": "stable" if audit["valid"] else "critical",

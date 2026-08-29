@@ -2,25 +2,24 @@
 """
 app/adapters/actuators.py
 
-【文件用途】
+【功能】
 - 提供“南向控制网关（PortSouthboundGateway）”，统一对接 OPC UA / Modbus-TCP /
   MQTT / HTTP(EMS/SCADA/TOS/PCS) 四类控制通道。
 - 提供指令白名单、幂等（Idempotency-Key）、双通道确认（Two-man rule / two-channel confirm）、
-  电子签名校验（e-sign placeholder）、证据包落盘（黑匣子）、一键回滚能力（若底层支持）。
+  电子签名校验接口、审计记录和底层支持范围内的回滚能力。
 - 若真实三方库、现场配置或鉴权缺失，网关必须拒绝执行，不得伪装成下发成功。
 - 与现有项目的“审计目录 data/objects/audit/”兼容（沿用 guard-*.json / evt-*.json 风格）。
 
-【谁会调用本文件】
-- 未来将由 `app/services/dispatch.py`（作业/能管/充电等指令下发服务）直接调用
+【调用关系】
+- 作业、能源和充电等指令服务调用
   PortSouthboundGateway.dispatch()/confirm()/rollback()。
-- 也会被 `app/services/closed_loop.py`（闭环控制）在自动/半自动模式里调用。
-- UI 或 API 层（我们随后会加到 `app/server.py` 的路由）会通过服务层间接触达本网关。
+- 闭环控制通过服务层调用本网关，UI 与 API 不直接访问南向协议适配器。
 
 【本文件依赖/被依赖关系】
 - 依赖：Python 标准库；可选依赖（若安装）：opcua、pymodbus、paho-mqtt、requests。
 - 写入：`data/objects/audit/` 目录（证据包），与现有审计文件并存。
 - 读取：`PORT_DT_ACTUATOR_CONFIG` 指向的现场配置；未配置时默认禁用。
-- 不直接依赖你现有的 infra.message_bus/storage/tsdb，避免破坏现状；后续我们再无缝接上。
+- 不直接依赖 infra.message_bus/storage/tsdb，保持协议适配器与业务存储解耦。
 
 【如何落地到真实港口】
 - 在 `data/objects/config/actuators.json` 填入现场 OPC UA/Modbus/MQTT/HTTP 的地址、资产映射、白名单。
@@ -74,6 +73,25 @@ CONFIG_FILE = os.path.join(CONFIG_DIR, "actuators.json")
 
 os.makedirs(AUDIT_DIR, exist_ok=True)
 os.makedirs(CONFIG_DIR, exist_ok=True)
+
+
+def _clean_receipt(value: Any) -> bool:
+    text = str(value or "").strip()
+    return bool(3 <= len(text) <= 256 and all(character.isalnum() or character in "_.:-" for character in text))
+
+
+def _evidence_integrity_hmac(payload: Dict[str, Any], secret: str) -> str:
+    signed = dict(payload)
+    signed.pop("integrity_hmac", None)
+    canonical = json.dumps(signed, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+    return hmac.new(secret.encode("utf-8"), canonical.encode("utf-8"), hashlib.sha256).hexdigest()
+
+
+def _evidence_integrity_valid(payload: Dict[str, Any], secret: str) -> bool:
+    supplied = str(payload.get("integrity_hmac") or "")
+    if len(supplied) != 64:
+        return False
+    return hmac.compare_digest(supplied, _evidence_integrity_hmac(payload, secret))
 
 
 # -----------------------------
@@ -133,6 +151,7 @@ class EvidencePackage:
     results: List[Dict[str, Any]]
     model_version: Optional[str] = None
     constraints_check: Dict[str, Any] = field(default_factory=dict)
+    integrity_hmac: Optional[str] = None
 
     def save(self) -> str:
         path = os.path.join(AUDIT_DIR, f"guard-{time.time_ns()}-{uuid.uuid4().hex[:8]}.json")
@@ -187,6 +206,11 @@ class Config:
         whitelist = self.data.get("whitelist", {})
         allowed = whitelist.get(asset_id, [])
         return action in allowed
+
+    def validation(self) -> Dict[str, Any]:
+        from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
+
+        return SiteExecutionAcceptanceService.validate_actuator_config(self.data)
 
 
 class IdempotencyStore:
@@ -252,7 +276,14 @@ class OPCUAActuator(BaseActuator):
                 return False, {"error": "opcua_connect_failed"}
             node = self.client.get_node(node_id)
             node.set_value(value)
-            return True, {"node": node_id, "value": value}
+            observed = node.get_value()
+            readback_verified = observed == value
+            return readback_verified, {
+                "node": node_id,
+                "value": value,
+                "observed": observed,
+                "readback_verified": readback_verified,
+            }
         except Exception as e:
             return False, {"error": f"opcua_execute_err:{e.__class__.__name__}:{e}"}
 
@@ -264,7 +295,9 @@ class OPCUAActuator(BaseActuator):
                 action="set", parameters={"node": cmd.parameters.get("node"),
                                           "value": cmd.parameters["original_value"]},
                 requested_by="rollback", idempotency_key=str(uuid.uuid4()))
-            return self.execute(revert)
+            ok, detail = self.execute(revert)
+            detail["rollback_verified"] = bool(ok and detail.get("readback_verified"))
+            return bool(ok and detail["rollback_verified"]), detail
         return False, {"reason": "no_original_value"}
 
 
@@ -298,9 +331,37 @@ class ModbusActuator(BaseActuator):
             rr = self.client.write_register(reg, val, unit=unit)
             if rr.isError():
                 return False, {"error": str(rr)}
-            return True, {"register": reg, "value": val, "unit": unit}
+            read = self.client.read_holding_registers(reg, count=1, unit=unit)
+            observed = None if read.isError() or not getattr(read, "registers", None) else int(read.registers[0])
+            readback_verified = observed == val
+            return readback_verified, {
+                "register": reg,
+                "value": val,
+                "unit": unit,
+                "observed": observed,
+                "readback_verified": readback_verified,
+            }
         except Exception as e:
             return False, {"error": f"modbus_execute_err:{e.__class__.__name__}:{e}"}
+
+    def rollback(self, cmd: Command) -> Tuple[bool, Dict[str, Any]]:
+        if "original_value" not in cmd.parameters:
+            return False, {"reason": "no_original_value", "rollback_verified": False}
+        revert = Command(
+            asset_id=cmd.asset_id,
+            asset_type=cmd.asset_type,
+            action="set",
+            parameters={
+                "register": cmd.parameters.get("register"),
+                "value": cmd.parameters["original_value"],
+                "unit_id": cmd.parameters.get("unit_id", 1),
+            },
+            requested_by="rollback",
+            idempotency_key=str(uuid.uuid4()),
+        )
+        ok, detail = self.execute(revert)
+        detail["rollback_verified"] = bool(ok and detail.get("readback_verified"))
+        return bool(ok and detail["rollback_verified"]), detail
 
 
 class MQTTActuator(BaseActuator):
@@ -334,7 +395,13 @@ class MQTTActuator(BaseActuator):
                 return False, {"error": "mqtt_connect_failed"}
             import json as _json
             rc = self.client.publish(topic, _json.dumps(payload), qos=1)
-            return True, {"topic": topic, "mid": getattr(rc, 'mid', None), "payload": payload}
+            return False, {
+                "topic": topic,
+                "mid": getattr(rc, 'mid', None),
+                "payload": payload,
+                "readback_verified": False,
+                "error": "mqtt_publish_is_not_a_correlated_device_readback",
+            }
         except Exception as e:
             return False, {"error": f"mqtt_execute_err:{e.__class__.__name__}:{e}"}
 
@@ -366,7 +433,17 @@ class HTTPActuator(BaseActuator):
                 data = resp.json()
             except Exception:
                 data = {"text": resp.text}
-            return ok, {"status_code": resp.status_code, "resp": data}
+            readback_verified = bool(
+                ok
+                and isinstance(data, dict)
+                and data.get("readback_verified") is True
+                and _clean_receipt(data.get("receipt_id"))
+            )
+            return bool(ok and readback_verified), {
+                "status_code": resp.status_code,
+                "receipt_id": data.get("receipt_id") if isinstance(data, dict) and _clean_receipt(data.get("receipt_id")) else None,
+                "readback_verified": readback_verified,
+            }
         except Exception as e:
             return False, {"error": f"http_execute_err:{e.__class__.__name__}:{e}"}
 
@@ -386,7 +463,19 @@ class HTTPActuator(BaseActuator):
                 data = resp.json()
             except Exception:
                 data = {"text": resp.text}
-            return ok, {"status_code": resp.status_code, "resp": data}
+            rollback_verified = bool(
+                ok
+                and isinstance(data, dict)
+                and data.get("rollback_verified") is True
+                and data.get("readback_verified") is True
+                and _clean_receipt(data.get("receipt_id"))
+            )
+            return bool(ok and rollback_verified), {
+                "status_code": resp.status_code,
+                "receipt_id": data.get("receipt_id") if isinstance(data, dict) and _clean_receipt(data.get("receipt_id")) else None,
+                "readback_verified": bool(isinstance(data, dict) and data.get("readback_verified") is True),
+                "rollback_verified": rollback_verified,
+            }
         except Exception as e:
             return False, {"error": f"http_rollback_err:{e.__class__.__name__}:{e}"}
 
@@ -400,8 +489,8 @@ class PortSouthboundGateway:
     - 校验白名单与签名
     - 幂等去重
     - 路由到指定通道
-    - 生成证据包（输入/路由/审批/时间戳/结果/约束）
-    - 支持“影子模式/小流量/全量”的逐步集成（后续我们和 rollout 服务对接）
+    - 记录输入、路由、审批、时间戳、结果与约束
+    - 为影子模式、小流量和全量集成预留 rollout 服务接口
     """
     def __init__(self, config_path: Optional[str] = None):
         self.cfg = Config(config_path)
@@ -476,11 +565,17 @@ class PortSouthboundGateway:
                     violations.append({"parameter": parameter, "reason": "below_minimum", "minimum": rule["min"], "value": numeric})
                 elif rule.get("max") is not None and numeric > float(rule["max"]):
                     violations.append({"parameter": parameter, "reason": "above_maximum", "maximum": rule["max"], "value": numeric})
+        for parameter in cmd.parameters:
+            if parameter not in rules:
+                violations.append({"parameter": parameter, "reason": "undeclared_parameter"})
         return not violations, {"ok": not violations, "violations": violations, "rules": rules}
 
-    def _validate_second_channel_token(self, token: str) -> Tuple[bool, str, Dict[str, Any]]:
+    def _confirmation_secret(self) -> Tuple[str, str]:
         token_env = str((self.cfg.data.get("security") or {}).get("confirmation_token_env") or "PORT_DT_SECOND_CHANNEL_TOKEN")
-        expected_token = os.getenv(token_env, "")
+        return token_env, os.getenv(token_env, "")
+
+    def _validate_second_channel_token(self, token: str) -> Tuple[bool, str, Dict[str, Any]]:
+        token_env, expected_token = self._confirmation_secret()
         if len(expected_token) < 32:
             return False, "second_channel_token_not_configured", {"token_env": token_env}
         if not isinstance(token, str) or not hmac.compare_digest(token, expected_token):
@@ -509,6 +604,39 @@ class PortSouthboundGateway:
                 message="actuator_gateway_disabled",
                 details={"reason": self.cfg.data.get("reason") or "enabled must be true"},
             )
+        config_validation = self.cfg.validation()
+        if not config_validation.get("valid"):
+            return CommandResult(
+                status="FAILED",
+                command_id=str(uuid.uuid4()),
+                asset_id=cmd.asset_id,
+                channel="guard",
+                message="actuator_config_invalid",
+                details={"errors": config_validation.get("errors") or []},
+            )
+        token_env, evidence_secret = self._confirmation_secret()
+        if len(evidence_secret) < 32:
+            return CommandResult(
+                status="FAILED",
+                command_id=str(uuid.uuid4()),
+                asset_id=cmd.asset_id,
+                channel="guard",
+                message="second_channel_token_not_configured",
+                details={"token_env": token_env},
+            )
+        if os.getenv("PORT_DT_ENV", "development").strip().lower() == "production":
+            from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
+
+            execution_readiness = SiteExecutionAcceptanceService().readiness()
+            if execution_readiness["boundary"]["site_execution_accepted"] is not True:
+                return CommandResult(
+                    status="FAILED",
+                    command_id=str(uuid.uuid4()),
+                    asset_id=cmd.asset_id,
+                    channel="guard",
+                    message="site_execution_acceptance_required",
+                    details={"site_status": execution_readiness["boundary"]["site_status"]},
+                )
         if bool((self.cfg.data.get("security") or {}).get("require_two_channel", True)) and not cmd.two_channel_required:
             return CommandResult(
                 status="FAILED", command_id=str(uuid.uuid4()), asset_id=cmd.asset_id, channel="guard",
@@ -548,6 +676,16 @@ class PortSouthboundGateway:
         existed = self.idem.find(cmd.idempotency_key)
         if existed:
             existed_path, previous = existed
+            if not _evidence_integrity_valid(previous, evidence_secret):
+                return CommandResult(
+                    status="FAILED",
+                    command_id=str(previous.get("command_id") or ""),
+                    asset_id=cmd.asset_id,
+                    channel="guard",
+                    message="idempotency_evidence_integrity_failed",
+                    details={"evidence_path": existed_path},
+                    evidence_path=existed_path,
+                )
             timestamps = previous.get("timestamps") or {}
             results = previous.get("results") or []
             previous_status = "ROLLEDBACK" if timestamps.get("rolledback_at") else (
@@ -569,24 +707,33 @@ class PortSouthboundGateway:
         route = self.cfg.resolve_route(cmd.asset_id, cmd.asset_type)
         actuator = self._build_actuator(route)
         now = time.time()
+        command_payload = asdict(cmd)
+        command_digest = hashlib.sha256(
+            json.dumps(command_payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        ttl_seconds = int((self.cfg.data.get("security") or {}).get("command_ttl_seconds") or 0)
         evidence = EvidencePackage(
             command_id=str(uuid.uuid4()),
             idempotency_key=cmd.idempotency_key,
             command=asdict(cmd),
             approvals=[{"type": "request", "by": cmd.requested_by, "at": now}],
             route=route,
-            timestamps={"requested_at": cmd.requested_at, "created_at": now},
+            timestamps={"requested_at": cmd.requested_at, "created_at": now, "expires_at": now + ttl_seconds},
             results=[],
             model_version=cmd.model_version,
             constraints_check={
                 "site_constraints": self.cfg.data.get("constraints", {}),
                 "decision_evidence": cmd.constraints_check,
+                "actuator_config_sha256": config_validation.get("config_sha256"),
+                "command_digest": command_digest,
+                "short_lived_confirmation": {"ttl_seconds": ttl_seconds, "expires_at": now + ttl_seconds},
             }
         )
 
         if cmd.two_channel_required:
             # 第一阶段仅记录待确认
             evidence.timestamps["pending_at"] = time.time()
+            evidence.integrity_hmac = _evidence_integrity_hmac(asdict(evidence), evidence_secret)
             path = evidence.save()
             payload = {
                 "event": "command_pending",
@@ -608,8 +755,11 @@ class PortSouthboundGateway:
 
         # 直接执行
         ok, detail = actuator.execute(cmd)
+        if bool((self.cfg.data.get("security") or {}).get("require_verified_readback", True)):
+            ok = bool(ok and detail.get("readback_verified") is True)
         evidence.results.append({"at": time.time(), "ok": ok, "detail": detail})
         evidence.timestamps["executed_at"] = time.time()
+        evidence.integrity_hmac = _evidence_integrity_hmac(asdict(evidence), evidence_secret)
         path = evidence.save()
         evt = {
             "event": "command_executed" if ok else "command_failed",
@@ -656,7 +806,12 @@ class PortSouthboundGateway:
             try:
                 with open(fp, "r", encoding="utf-8") as f:
                     data = json.load(f)
-                if data.get("command_id") == command_id and "pending_at" in data.get("timestamps", {}) and "executed_at" not in data.get("timestamps", {}):
+                if (
+                    data.get("command_id") == command_id
+                    and "pending_at" in data.get("timestamps", {})
+                    and "executed_at" not in data.get("timestamps", {})
+                    and "expired_at" not in data.get("timestamps", {})
+                ):
                     mtime = os.path.getmtime(fp)
                     if mtime > latest_mtime:
                         latest_mtime = mtime
@@ -674,6 +829,95 @@ class PortSouthboundGateway:
             evidence = json.load(f)
 
         cmd_dict = evidence.get("command", {})
+        _, evidence_secret = self._confirmation_secret()
+        if not _evidence_integrity_valid(evidence, evidence_secret):
+            return CommandResult(
+                status="FAILED",
+                command_id=command_id,
+                asset_id=str(cmd_dict.get("asset_id") or ""),
+                channel="guard",
+                message="pending_evidence_or_config_integrity_failed",
+                details={},
+            )
+        config_validation = self.cfg.validation()
+        expected_command_digest = hashlib.sha256(
+            json.dumps(cmd_dict, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode("utf-8")
+        ).hexdigest()
+        recorded_checks = evidence.get("constraints_check") or {}
+        if (
+            not config_validation.get("valid")
+            or recorded_checks.get("actuator_config_sha256") != config_validation.get("config_sha256")
+            or recorded_checks.get("command_digest") != expected_command_digest
+        ):
+            return CommandResult(
+                status="FAILED",
+                command_id=command_id,
+                asset_id=str(cmd_dict.get("asset_id") or ""),
+                channel="guard",
+                message="pending_evidence_or_config_integrity_failed",
+                details={},
+            )
+        if os.getenv("PORT_DT_ENV", "development").strip().lower() == "production":
+            from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
+
+            if SiteExecutionAcceptanceService().readiness()["boundary"]["site_execution_accepted"] is not True:
+                return CommandResult(
+                    status="FAILED",
+                    command_id=command_id,
+                    asset_id=str(cmd_dict.get("asset_id") or ""),
+                    channel="guard",
+                    message="site_execution_acceptance_required",
+                    details={},
+                )
+        expires_at = float((evidence.get("timestamps") or {}).get("expires_at") or 0.0)
+        if expires_at <= time.time():
+            evidence.setdefault("timestamps", {})["expired_at"] = time.time()
+            evidence.setdefault("results", []).append({
+                "at": time.time(),
+                "ok": False,
+                "blocked": True,
+                "detail": {"reason": "command_confirmation_expired"},
+            })
+            evidence["integrity_hmac"] = _evidence_integrity_hmac(evidence, evidence_secret)
+            _write_json_atomic(target_path, evidence)
+            self._save_evt({
+                "event": "command_confirmation_expired",
+                "command_id": command_id,
+                "asset_id": str(cmd_dict.get("asset_id") or ""),
+                "evidence_path": target_path,
+            })
+            return CommandResult(
+                status="FAILED",
+                command_id=command_id,
+                asset_id=str(cmd_dict.get("asset_id") or ""),
+                channel="guard",
+                message="command_confirmation_expired",
+                details={},
+                evidence_path=target_path,
+            )
+        restored_command = Command(
+            asset_id=str(cmd_dict.get("asset_id") or ""),
+            asset_type=str(cmd_dict.get("asset_type") or ""),
+            action=str(cmd_dict.get("action") or ""),
+            parameters=dict(cmd_dict.get("parameters") or {}),
+            requested_by=str(cmd_dict.get("requested_by") or ""),
+            two_channel_required=True,
+        )
+        constraints_ok, constraints_detail = self._check_site_constraints(restored_command)
+        current_route = self.cfg.resolve_route(restored_command.asset_id, restored_command.asset_type)
+        if (
+            not self.cfg.is_allowed(restored_command.asset_id, restored_command.action)
+            or not constraints_ok
+            or current_route != evidence.get("route")
+        ):
+            return CommandResult(
+                status="FAILED",
+                command_id=command_id,
+                asset_id=restored_command.asset_id,
+                channel="guard",
+                message="confirmation_revalidation_failed",
+                details={"constraints": constraints_detail},
+            )
         if not confirmer.strip() or hmac.compare_digest(str(confirmer).strip(), str(cmd_dict.get("requested_by") or "").strip()):
             return CommandResult(
                 status="FAILED", command_id=command_id, asset_id=str(cmd_dict.get("asset_id") or ""), channel="guard",
@@ -695,8 +939,11 @@ class PortSouthboundGateway:
             idempotency_key=cmd_dict.get("idempotency_key"), two_channel_required=False
         )
         ok, detail = actuator.execute(cmd)
+        if bool((self.cfg.data.get("security") or {}).get("require_verified_readback", True)):
+            ok = bool(ok and detail.get("readback_verified") is True)
         evidence.setdefault("results", []).append({"at": time.time(), "ok": ok, "detail": detail})
         evidence.setdefault("timestamps", {})["executed_at"] = time.time()
+        evidence["integrity_hmac"] = _evidence_integrity_hmac(evidence, evidence_secret)
 
         # 覆盖保存
         _write_json_atomic(target_path, evidence)
@@ -758,6 +1005,42 @@ class PortSouthboundGateway:
             )
 
         cmd_dict = evidence.get("command", {})
+        _, evidence_secret = self._confirmation_secret()
+        if not _evidence_integrity_valid(evidence, evidence_secret):
+            return CommandResult(
+                status="FAILED",
+                command_id=command_id,
+                asset_id=str(cmd_dict.get("asset_id") or ""),
+                channel="guard",
+                message="rollback_evidence_integrity_failed",
+                details={},
+            )
+        config_validation = self.cfg.validation()
+        recorded_checks = evidence.get("constraints_check") or {}
+        if (
+            not config_validation.get("valid")
+            or recorded_checks.get("actuator_config_sha256") != config_validation.get("config_sha256")
+        ):
+            return CommandResult(
+                status="FAILED",
+                command_id=command_id,
+                asset_id=str(cmd_dict.get("asset_id") or ""),
+                channel="guard",
+                message="rollback_config_integrity_failed",
+                details={},
+            )
+        if os.getenv("PORT_DT_ENV", "development").strip().lower() == "production":
+            from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
+
+            if SiteExecutionAcceptanceService().readiness()["boundary"]["site_execution_accepted"] is not True:
+                return CommandResult(
+                    status="FAILED",
+                    command_id=command_id,
+                    asset_id=str(cmd_dict.get("asset_id") or ""),
+                    channel="guard",
+                    message="site_execution_acceptance_required",
+                    details={},
+                )
         if not any(item.get("ok") and not item.get("rollback") for item in evidence.get("results", [])):
             return CommandResult(status="FAILED", command_id=command_id, asset_id=str(cmd_dict.get("asset_id") or ""), channel="guard", message="no_successful_execution_to_rollback", details={})
         if evidence.get("timestamps", {}).get("rolledback_at"):
@@ -770,12 +1053,15 @@ class PortSouthboundGateway:
             requested_by="rollback", idempotency_key=cmd_dict.get("idempotency_key")
         )
         ok, detail = actuator.rollback(cmd)
+        if bool((self.cfg.data.get("security") or {}).get("require_rollback", True)):
+            ok = bool(ok and detail.get("rollback_verified") is True and detail.get("readback_verified") is True)
         evidence.setdefault("results", []).append({"at": time.time(), "ok": ok, "detail": detail, "rollback": True})
         if ok:
             evidence.setdefault("timestamps", {})["rolledback_at"] = time.time()
         else:
             evidence.setdefault("timestamps", {})["rollback_failed_at"] = time.time()
         evidence.setdefault("approvals", []).append({"type": "rollback", "by": approver, "reason": reason, "method": "separate_channel_secret", "at": time.time()})
+        evidence["integrity_hmac"] = _evidence_integrity_hmac(evidence, evidence_secret)
 
         _write_json_atomic(target_path, evidence)
 
@@ -811,9 +1097,23 @@ class ExplicitDryRunActuator(BaseActuator):
     """仅在 PORT_DT_ENABLE_ACTUATOR_DRY_RUN=1 时启用的明示预演通道。"""
     channel_name = "dry_run"
     def execute(self, cmd: Command) -> Tuple[bool, Dict[str, Any]]:
-        return True, {"dry_run": True, "executed_on_equipment": False, "cmd": asdict(cmd)}
+        return True, {
+            "dry_run": True,
+            "executed_on_equipment": False,
+            "readback_verified": True,
+            "receipt_id": "contract-dry-run-receipt",
+            "cmd": asdict(cmd),
+        }
     def rollback(self, cmd: Command) -> Tuple[bool, Dict[str, Any]]:
-        return True, {"dry_run": True, "executed_on_equipment": False, "rollback": True, "cmd": asdict(cmd)}
+        return True, {
+            "dry_run": True,
+            "executed_on_equipment": False,
+            "rollback": True,
+            "readback_verified": True,
+            "rollback_verified": True,
+            "receipt_id": "contract-dry-run-rollback-receipt",
+            "cmd": asdict(cmd),
+        }
 
 
 # -----------------------------

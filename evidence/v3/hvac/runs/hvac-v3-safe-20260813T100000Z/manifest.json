@@ -1,0 +1,78 @@
+{
+  "schema": "port-dt-hvac-formal-run.v1",
+  "run_id": "hvac-v3-safe-20260813T100000Z",
+  "created_at": "2026-08-13T03:13:00.274480Z",
+  "dataset": {
+    "dataset_id": "hvac_engineering_replay_v3",
+    "rows": 5760,
+    "time_range": {
+      "start": "2025-01-01 00:00:00",
+      "end": "2025-03-01 23:45:00"
+    },
+    "train_rows": 4032,
+    "validation_rows": 576,
+    "blind_test_rows": 1152,
+    "split": "chronological_70_10_20",
+    "measured": false,
+    "evidence_tier": "checked_in_engineering_emulator_replay",
+    "quality": {
+      "training_eligible": true,
+      "finite_numeric_rate": 1.0,
+      "duplicate_timestamp_count": 0,
+      "interval_minutes": 15.0,
+      "maximum_interval_minutes": 15.0
+    },
+    "files": [
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/hvac_telemetry.csv",
+        "rows": 5760,
+        "sha256": "12f998512b7741540ac0c2bf23d488fca8408a70374eebb248f2ea6864f4e8c7"
+      },
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/load_forecast.csv",
+        "rows": 5760,
+        "sha256": "297ca2d0e6d4b22b1db3482de100a5a79c19a3846e2a36d8dcb4cf18e03119c8"
+      },
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/weather_forecast.csv",
+        "rows": 5760,
+        "sha256": "3c12d8ff12b5d6c5019f3d38e3ddf53ebc8cbf2322baa1ed30e897241af83356"
+      },
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/plant_efficiency_map.csv",
+        "rows": 165,
+        "sha256": "1dc9851db9410d179523ad11d990d2de526d700b9d79aa6da3aa4918b7a8814f"
+      },
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/plant_master.json",
+        "rows": null,
+        "sha256": "5ce8254d6c9f5340f31f7967b65a1818387f20d2b42e5e1d58796c9200a13f01"
+      }
+    ]
+  },
+  "config_path": "config/hvac_v3.json",
+  "config_sha256": "c6173fedb2b0c40a450da9303c46176210bc7b1c3518bf0ce7da71d3dd2322b9",
+  "protocol": {
+    "seeds": [
+      53,
+      153,
+      253
+    ],
+    "validation_starts": [
+      0,
+      64,
+      128,
+      192
+    ],
+    "blind_test_starts_sealed_until_selection": [
+      0,
+      109,
+      219,
+      329,
+      438,
+      548,
+      658,
+      768
+    ]
+  }
+}

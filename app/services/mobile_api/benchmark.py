@@ -183,6 +183,5 @@ def load_verified_report(
     if checked_in != rebuilt:
         raise ValueError("checked-in mobile workflow report is stale")
     if checked_in.get("release_gate", {}).get("passed") is not True:
-        raise ValueError("mobile workflow benchmark release gate failed")
+        raise ValueError("mobile workflow benchmark integrity check failed")
     return checked_in
-

@@ -25,6 +25,7 @@ import hashlib
 import json
 import subprocess
 import sys
+import time
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, List, Optional
 from datetime import datetime, timezone, timedelta  # <- 加上 timedelta
@@ -65,10 +66,45 @@ from app.services.story.service import router as story_router
 from app.services.rl_training.api import router as real_rl_training_router
 from app.services.rl_training.trainer import ALGORITHMS as REAL_RL_ALGORITHMS
 from app.services.rl_training.trainer import TRAINING_MANAGER
+from app.services.rl_training.datasets import FACTOR_COLUMNS, load_port_dataset
 from app.services.business_benchmark import load_verified_report as load_business_benchmark
 from app.services.twin_schema.api import router as twin_schema_router
 from app.services.execution.api import router as site_execution_router
 from app.services.mobile_api.api import router as mobile_api_router
+from app.services.v3_port_ai import router as v3_port_ai_router
+from app.services.v3_runtime import V3RuntimeService
+from app.services.story_evidence import StoryEvidenceService
+from app.services.realtime_insights import RealtimeInsightsService
+from app.services.copilot.mission_control import XiaoyiMissionControl
+from app.services.mas_evidence import MASEvidenceService
+from app.services.twin_reliability import TwinReliabilityService
+from app.services.yard_lighting_evidence import YardLightingEvidenceService
+from app.services.hvac_evidence import HVACEvidenceService
+from app.services.shore_bess_evidence import ShoreBESSEvidenceService
+from app.services.bess_energy_evidence import BESSEnergyEvidenceService
+from app.services.yard_crane_evidence import YardCraneEvidenceService
+from app.services.ai_trust_evidence import AITrustEvidenceService
+from app.services.monitoring_evidence import MonitoringEvidenceService
+from app.services.future_decision import FutureDecisionService
+from app.services.opsx_evidence import OpsXEvidenceService
+from app.services.external_signals_evidence import ExternalSignalsEvidenceService
+from app.services.port_call_gateway import (
+    PortCallGateway,
+    PortCallGatewayUnavailable,
+    PortCallPayloadRejected,
+)
+from app.services.port_call_collaboration import PortCallCollaborationService
+from app.services.maritime_interoperability import MaritimeInteroperabilityService
+from app.services.forecast_uncertainty import ForecastUncertaintyService
+from app.services.business_benefit_attribution import BusinessBenefitAttributionService
+from app.services.end_to_end_coordination import EndToEndCoordinationService
+from app.services.production_continuity import ProductionContinuityService
+from app.services.operating_model_governance import OperatingModelGovernanceService
+from app.services.site_twin_calibration import SiteTwinCalibrationService
+from app.services.site_shadow_acceptance import SiteShadowAcceptanceService
+from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
+from app.services.mlops_evidence import MLOpsEvidenceService
+from app.services.governance_evidence import GovernanceEvidenceService
 from app.operations import configure_operations, cors_origins, is_production
 
 from fastapi.staticfiles import StaticFiles
@@ -180,8 +216,8 @@ async def multiport_summary() -> JSONResponse:
     try:
         getsum = getattr(svc, "get_summary")
         data = await getsum() if asyncio.iscoroutinefunction(getsum) else getsum()
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"multiport service error: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="multiport service unavailable")
 
     # 基础校验 & 轻度规范化
     if not isinstance(data, dict) or "ports" not in data:
@@ -224,7 +260,7 @@ except Exception:
 # -------------------------------------------------
 app = FastAPI(
     title="Smart Port Twin API",
-    version="3.0.1",
+    version="3.2.0",
     docs_url=None if is_production() else "/docs",
     redoc_url=None if is_production() else "/redoc",
     openapi_url=None if is_production() else "/openapi.json",
@@ -295,15 +331,347 @@ app.include_router(real_rl_training_router)
 app.include_router(twin_schema_router)
 app.include_router(site_execution_router)
 app.include_router(mobile_api_router)
+app.include_router(v3_port_ai_router)
 
 di = Container()
+di.strategy_runtime = V3RuntimeService(di)
+story_evidence = StoryEvidenceService(TRAINING_MANAGER.run_root, di.strategy_runtime)
 stacked = CurvesStacked(di)
 curves = CurvesService(di)
+_ASSET_CURVE_CACHE: Dict[tuple, tuple[float, Dict[str, Any]]] = {}
+_ASSET_CURVE_CACHE_TTL_SECONDS = 2.0
+_ASSET_CURVE_CACHE_MAX_ENTRIES = 256
 energy_intensity = CurvesEnergyIntensity(di)
 peak_risk = CurvesPeakRisk(di)
+realtime_insights = RealtimeInsightsService(di, peak_risk)
+mas_evidence = MASEvidenceService()
+_site_twin_calibration = SiteTwinCalibrationService()
+_site_shadow_acceptance = SiteShadowAcceptanceService()
+_site_execution_acceptance = SiteExecutionAcceptanceService()
+_port_call_collaboration = PortCallCollaborationService()
+_maritime_interoperability = MaritimeInteroperabilityService()
+_forecast_uncertainty = ForecastUncertaintyService()
+_business_benefit_attribution = BusinessBenefitAttributionService()
+_end_to_end_coordination = EndToEndCoordinationService()
+_production_continuity = ProductionContinuityService()
+_operating_model_governance = OperatingModelGovernanceService()
+twin_reliability = TwinReliabilityService(
+    di.strategy_runtime,
+    di.telemetry,
+    site_calibration=_site_twin_calibration,
+)
+yard_lighting_evidence = YardLightingEvidenceService()
+hvac_evidence = HVACEvidenceService()
+shore_bess_evidence = ShoreBESSEvidenceService()
+bess_energy_evidence = BESSEnergyEvidenceService()
+yard_crane_evidence = YardCraneEvidenceService()
+ai_trust_evidence = AITrustEvidenceService({
+    "yard_lighting": yard_lighting_evidence,
+    "hvac": hvac_evidence,
+    "shore_bess": shore_bess_evidence,
+    "bess_energy": bess_energy_evidence,
+    "yard_crane": yard_crane_evidence,
+})
+monitoring_evidence = MonitoringEvidenceService(di.telemetry, di.monitoring)
+future_decision = FutureDecisionService(di.strategy_runtime, monitoring_evidence)
+xiaoyi_mission_control = XiaoyiMissionControl(
+    realtime_insights,
+    monitoring_evidence,
+    di.strategy_runtime,
+)
+app.state.xiaoyi_mission_control = xiaoyi_mission_control
+opsx_evidence = OpsXEvidenceService(ai_trust_evidence, monitoring_evidence)
+mlops_evidence = MLOpsEvidenceService(TRAINING_MANAGER, opsx_evidence)
 carbon_intensity = CurvesCarbonIntensity(di)
 economic_benefit = CurvesEconomicBenefit(di)
 bess_capability = CurvesBessCapability(di)
+
+
+@app.get("/api/v3/runtime/status", tags=["v3-runtime"])
+async def v3_runtime_status() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(di.strategy_runtime.status))
+
+
+@app.get("/api/v3/modules/yard-lighting/evidence", tags=["v3-modules"])
+async def v3_yard_lighting_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(yard_lighting_evidence.build))
+
+
+@app.get("/api/v3/modules/hvac/evidence", tags=["v3-modules"])
+async def v3_hvac_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(hvac_evidence.build))
+
+
+@app.get("/api/v3/modules/shore-bess/evidence", tags=["v3-modules"])
+async def v3_shore_bess_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(shore_bess_evidence.build))
+
+
+@app.get("/api/v3/modules/bess-energy/evidence", tags=["v3-modules"])
+async def v3_bess_energy_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(bess_energy_evidence.build))
+
+
+@app.get("/api/v3/modules/yard-crane/evidence", tags=["v3-modules"])
+async def v3_yard_crane_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(yard_crane_evidence.build))
+
+
+@app.get("/api/v3/ai-trust/evidence", tags=["v3-governance"])
+async def v3_ai_trust_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(ai_trust_evidence.build))
+
+
+@app.get("/api/v3/monitoring/evidence", tags=["v3-governance"])
+async def v3_monitoring_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(monitoring_evidence.build))
+
+
+@app.post("/api/v3/future-decision/run", tags=["v3-runtime"])
+async def v3_future_decision_run(
+    payload: Dict[str, Any] = Body(
+        default={
+            "horizon_min": 90,
+            "step_min": 5,
+            "max_candidates": 3,
+            "source": "rl-future-deck",
+        }
+    ),
+) -> JSONResponse:
+    try:
+        horizon_min = int(payload.get("horizon_min", 90))
+        step_min = int(payload.get("step_min", 5))
+        max_candidates = int(payload.get("max_candidates", 3))
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=422, detail="future decision parameters must be integers") from exc
+    if not 15 <= horizon_min <= 24 * 60:
+        raise HTTPException(status_code=422, detail="horizon_min must be between 15 and 1440")
+    if not 1 <= step_min <= 60 or step_min > horizon_min:
+        raise HTTPException(status_code=422, detail="step_min must be between 1 and horizon_min")
+    if not 1 <= max_candidates <= 3:
+        raise HTTPException(status_code=422, detail="max_candidates must be between 1 and 3")
+    try:
+        result = await asyncio.to_thread(
+            future_decision.run,
+            horizon_min=horizon_min,
+            step_min=step_min,
+            max_candidates=max_candidates,
+            source=str(payload.get("source") or "rl-future-deck")[:80],
+        )
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    return JSONResponse(result)
+
+
+@app.get("/api/v3/opsx/evidence", tags=["v3-governance"])
+async def v3_opsx_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(opsx_evidence.build))
+
+
+@app.get("/api/v3/mlops/evidence", tags=["v3-governance"])
+async def v3_mlops_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(mlops_evidence.build))
+
+
+@app.get("/api/v3/runtime/frame", tags=["v3-runtime"])
+async def v3_runtime_frame() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(di.strategy_runtime.current_frame))
+
+
+@app.get("/api/v3/runtime/series", tags=["v3-runtime"])
+async def v3_runtime_series(
+    scenario: str = Query("strategy"),
+    horizon_min: int = Query(360, ge=1, le=24 * 60),
+    step_min: int = Query(1, ge=1, le=60),
+) -> JSONResponse:
+    allowed = {
+        "baseline",
+        "forecast",
+        "forecast_baseline",
+        *(row["id"] for row in di.strategy_runtime.coverage()["scenarios"] if row["state"] != "contract_only"),
+    }
+    if scenario not in allowed:
+        raise HTTPException(status_code=422, detail=f"unsupported V3 runtime scenario: {scenario}")
+    return JSONResponse(
+        await asyncio.to_thread(
+            di.strategy_runtime.series,
+            horizon_min=horizon_min,
+            step_min=step_min,
+            scenario=scenario,
+        )
+    )
+
+
+@app.get("/api/v3/runtime/coverage", tags=["v3-runtime"])
+async def v3_runtime_coverage() -> JSONResponse:
+    return JSONResponse(di.strategy_runtime.coverage())
+
+
+@app.get("/api/v3/realtime/insights", tags=["v3-runtime"])
+async def v3_realtime_insights(
+    asset_id: str = Query("qc-01"),
+    mode: str = Query("now", pattern="^(now|forecast|sim)$"),
+    cap_kw: float = Query(36000.0, ge=1.0),
+    horizon_min: int = Query(60, ge=15, le=360),
+    step_min: int = Query(5, ge=1, le=15),
+) -> JSONResponse:
+    return JSONResponse(
+        await asyncio.to_thread(
+            realtime_insights.build,
+            asset_id=asset_id,
+            mode=mode,
+            cap_kw=cap_kw,
+            horizon_min=horizon_min,
+            step_min=step_min,
+        )
+    )
+
+
+@app.get("/api/v3/twin/reliability", tags=["v3-runtime"])
+async def v3_twin_reliability(
+    refresh: bool = Query(False),
+    scenario: str = Query("strategy"),
+) -> JSONResponse:
+    return JSONResponse(
+        await asyncio.to_thread(
+            twin_reliability.build,
+            refresh=refresh,
+            selected_scenario=scenario,
+        )
+    )
+
+
+@app.get("/api/v3/mas/evidence", tags=["v3-runtime"])
+async def v3_mas_evidence(
+    scenario: str = Query("replay", pattern="^(replay|dense|degraded)$"),
+) -> JSONResponse:
+    try:
+        payload = await asyncio.to_thread(mas_evidence.build, scenario=scenario)
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    return JSONResponse(payload)
+
+
+@app.get("/api/v3/twinlab/evidence", tags=["v3-runtime"])
+async def v3_twinlab_evidence(refresh: bool = Query(False)) -> JSONResponse:
+    reliability = await asyncio.to_thread(
+        twin_reliability.build,
+        refresh=refresh,
+        selected_scenario="strategy",
+    )
+    dataset = await asyncio.to_thread(
+        load_port_dataset,
+        "public_cn_sha_hourly_v3",
+        TRAINING_MANAGER.data_root,
+    )
+    description = await asyncio.to_thread(dataset.describe)
+    quality = description.get("quality") or {}
+    coverage = quality.get("factor_coverage") or {}
+    measured = set(dataset.metadata.get("measured_columns") or [])
+    derived = set(dataset.metadata.get("derived_columns") or [])
+    contracts = []
+    for factor in FACTOR_COLUMNS:
+        ratio = float(coverage.get(factor) or 0.0)
+        if factor in measured:
+            source = "public_measured"
+        elif factor in derived or ratio > 0.0:
+            source = "public_reanalysis_or_declared_derivative"
+        else:
+            source = "pending_port_connection"
+        contracts.append(
+            {
+                "feature": factor,
+                "source": source,
+                "coverage": ratio,
+                "null_rate": 1.0 - ratio,
+                "schema_ok": True,
+                "status": "REPLAY_READY" if ratio >= 1.0 else "PENDING_PORT",
+                "site_replacement": "required_before_site_claim",
+            }
+        )
+    stress = (reliability.get("software_stress") or {}).get("runs") or []
+    scenario_items = [
+        {
+            "id": row.get("id"),
+            "name": row.get("name"),
+            "tags": [row.get("status"), "recommendation-only"],
+            "pass_rate": (
+                float(row.get("safe_action_count") or 0)
+                / max(1, int(row.get("decision_count") or 0))
+            ),
+            "safe_action_count": int(row.get("safe_action_count") or 0),
+            "blocked_action_count": int(row.get("blocked_action_count") or 0),
+            "decision_count": int(row.get("decision_count") or 0),
+            "peak_kw": row.get("peak_kw"),
+            "terminal_soc": row.get("terminal_soc"),
+            "result": row.get("status"),
+            "passed": row.get("passed"),
+        }
+        for row in stress
+    ]
+    fail_closed = reliability.get("fail_closed_checks") or []
+    generated_at = datetime.fromtimestamp(
+        float(reliability.get("generated_at") or 0.0), tz=timezone.utc
+    ).isoformat().replace("+00:00", "Z")
+    return JSONResponse(
+        {
+            "available": bool(reliability.get("available")),
+            "schema": "port-dt-v3-twinlab-evidence.v1",
+            "mode": "hash_verified_policy_bounded_software_replay",
+            "generated_at": generated_at,
+            "production_authority": False,
+            "scenarios": {
+                "items": scenario_items,
+                "passed": int((reliability.get("software_stress") or {}).get("passed") or 0),
+                "total": int((reliability.get("software_stress") or {}).get("total") or 0),
+                "basis": (reliability.get("software_stress") or {}).get("basis"),
+                "distribution": {
+                    "safe_actions": sum(int(row.get("safe_action_count") or 0) for row in stress),
+                    "fail_closed_blocks": sum(int(row.get("blocked_action_count") or 0) for row in stress),
+                    "site_contract_pending": sum(row.get("state") == "contract_only" for row in (reliability.get("software_coverage") or {}).get("matrix") or []),
+                },
+            },
+            "drills": {
+                "items": [
+                    {
+                        "name": "有界软件压力矩阵",
+                        "evidence": f"{(reliability.get('software_stress') or {}).get('passed', 0)}/{(reliability.get('software_stress') or {}).get('total', 0)}",
+                        "result": "PASS" if (reliability.get("software_stress") or {}).get("pass_rate") == 1.0 else "REVIEW",
+                        "side_effect": "none",
+                    },
+                    *[
+                        {
+                            "name": row.get("id"),
+                            "evidence": row.get("basis"),
+                            "result": row.get("status"),
+                            "side_effect": "none",
+                        }
+                        for row in fail_closed
+                    ],
+                ],
+                "software_passed": int((reliability.get("software_stress") or {}).get("passed") or 0),
+                "software_total": int((reliability.get("software_stress") or {}).get("total") or 0),
+                "fail_closed_covered": sum(row.get("passed") is True for row in fail_closed),
+                "pending_port": sum(row.get("status") == "pending_port_connection" for row in fail_closed),
+                "site_rto_rpo": "pending_port_connection",
+            },
+            "contracts": {
+                "items": contracts,
+                "available": sum(row["coverage"] >= 1.0 for row in contracts),
+                "total": len(contracts),
+                "missing": [row["feature"] for row in contracts if row["coverage"] < 1.0],
+                "dataset_id": dataset.dataset_id,
+                "dataset_sha256": dataset.fingerprint,
+                "quality_status": quality.get("status"),
+                "training_eligible": quality.get("training_eligible"),
+            },
+            "policy": reliability.get("policy"),
+            "site_fidelity": reliability.get("site_fidelity"),
+            "claim_boundary": reliability.get("claim_boundary"),
+        }
+    )
 
 
 register_ingest_startup(app, di, interval_sec=30, step_sec=60)
@@ -311,6 +679,267 @@ register_ingest_startup(app, di, interval_sec=30, step_sec=60)
 _tos = TOSClient() if TOSClient else None
 _market = MarketClient() if MarketClient else None
 _ais = AISTideClient() if AISTideClient else None
+_port_call = PortCallGateway()
+external_signals_evidence = ExternalSignalsEvidenceService(
+    di.telemetry,
+    tos=_tos,
+    market=_market,
+    ais_tide=_ais,
+    schedule=getattr(di, "schedule", None),
+    port_call=_port_call,
+)
+governance_evidence = GovernanceEvidenceService(
+    ai_trust_evidence,
+    opsx_evidence,
+    external_signals_evidence,
+)
+
+
+@app.get("/api/v3/external-signals/evidence", tags=["v3-governance"])
+async def v3_external_signals_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(external_signals_evidence.build))
+
+
+@app.get("/api/v3/port-call/readiness", tags=["v3-governance"])
+async def v3_port_call_readiness() -> JSONResponse:
+    return JSONResponse(_port_call.readiness())
+
+
+@app.post("/api/v3/port-call/validate", tags=["v3-governance"])
+async def v3_port_call_validate(
+    payload: Dict[str, Any] = Body(..., description="标准靠泊事件数据包；仅校验，不保存、不下发"),
+) -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_port_call.validate_bundle, payload))
+
+
+@app.get("/api/v3/port-call/events", tags=["v3-governance"])
+async def v3_port_call_events(
+    start: str = Query(..., min_length=20, max_length=40, description="开始时间 ISO 8601"),
+    end: str = Query(..., min_length=20, max_length=40, description="结束时间 ISO 8601"),
+    port_unlocode: str = Query(..., min_length=5, max_length=5, pattern="^[A-Za-z]{2}[A-Za-z0-9]{3}$"),
+) -> JSONResponse:
+    try:
+        start_at = _parse_iso(start)
+        end_at = _parse_iso(end)
+        if end_at <= start_at:
+            raise HTTPException(status_code=422, detail="end must be after start")
+        if end_at - start_at > timedelta(days=31):
+            raise HTTPException(status_code=422, detail="port-call query window must not exceed 31 days")
+        result = await asyncio.to_thread(
+            _port_call.fetch_events,
+            start=start_at.isoformat(),
+            end=end_at.isoformat(),
+            port_unlocode=port_unlocode.upper(),
+        )
+        return JSONResponse(result)
+    except HTTPException:
+        raise
+    except PortCallGatewayUnavailable as exc:
+        raise HTTPException(status_code=503, detail="port call gateway is not configured") from exc
+    except PortCallPayloadRejected as exc:
+        raise HTTPException(
+            status_code=422,
+            detail={"message": "configured port-call source failed validation", "validation": exc.result},
+        ) from exc
+    except Exception as exc:
+        raise HTTPException(status_code=502, detail="port call gateway query failed") from exc
+
+
+@app.get("/api/v3/port-call-collaboration/readiness", tags=["v3-governance"])
+async def v3_port_call_collaboration_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_port_call_collaboration.readiness))
+
+
+@app.post("/api/v3/port-call-collaboration/run", tags=["v3-governance"])
+async def v3_port_call_collaboration_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="六方靠泊协同数据包；浏览器接口只计算延误传播和重排建议，不保存、不审批、不修改真实计划",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _port_call_collaboration.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/maritime-interoperability/readiness", tags=["v3-governance"])
+async def v3_maritime_interoperability_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_maritime_interoperability.readiness))
+
+
+@app.post("/api/v3/maritime-interoperability/run", tags=["v3-governance"])
+async def v3_maritime_interoperability_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="标准互操作映射数据包；浏览器接口只生成字段映射和内部合同结果，不报送主管机关、不授予适航或生产权限",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _maritime_interoperability.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/forecast-uncertainty/readiness", tags=["v3-governance"])
+async def v3_forecast_uncertainty_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_forecast_uncertainty.readiness))
+
+
+@app.post("/api/v3/forecast-uncertainty/run", tags=["v3-governance"])
+async def v3_forecast_uncertainty_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="八类港口预测与区间校准数据包；浏览器接口只拟合并评估合同样例，不保存、不审批、不触发资源承诺或设备指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _forecast_uncertainty.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/business-benefit-attribution/readiness", tags=["v3-governance"])
+async def v3_business_benefit_attribution_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_business_benefit_attribution.readiness))
+
+
+@app.post("/api/v3/business-benefit-attribution/run", tags=["v3-governance"])
+async def v3_business_benefit_attribution_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="成对业务收益归因数据包；浏览器接口只计算合同样例，不保存、不审批、不把离线反事实改称现场收益",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _business_benefit_attribution.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/end-to-end-coordination/readiness", tags=["v3-governance"])
+async def v3_end_to_end_coordination_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_end_to_end_coordination.readiness))
+
+
+@app.post("/api/v3/end-to-end-coordination/run", tags=["v3-governance"])
+async def v3_end_to_end_coordination_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="港口全链条滚动协同计划数据包；浏览器接口只生成候选建议，不保存、不批准、不修改共享计划、不承诺资源或下发设备指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _end_to_end_coordination.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/production-continuity/readiness", tags=["v3-governance"])
+async def v3_production_continuity_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_production_continuity.readiness))
+
+
+@app.post("/api/v3/production-continuity/run", tags=["v3-governance"])
+async def v3_production_continuity_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="连续运行、服务目标、事件、备份恢复和故障演练数据包；浏览器接口只验证合同，不保存、不形成现场服务承诺或自动切换授权",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(_production_continuity.run, payload, source_verified=False)
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/operating-model-governance/readiness", tags=["v3-governance"])
+async def v3_operating_model_governance_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_operating_model_governance.readiness))
+
+
+@app.post("/api/v3/operating-model-governance/run", tags=["v3-governance"])
+async def v3_operating_model_governance_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="组织职责、异人审批、三班值守、资质和升级链数据包；浏览器接口只验证合同，不任命人员、不授予访问权或生产控制权",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(_operating_model_governance.run, payload, source_verified=False)
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/twin-calibration/readiness", tags=["v3-governance"])
+async def v3_twin_calibration_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_site_twin_calibration.readiness))
+
+
+@app.post("/api/v3/twin-calibration/run", tags=["v3-governance"])
+async def v3_twin_calibration_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="现场孪生标定数据包；浏览器接口只计算候选证据，不保存、不审批",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _site_twin_calibration.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/shadow-acceptance/readiness", tags=["v3-governance"])
+async def v3_shadow_acceptance_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_site_shadow_acceptance.readiness))
+
+
+@app.post("/api/v3/shadow-acceptance/run", tags=["v3-governance"])
+async def v3_shadow_acceptance_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="只读影子周期数据包；浏览器接口只计算候选证据，不保存、不审批、不发送设备指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _site_shadow_acceptance.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/execution-acceptance/readiness", tags=["v3-governance"])
+async def v3_execution_acceptance_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_site_execution_acceptance.readiness))
+
+
+@app.post("/api/v3/execution-acceptance/run", tags=["v3-governance"])
+async def v3_execution_acceptance_run(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="执行配置与联锁调试合同；浏览器接口只校验、不保存、不审批、不下发设备指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _site_execution_acceptance.run,
+        payload,
+        source_verified=False,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
+
+
+@app.get("/api/v3/governance/evidence", tags=["v3-governance"])
+async def v3_governance_evidence() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(governance_evidence.build))
 
 
 @app.get("/api/system/provenance", tags=["system"])
@@ -324,6 +953,7 @@ async def system_provenance() -> JSONResponse:
         "market": _market.source_status() if _market and hasattr(_market, "source_status") else {"mode": "unavailable"},
         "ais_tide": _ais.source_status() if _ais and hasattr(_ais, "source_status") else {"mode": "unavailable"},
         "schedule": di.schedule.source_status() if hasattr(getattr(di, "schedule", None), "source_status") else {"mode": "unavailable"},
+        "port_call": _port_call.source_status(),
     }
     live_adapters = all(
         item.get("mode") == "live_rest"
@@ -338,8 +968,19 @@ async def system_provenance() -> JSONResponse:
         "production": False,
     }
     telemetry_live = telemetry_status.get("mode") in {"live", "live_rest", "opcua", "mqtt", "tsdb"}
+    runtime_status = await asyncio.to_thread(di.strategy_runtime.status)
     engineering_simulators_enabled = os.getenv("PORT_DT_ENABLE_ENGINEERING_SIMULATORS", "").strip().lower() in {"1", "true", "yes", "on"}
     legacy_rl_enabled = os.getenv("PORT_DT_ENABLE_LEGACY_RL", "").strip().lower() in {"1", "true", "yes", "on"}
+    twin_calibration_readiness = _site_twin_calibration.readiness()
+    shadow_acceptance_readiness = _site_shadow_acceptance.readiness()
+    execution_acceptance_readiness = _site_execution_acceptance.readiness()
+    collaboration_readiness = _port_call_collaboration.readiness()
+    interoperability_readiness = _maritime_interoperability.readiness()
+    forecast_uncertainty_readiness = _forecast_uncertainty.readiness()
+    business_benefit_readiness = _business_benefit_attribution.readiness()
+    coordination_readiness = _end_to_end_coordination.readiness()
+    production_continuity_readiness = _production_continuity.readiness()
+    operating_model_readiness = _operating_model_governance.readiness()
     return JSONResponse(
         {
             "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
@@ -360,6 +1001,7 @@ async def system_provenance() -> JSONResponse:
             },
             "external_adapters": adapters,
             "telemetry": telemetry_status,
+            "runtime_policy": runtime_status,
             "feature_flags": {
                 "engineering_simulators_enabled": engineering_simulators_enabled,
                 "legacy_rl_enabled": legacy_rl_enabled,
@@ -370,13 +1012,45 @@ async def system_provenance() -> JSONResponse:
                     adapters.get("ais_tide", {}).get("ais_mode") == "live_rest"
                     and adapters.get("ais_tide", {}).get("tide_mode") == "live_rest"
                 ),
-                "twin_calibration_configured": bool(os.getenv("PORT_DT_TWIN_CALIBRATION_PATH", "").strip()),
+                "port_call_adapter_live": adapters.get("port_call", {}).get("live_data_verified") is True,
+                "twin_calibration_configured": twin_calibration_readiness["configured_artifact"]["configured"],
+                "twin_calibration_verified": twin_calibration_readiness["configured_artifact"]["verified"],
+                "site_calibrated": twin_calibration_readiness["boundary"]["site_calibrated"],
+                "shadow_acceptance_configured": shadow_acceptance_readiness["configured_artifact"]["configured"],
+                "shadow_acceptance_verified": shadow_acceptance_readiness["configured_artifact"]["verified"],
+                "site_shadow_accepted": shadow_acceptance_readiness["boundary"]["site_shadow_accepted"],
+                "execution_acceptance_configured": execution_acceptance_readiness["configured_artifacts"]["evidence_configured"],
+                "execution_acceptance_verified": execution_acceptance_readiness["configured_artifacts"]["verified"],
+                "site_execution_accepted": execution_acceptance_readiness["boundary"]["site_execution_accepted"],
+                "port_call_collaboration_configured": collaboration_readiness["configured_artifact"]["configured"],
+                "port_call_collaboration_verified": collaboration_readiness["configured_artifact"]["verified"],
+                "site_port_call_collaboration_accepted": collaboration_readiness["boundary"]["site_collaboration_accepted"],
+                "maritime_interoperability_configured": interoperability_readiness["configured_artifact"]["configured"],
+                "maritime_interoperability_verified": interoperability_readiness["configured_artifact"]["verified"],
+                "site_maritime_interoperability_accepted": interoperability_readiness["boundary"]["site_interoperability_accepted"],
+                "forecast_uncertainty_configured": forecast_uncertainty_readiness["configured_artifact"]["configured"],
+                "forecast_uncertainty_verified": forecast_uncertainty_readiness["configured_artifact"]["verified"],
+                "site_forecast_service_accepted": forecast_uncertainty_readiness["boundary"]["site_forecast_service_accepted"],
+                "business_benefit_attribution_configured": business_benefit_readiness["configured_artifact"]["configured"],
+                "business_benefit_attribution_verified": business_benefit_readiness["configured_artifact"]["verified"],
+                "realized_business_benefit_verified": business_benefit_readiness["boundary"]["realized_business_benefit_verified"],
+                "end_to_end_coordination_configured": coordination_readiness["configured_artifact"]["configured"],
+                "end_to_end_coordination_verified": coordination_readiness["configured_artifact"]["verified"],
+                "site_end_to_end_coordination_accepted": coordination_readiness["boundary"]["site_end_to_end_coordination_accepted"],
+                "production_continuity_configured": production_continuity_readiness["configured_artifact"]["configured"],
+                "production_continuity_verified": production_continuity_readiness["configured_artifact"]["verified"],
+                "site_continuity_accepted": production_continuity_readiness["boundary"]["site_continuity_accepted"],
+                "operating_model_governance_configured": operating_model_readiness["configured_artifact"]["configured"],
+                "operating_model_governance_verified": operating_model_readiness["configured_artifact"]["verified"],
+                "site_operating_model_accepted": operating_model_readiness["boundary"]["site_operating_model_accepted"],
             },
             "module_assessment": {
                 "rl_training": "real_algorithm_and_dataset",
                 "rl_evaluation": "chronological_holdout_only",
                 "port_visualisation": "dataset_projection_or_strict_jsonl_adapter",
                 "forecast_twin": "telemetry_fitted_ridge_autoregression_with_explicit_scenario_parameters",
+                "strategy_twin": "hash_verified_saved_sac_policy_over_canonical_port_state",
+                "scenario_coverage": "offline_runtime_stress_matrix_with_fail_closed_site_boundaries",
                 "rlops": "persisted_training_and_holdout_evaluation_not_ope",
                 "opsx": "engineering_simulator_opt_in" if engineering_simulators_enabled else "unavailable_until_production_backend_is_configured",
                 "legacy_dashboard_generators": "opt_in_engineering_simulators" if engineering_simulators_enabled else "disabled_by_default",
@@ -385,6 +1059,14 @@ async def system_provenance() -> JSONResponse:
                 "exec_cockpit": "provenance_verified_snapshot_required",
                 "platform_map": "repository_architecture_config_not_runtime_topology",
                 "execution": "dry_run_and_human_gate_no_default_production_actuator",
+                "port_call_gateway": "strict_event_validation_and_fail_closed_live_adapter",
+                "port_call_collaboration": "six_party_shared_timeline_delay_propagation_and_recommendation_only_resource_replan",
+                "maritime_interoperability": "dcsa_port_call_2_0_imo_msw_and_iho_s100_mapping_with_bound_external_conformance_evidence",
+                "forecast_uncertainty": "eight_target_chronological_train_calibration_test_with_empirical_interval_coverage_and_advisory_only_boundary",
+                "business_benefit_attribution": "execution_bound_preregistered_paired_difference_in_differences_with_measured_outcomes_and_field_claim_gate",
+                "end_to_end_coordination": "eleven_resource_nine_stage_capacity_feasible_freeze_aware_recommendation_only_rolling_plan",
+                "production_continuity": "eight_component_hourly_slo_incident_backup_restore_and_six_drill_evidence_gate",
+                "operating_model_governance": "twelve_domain_ten_workflow_four_eyes_three_shift_roster_and_escalation_evidence_gate",
                 "legacy_rl_routes": "opt_in_enabled" if legacy_rl_enabled else "disabled_by_default",
             },
         }
@@ -406,7 +1088,7 @@ def _inject_xiaoyi_sprite(html: str) -> str:
     marker = "/ui/adapters/xiaoyi_sprite.js"
     if marker in html:
         return html
-    tag = '  <script src="/ui/adapters/xiaoyi_sprite.js?v=20260712-speech-v2"></script>\n'
+    tag = '  <script src="/ui/adapters/xiaoyi_sprite.js?v=20260814-evidence-context-v3"></script>\n'
     if "</body>" in html:
         return html.replace("</body>", f"{tag}</body>")
     return html + tag
@@ -728,7 +1410,7 @@ _RL_PANEL_HTML = r"""
           <div class="field"><label for="inpSafetyW">安全权重 / Safety W</label><input id="inpSafetyW" type="number" value="0.20" min="0" max="1" step="0.01"></div>
         </div>
 
-        <div class="section-label" style="margin-top:14px;">七算法可复现实验 / 6 RL + 1 Control Baseline</div>
+        <div class="section-label" style="margin-top:14px;">十二控制器可复现实验 / 10 RL + MPC + FCFS</div>
         <div id="baselineGrid" class="baseline-grid"></div>
 
         <div class="connector-grid">
@@ -828,7 +1510,7 @@ _RL_PANEL_HTML = r"""
       <button id="btnSim" class="btn" disabled>留出集测试</button>
       <button id="btnVerifyDryRun" class="btn secondary" disabled>检查上线门禁</button>
       <button id="btnDispatch" class="btn secondary" disabled>设备执行仅走南向审批</button>
-      <button id="btnHistory" class="btn ghost" disabled>查看南向能力</button>
+      <button id="btnHistory" class="btn ghost">查看南向能力</button>
       <span id="simHint" class="muted small">请选择左侧一条策略后再点击</span>
     </div>
 
@@ -863,8 +1545,8 @@ _RL_PANEL_HTML = r"""
 </main>
 <div id="assistantConfirmBackdrop" class="confirm-backdrop" role="dialog" aria-modal="true" aria-labelledby="assistantConfirmTitle">
   <div class="confirm-dialog">
-    <h2 id="assistantConfirmTitle">小懿请求执行 RL 训练</h2>
-    <div id="assistantConfirmIntro" class="small muted">请确认训练目标、接口调用和风险边界。</div>
+    <h2 id="assistantConfirmTitle">强化学习训练启动确认</h2>
+    <div id="assistantConfirmIntro" class="small muted">请在启动前确认训练目标、数据集、参数、接口调用和风险边界。</div>
     <div class="confirm-grid">
       <div class="confirm-item"><span>自然语言指令</span><b id="confirmCommandText">—</b></div>
       <div class="confirm-item"><span>训练目标</span><b id="confirmObjectiveText">—</b></div>
@@ -877,7 +1559,7 @@ _RL_PANEL_HTML = r"""
     <div class="risk-list" id="confirmRiskText"></div>
     <div class="row-actions" style="margin-top:14px;justify-content:flex-end;">
       <button id="btnCancelAssistantRun" class="btn ghost">取消</button>
-      <button id="btnConfirmAssistantRun" class="btn">开始执行</button>
+      <button id="btnConfirmAssistantRun" class="btn">确认并启动</button>
     </div>
   </div>
 </div>
@@ -1192,7 +1874,7 @@ function confirmationSummary(){
   const cfg = trainConfig();
   const risks = OBJECTIVE_RISK[cfg.objective] || OBJECTIVE_RISK.multi_objective;
   return {
-    command: commandFrom || "小懿，开始 RL 训练",
+    command: commandFrom || "操作员点击“启动训练”",
     objective: objectiveLabelFrom || cfg.objective_label,
     algoScenario: `${cfg.algorithm_label} · ${cfg.scenario_label}`,
     assetHorizon: `${cfg.asset_label} · horizon=${cfg.horizon_min}min · step=${cfg.step_min}min`,
@@ -1212,7 +1894,7 @@ function showAssistantRunConfirm(){
   $("#confirmRecommendText").textContent = s.recommendation;
   $("#confirmRiskText").innerHTML = `<b>执行风险与边界</b><br>${s.risks.map(x=>`• ${x}`).join("<br>")}<br>• 点击“开始执行”后才会调用 /api/rl/train/start；训练结果仍需策略测试、安全校验和 dry-run，不能直接生产执行。`;
   box.style.display = "flex";
-  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] assistant confirmation pending · ${s.objective}`);
+  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training confirmation pending · ${s.objective}`);
 }
 
 function hideAssistantRunConfirm(){
@@ -1699,11 +2381,11 @@ async function loadBusinessEvidence(){
   const report = await response.json();
   const test = report.test || {};
   const exact = test.improvements || {};
-  const claims = report.resume_claims_rounded_percent || {};
+  const claims = report.summary_metrics_rounded_percent || {};
   const setText = (selector, value)=>{ const node=$(selector); if(node) node.textContent=value; };
-  setText("#businessBerthKpi", `+${Number(exact.berth_utilization_relative_improvement_percent||0).toFixed(2)}%（简历 ${Number(claims.berth_utilization_relative_improvement_percent||0).toFixed(0)}%）`);
-  setText("#businessWaitKpi", `-${Number(exact.average_waiting_time_reduction_percent||0).toFixed(2)}%（简历 ${Number(claims.average_waiting_time_reduction_percent||0).toFixed(0)}%）`);
-  setText("#businessCostKpi", `-${Number(exact.scenario_energy_cost_reduction_percent||0).toFixed(2)}%（简历 ${Number(claims.scenario_energy_cost_reduction_percent||0).toFixed(0)}%）`);
+  setText("#businessBerthKpi", `+${Number(exact.berth_utilization_relative_improvement_percent||0).toFixed(2)}%（摘要 ${Number(claims.berth_utilization_relative_improvement_percent||0).toFixed(0)}%）`);
+  setText("#businessWaitKpi", `-${Number(exact.average_waiting_time_reduction_percent||0).toFixed(2)}%（摘要 ${Number(claims.average_waiting_time_reduction_percent||0).toFixed(0)}%）`);
+  setText("#businessCostKpi", `-${Number(exact.scenario_energy_cost_reduction_percent||0).toFixed(2)}%（摘要 ${Number(claims.scenario_energy_cost_reduction_percent||0).toFixed(0)}%）`);
   setText("#businessHoldoutRows", `${Number(test.rows||0).toLocaleString("zh-CN")} rows`);
   setText("#businessEvidenceChip", report.release_gate?.passed ? "证据校验通过 · PASS" : "证据不可用 · BLOCKED");
   const period=report.dataset?.test_period||{};
@@ -1883,6 +2565,8 @@ async function loadList(){
 
 async function simulate(options={}){
   if(!selectedId) return;
+  const rowSimulationButtons = $$("#tbl button[data-simid]");
+  rowSimulationButtons.forEach(button=>{ button.disabled = true; });
   $("#btnSim").disabled = true;
   $("#btnDispatch").disabled = true;
   if($("#btnVerifyDryRun")) $("#btnVerifyDryRun").disabled = true;
@@ -1893,7 +2577,7 @@ async function simulate(options={}){
     if(!res.ok) throw new Error(await res.text());
     const data = await res.json();
     lastSimulation = data;
-    const metricText = (value,digits)=>Number.isFinite(Number(value))?Number(value).toFixed(digits):"N/A";
+    const metricText = (value,digits)=>value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value)) ? Number(value).toFixed(digits) : "N/A";
     $("#m_dkwh").textContent = metricText(data.summary?.delta_kWh,3);
     $("#m_dco2").textContent = metricText(data.summary?.delta_carbon_kg,3);
     $("#m_peak").textContent = metricText(data.summary?.peak_reduction_kW,2);
@@ -1921,6 +2605,7 @@ async function simulate(options={}){
     $("#simHint").textContent = "模拟失败，请检查接口日志";
     return null;
   }finally{
+    rowSimulationButtons.forEach(button=>{ button.disabled = false; });
     $("#btnSim").disabled = false;
     if($("#btnVerifyDryRun")) $("#btnVerifyDryRun").disabled = !selectedId;
   }
@@ -2053,7 +2738,7 @@ $("#btnDispatch").addEventListener("click", dispatchSelected);
 $("#btnHistory").addEventListener("click", loadHistory);
 $("#btnBackToPlatform")?.addEventListener("click", ()=> goBackTo(returnTo));
 $("#btnBackToHome")?.addEventListener("click", ()=> goBackTo('/'));
-$("#btnStartTrain")?.addEventListener("click", startTraining);
+$("#btnStartTrain")?.addEventListener("click", showAssistantRunConfirm);
 $("#btnPauseTrain")?.addEventListener("click", pauseTraining);
 $("#btnResetTrain")?.addEventListener("click", resetTraining);
 $("#btnPollTrainStatus")?.addEventListener("click", ()=> pollTrainingStatus({log:true, sourceLabel:"manual poll"}));
@@ -2061,15 +2746,15 @@ $("#btnEvaluateTrain")?.addEventListener("click", evaluateTraining);
 $("#btnVerifyDryRun")?.addEventListener("click", ()=> verifyPolicyForOnline({source:"manual_verify_online"}));
 $("#btnCancelAssistantRun")?.addEventListener("click", ()=>{
   hideAssistantRunConfirm();
-  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] assistant command cancelled · human gate`);
-  if($("#trainDetail")) $("#trainDetail").textContent = "已取消小懿训练指令；未调用 /api/rl/train/start。";
+  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training start cancelled · human gate`);
+  if($("#trainDetail")) $("#trainDetail").textContent = "已取消训练启动；未调用 /api/rl/train/start。";
 });
 $("#btnConfirmAssistantRun")?.addEventListener("click", async ()=>{
   hideAssistantRunConfirm();
   const s = confirmationSummary();
   if($("#trainDetail")) $("#trainDetail").textContent = `人工确认通过：${s.objective}，正在启动训练。`;
   await startTraining();
-  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] assistant confirmed · ${s.objective} -> #btnStartTrain -> /api/rl/train/start`);
+  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training confirmed · ${s.objective} -> #btnStartTrain -> /api/rl/train/start`);
 });
 $("#btnPingConnector")?.addEventListener("click", refreshConnector);
 $("#btnRefreshMobileRequests")?.addEventListener("click", loadMobileTrainingRequests);
@@ -2120,7 +2805,7 @@ async def home() -> HTMLResponse:
     html = _UI_INDEX.read_text(encoding="utf-8")
     # 自动注入监测适配器脚本（不改动源文件；若文件不存在则忽略）
     try:
-        _adapter_path = Path(__file__).resolve().parent / "ui" / "adapters" / "monitoring.js"
+        _adapter_path = Path(__file__).resolve().parent / "adapters" / "monitoring.js"
         if _adapter_path.exists() and ("ui/adapters/monitoring.js" not in html):
             html = html.replace("</body>", '  <script src="/ui/adapters/monitoring.js"></script>\n</body>')
     except Exception:
@@ -2135,15 +2820,15 @@ async def monitoring_adapter_js() -> HTMLResponse:
     前端适配器脚本（生产部署可由 Nginx/静态服务器托管；此处提供直连以便开发联调）
     """
     try:
-        path = Path(__file__).resolve().parent / "ui" / "adapters" / "monitoring.js"
+        path = Path(__file__).resolve().parent / "adapters" / "monitoring.js"
         if path.exists():
             return HTMLResponse(path.read_text(encoding="utf-8"),
                                 media_type="application/javascript",
                                 status_code=200)
-        return HTMLResponse("// monitoring adapter not found: app/ui/adapters/monitoring.js",
+        return HTMLResponse("// monitoring adapter not found: app/adapters/monitoring.js",
                             media_type="application/javascript", status_code=404)
-    except Exception as e:
-        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+    except Exception:
+        return HTMLResponse("// monitoring adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 @app.get("/ui/adapters/xiaoyi_sprite.js", response_class=HTMLResponse, tags=["ui"])
@@ -2163,8 +2848,8 @@ async def xiaoyi_sprite_adapter_js() -> HTMLResponse:
             media_type="application/javascript",
             status_code=404,
         )
-    except Exception as e:
-        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+    except Exception:
+        return HTMLResponse("// xiaoyi sprite adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 @app.get("/ui/adapters/bilingual_ui.js", response_class=HTMLResponse, tags=["ui"])
@@ -2182,8 +2867,8 @@ async def bilingual_ui_adapter_js() -> HTMLResponse:
             media_type="application/javascript",
             status_code=404,
         )
-    except Exception as e:
-        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+    except Exception:
+        return HTMLResponse("// bilingual UI adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 @app.get("/ui/adapters/rl_evidence_console.js", response_class=HTMLResponse, tags=["ui"])
@@ -2200,8 +2885,8 @@ async def rl_evidence_console_adapter_js() -> HTMLResponse:
             media_type="application/javascript",
             status_code=404,
         )
-    except Exception as e:
-        return HTMLResponse(f"// error: {e}", media_type="application/javascript", status_code=500)
+    except Exception:
+        return HTMLResponse("// RL evidence adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 def _read_exec_pending_snapshot(limit: int = 20) -> Dict[str, Any]:
@@ -2274,12 +2959,12 @@ async def platform_home_brief() -> JSONResponse:
     except Exception:
         apps_total = 0
 
-    status = "稳定"
-    risk_label = "中低"
-    focus = "先巡检主链路"
-    status_sub = "当前无明显待审批拥塞，适合先看 Twin → Strategy → Execution → Audit 主链路一致性。"
-    risk_sub = "规则判定：待审批=0，最近闭环未出现异常回滚。"
-    focus_sub = "首页先给结论，细节继续在孪生、策略、执行和审计模块承接。"
+    status = "证据受限"
+    risk_label = "待验证"
+    focus = "先核验数据来源"
+    status_sub = "未接入现场 TOS/VTS/设备遥测前，不据空白执行记录推断港区稳定。"
+    risk_sub = "当前只能证明公开数据离线能力；运行风险需由现场告警、工单和控制回执确认。"
+    focus_sub = "先检查来源、时间戳、质量门与执行权限，再进入策略和孪生分析。"
 
     if pending_count >= 5 or last_status == "rolled_back":
         status = "临界"
@@ -2390,8 +3075,13 @@ async def list_assets() -> JSONResponse:
     try:
         assets = di.telemetry.list_assets()
         return JSONResponse(assets)
-    except Exception:
-        return JSONResponse([{"id": "agv-01", "label": "AGV-01"}], status_code=200)
+    except Exception as exc:
+        # Fail closed: never invent equipment just to populate the 3D scene.
+        return JSONResponse(
+            [],
+            status_code=503,
+            headers={"X-Port-DT-Source-Error": type(exc).__name__},
+        )
 
 
 async def _sse_generator(asset_id: str) -> AsyncGenerator[bytes, None]:
@@ -2532,8 +3222,8 @@ async def telemetry_clean(
         return JSONResponse(body)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"telemetry.clean 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="telemetry.clean 失败；内部诊断已隐藏")
 
 @app.get("/api/telemetry/quality", tags=["telemetry"])
 async def telemetry_quality(
@@ -2552,8 +3242,8 @@ async def telemetry_quality(
         return JSONResponse({"asset_id": asset_id, "point": point, "quality": payload.get("quality", {}), "source": payload.get("source")})
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"telemetry.quality 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="telemetry.quality 失败；内部诊断已隐藏")
 
 @app.get("/api/telemetry/recent/{asset_id}", tags=["telemetry"])
 async def telemetry_recent(asset_id: str):
@@ -2569,8 +3259,8 @@ async def telemetry_recent(asset_id: str):
         return JSONResponse(arr)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"telemetry.recent 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="telemetry.recent 失败；内部诊断已隐藏")
 
 # Monitoring and operations API group
 # -------------------------------------------------
@@ -2683,6 +3373,18 @@ def _get_clean_series(asset_id: str, point: str, start_ts: float, end_ts: float,
     )
     return cleaned, quality, source or "unknown"
 
+
+def _monitoring_source_status() -> Dict[str, Any]:
+    source_status_fn = getattr(di.telemetry, "source_status", None)
+    if callable(source_status_fn):
+        try:
+            status = source_status_fn()
+            if isinstance(status, dict):
+                return status
+        except Exception:
+            pass
+    return {"mode": "unknown", "measured": False, "production": False}
+
 @app.get("/api/monitoring/anomaly/scan", tags=["monitoring"])
 async def monitoring_anomaly_scan(
     assets: Optional[str] = Query(None, description="逗号分隔资产ID（为空则自动截取前 10 个资产）"),
@@ -2744,7 +3446,9 @@ async def monitoring_anomaly_scan(
                     "start": _to_iso(start_ts), "end": _to_iso(end_ts),
                     "step_sec": step_sec, "method": method, "sensitivity": sensitivity
                 },
-                "items": items
+                "items": items,
+                "source_status": _monitoring_source_status(),
+                "boundary": {"incident_claim_eligible": False, "production_authority": False, "site_status": "待接入港口"},
             })
 
         # ✅ 调用 DI 的 MonitoringService（已在 app/di.py 中挂载）
@@ -2759,16 +3463,13 @@ async def monitoring_anomaly_scan(
             sensitivity=sensitivity,
             residual=False  # Residual anomaly mode is intentionally disabled for this endpoint.
         )
+        res["source_status"] = _monitoring_source_status()
+        res["boundary"] = {"incident_claim_eligible": False, "production_authority": False, "site_status": "待接入港口"}
         return JSONResponse(res)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"monitoring.anomaly.scan 失败: {e}")
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"monitoring.anomaly.scan 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="monitoring.anomaly.scan 失败；内部诊断已隐藏")
 
 def _psi(buckets_ref: List[float], ref_vals: List[float], cur_vals: List[float]) -> Dict[str, Any]:
     """
@@ -2839,16 +3540,24 @@ async def monitoring_drift_psi(
         edges = [lo + i*step for i in range(bins)] + [hi]  # 长度 bins+1
 
         res = _psi(edges, base_vals, cur_vals)
+        merged_bins = [
+            {**edge, **{key: value for key, value in detail.items() if key != "bin"}}
+            for edge, detail in zip(res["bins"], res["details"])
+        ]
+        level = "ok" if res["psi"] < 0.1 else ("warn" if res["psi"] < 0.25 else "drift")
         return JSONResponse({
             "asset": asset_id, "point": point, "asset_type": asset_type,
             "baseline": {"start": _to_iso(b0), "end": _to_iso(b1), "n": len(base_vals)},
             "recent":   {"start": _to_iso(r0), "end": _to_iso(r1), "n": len(cur_vals)},
-            "psi": res["psi"], "bins": res["bins"], "details": res["details"]
+            "psi": res["psi"], "level": level, "bins": merged_bins, "details": res["details"],
+            "source_status": _monitoring_source_status(),
+            "boundary": {"incident_claim_eligible": False, "production_authority": False, "site_status": "待接入港口"},
+            "warning": "PSI对班次与季节窗口敏感；用于准入诊断，不单独构成现场事故或根因结论。",
         })
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"monitoring.drift.psi 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="monitoring.drift.psi 失败；内部诊断已隐藏")
 
 
 # -------------------------------------------------
@@ -2885,7 +3594,7 @@ async def forecast_asset(
         except HTTPException:
             raise
         except Exception as exc:
-            raise HTTPException(status_code=502, detail=f"forecast driver load failed: {exc}") from exc
+            raise HTTPException(status_code=502, detail="forecast driver load failed") from exc
 
     # 向预测服务传入 drivers（若实现支持）；不支持时回退到原签名
     try:
@@ -2931,7 +3640,7 @@ async def external_weather(
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"weather adapter failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="weather adapter failed") from exc
 
 @app.get("/external/vessels_schedule", tags=["external"])
 async def external_vessels(
@@ -3102,7 +3811,7 @@ async def external_vessels(
 
         return JSONResponse(rows)
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"vessel schedule adapter failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="vessel schedule adapter failed") from exc
 
 
 @app.get("/external/power/tou_tariff", tags=["external"])
@@ -3121,7 +3830,7 @@ async def external_tou(
     except HTTPException:
         raise
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"tariff adapter failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="tariff adapter failed") from exc
 
 # —— TOS / WMS：船期/泊位/工单/堆场/预约 —— #
 @app.get("/external/tos/vessels", tags=["external"])
@@ -3134,7 +3843,7 @@ async def ext_tos_vessels(
     try:
         return JSONResponse(_tos.vessel_calls(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS vessel query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS vessel query failed") from exc
 
 @app.get("/external/tos/berths", tags=["external"])
 async def ext_tos_berths(
@@ -3146,7 +3855,7 @@ async def ext_tos_berths(
         d0 = _parse_iso(date).replace(hour=0, minute=0, second=0, microsecond=0)
         return JSONResponse(_tos.berth_plan(d0))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS berth query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS berth query failed") from exc
 
 @app.get("/external/tos/move_orders", tags=["external"])
 async def ext_tos_moves(
@@ -3159,7 +3868,7 @@ async def ext_tos_moves(
     try:
         return JSONResponse(_tos.move_orders(_parse_iso(start), _parse_iso(end), status=status))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS move-order query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS move-order query failed") from exc
 
 @app.get("/external/tos/yard", tags=["external"])
 async def ext_tos_yard() -> JSONResponse:
@@ -3168,7 +3877,7 @@ async def ext_tos_yard() -> JSONResponse:
     try:
         return JSONResponse(_tos.yard_inventory())
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS yard query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS yard query failed") from exc
 
 @app.get("/external/tos/truck_appts", tags=["external"])
 async def ext_tos_truck(
@@ -3180,7 +3889,7 @@ async def ext_tos_truck(
         d0 = _parse_iso(date).replace(hour=0, minute=0, second=0, microsecond=0)
         return JSONResponse(_tos.truck_appointments(d0))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"TOS truck query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="TOS truck query failed") from exc
 
 
 # —— 电力市场：电价/需量/DR/碳价/绿证/边际因子 —— #
@@ -3194,7 +3903,7 @@ async def ext_mkt_da(
         d0 = _parse_iso(date).replace(hour=0, minute=0, second=0, microsecond=0)
         return JSONResponse(_market.day_ahead_price(d0))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"day-ahead price query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="day-ahead price query failed") from exc
 
 @app.get("/external/market/real_time", tags=["external"])
 async def ext_mkt_rt(
@@ -3206,7 +3915,7 @@ async def ext_mkt_rt(
     try:
         return JSONResponse(_market.real_time_price(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"real-time price query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="real-time price query failed") from exc
 
 @app.get("/external/market/demand_limit", tags=["external"])
 async def ext_mkt_dlimit(
@@ -3217,7 +3926,7 @@ async def ext_mkt_dlimit(
     try:
         return JSONResponse(_market.demand_limit(month))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"demand-limit query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="demand-limit query failed") from exc
 
 @app.get("/external/market/demand_charge", tags=["external"])
 async def ext_mkt_dcharge(
@@ -3228,7 +3937,7 @@ async def ext_mkt_dcharge(
     try:
         return JSONResponse(_market.demand_charge(month))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"demand-charge query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="demand-charge query failed") from exc
 
 @app.get("/external/market/dr_events", tags=["external"])
 async def ext_mkt_dr(
@@ -3240,7 +3949,7 @@ async def ext_mkt_dr(
     try:
         return JSONResponse(_market.dr_events(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"demand-response query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="demand-response query failed") from exc
 
 @app.get("/external/market/carbon_price", tags=["external"])
 async def ext_mkt_carbon(
@@ -3252,7 +3961,7 @@ async def ext_mkt_carbon(
     try:
         return JSONResponse(_market.carbon_price(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"carbon-price query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="carbon-price query failed") from exc
 
 @app.get("/external/market/grid_factor", tags=["external"])
 async def ext_mkt_gf(
@@ -3264,7 +3973,7 @@ async def ext_mkt_gf(
     try:
         return JSONResponse(_market.grid_factor(_parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"grid-factor query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="grid-factor query failed") from exc
 
 @app.get("/external/market/rec_price", tags=["external"])
 async def ext_mkt_rec(
@@ -3276,7 +3985,7 @@ async def ext_mkt_rec(
         d0 = _parse_iso(date).replace(hour=0, minute=0, second=0, microsecond=0)
         return JSONResponse(_market.rec_price(d0))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"REC-price query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="REC-price query failed") from exc
 
 @app.get("/external/market/signals", tags=["external"])
 async def ext_mkt_signals(
@@ -3289,7 +3998,7 @@ async def ext_mkt_signals(
     try:
         return JSONResponse(_market.compose_signals(_parse_iso(start), _parse_iso(end), prefer=prefer))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"market-signal composition failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="market-signal composition failed") from exc
 
 
 # —— AIS + 潮汐 —— #
@@ -3304,7 +4013,7 @@ async def ext_ais_live(
     try:
         return JSONResponse(_ais.live_ships(lat, lon, radius_km))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"AIS live query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="AIS live query failed") from exc
 
 @app.get("/external/ais/track", tags=["external"])
 async def ext_ais_track(
@@ -3316,7 +4025,7 @@ async def ext_ais_track(
     try:
         return JSONResponse(_ais.track(mmsi, hours=hours))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"AIS track query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="AIS track query failed") from exc
 
 @app.get("/external/ais/tide", tags=["external"])
 async def ext_tide_series(
@@ -3330,7 +4039,7 @@ async def ext_tide_series(
     try:
         return JSONResponse(_ais.tide_series(lat, lon, _parse_iso(start), _parse_iso(end)))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"tide query failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="tide query failed") from exc
 
 @app.get("/external/ais/context", tags=["external"])
 async def ext_ais_ctx(
@@ -3341,7 +4050,7 @@ async def ext_ais_ctx(
     try:
         return JSONResponse(_ais.compose_context(hours_ahead=hours_ahead))
     except Exception as exc:
-        raise HTTPException(status_code=502, detail=f"AIS/tide context failed: {exc}") from exc
+        raise HTTPException(status_code=502, detail="AIS/tide context failed") from exc
 
 
 # -------------------------------------------------
@@ -3385,7 +4094,7 @@ async def twin_run(
         )
         return JSONResponse(data)
     except Exception as exc:
-        raise HTTPException(status_code=503, detail=f"twin adapter failed: {exc}") from exc
+        raise HTTPException(status_code=503, detail="twin adapter failed") from exc
 
 
 
@@ -3474,8 +4183,8 @@ async def scene_aggregate_sim(
     try:
         data = aggregate_sim(di, scenario=scenario, horizon_min=horizon_min, step_min=step_min, limit=limit)
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"scene.aggregate_sim 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="scene.aggregate_sim 失败；内部诊断已隐藏")
 # -------------------------------------------------
 # 需量峰值风险（15min滚动）：曲线服务 · CurvesPeakRisk
 # -------------------------------------------------
@@ -3599,9 +4308,22 @@ async def curves_asset(
     scenario: str = Query("baseline"),
     use_drivers: int = Query(1, ge=0, le=1),
 ) -> JSONResponse:
+    cache_key = (asset_id, mode, horizon_min, step_min, scenario, int(use_drivers))
+    now = time.monotonic()
+    cached = _ASSET_CURVE_CACHE.get(cache_key)
+    if cached and now - cached[0] < _ASSET_CURVE_CACHE_TTL_SECONDS:
+        response = JSONResponse(cached[1])
+        response.headers["X-Port-DT-Cache"] = "hit"
+        return response
     data = curves.asset(asset_id=asset_id, mode=mode, horizon_min=horizon_min,
                         step_min=step_min, scenario=scenario, use_drivers=bool(use_drivers))
-    return JSONResponse(data)
+    if len(_ASSET_CURVE_CACHE) >= _ASSET_CURVE_CACHE_MAX_ENTRIES:
+        oldest_key = min(_ASSET_CURVE_CACHE, key=lambda key: _ASSET_CURVE_CACHE[key][0])
+        _ASSET_CURVE_CACHE.pop(oldest_key, None)
+    _ASSET_CURVE_CACHE[cache_key] = (now, data)
+    response = JSONResponse(data)
+    response.headers["X-Port-DT-Cache"] = "miss"
+    return response
 
 # Command-center KPI aggregation
 # -------------------------------------------------
@@ -3621,8 +4343,8 @@ async def energy_today(
             horizon_min=horizon_min,
             step_min=step_min,
         )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"energy.today 聚合失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="energy.today 聚合失败；内部诊断已隐藏")
 
     elec = summary.get("electricity", {})
     if elec.get("kWh") is not None:
@@ -3638,6 +4360,7 @@ async def energy_today(
         "gas": summary.get("gas", {}),
         "intensity": summary.get("intensity", {}),
         "utilization_percent": summary.get("utilization_percent"),
+        "data_status": summary.get("data_status", {}),
         "assumptions": summary.get("assumptions", {}),
         "_source": summary.get("_source", "energy_service"),
     }
@@ -3666,8 +4389,8 @@ async def alerts_scan(
             step_min=step_min,
         )
         return JSONResponse(result)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"alerts.scan 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="alerts.scan 失败；内部诊断已隐藏")
 
 
 # =================================================
@@ -3682,8 +4405,25 @@ async def rl_list_strategies(
     max_items: int = Query(8, ge=1, le=50, description="返回条目上限"),
 ) -> JSONResponse:
     registry = TRAINING_MANAGER.model_registry().list()
+    preferred_algorithms = (
+        "sac", "ppo", "td3", "dqn", "a2c", "tqc", "qrdqn",
+        "trpo", "recurrent_ppo", "ars", "mpc", "fcfs",
+    )
+    # The registry is newest-first.  Surface the newest evaluated record per
+    # controller instead of allowing recent multi-seed/test runs from one
+    # algorithm to crowd the business-facing strategy list.
+    latest_by_algorithm: Dict[str, Dict[str, Any]] = {}
+    for record in registry.get("models", []):
+        algorithm = str(record.get("algorithm") or "").lower()
+        if algorithm and algorithm not in latest_by_algorithm:
+            latest_by_algorithm[algorithm] = record
+    selected_records = [
+        latest_by_algorithm[algorithm]
+        for algorithm in preferred_algorithms
+        if algorithm in latest_by_algorithm
+    ][:max_items]
     strategies = []
-    for record in registry.get("models", [])[:max_items]:
+    for record in selected_records:
         evaluation = record.get("evaluation") or {}
         metrics = evaluation.get("metrics") or {}
         violation_rate = metrics.get("guardrail_violation_rate")
@@ -3694,6 +4434,12 @@ async def rl_list_strategies(
             "impact": {
                 "reward": metrics.get("reward"),
                 "peak_kw": metrics.get("peak_kw"),
+                "throughput_teu": metrics.get("throughput_teu"),
+                "cost_per_teu": metrics.get("cost_per_teu"),
+                "carbon_kg_per_teu": metrics.get("carbon_kg_per_teu"),
+                "energy_kwh_per_teu": metrics.get("energy_kwh_per_teu"),
+                "service_completion_ratio": metrics.get("service_completion_ratio"),
+                "delay_index_mean": metrics.get("delay_index_mean"),
                 "guardrail_violation_rate": violation_rate,
                 "risk_level": "unassessed" if violation_rate is None else ("high" if float(violation_rate) > 0.05 else "reviewable"),
             },
@@ -3714,6 +4460,8 @@ async def rl_list_strategies(
         "strategies": strategies,
         "count": len(strategies),
         "source": "verified_model_registry",
+        "selection_basis": "newest_evaluated_record_per_algorithm_in_controller_order",
+        "algorithm_coverage": [str(item.get("meta", {}).get("algorithm") or "") for item in strategies],
         "generated_values": False,
         "requested_display_horizon_min": horizon_min,
         "requested_display_step_min": step_min,
@@ -3739,6 +4487,21 @@ async def rl_simulate(
         baseline = [float(item.get("baseline_kw") or 0.0) for item in frames]
         policy = [float(item.get("net_load_kw") or 0.0) for item in frames]
         peak_reduction = (max(baseline) - max(policy)) if baseline and policy else None
+        interval_hours = None
+        if len(frames) >= 2:
+            try:
+                start_ts = datetime.fromisoformat(str(frames[0].get("timestamp") or "").replace("Z", "+00:00"))
+                next_ts = datetime.fromisoformat(str(frames[1].get("timestamp") or "").replace("Z", "+00:00"))
+                candidate_interval = (next_ts - start_ts).total_seconds() / 3600.0
+                if 0 < candidate_interval <= 24:
+                    interval_hours = candidate_interval
+            except (TypeError, ValueError):
+                interval_hours = None
+        delta_kwh = (
+            sum(base - active for base, active in zip(baseline, policy)) * interval_hours
+            if baseline and policy and interval_hours is not None
+            else None
+        )
         window = {
             "start": frames[0].get("timestamp") if frames else None,
             "end": frames[-1].get("timestamp") if frames else None,
@@ -3748,9 +4511,11 @@ async def rl_simulate(
             "production_dispatched": False,
             "strategy_id": job_id,
             "summary": {
-                "delta_kWh": None,
+                "delta_kWh": delta_kwh,
                 "delta_carbon_kg": None,
                 "peak_reduction_kW": peak_reduction,
+                "decision_interval_hours": interval_hours,
+                "comparison_basis": "same_holdout_window_uncontrolled_baseline_kw_vs_policy_net_load_kw",
                 "window": window,
                 "dispatch_ready": False,
                 "reason": "留出集评测只产生决策证据，不授予设备执行权。",
@@ -3775,8 +4540,8 @@ async def rl_simulate(
         raise HTTPException(status_code=409, detail=str(exc)) from exc
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"rl.simulate 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="rl.simulate 失败；内部诊断已隐藏")
 
 
 _RL_FUTURE_RUNS: List[Dict[str, Any]] = []
@@ -3876,7 +4641,7 @@ async def rl_future_run(
                     "reason": (strategy.get("explain") or {}).get("reason", ""),
                     "operator_guidance": (feasibility.get("operator_guidance") or {}).get("message", ""),
                 }
-            except Exception as simulation_error:
+            except Exception:
                 candidate = {
                     "id": strategy.get("id"),
                     "title": strategy.get("title") or strategy.get("id"),
@@ -3894,7 +4659,7 @@ async def rl_future_run(
                     "simulated_peak_kw": 0.0,
                     "delay_min": round(_rl_future_number(impact.get("throughput_delay_min_est")), 2),
                     "supports": [],
-                    "blockers": [f"反事实模拟失败：{simulation_error}"],
+                    "blockers": ["反事实模拟失败；内部诊断已隐藏，请检查服务日志。"],
                     "risk_flags": ["simulation_error"],
                     "reason": (strategy.get("explain") or {}).get("reason", ""),
                     "operator_guidance": "保持阻断，不进入后续执行。",
@@ -4061,8 +4826,8 @@ async def rl_future_run(
         return JSONResponse(response)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"rl.future.run 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="rl.future.run 失败；内部诊断已隐藏")
 
 
 @_engineering_route("get", "/api/rl/future/history", tags=["rl-future-engineering-simulator"])
@@ -4326,7 +5091,7 @@ async def rl_business_benchmark() -> JSONResponse:
     except (FileNotFoundError, ValueError, json.JSONDecodeError) as exc:
         raise HTTPException(
             status_code=409,
-            detail=f"业务KPI证据校验失败：{exc}",
+            detail="业务KPI证据校验失败；内部诊断已隐藏",
         ) from exc
     test = report.get("test") or {}
     return JSONResponse(
@@ -4361,8 +5126,8 @@ async def rl_business_benchmark() -> JSONResponse:
                     "energy_balance",
                 )
             },
-            "resume_claims_rounded_percent": report.get(
-                "resume_claims_rounded_percent"
+            "summary_metrics_rounded_percent": report.get(
+                "summary_metrics_rounded_percent"
             ),
             "claim_text": report.get("claim_text"),
             "evidence_boundary": report.get("evidence_boundary"),
@@ -4425,8 +5190,8 @@ async def rl_desktop_panel_launch() -> JSONResponse:
             start_new_session=True,
         )
         launched = True
-    except (OSError, ValueError) as exc:
-        launch_error = str(exc)
+    except (OSError, ValueError):
+        launch_error = "desktop launch failed; inspect server logs"
     _RL_DESKTOP_PANEL_STATE.update(
         {
             "launch_requested_at": now,
@@ -4795,8 +5560,8 @@ async def rl_dispatch(
         return JSONResponse(result)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"dispatch 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="dispatch 失败；内部诊断已隐藏")
 
 
 async def rl_dispatch_history(
@@ -4805,8 +5570,8 @@ async def rl_dispatch_history(
     try:
         data = di.dispatch.list_history(limit=limit)
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"dispatch.history 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="dispatch.history 失败；内部诊断已隐藏")
 
 
 async def rl_dispatch_cancel(
@@ -4823,8 +5588,8 @@ async def rl_dispatch_cancel(
         return JSONResponse(data)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"dispatch.cancel 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="dispatch.cancel 失败；内部诊断已隐藏")
 
 
 # =================================================
@@ -4975,8 +5740,8 @@ async def exec_submit(
         return JSONResponse(data)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.submit 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.submit 失败；内部诊断已隐藏")
 
 
 async def exec_approve(
@@ -4992,15 +5757,15 @@ async def exec_approve(
         return JSONResponse(data)
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.approve 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.approve 失败；内部诊断已隐藏")
 
 
 async def exec_get(job_id: str) -> JSONResponse:
     try:
         return JSONResponse(di.closedloop.get(job_id))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.get 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.get 失败；内部诊断已隐藏")
 
 
 async def exec_list(
@@ -5008,8 +5773,8 @@ async def exec_list(
 ) -> JSONResponse:
     try:
         return JSONResponse(di.closedloop.list(limit=limit))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.list 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.list 失败；内部诊断已隐藏")
 
 
 async def exec_abtest(job_id: str) -> JSONResponse:
@@ -5021,8 +5786,8 @@ async def exec_abtest(job_id: str) -> JSONResponse:
     """
     try:
         return JSONResponse(di.closedloop.ab_compare(job_id))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.abtest 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.abtest 失败；内部诊断已隐藏")
 
 
 async def exec_learn(
@@ -5040,16 +5805,16 @@ async def exec_learn(
         return JSONResponse(di.closedloop.learn(job_id=job_id, alpha=alpha))
     except HTTPException:
         raise
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.learn 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.learn 失败；内部诊断已隐藏")
 
 
 async def exec_model(strategy_id: str) -> JSONResponse:
     """查询某策略的在线学习画像。"""
     try:
         return JSONResponse(di.closedloop.get_model(strategy_id=strategy_id))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"exec.model 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="exec.model 失败；内部诊断已隐藏")
 
 
 if _ENABLE_LEGACY_CLOSEDLOOP:
@@ -5134,6 +5899,20 @@ async def app_center_overview() -> JSONResponse:
     """Expose the routes actually registered by the running FastAPI app."""
     rest_apis = []
     ui_apps = []
+    ui_catalog = {
+        "/rl-panel": {
+            "name": "RL 决策与证据控制台",
+            "description": "训练、历史指标、盲测评估、模型就绪度与回滚入口。",
+        },
+        "/integration-hub": {
+            "name": "港口集成中心",
+            "description": "TOS/ECS/EMS/CMDB 适配器契约、健康检查与现场替换边界。",
+        },
+        "/ops-copilot": {
+            "name": "Ops Copilot 运营副驾",
+            "description": "基于运行上下文、证据引用和可审计动作的运营辅助入口。",
+        },
+    }
     for route in app.routes:
         path = str(getattr(route, "path", ""))
         methods = sorted(method for method in (getattr(route, "methods", set()) or set()) if method not in {"HEAD", "OPTIONS"})
@@ -5144,16 +5923,30 @@ async def app_center_overview() -> JSONResponse:
                 "label": str(getattr(route, "summary", None) or getattr(route, "name", path)),
             })
         elif path in {"/rl-panel", "/integration-hub", "/ops-copilot"}:
-            ui_apps.append({"id": path.strip("/").replace("-", "_"), "name": path, "path": path, "category": "ui"})
+            catalog = ui_catalog[path]
+            ui_apps.append({
+                "id": path.strip("/").replace("-", "_"),
+                "name": catalog["name"],
+                "path": path,
+                "description": catalog["description"],
+                "category": "runtime_ui",
+                "status": "registered",
+            })
     rest_apis.sort(key=lambda item: (item["path"], item["methods"]))
     return JSONResponse({
         "platform_support": {
             "rest_apis": rest_apis,
             "webhooks": [],
-            "sdk": {"notebooks": [], "languages": ["python", "javascript"]},
+            "sdk": {"notebooks": [], "languages": [], "openapi_path": "/openapi.json"},
         },
         "apps": ui_apps,
         "counts": {"rest_routes": len(rest_apis), "ui_apps": len(ui_apps)},
+        "site_integrations": {
+            "connected": False,
+            "status": "pending_port_connection",
+            "required": ["API Gateway/OAuth2", "Webhook/Message Bus", "SDK/Notebook Registry"],
+        },
+        "data_class": "fastapi_runtime_registry_not_port_deployment_registry",
         "_source": "fastapi_runtime_route_registry",
     })
 
@@ -5171,13 +5964,13 @@ async def esg_summary() -> JSONResponse:
     try:
         # The ESG service owns measured-versus-simulated provenance aggregation.
         from app.services.esg.service import get_summary  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.service 导入失败；内部诊断已隐藏")
 
     try:
         data = get_summary(di)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.summary 执行失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.summary 执行失败；内部诊断已隐藏")
 
     return JSONResponse(data)
 
@@ -5192,12 +5985,12 @@ async def compliance_catalog() -> JSONResponse:
     """
     try:
         from app.services.esg.service import get_ports_catalog  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.service 导入失败；内部诊断已隐藏")
     try:
         return JSONResponse(get_ports_catalog())
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.catalog 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.catalog 失败；内部诊断已隐藏")
 
 
 @app.get("/api/compliance/timeseries", tags=["compliance"])
@@ -5208,14 +6001,14 @@ async def compliance_timeseries(
 ) -> JSONResponse:
     try:
         from app.services.esg.service import get_compliance_timeseries  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.service 导入失败；内部诊断已隐藏")
     try:
         y = year or datetime.now().year
         data = get_compliance_timeseries(port_code=port, year=int(y), granularity=granularity)
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.timeseries 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.timeseries 失败；内部诊断已隐藏")
 
 
 @app.get("/api/compliance/breakdown", tags=["compliance"])
@@ -5226,14 +6019,14 @@ async def compliance_breakdown(
 ) -> JSONResponse:
     try:
         from app.services.esg.service import get_compliance_breakdown  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"esg.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="esg.service 导入失败；内部诊断已隐藏")
     try:
         y = year or datetime.now().year
         data = get_compliance_breakdown(port_code=port, year=int(y), month=int(month))
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.breakdown 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.breakdown 失败；内部诊断已隐藏")
 
 # =================================================
 # Trust-badge API
@@ -5257,13 +6050,13 @@ async def ai_trust_badge() -> JSONResponse:
     try:
         # Trust evidence is resolved by the optional ai_trust service.
         from app.services.ai_trust.service import get_badge  # type: ignore
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ai_trust.service 导入失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="ai_trust.service 导入失败；内部诊断已隐藏")
 
     try:
         data = get_badge(di)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"ai_trust.badge 执行失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="ai_trust.badge 执行失败；内部诊断已隐藏")
 
     return JSONResponse(data)
 # =================================================
@@ -5272,37 +6065,22 @@ async def ai_trust_badge() -> JSONResponse:
 from fastapi import Query
 
 @app.get("/api/story/summary", tags=["story"])
-async def story_summary(hour: int = Query(0, ge=-24, le=24)) -> JSONResponse:
+async def story_summary(
+    hour: int = Query(0, ge=-24, le=24),
+    port: str = Query("shanghai"),
+    scenario: str = Query("sac_vs_fcfs"),
+) -> JSONResponse:
     """
     从最新真实留出集评测轨迹取一帧；无评测时明确不可用。
     """
-    status = TRAINING_MANAGER.status()
-    evaluation = status.get("evaluation") or {}
-    job_id = str(status.get("job_id") or "")
-    trace_path = TRAINING_MANAGER.run_root / job_id / "evaluation_trajectory.json"
-    trace = json.loads(trace_path.read_text(encoding="utf-8")) if job_id and trace_path.exists() else {}
-    frames = trace.get("frames") or []
-    if not frames:
-        raise HTTPException(status_code=503, detail="尚无训练完成后的留出集评测轨迹")
-    index = round((hour + 24) / 48 * (len(frames) - 1))
-    frame = frames[max(0, min(len(frames) - 1, index))]
-    return JSONResponse({
-        "available": True,
-        "hour": hour,
-        "events": [],
-        "baseline": {"peak_kw": frame.get("baseline_kw"), "bill_cny": None},
-        "with_rl": {
-            "peak_kw": frame.get("net_load_kw"),
-            "bill_cny": None,
-            "co2_ton": (float(frame["carbon_kg"]) / 1000.0) if frame.get("carbon_kg") is not None else None,
-        },
-        "frame": frame,
-        "job_id": job_id,
-        "algorithm": evaluation.get("algorithm"),
-        "dataset_id": evaluation.get("dataset_id"),
-        "dataset_sha256": evaluation.get("dataset_sha256"),
-        "_source": "rl_heldout_evaluation_trajectory",
-    })
+    return JSONResponse(
+        await asyncio.to_thread(
+            story_evidence.summary,
+            hour=hour,
+            port=port,
+            replay=scenario,
+        )
+    )
 
 
 @app.post("/api/story/play", tags=["story"])
@@ -5315,10 +6093,7 @@ async def story_play(payload: dict | None = None) -> JSONResponse:
     请求体：{"mode": "demo"}（可扩展）
     返回结构（由 service 决定，例如）：{"ok": true, "mode": "demo", "ts": "..."}
     """
-    raise HTTPException(
-        status_code=501,
-        detail="服务端回放编排器未配置；可直接读取 /api/story/summary 的留出集轨迹帧。",
-    )
+    return JSONResponse(await asyncio.to_thread(story_evidence.play_ack))
 
 # =================================================
 # ⭐⭐ 合规报表（Compliance）接口组 —— 保持
@@ -5350,8 +6125,8 @@ async def compliance_monthly(
             diesel_model=diesel_model,
         )
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.monthly 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.monthly 失败；内部诊断已隐藏")
 
 
 @app.get("/api/compliance/quarterly", tags=["compliance"])
@@ -5380,8 +6155,8 @@ async def compliance_quarterly(
             diesel_model=diesel_model,
         )
         return JSONResponse(data)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.quarterly 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.quarterly 失败；内部诊断已隐藏")
 
 
 @app.post("/api/compliance/make", tags=["compliance"])
@@ -5424,8 +6199,8 @@ async def compliance_make(
             "teu": int(cfg.get("teu", 12000)),
         }
         return JSONResponse(di.compliance.make_report(config=config, factors=ef, diesel_model=diesel_model))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"compliance.make 失败: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="compliance.make 失败；内部诊断已隐藏")
 
 
 # -------------------------------------------------

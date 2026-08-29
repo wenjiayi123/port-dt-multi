@@ -700,11 +700,13 @@ def _mime_for(p: Path) -> str:
 
 
 def _safe_target(name: str) -> Path:
-    name = (name or "").strip().lstrip("/").replace("..", "__")
-    p = (_ART_DIR / name).resolve()
-    if not str(p).startswith(str(_ART_DIR.resolve())):
-        raise HTTPException(400, "invalid artifact name")
-    return p
+    if not _ART_DIR.is_dir():
+        raise HTTPException(404, "artifact directory missing")
+    registered = {item.name: item.resolve() for item in _ART_DIR.iterdir() if item.is_file()}
+    target = registered.get(str(name))
+    if target is None:
+        raise HTTPException(404, "artifact not found")
+    return target
 
 
 def _list_whitelist() -> set:

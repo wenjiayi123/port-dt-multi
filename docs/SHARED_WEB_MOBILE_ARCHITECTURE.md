@@ -10,7 +10,7 @@ Web 与 Flutter 移动端是同一套“数字孪生 AI 港口智能决策系统
           v
 port-dt-multi FastAPI
   |- 数字孪生与固定业务基准
-  |- SAC / PPO / TD3 / DQN / A2C / TQC / MPC
+  |- 10 RL（含分布式/时序/信赖域/无梯度）+ MPC + FCFS
   |- 模型登记与留出集评测
   |- 移动端契约 /api/mobile/*
   |- 两人确认的南向执行边界 /api/actuators/*

@@ -77,6 +77,13 @@ def _pick(row: Dict[str,Any], cands: List[str], default=None):
         if k in row and row[k] not in (None,""): return row[k]
     return default
 
+def _as_bool(value: Any) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return bool(value)
+    return str(value or "").strip().lower() in {"1", "true", "yes", "y", "on"}
+
 def _parse_ts(s: str) -> Optional[datetime]:
     if not s: return None
     s=s.strip()
@@ -214,8 +221,8 @@ def _load_series() -> Tuple[List[datetime], Dict[str,List[_SeriesRow]]]:
             seq.append(_SeriesRow(
                 ts=g, zone=zid, power=max(0.0, pow0), dim=max(0.05,dim0), lux=max(0.1,lux0),
                 L_min=float(zone_meta[zid].get("L_min",20.0)),
-                critical=bool(zone_meta[zid].get("critical", False)),
-                complaint=bool(zone_meta[zid].get("complaint_zone", False)),
+                critical=_as_bool(zone_meta[zid].get("critical", False)),
+                complaint=_as_bool(zone_meta[zid].get("complaint_zone", False)),
                 price=float(p_map.get(g,0.0) or 0.0),
                 ef=float(e_map.get(g,0.0) or 0.0),
             ))

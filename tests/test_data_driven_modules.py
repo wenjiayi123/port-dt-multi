@@ -18,6 +18,7 @@ from app.services.forecast import ForecastService
 from app.services.forecast_twin.sim_aggregate import aggregate_sim
 from app.services.forecast_twin.twin import TwinService
 from app.services.exec_cockpit.service import get_summary as get_exec_summary
+from app.services.platform_map.service import get_graph as get_platform_graph
 from app.services.energy_reporting.energy import EnergyService
 from app.services.energy_reporting.reporting import ReportingService
 
@@ -55,6 +56,27 @@ class DataDrivenModuleTests(unittest.TestCase):
         self.assertEqual(first, second)
         self.assertEqual(len(first["asset"]), 12)
         self.assertTrue(all(row["model"] == "ridge_autoregression" for row in first["asset"]))
+
+    def test_recursive_forecast_is_bounded_by_registered_asset_rating(self):
+        class RatedTelemetry(_Telemetry):
+            def list_assets(self):
+                return [{"id": "asset", "rated_kw": 4200.0}]
+
+        start = datetime(2026, 1, 1, tzinfo=timezone.utc)
+        points = [
+            {
+                "ts": (start + timedelta(minutes=i)).isoformat(),
+                "kW": 1500.0 + (i ** 2) * 0.10,
+            }
+            for i in range(120)
+        ]
+        rows = ForecastService(RatedTelemetry(points)).forecast_load(
+            ["asset"], horizon_min=360, step_min=1
+        )["asset"]
+        self.assertTrue(rows)
+        self.assertTrue(all(0.0 <= row["p50"] <= row["stability_cap_kw"] for row in rows))
+        self.assertTrue(all(row["stability_guard"] == "registered_asset_rating" for row in rows))
+        self.assertTrue(any(row["guard_applied"] for row in rows))
 
     def test_twin_does_not_create_uncertainty_bands(self):
         class Forecast:
@@ -105,10 +127,24 @@ class DataDrivenModuleTests(unittest.TestCase):
         self.assertFalse(result["available"])
         self.assertEqual(result["series"]["total"], [])
 
-    def test_exec_cockpit_rejects_unverified_snapshot(self):
+    def test_exec_cockpit_replaces_unverified_snapshot_with_v3_public_evidence(self):
         result = get_exec_summary(SimpleNamespace())
-        self.assertFalse(result["available"])
-        self.assertIsNone(result["yearly_saving_cny"])
+        self.assertTrue(result["available"])
+        self.assertEqual(result["evidence_mode"], "public_data_offline_verified")
+        self.assertGreater(result["yearly_saving_cny"], 0)
+        self.assertIsNone(result["peak_risk_30d"])
+        self.assertTrue(result["evidence"]["site_kpis_pending"])
+
+    def test_platform_map_separates_repository_map_from_live_topology(self):
+        result = get_platform_graph(SimpleNamespace())
+        self.assertTrue(result["available"])
+        self.assertEqual(
+            result["data_class"],
+            "repository_architecture_configuration_not_runtime_topology",
+        )
+        self.assertFalse(result["deployment"]["runtime_topology_connected"])
+        self.assertIsNone(result["deployment"]["production_instances"])
+        self.assertGreaterEqual(len(result["deployment"]["required_adapters"]), 4)
 
     def test_today_energy_rejects_stale_dataset_replay(self):
         telemetry = DatasetTelemetry()

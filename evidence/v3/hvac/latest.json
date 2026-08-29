@@ -1,0 +1,10 @@
+{
+  "schema": "port-dt-hvac-latest-pointer.v1",
+  "run_id": "hvac-v3-safe-20260813T100000Z",
+  "status": "passed",
+  "report_path": "evidence/v3/hvac/runs/hvac-v3-safe-20260813T100000Z/report.json",
+  "report_sha256": "9049ed2375f75850add7a2d614279f226e268c280154a43df62d19947f9e1ace",
+  "model_path": "evidence/v3/hvac/runs/hvac-v3-safe-20260813T100000Z/seed_253/selected_model.json",
+  "model_sha256": "9c1ce9fe479307e29de40c6f21b43d2065501f4aa16943f234916f3eacdcdb4c",
+  "updated_at": "2026-08-13T03:17:02.554307Z"
+}

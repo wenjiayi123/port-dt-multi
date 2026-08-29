@@ -1,0 +1,28 @@
+{
+  "schema": "port-dt-v3-runtime-policy.v1",
+  "exported_at": "2026-08-13T06:47:57.002005Z",
+  "job_id": "rl-20260813T063524662Z",
+  "algorithm": "sac",
+  "implementation": "stable_baselines3.SAC",
+  "seed": 42,
+  "dataset_id": "public_cn_sha_hourly_v3",
+  "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+  "environment_version": "port_ops_v3",
+  "model_artifact": "selected_sac_v3.zip",
+  "model_sha256": "7160a1959e42e95523e83348f448d01b5e363b047eeed8bcdbcc4e17915f88da",
+  "config_artifact": "selected_sac_v3.config.json",
+  "config_sha256": "82c3bde7c4611e31b56b8fa30b543afd784774262ed0e158a0c76645aec6e7b2",
+  "selection_protocol": {
+    "algorithm_selection": "chronological_validation_only",
+    "final_advantage_report": "chronological_blind_test_only",
+    "blind_test_used_for_selection": false,
+    "expected_seeds": [
+      42,
+      142,
+      242
+    ],
+    "validation_episode_windows": 10
+  },
+  "production_authority": false,
+  "purpose": "clone-safe deterministic dashboard inference; not production dispatch"
+}

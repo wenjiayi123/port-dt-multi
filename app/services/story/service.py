@@ -88,8 +88,13 @@ def _read_or_create(port: str) -> Dict[str, Any]:
       2) 否则按默认规则生成，并写入本模块 data/ 目录。
     """
     slug = _slug(port)
-    f = DATA_DIR / f"summary_{slug}.json"
-    if f.exists():
+    registered = {
+        item.stem.removeprefix("summary_"): item
+        for item in DATA_DIR.glob("summary_*.json")
+        if item.is_file() and item.name != "summary_snapshot.json"
+    }
+    f = registered.get(slug)
+    if f is not None:
         return json.loads(f.read_text(encoding="utf-8"))
 
     legacy = DATA_DIR / "summary_snapshot.json"
@@ -99,12 +104,10 @@ def _read_or_create(port: str) -> Dict[str, Any]:
         except Exception:
             pass
 
-    payload = _default_payload(port)
-    try:
-        f.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
-    except Exception:
-        pass
-    return payload
+    # Unknown caller-provided names are rendered in memory only. Writing a
+    # caller-derived filename would turn this read-only comparison endpoint
+    # into an uncontrolled filesystem surface.
+    return _default_payload(port)
 
 def _list_ports() -> List[str]:
     ports: List[str] = []
@@ -133,8 +136,8 @@ def get_summary(
     """
     try:
         payload = _read_or_create(port)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"load summary failed: {e}")
+    except Exception:
+        raise HTTPException(status_code=500, detail="load summary failed")
     return payload
 
 @router.get("/compare")
@@ -146,8 +149,8 @@ def compare(
     for name in [p.strip() for p in ports.split(",") if p.strip()]:
         try:
             result[name] = _read_or_create(name)
-        except Exception as e:
-            result[name] = {"error": str(e)}
+        except Exception:
+            result[name] = {"error": "summary unavailable"}
     return {"items": result}
 
 # 说明：

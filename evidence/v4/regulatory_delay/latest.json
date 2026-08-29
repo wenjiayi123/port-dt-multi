@@ -1,0 +1,15 @@
+{
+  "schema": "port-dt-regulatory-resilience-latest.v1",
+  "run_id": "regulatory-resilience-v4-20260821T070552Z",
+  "status": "ADMITTED_OFFLINE_SCENARIO_CANDIDATE",
+  "report_path": "evidence/v4/regulatory_delay/runs/regulatory-resilience-v4-20260821T070552Z/report.json",
+  "report_sha256": "939474b003d1c01e9738f34f70617bd8da032e72cedd8364b35c8e3809fb8a2e",
+  "selected_job_id": "rl-20260821T065745532Z",
+  "selected_model_path": "data/rl/runs/rl-20260821T065745532Z/model.zip",
+  "selected_model_sha256": "43656033422d9a42262f8ce81d249dc2af8d15fced71d5d71427f95667259287",
+  "production_authority": false,
+  "updated_at": "2026-08-21T07:15:06.806556Z",
+  "forward_challenge_status": "PASS",
+  "forward_challenge_path": "evidence/v4/regulatory_delay/runs/regulatory-resilience-v4-20260821T070552Z/forward_challenge.json",
+  "forward_challenge_sha256": "f03bdee6c2f92407dc4d2cd49c875071dcd983ce5204759b4d20c08f857f2526"
+}

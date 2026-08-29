@@ -1,0 +1,112 @@
+{
+  "schema": "port-dt-yard-lighting-formal-run.v1",
+  "run_id": "yard-lighting-v3-safe-20260813T130000Z",
+  "created_at": "2026-08-13T03:54:17.545889Z",
+  "dataset": {
+    "dataset_id": "yard_lighting_public_enriched_engineering_replay_v3",
+    "rows": 2783,
+    "raw_lighting_rows": 267168,
+    "raw_activity_rows": 953856,
+    "zones": 96,
+    "public_source_observations": 17566,
+    "public_aligned_steps": 2783,
+    "weather_reconstructed_steps": 768,
+    "time_range": {
+      "start": "2025-10-05T00:00:00+00:00",
+      "end": "2025-10-14T15:50:00+00:00"
+    },
+    "train_rows": 1948,
+    "validation_rows": 278,
+    "blind_test_rows": 557,
+    "split": "chronological_70_10_20",
+    "measured": false,
+    "evidence_tier": "public_reanalysis_enriched_engineering_emulator_replay",
+    "quality": {
+      "training_eligible": true,
+      "finite_numeric_rate": 1.0,
+      "duplicate_timestamp_count": 0,
+      "interval_minutes": 5.0,
+      "maximum_interval_minutes": 5.0,
+      "raw_lighting_rows": 267168,
+      "raw_activity_rows": 953856,
+      "zones": 96,
+      "public_source_observations": 17566,
+      "public_aligned_steps": 2783,
+      "weather_reconstructed_steps": 768,
+      "reconstruction": "local astro minute-of-week replay only after checked-in astro range; public Shanghai hourly signals linearly aligned to 5 minutes"
+    },
+    "files": [
+      {
+        "path": "app/services/rl_model/yard_lighting/data/zones_master.csv",
+        "rows": 96,
+        "sha256": "e851114abcbcb03850637c1c9d5304b9616733a30d970c324df312cd3ba87789"
+      },
+      {
+        "path": "app/services/rl_model/yard_lighting/data/lighting_telemetry.csv",
+        "rows": 267168,
+        "sha256": "a71072a0615760d0083f29770db397e17608df14c9c2679a6d2159c241849631"
+      },
+      {
+        "path": "app/services/rl_model/yard_lighting/data/activity_forecast.csv",
+        "rows": 953856,
+        "sha256": "28106dc125b8852a9c87cb8fd65924ff4bee012f85aa52031eb2952b5d2a7fea"
+      },
+      {
+        "path": "app/services/rl_model/yard_lighting/data/weather_astro.csv",
+        "rows": 2015,
+        "sha256": "81b46489aa9c3111bb7d0918b43a12a8f6cc7cdacea13502dd366bac14bc9a6e"
+      },
+      {
+        "path": "app/services/rl_model/yard_lighting/data/complaints_events.csv",
+        "rows": 11,
+        "sha256": "4363836919f5e22f226c685c5bfe9fbcd8bc97b9410b17c3ded6a1befb4e464f"
+      },
+      {
+        "path": "app/services/rl_model/yard_lighting/data/market_price.csv",
+        "rows": 145,
+        "sha256": "dac8205abacb9352510e4ae90fa0a47921f7f0d06a351db899ec9fb35e4051e2"
+      },
+      {
+        "path": "app/services/rl_model/yard_lighting/data/grid_ef.csv",
+        "rows": 145,
+        "sha256": "29b6650551a349b3c1a5ed947ddf2c8fe7fcf167824dbe4bb6a6eb891d59d52b"
+      },
+      {
+        "path": "app/services/rl_model/yard_lighting/data/config_limits.json",
+        "rows": null,
+        "sha256": "8117d936fe34ccec44363a46ff7240569623c867260167c5fbdbe0eafe4cb806"
+      },
+      {
+        "path": "data/rl/datasets/public_cn_sha_hourly_v3.csv",
+        "rows": 17544,
+        "sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01"
+      },
+      {
+        "path": "data/rl/datasets/public_cn_sha_hourly_v3.meta.json",
+        "rows": null,
+        "sha256": "97a9d81b8420273453b1f06ff373a71aa29cb57ca9b0e064e0bd59570e2d2fc7"
+      }
+    ]
+  },
+  "config_path": "config/yard_lighting_v3.json",
+  "config_sha256": "58e6c5c7294f452ea5fcdce68aa3992cda9db7c76a8e3200ee890b714bff743c",
+  "protocol": {
+    "seeds": [
+      67,
+      167,
+      267
+    ],
+    "validation_starts": [
+      0,
+      91,
+      182
+    ],
+    "blind_test_starts_sealed_until_selection": [
+      0,
+      115,
+      230,
+      345,
+      461
+    ]
+  }
+}

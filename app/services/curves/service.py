@@ -9,7 +9,7 @@ class CurvesService:
     统一提供设备/聚合曲线：
       - mode="now"      -> 最近实时点（按索引对齐后求和）
       - mode="forecast" -> di.fcst.forecast_load(…, return_quantiles=True)
-      - mode="sim"      -> di.twin.run / services.sim_aggregate.aggregate_sim
+      - mode="sim"      -> hash-verified selected policy over forecast/state input
 
     所有模式的返回格式统一为:
       {
@@ -181,19 +181,34 @@ class CurvesService:
             }
 
         if mode == "sim":
-            # Twin 兼容口径：只传 asset_id，其他窗口参数由 Twin 内部决定
-            try:
-                data = self.di.twin.run(asset_id=asset_id) or {}
-            except Exception:
-                data = {}
-            seq = data.get("plan", []) or []
+            runtime = getattr(self.di, "strategy_runtime", None)
+            if runtime is None or not callable(getattr(runtime, "series", None)):
+                return {
+                    "asset": asset_id,
+                    "available": False,
+                    "series": {"p50": [], "p10": [], "p90": []},
+                    "_source": "selected_policy_runtime_unavailable",
+                }
+            data = runtime.series(
+                horizon_min=horizon_min,
+                step_min=step_min,
+                scenario=scenario if scenario not in {"baseline", "forecast"} else "strategy",
+            ) or {}
+            seq = (data.get("assets") or {}).get(asset_id) or []
             p50 = [
-                {"ts": p.get("ts"), "kW": float(p.get("kW", p.get("p50", 0.0)))}
+                {"ts": p.get("ts"), "kW": float(p.get("kW", 0.0) or 0.0)}
                 for p in seq
+                if isinstance(p, dict)
             ]
-            p10 = [{"ts": p.get("ts"), "kW": float(p["p10"])} for p in seq if "p10" in p]
-            p90 = [{"ts": p.get("ts"), "kW": float(p["p90"])} for p in seq if "p90" in p]
-            return {"asset": asset_id, "available": bool(p50), "series": {"p50": p50, "p10": p10, "p90": p90}, "_source": "twin_adapter"}
+            return {
+                "asset": asset_id,
+                "available": bool(data.get("available") and p50),
+                "series": {"p50": p50, "p10": [], "p90": []},
+                "_source": data.get("_source", "selected_policy_runtime"),
+                "policy": data.get("policy"),
+                "scenario": data.get("scenario", scenario),
+                "production_authority": False,
+            }
 
         # forecast
         fmap = self._call_forecast_load(
@@ -239,63 +254,38 @@ class CurvesService:
 
         # -------------------------- 仿真模式 --------------------------
         if mode == "sim":
-            # 优先用已有的聚合仿真实现（如果上层已经实现了更复杂的港口模型，就直接复用）
-            try:
-                from app.services.forecast_twin.sim_aggregate import aggregate_sim  # type: ignore
-
-                data = (
-                    aggregate_sim(
-                        self.di,
-                        scenario=scenario,
-                        horizon_min=horizon_min,
-                        step_min=step_min,
-                        limit=limit,
-                    )
-                    or {}
-                )
-                agg = data.get("agg") if isinstance(data.get("agg"), dict) else {}
-                raw_p50 = data.get("p50") or agg.get("p50") or []
-                raw_p10 = data.get("p10") or agg.get("p10") or []
-                raw_p90 = data.get("p90") or agg.get("p90") or []
-                max_len = max(len(raw_p50), len(raw_p10), len(raw_p90), 0)
-                ts = data.get("ts") or self._iso_series_from_window(data, max_len, step_min)
-
-                def pack(arr: List[float]) -> List[Dict[str, Any]]:
-                    L = min(len(ts), len(arr))
-                    return [
-                        {"ts": ts[i], "kW": float(arr[i])}
-                        for i in range(L)
-                    ]
-
-                p50 = pack(raw_p50)
-                p10 = pack(raw_p10)
-                p90 = pack(raw_p90)
-
-                # 仿真空时明确不可用，不跨模式或生成替代曲线。
-                if len(p50) == 0:
-                    return empty
-
-                return {
-                    "mode": mode,
-                    "available": True,
-                    "series": {"p50": p50, "p10": p10, "p90": p90},
-                    "_source": "twin_adapter",
-                    "_step_min": int((data.get("window") or {}).get("step_min_effective") or step_min),
-                }
-
-            except Exception:
+            runtime = getattr(self.di, "strategy_runtime", None)
+            if runtime is None or not callable(getattr(runtime, "series", None)):
                 return empty
+            data = runtime.series(
+                horizon_min=horizon_min,
+                step_min=step_min,
+                scenario=scenario if scenario not in {"baseline", "forecast"} else "strategy",
+            ) or {}
+            if not data.get("available"):
+                return {**empty, "reason": data.get("reason", "selected policy runtime unavailable")}
+            return {
+                "mode": mode,
+                "available": True,
+                "series": data.get("series") or empty["series"],
+                "_source": data.get("_source", "selected_policy_runtime"),
+                "_step_min": int(step_min),
+                "policy": data.get("policy"),
+                "scenario": data.get("scenario", scenario),
+                "summary": data.get("summary"),
+                "production_authority": False,
+            }
 
         # -------------------------- 实时模式 --------------------------
         if mode == "now":
-            seqs: List[List[float]] = []
+            seqs: List[List[Dict[str, Any]]] = []
             for aid in ids:
                 try:
                     arr = self.di.telemetry.get_recent_power(aid) or []
                 except Exception:
                     continue
                 seq = [
-                    float(p.get("kW", p.get("value", 0.0)))
+                    {"ts": p.get("ts"), "kW": float(p.get("kW", p.get("value", 0.0)))}
                     for p in arr
                     if isinstance(p, dict)
                 ]
@@ -305,8 +295,12 @@ class CurvesService:
             if L == 0:
                 return empty
 
-            s = [sum(s[-L:][i] for s in seqs) for i in range(L)]
-            p50 = [{"ts": None, "kW": round(v, 3)} for v in s]
+            aligned = [seq[-L:] for seq in seqs]
+            s = [sum(float(seq[i]["kW"]) for seq in aligned) for i in range(L)]
+            p50 = [
+                {"ts": aligned[0][i].get("ts"), "kW": round(v, 3)}
+                for i, v in enumerate(s)
+            ]
             return {"mode": mode, "available": True, "series": {"p50": p50, "p10": [], "p90": []}, "_source": "telemetry_aggregate"}
 
         # -------------------------- 预测模式 --------------------------

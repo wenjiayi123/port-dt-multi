@@ -1,0 +1,1053 @@
+{
+  "schema_version": 1,
+  "model": {
+    "job_id": "rl-20260813T064228701Z",
+    "algorithm": "sac",
+    "dataset_id": "public_cn_sha_hourly_v3",
+    "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+    "seed": 242,
+    "status": "EVALUATED",
+    "created_at": "2026-08-13T06:42:28.702056Z",
+    "updated_at": "2026-08-13T06:45:36.674127Z",
+    "implementation": "stable_baselines3.SAC",
+    "artifact": {
+      "artifact_id": "model.zip",
+      "expected_sha256": "c4a9773610a7473896141eeef3d67324a9a68aecb6db62eaf0b958af32959808",
+      "actual_sha256": "c4a9773610a7473896141eeef3d67324a9a68aecb6db62eaf0b958af32959808",
+      "verified": true,
+      "controller_only": false
+    },
+    "evaluation": {
+      "available": true,
+      "episodes": 10,
+      "metrics": {
+        "reward": -126.37823509840537,
+        "energy_cost": 844902.5805406726,
+        "carbon_kg": 664389.9381646017,
+        "throughput_teu": 194276.42622068475,
+        "peak_kw": 28572.24140135661,
+        "grid_energy_kwh": 1177614.276478223,
+        "bess_throughput_kwh": 36333.623413400004,
+        "flex_shift_energy_kwh": 1140.6219218792103,
+        "work_demand_teu": 305916.65121291636,
+        "queue_peak_teu": 111640.22499223163,
+        "queue_end_teu": 111640.22499223163,
+        "weather_blocked_steps": 0.0,
+        "projection_count": 28.4,
+        "projection_correction_kw": 67312.48435279999,
+        "projection_severity": 16.828121090999996,
+        "projection_grid_cap_count": 0.0,
+        "projection_soc_bound_count": 0.0,
+        "projection_terminal_reachability_count": 28.2,
+        "projection_power_bound_count": 2.2,
+        "resource_factor_sum": 27.410419412349,
+        "service_factor_sum": 53.28402140000001,
+        "terminal_soc_error": 0.0,
+        "cost_per_teu": 4.404093364885269,
+        "carbon_kg_per_teu": 3.463899418747135,
+        "energy_kwh_per_teu": 6.13974663851739,
+        "service_completion_ratio": 0.633426830486161,
+        "bess_equivalent_full_cycles": 0.36333623413399996,
+        "weather_block_rate": 0.0,
+        "action_projection_rate": 0.5916666666666666,
+        "action_projection_correction_kw_mean": 1402.3434240166666,
+        "action_projection_severity_mean": 0.3505858560625,
+        "action_projection_grid_cap_rate": 0.0,
+        "action_projection_soc_bound_rate": 0.0,
+        "action_projection_terminal_reachability_rate": 0.5874999999999999,
+        "action_projection_power_bound_rate": 0.04583333333333333,
+        "operational_resource_factor_mean": 0.5710504044239375,
+        "service_factor_mean": 1.1100837791666667,
+        "delay_index_mean": 8.21646209326757,
+        "guardrail_violation_rate": 0.0
+      },
+      "uncertainty": {
+        "action_projection_correction_kw_mean": {
+          "n": 10,
+          "mean": 1402.3434240166666,
+          "std": 431.6816274755155,
+          "median": 1388.7039069166663,
+          "ci_low": 1139.2297586624477,
+          "ci_high": 1656.4862526942181,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_grid_cap_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_power_bound_rate": {
+          "n": 10,
+          "mean": 0.04583333333333333,
+          "std": 0.0498841249890777,
+          "median": 0.03125,
+          "ci_low": 0.01875,
+          "ci_high": 0.075,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_rate": {
+          "n": 10,
+          "mean": 0.5916666666666666,
+          "std": 0.16585450265031312,
+          "median": 0.625,
+          "ci_low": 0.4875,
+          "ci_high": 0.6875,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_severity_mean": {
+          "n": 10,
+          "mean": 0.3505858560625,
+          "std": 0.10792040687138676,
+          "median": 0.34717597697916663,
+          "ci_low": 0.28480743967708333,
+          "ci_high": 0.41412156313177073,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_soc_bound_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "action_projection_terminal_reachability_rate": {
+          "n": 10,
+          "mean": 0.5874999999999999,
+          "std": 0.1706130015452993,
+          "median": 0.625,
+          "ci_low": 0.48125,
+          "ci_high": 0.6854687499999996,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "bess_equivalent_full_cycles": {
+          "n": 10,
+          "mean": 0.36333623413399996,
+          "std": 0.049903706360958124,
+          "median": 0.34088982666,
+          "ci_low": 0.33729367034740004,
+          "ci_high": 0.39249062275545005,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "bess_throughput_kwh": {
+          "n": 10,
+          "mean": 36333.623413400004,
+          "std": 4990.370636095811,
+          "median": 34088.982665999996,
+          "ci_low": 33729.36703474001,
+          "ci_high": 39249.062275544995,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "carbon_kg": {
+          "n": 10,
+          "mean": 664389.9381646017,
+          "std": 20963.924680847733,
+          "median": 658044.2718639759,
+          "ci_low": 652122.4016952455,
+          "ci_high": 677083.448884627,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "carbon_kg_per_teu": {
+          "n": 10,
+          "mean": 3.463899418747135,
+          "std": 0.3892824880689525,
+          "median": 3.3533265710164715,
+          "ci_low": 3.2517425225782857,
+          "ci_high": 3.7149039201469356,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "cost_per_teu": {
+          "n": 10,
+          "mean": 4.404093364885269,
+          "std": 0.4891596302688161,
+          "median": 4.236043815425408,
+          "ci_low": 4.138274697284966,
+          "ci_high": 4.7222282336154215,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "delay_index_mean": {
+          "n": 10,
+          "mean": 8.21646209326757,
+          "std": 1.4535636855488145,
+          "median": 7.657345225099284,
+          "ci_low": 7.402060182586084,
+          "ci_high": 9.181351752791683,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "energy_cost": {
+          "n": 10,
+          "mean": 844902.5805406726,
+          "std": 29215.146079267677,
+          "median": 835689.6662599345,
+          "ci_low": 827879.1681962587,
+          "ci_high": 862829.5192466849,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "energy_kwh_per_teu": {
+          "n": 10,
+          "mean": 6.13974663851739,
+          "std": 0.6904753588937995,
+          "median": 5.944176231211518,
+          "ci_low": 5.763979709990866,
+          "ci_high": 6.584540026091841,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "flex_shift_energy_kwh": {
+          "n": 10,
+          "mean": 1140.6219218792103,
+          "std": 273.4350341613871,
+          "median": 1187.4438993581862,
+          "ci_low": 980.6242777972511,
+          "ci_high": 1304.1020250902693,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "grid_energy_kwh": {
+          "n": 10,
+          "mean": 1177614.276478223,
+          "std": 36998.615355221154,
+          "median": 1166339.953403389,
+          "ci_low": 1155912.8440833082,
+          "ci_high": 1200014.1173287479,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "guardrail_violation_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "operational_resource_factor_mean": {
+          "n": 10,
+          "mean": 0.5710504044239375,
+          "std": 0.04465933097260087,
+          "median": 0.590715140398267,
+          "ci_low": 0.5420263179336092,
+          "ci_high": 0.5958234548236545,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "peak_kw": {
+          "n": 10,
+          "mean": 28572.24140135661,
+          "std": 818.8740011113016,
+          "median": 28483.382130674574,
+          "ci_low": 28097.36588571708,
+          "ci_high": 29048.93277061589,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_correction_kw": {
+          "n": 10,
+          "mean": 67312.48435279999,
+          "std": 20720.71811882474,
+          "median": 66657.78753199999,
+          "ci_low": 54683.028415797504,
+          "ci_high": 79511.34012932247,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_count": {
+          "n": 10,
+          "mean": 28.4,
+          "std": 7.961016127215029,
+          "median": 30.0,
+          "ci_low": 23.4,
+          "ci_high": 33.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_grid_cap_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_power_bound_count": {
+          "n": 10,
+          "mean": 2.2,
+          "std": 2.394437999475729,
+          "median": 1.5,
+          "ci_low": 0.9,
+          "ci_high": 3.6,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_severity": {
+          "n": 10,
+          "mean": 16.828121090999996,
+          "std": 5.180179529826565,
+          "median": 16.664446894999998,
+          "ci_low": 13.670757104499998,
+          "ci_high": 19.877835030324995,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_soc_bound_count": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "projection_terminal_reachability_count": {
+          "n": 10,
+          "mean": 28.2,
+          "std": 8.189424074174365,
+          "median": 30.0,
+          "ci_low": 23.1,
+          "ci_high": 32.90249999999998,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "queue_end_teu": {
+          "n": 10,
+          "mean": 111640.22499223163,
+          "std": 13899.607500045928,
+          "median": 108712.07664276229,
+          "ci_low": 103572.83111384425,
+          "ci_high": 120477.99530404138,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "queue_peak_teu": {
+          "n": 10,
+          "mean": 111640.22499223163,
+          "std": 13899.607500045928,
+          "median": 108712.07664276229,
+          "ci_low": 103572.83111384425,
+          "ci_high": 120477.99530404138,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "resource_factor_sum": {
+          "n": 10,
+          "mean": 27.410419412349,
+          "std": 2.143647886684842,
+          "median": 28.354326739116814,
+          "ci_low": 26.017263260813248,
+          "ci_high": 28.59952583153542,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "reward": {
+          "n": 10,
+          "mean": -126.37823509840537,
+          "std": 18.536925953584184,
+          "median": -118.70393275174132,
+          "ci_low": -138.5082388548481,
+          "ci_high": -116.17779535396211,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "service_completion_ratio": {
+          "n": 10,
+          "mean": 0.633426830486161,
+          "std": 0.055320438214295074,
+          "median": 0.6544985122115629,
+          "ci_low": 0.5970326239510227,
+          "ci_high": 0.6638955444174406,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "service_factor_mean": {
+          "n": 10,
+          "mean": 1.1100837791666667,
+          "std": 0.02873167038713003,
+          "median": 1.1062201875000004,
+          "ci_low": 1.092997623125,
+          "ci_high": 1.1270275366666664,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "service_factor_sum": {
+          "n": 10,
+          "mean": 53.28402140000001,
+          "std": 1.3791201785822418,
+          "median": 53.09856900000001,
+          "ci_low": 52.463885909999995,
+          "ci_high": 54.09732176000001,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "terminal_soc_error": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "throughput_teu": {
+          "n": 10,
+          "mean": 194276.42622068475,
+          "std": 25072.323642009036,
+          "median": 198145.0020311731,
+          "ci_low": 178580.732609504,
+          "ci_high": 208872.32873781578,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "weather_block_rate": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "weather_blocked_steps": {
+          "n": 10,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "work_demand_teu": {
+          "n": 10,
+          "mean": 305916.65121291636,
+          "std": 18743.695726281017,
+          "median": 297820.5717897415,
+          "ci_low": 294949.45725071494,
+          "ci_high": 317110.54260875814,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      },
+      "evaluated_at": "2026-08-13T06:45:36.549883Z"
+    }
+  },
+  "intended_use": "offline port operations decision support and held-out evaluation",
+  "not_intended_use": [
+    "autonomous actuator dispatch",
+    "safety-critical control without site validation",
+    "performance claims outside the recorded dataset and configuration"
+  ],
+  "training_data": {
+    "dataset_id": "public_cn_sha_hourly_v3",
+    "title": "Shanghai official aggregate + Yangshan public reanalysis v3",
+    "created_at": "2026-08-12T06:09:21.370394Z",
+    "provenance_type": "public_official_aggregate_plus_public_reanalysis_and_declared_derivatives",
+    "evidence_tier": "public_official_aggregate_reanalysis_enriched",
+    "owner": "port-dt-multi maintainers",
+    "timezone": "UTC",
+    "intended_use": "Shanghai public-data offline RL training, blind holdout evaluation and port-adapter validation",
+    "license": "PRC Ministry of Transport public information; Open-Meteo attribution and upstream model terms; code MIT",
+    "port_profile_id": "cn_sha_public_benchmark_v3",
+    "environment_version": "port_ops_v3",
+    "measured_columns": [],
+    "official_aggregate_columns": [
+      "throughput_teu"
+    ],
+    "public_reanalysis_columns": [
+      "ambient_c",
+      "wind_speed_mps",
+      "wave_height_m",
+      "tide_m",
+      "current_speed_mps"
+    ],
+    "derived_columns": [
+      "hourly_throughput_teu_distribution",
+      "vessel_arrivals",
+      "base_load_kw",
+      "price_per_kwh",
+      "carbon_kg_per_kwh",
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "reefer_load_kw",
+      "pilot_tug_availability_ratio",
+      "closure_flag"
+    ],
+    "unavailable_factors": [
+      "visibility_km"
+    ],
+    "independent_source_observations": 17566,
+    "source_observation_counts": {
+      "official_port_reporting_periods": 22,
+      "aligned_public_reanalysis_hours": 17544
+    },
+    "snapshot": {
+      "artifact_id": "shanghai_yangshan_reanalysis_2024_2025.csv",
+      "sha256": "3bfecc268f830be4f69fab85a4c27a09adec14ad15a6e83bd12c52963ceb14a7",
+      "rows": 17544,
+      "refresh_result": {
+        "rows": 17544,
+        "sha256": "3bfecc268f830be4f69fab85a4c27a09adec14ad15a6e83bd12c52963ceb14a7",
+        "null_counts": {
+          "ocean_current_velocity_kmh": 96,
+          "sea_level_height_msl": 432
+        },
+        "weather_grid": {
+          "latitude": 30.5,
+          "longitude": 122.0
+        },
+        "marine_grid": {
+          "latitude": 30.5,
+          "longitude": 122.0
+        }
+      }
+    },
+    "reanalysis_processing": {
+      "alignment": "hourly UTC inner alignment on the weather and marine model grids",
+      "gap_fill": "linear interpolation within the same public reanalysis series; no terminal telemetry substituted",
+      "filled_value_counts": {
+        "ocean_current_velocity_kmh": 96,
+        "sea_level_height_msl": 432
+      }
+    },
+    "sources": [
+      {
+        "publisher": "Ministry of Transport of the People's Republic of China",
+        "role": "official_Shanghai_container_throughput_anchors",
+        "artifact_id": "shanghai_port_mot_2024_2025.json",
+        "sha256": "e8937ea74515bb3df73a4807c297f0d4a6c70b6e846b1edf7b41a75f190da8e9",
+        "source_urls": [
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202403/P020240528369534362302.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202404/P020240528368732806335.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202405/P020240528348031532627.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202406/P020240628504193219950.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202407/P020240726315056370661.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202408/P020240830512415780926.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202409/P020240929371784231670.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202410/P020241031537369031657.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202411/P020241127569785743903.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202412/P020241224528010634131.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202503/P020250326508512684765.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202503/P020250326523159037809.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202504/P020250430342705534557.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202505/P020250530444803811811.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202506/P020250630541133602289.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202507/P020250725557677106021.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202508/P020250827544303907995.pdf",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202509/P020250930551932136174.xlsx",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202510/P020251031671201713119.xlsx",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202511/P020251128543498309570.xlsx",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202512/P020251226513609255904.xlsx",
+          "https://xxgk.mot.gov.cn/jigou/zhghs/202601/P020260130498887936897.pdf"
+        ],
+        "accessed_at": "2026-08-12"
+      },
+      {
+        "publisher": "Open-Meteo / Copernicus ERA5",
+        "role": "hourly_public_weather_reanalysis_near_Yangshan",
+        "url": "https://archive-api.open-meteo.com/v1/archive",
+        "license_url": "https://open-meteo.com/en/license",
+        "accessed_at": "2026-08-12"
+      },
+      {
+        "publisher": "Open-Meteo marine model aggregation",
+        "role": "hourly_public_marine_reanalysis_near_Yangshan",
+        "url": "https://marine-api.open-meteo.com/v1/marine",
+        "license_url": "https://open-meteo.com/en/license",
+        "accessed_at": "2026-08-12"
+      }
+    ],
+    "split_policy": {
+      "training": "first 70 percent chronological rows",
+      "validation": "next 10 percent chronological rows",
+      "blind_test": "final 20 percent chronological rows",
+      "shuffle": false
+    },
+    "warning": "This is not Shanghai terminal telemetry. Official throughput remains aggregate, environmental values are reanalysis, terminal operational fields are engineering derivatives, and production dispatch stays prohibited until authorized field mapping, calibration, shadow operation and acceptance.",
+    "sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+    "rows": 17544,
+    "start_at": "2024-01-01T00:00:00Z",
+    "end_at": "2025-12-31T23:00:00Z",
+    "artifact_id": "public_cn_sha_hourly_v3.csv",
+    "columns": [
+      "timestamp",
+      "base_load_kw",
+      "throughput_teu",
+      "vessel_arrivals",
+      "tide_m",
+      "price_per_kwh",
+      "carbon_kg_per_kwh",
+      "ambient_c"
+    ],
+    "optional_factor_columns": [
+      "wind_speed_mps",
+      "visibility_km",
+      "wave_height_m",
+      "current_speed_mps",
+      "berth_occupancy_ratio",
+      "yard_occupancy_ratio",
+      "crane_availability_ratio",
+      "equipment_availability_ratio",
+      "channel_congestion_ratio",
+      "reefer_load_kw",
+      "pilot_tug_availability_ratio",
+      "closure_flag"
+    ],
+    "train_rows": 12280,
+    "validation_rows": 1755,
+    "test_rows": 3509,
+    "split_method": "chronological_train_validation_blind_test_no_shuffle",
+    "test_ratio": 0.2,
+    "validation_ratio": 0.1,
+    "quality": {
+      "status": "pass",
+      "training_eligible": true,
+      "dataset_id": "public_cn_sha_hourly_v3",
+      "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+      "rows": 17544,
+      "time": {
+        "start_at": "2024-01-01T00:00:00Z",
+        "end_at": "2025-12-31T23:00:00Z",
+        "median_cadence_seconds": 3600.0,
+        "irregular_gap_count": 0,
+        "strictly_increasing": true
+      },
+      "missing_value_count": 0,
+      "non_finite_value_count": 0,
+      "physical_violation_count": 0,
+      "missing_governance_metadata": [],
+      "columns": {
+        "base_load_kw": {
+          "unit": "kW",
+          "min": 19058.8515625,
+          "p25": 21382.646484375,
+          "median": 22656.0712890625,
+          "p75": 23931.8095703125,
+          "max": 27677.998046875,
+          "mean": 22700.423911731752,
+          "std": 1620.2706689046174,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "throughput_teu": {
+          "unit": "TEU/sampling_interval",
+          "min": 4131.48193359375,
+          "p25": 5351.5335693359375,
+          "median": 6050.06884765625,
+          "p75": 6762.690673828125,
+          "max": 8507.19921875,
+          "mean": 6074.44140302151,
+          "std": 862.355676331925,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "vessel_arrivals": {
+          "unit": "vessel_calls/sampling_interval",
+          "min": 0.7945157885551453,
+          "p25": 1.0291410386562347,
+          "median": 1.1634747385978699,
+          "p75": 1.3005174100399017,
+          "max": 1.6359999179840088,
+          "mean": 1.1681618086528245,
+          "std": 0.16583762999285168,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "tide_m": {
+          "unit": "m",
+          "min": -1.809999942779541,
+          "p25": -0.4099999964237213,
+          "median": 0.23000000417232513,
+          "p75": 0.9300000071525574,
+          "max": 2.759999990463257,
+          "mean": 0.2753077974106405,
+          "std": 0.8662895385392361,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": -20.0,
+            "max": 20.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "price_per_kwh": {
+          "unit": "currency/kWh",
+          "min": 0.4300000071525574,
+          "p25": 0.4300000071525574,
+          "median": 0.7200000286102295,
+          "p75": 0.7200000286102295,
+          "max": 1.0800000429153442,
+          "mean": 0.7104166919986407,
+          "std": 0.22679799845180715,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "carbon_kg_per_kwh": {
+          "unit": "kgCO2e/kWh",
+          "min": 0.5400000214576721,
+          "p25": 0.5473219752311707,
+          "median": 0.5649999976158142,
+          "p75": 0.5826780200004578,
+          "max": 0.5899999737739563,
+          "mean": 0.565000002582868,
+          "std": 0.017677734983992006,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 5.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "ambient_c": {
+          "unit": "degreeCelsius",
+          "min": -1.399999976158142,
+          "p25": 10.5,
+          "median": 18.600000381469727,
+          "p75": 26.5,
+          "max": 32.20000076293945,
+          "mean": 18.11199270227327,
+          "std": 8.112262988230132,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": -60.0,
+            "max": 70.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "wind_speed_mps": {
+          "unit": "m/s",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.10000000149011612,
+          "max": 18.25,
+          "mean": 6.439315440292044,
+          "std": 2.6378582248109415,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 100.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "visibility_km": {
+          "unit": "km",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1000.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "wave_height_m": {
+          "unit": "m",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.019999999552965164,
+          "max": 2.759999990463257,
+          "mean": 0.5258538532300142,
+          "std": 0.33430444529192976,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 40.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "current_speed_mps": {
+          "unit": "m/s",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.0,
+          "max": 2.1666669845581055,
+          "mean": 0.7113115847751166,
+          "std": 0.3945485789087322,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 15.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "berth_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.6322270035743713,
+          "max": 0.9200000166893005,
+          "mean": 0.7696512263664034,
+          "std": 0.06098455227016419,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "yard_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.6123800277709961,
+          "max": 0.9200000166893005,
+          "mean": 0.7592823416796439,
+          "std": 0.0651903864813142,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "crane_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.8100000023841858,
+          "max": 0.98540198802948,
+          "mean": 0.9174556571988552,
+          "std": 0.03273373916214191,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "equipment_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.8849999904632568,
+          "max": 0.9824450016021729,
+          "mean": 0.9446975859676221,
+          "std": 0.01818541173067248,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "channel_congestion_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.5735380053520203,
+          "max": 0.8805819749832153,
+          "mean": 0.7159709532817803,
+          "std": 0.07036745816946409,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "reefer_load_kw": {
+          "unit": "kW",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 547.2315063476562,
+          "max": 1141.702392578125,
+          "mean": 744.4219901158393,
+          "std": 140.4671724569511,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "pilot_tug_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.7400000095367432,
+          "max": 0.9738690257072449,
+          "mean": 0.8832742089394614,
+          "std": 0.04364498721915798,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "closure_flag": {
+          "unit": "binary",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": true,
+          "optional": true
+        }
+      },
+      "factor_coverage": {
+        "wind_speed_mps": 1.0,
+        "visibility_km": 0.0,
+        "wave_height_m": 1.0,
+        "current_speed_mps": 1.0,
+        "berth_occupancy_ratio": 1.0,
+        "yard_occupancy_ratio": 1.0,
+        "crane_availability_ratio": 1.0,
+        "equipment_availability_ratio": 1.0,
+        "channel_congestion_ratio": 1.0,
+        "reefer_load_kw": 1.0,
+        "pilot_tug_availability_ratio": 1.0,
+        "closure_flag": 1.0
+      },
+      "available_factor_count": 11,
+      "factor_count": 12,
+      "evidence": {
+        "tier": "public_official_aggregate_reanalysis_enriched",
+        "measured_columns": [],
+        "derived_columns": [
+          "hourly_throughput_teu_distribution",
+          "vessel_arrivals",
+          "base_load_kw",
+          "price_per_kwh",
+          "carbon_kg_per_kwh",
+          "berth_occupancy_ratio",
+          "yard_occupancy_ratio",
+          "crane_availability_ratio",
+          "equipment_availability_ratio",
+          "channel_congestion_ratio",
+          "reefer_load_kw",
+          "pilot_tug_availability_ratio",
+          "closure_flag"
+        ],
+        "independent_source_observations": 17566,
+        "row_count_is_not_independent_information_count": true
+      },
+      "errors": [],
+      "warnings": [],
+      "generated_at": "2026-08-13T06:42:29.266088Z"
+    }
+  },
+  "limitations": [
+    "public example data includes explicitly derived engineering fields",
+    "software guardrails do not replace PLC/BMS interlocks or operator authority",
+    "results require multiple seeds before comparative claims"
+  ],
+  "generated_at": "2026-08-13T06:45:36.760946Z"
+}
