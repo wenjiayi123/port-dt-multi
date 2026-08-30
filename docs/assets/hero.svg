@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1600" height="560" viewBox="0 0 1600 560" role="img" aria-labelledby="title desc">
   <title id="title">港航数字孪生 AI 决策调度双端系统</title>
-  <desc id="desc">Web and mobile port and maritime digital twin AI decision and dispatch system.</desc>
+  <desc id="desc">V6 Web and mobile port and maritime digital twin with thirteen business domains, a 110-dimensional observation contract, eighteen recommendation actions, and fail-closed governance.</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop stop-color="#071426"/><stop offset="0.52" stop-color="#0b2340"/><stop offset="1" stop-color="#071b25"/>
@@ -28,7 +28,7 @@
   <text x="205" y="144" fill="#7dd3fc" font-family="ui-sans-serif,system-ui" font-size="20" font-weight="700" letter-spacing="3">PORT &amp; MARITIME · DIGITAL TWIN · AI DISPATCH</text>
   <text x="90" y="242" fill="#f8fafc" font-family="ui-sans-serif,system-ui" font-size="43" font-weight="850">港航数字孪生 AI 决策调度双端系统</text>
   <text x="90" y="296" fill="#dbeafe" font-family="ui-sans-serif,system-ui" font-size="24" font-weight="650">Port &amp; Maritime Digital Twin AI Decision &amp; Dispatch System</text>
-  <text x="90" y="340" fill="#93c5fd" font-family="ui-sans-serif,system-ui" font-size="22">Web + Mobile · TwinLab + RL · Xiaoyi AI Copilot</text>
+  <text x="90" y="340" fill="#93c5fd" font-family="ui-sans-serif,system-ui" font-size="22">V6 · 13 business domains · 110D observations · 18D recommendations</text>
   <path d="M90 387h740" stroke="url(#cyan)" stroke-width="3"/>
   <text x="90" y="434" fill="#b7c9df" font-family="ui-sans-serif,system-ui" font-size="19">PROVENANCE → TWIN → TRAIN → EVALUATE → GOVERN → DRY-RUN → AUDIT</text>
   <g transform="translate(1010 95)" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -39,10 +39,11 @@
     <circle cx="414" cy="253" r="10" fill="#34d399" stroke="none"/>
     <path d="M55 380c55-22 100-22 150 0s100 22 150 0 95-22 140 0" stroke="#60a5fa" stroke-width="3" opacity=".65"/>
   </g>
-  <g font-family="ui-sans-serif,system-ui" font-size="14" font-weight="700">
-    <rect x="90" y="474" width="160" height="38" rx="19" fill="#0f3354" stroke="#2563eb"/><text x="113" y="498" fill="#bfdbfe">12 CONTROLLERS</text>
-    <rect x="264" y="474" width="160" height="38" rx="19" fill="#0c3b3d" stroke="#10b981"/><text x="291" y="498" fill="#a7f3d0">WEB + MOBILE</text>
-    <rect x="438" y="474" width="176" height="38" rx="19" fill="#342057" stroke="#8b5cf6"/><text x="466" y="498" fill="#ddd6fe">EVIDENCE GATES</text>
-    <rect x="628" y="474" width="170" height="38" rx="19" fill="#4a2c0c" stroke="#f59e0b"/><text x="653" y="498" fill="#fde68a">XIAOYI COPILOT</text>
+  <g font-family="ui-sans-serif,system-ui" font-size="13" font-weight="700">
+    <rect x="90" y="474" width="150" height="38" rx="19" fill="#0f3354" stroke="#2563eb"/><text x="109" y="498" fill="#bfdbfe">12 CONTROLLERS</text>
+    <rect x="253" y="474" width="190" height="38" rx="19" fill="#0c3b3d" stroke="#10b981"/><text x="275" y="498" fill="#a7f3d0">13 BUSINESS DOMAINS</text>
+    <rect x="456" y="474" width="180" height="38" rx="19" fill="#342057" stroke="#8b5cf6"/><text x="480" y="498" fill="#ddd6fe">110D OBS · 18D ACT</text>
+    <rect x="649" y="474" width="145" height="38" rx="19" fill="#0f3354" stroke="#38bdf8"/><text x="672" y="498" fill="#bae6fd">WEB + MOBILE</text>
+    <rect x="807" y="474" width="184" height="38" rx="19" fill="#4a2c0c" stroke="#f59e0b"/><text x="829" y="498" fill="#fde68a">FAIL-CLOSED GATES</text>
   </g>
 </svg>

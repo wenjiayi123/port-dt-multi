@@ -249,6 +249,8 @@ REQUIRED = (
     "app/static/xiaoyi_maritime_officer.png",
     "app/static/vendor/echarts/echarts.min.js",
     "app/static/vendor/echarts/LICENSE",
+    "docs/assets/hero.svg",
+    "docs/assets/v6-coordinated-business-evidence.svg",
     "docs/assets/system-overview-provenance-governance.png",
     "docs/assets/training-center-algorithm-matrix-xiaoyi.png",
     "docs/assets/xiaoyi-system-assistant-button-linkage.png",
@@ -1214,15 +1216,21 @@ def main() -> int:
         if marker not in operations:
             errors.append(f"Production readiness hardening marker missing: {marker}")
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    screenshot_paths = (
+    current_visual_paths = (
+        "docs/assets/hero.svg",
         "docs/assets/system-overview-provenance-governance.png",
+        "docs/assets/v6-coordinated-business-evidence.svg",
+    )
+    historical_screenshot_paths = (
         "docs/assets/training-center-algorithm-matrix-xiaoyi.png",
         "docs/assets/rl-training-console-real-backend.png",
         "docs/assets/seven-controller-backend-results.png",
         "docs/assets/xiaoyi-system-assistant-button-linkage.png",
     )
-    if any(readme.count(path) != 1 for path in screenshot_paths):
-        errors.append("README must embed each of the five evidence screenshots exactly once")
+    if any(readme.count(path) != 1 for path in current_visual_paths):
+        errors.append("README must embed each current V6 visual exactly once")
+    if any(readme.count(path) != 1 for path in historical_screenshot_paths):
+        errors.append("README must retain one traceable link to each historical evidence screenshot")
     for script_path in (
         ROOT / "app/ui/adapters/xiaoyi_sprite.js",
         ROOT / "app/ui/adapters/rl_evidence_console.js",

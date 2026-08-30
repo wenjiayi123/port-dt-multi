@@ -17,12 +17,14 @@
   <img alt="Python 3.12+" src="https://img.shields.io/badge/Python-3.12%2B-3776ab?logo=python&logoColor=white" />
   <img alt="FastAPI" src="https://img.shields.io/badge/FastAPI-0.139-009688?logo=fastapi&logoColor=white" />
   <img alt="Twelve controllers" src="https://img.shields.io/badge/controllers-12-8b5cf6" />
-  <img alt="Status" src="https://img.shields.io/badge/status-research%20%26%20integration-0ea5e9" />
+  <img alt="Thirteen business domains" src="https://img.shields.io/badge/business%20domains-13-10b981" />
+  <img alt="V6 contract" src="https://img.shields.io/badge/V6-110D%20observations%20%7C%2018D%20actions-0ea5e9" />
+  <img alt="Status" src="https://img.shields.io/badge/status-offline%20engineering%20baseline-f59e0b" />
 </p>
 
 <p align="center">
-  <strong>面向港口与航运现场的 Web 指挥中心 + Flutter 移动端，将实时孪生、预测、RL/MPC 决策、小懿AI协同、人工审批与操作追踪组成同一运营闭环。</strong><br />
-  <em>A dual-end Web and Flutter system unifying live twins, forecasting, RL/MPC decisions, Xiaoyi AI collaboration, human approval, and traceable operations.</em>
+  <strong>面向港口与航运现场的 Web 指挥中心 + Flutter 稳定契约，将连续孪生回放、预测、RL/MPC 建议、小懿AI协同、人工审批与操作追踪组成同一运营闭环。</strong><br />
+  <em>A Web command center and stable Flutter contract unifying continuous twin replay, forecasting, bounded RL/MPC recommendations, Xiaoyi AI collaboration, human approval, and traceable operations.</em>
 </p>
 
 ## 项目介绍 / Project introduction
@@ -33,17 +35,18 @@ It is an executable engineering platform for coordinated port production, energy
 
 | 项目维度 / Dimension | 当前能力 / Current capability |
 |---|---|
-| 双端协同 / Dual-end workflow | Web 指挥中心 + Flutter 一线移动端，同源数据、同模型版本、同任务与审计 ID |
-| 业务覆盖 / Operations | 泊位船期、场桥、暖通、岸电+储能、场内储能、堆场照明、安全、ESG 与 OpsX |
-| AI 决策 / AI decisions | 10 类可执行 RL 算法 + MPC + FCFS，配套时序留出评测、多种子统计、安全投影和准入门 |
+| 双端协同 / Dual-end workflow | 本仓库提供 Web/FastAPI 主系统与稳定 `/api/mobile/*` 契约；Flutter 一线客户端通过同一任务、模型和审计 ID 接入 |
+| 业务覆盖 / Operations | 13 个业务域全部有运行输出：泊位、岸桥、堆场、水平运输、闸口/铁路/驳船、能源、冷藏箱/岸电、维护、监管、安全、审批、核算、迁移/漂移治理 |
+| AI 决策 / AI decisions | 9 个域由 RL 或独立优化器给出建议；4 个安全/治理/核算域明确不交给 RL；另保留 10 类 RL + MPC + FCFS 对照矩阵 |
 | 小懿AI / Xiaoyi AI | 基于当前孪生、预测、模型、异常和准入状态执行态势、解释、分诊、预演与交接班任务 |
-| 落地边界 / Deployment boundary | 公开数据与校准回放用于开发和评测；接港时按数据契约替换 TOS、PLC、BMS/BA 等适配器，配置未通过校验时不执行现场指令 |
+| 落地边界 / Deployment boundary | 当前是可开展只读接港与影子运行的离线工程基线；八类现场适配器、校准、联锁回读和独立验收未完成，`production_authority=false` |
 
 > **一句话闭环：**公开数据/现场数据 → 数字孪生 → 预测与 RL/MPC 策略 → 软件安全包络 → 人工审批 → 双端任务执行/回放 → 操作记录。
 
 <p align="center">
   <a href="#项目介绍--project-introduction">项目介绍 / Introduction</a> ·
   <a href="#-系统全景--system-at-a-glance">系统全景 / Overview</a> ·
+  <a href="#v6-current">V6 当前证据 / Current evidence</a> ·
   <a href="#-真实训练与评测--real-training--evaluation">训练与评测 / Evaluation</a> ·
   <a href="#-版本演进与训练结果--version-evolution--training-results">版本与训练 / Versions</a> ·
   <a href="#-快速开始--quick-start">快速开始 / Quick start</a> ·
@@ -53,23 +56,23 @@ It is an executable engineering platform for coordinated port production, energy
 
 <table>
   <tr>
-    <th align="center">公开数据驱动记录<br /><sub>PUBLIC-DATA DRIVEN</sub></th>
-    <th align="center">泊位有效利用率<br /><sub>BERTH UTILIZATION</sub></th>
-    <th align="center">平均待泊时间<br /><sub>MEAN WAITING TIME</sub></th>
-    <th align="center">情景用电成本<br /><sub>SCENARIO ENERGY COST</sub></th>
-    <th align="center">稳定性复验<br /><sub>PAIRED BOOTSTRAP</sub></th>
+    <th align="center">运行业务覆盖<br /><sub>BUSINESS COVERAGE</sub></th>
+    <th align="center">策略合同<br /><sub>POLICY CONTRACT</sub></th>
+    <th align="center">真实优化训练<br /><sub>REAL OPTIMIZATION</sub></th>
+    <th align="center">相对 FCFS<br /><sub>PAIRED FORWARD VALUE</sub></th>
+    <th align="center">相对固定规则<br /><sub>STRONGER BASELINE</sub></th>
   </tr>
   <tr>
-    <td align="center"><strong>52,608</strong><br />小时记录 / hourly records</td>
-    <td align="center"><strong>83.63% → 91.09%</strong><br />相对提升 / relative +8.91%</td>
-    <td align="center"><strong>−16.94%</strong><br />5.90 h → 4.90 h</td>
-    <td align="center"><strong>−11.80%</strong><br />同吞吐情景 / throughput held</td>
-    <td align="center"><strong>365 × 2,000</strong><br />日级配对复验 / paired daily resampling</td>
+    <td align="center"><strong>13 / 13</strong><br />均有后端运行输出</td>
+    <td align="center"><strong>110D / 18D</strong><br />观测 / 连续建议动作</td>
+    <td align="center"><strong>3 × 30,000</strong><br />SAC 环境优化步</td>
+    <td align="center"><strong>+15.77%</strong><br />95% CI 10.18%–21.18%</td>
+    <td align="center"><strong>+22.94%</strong><br />95% CI 19.17%–26.49%</td>
   </tr>
 </table>
 
 <p align="center">
-  <sub><strong>Evidence scope:</strong> parameter-declared digital-twin counterfactual over public MPA anchors; not a measured terminal KPI, online A/B test, or audited financial saving.</sub>
+  <sub><strong>Evidence scope:</strong> V6 offline counterfactual over public aggregates/reanalysis plus declared replaceable engineering parameters; 19/19 offline gates passed with zero guardrail violations, but this is not a measured terminal KPI, online A/B test, audited saving, or production authorization.</sub>
 </p>
 
 ---
@@ -111,7 +114,7 @@ flowchart LR
   subgraph T["Twin & Experiment Plane / 孪生与实验平面"]
     V["PortViz + DTDL graph\n港区态势与语义图"]
     E["Chronological environment\n时间顺序实验环境"]
-    C["10 RL methods · MPC · FCFS"]
+    C["Controller matrix + V6 coordinated SAC\n控制器矩阵与V6协同策略"]
     Q --> V
     Q --> E --> C
   end
@@ -144,10 +147,15 @@ This is not a monolithic “AI that does everything.” Provenance levels, envir
 ## 🖥️ 产品界面 / Product surfaces
 
 <p align="center">
-  <img src="docs/assets/training-center-algorithm-matrix-xiaoyi.png" alt="Historical V2 training center evidence with seven-controller matrix, objectives, observations, actions, and Xiaoyi advisor" width="96%" />
+  <img src="docs/assets/v6-coordinated-business-evidence.svg" alt="V6 coordinated port business evidence showing thirteen domains, 110-dimensional observations, eighteen recommendation actions, offline training, paired forward value, admission gates, and production boundary" width="96%" />
   <br />
-  <sub>图 2 · V2 历史界面证据（保留）：7 类控制器、87,459 行公开训练包与 37D/5D 环境；V3 当前 12 控制器界面请打开 <code>/v3</code>。</sub>
+  <sub>图 2 · V6 当前证据摘要：13 个业务域、110D 观测、18D 建议动作、真实多种子 SAC 训练、独立前向对照和失效安全边界。</sub>
 </p>
+
+<details>
+  <summary><strong>历史界面证据 / Historical UI evidence</strong></summary>
+  <p>V2 的 7 类控制器、37D/5D 合同与小懿按钮联动截图继续保留在 <a href="docs/assets/training-center-algorithm-matrix-xiaoyi.png">训练中心</a>、<a href="docs/assets/rl-training-console-real-backend.png">训练控制台</a>、<a href="docs/assets/seven-controller-backend-results.png">后端结果</a>和<a href="docs/assets/xiaoyi-system-assistant-button-linkage.png">按钮联动</a>中，仅用于版本追溯，不代表当前 V6 合同。</p>
+</details>
 
 项目统一使用同一份透明背景“小懿 Q 版海事官”资产；训练顾问、全系统助手和页面悬浮入口不再混用旧写实 SVG。人物只承担解释、导航和受控命令编排，不绕过训练确认或设备执行门禁。
 
@@ -166,9 +174,9 @@ The training advisor, full-system assistant, and floating entry point now share 
 
 ## 🧠 真实训练与评测 / Real training & evaluation
 
-十二个控制器使用相同规范数据契约和评测口径，但并不伪装成相同类型：SAC、PPO、TD3、DQN、A2C 由 Stable-Baselines3 实际优化；TQC、QR-DQN、TRPO、Recurrent PPO、ARS 由 SB3-Contrib 实际优化；MPC 与中性 FCFS 是非学习比较基线。
+仓库保留 12 类控制器的可执行矩阵和统一证据协议，但不会宣称每个算法适合每个环境：SAC、PPO、TD3、DQN、A2C 由 Stable-Baselines3 实际优化；TQC、QR-DQN、TRPO、Recurrent PPO、ARS 由 SB3-Contrib 实际优化；MPC 与中性 FCFS 是非学习比较基线。V6 是 18 维连续动作合同，离散 DQN/QR-DQN 在入口处被拒绝；当前 V6 正式冠军来自 SAC，而不是从 12 类算法中事后挑最好看的结果。
 
-All twelve controllers share one canonical data contract and evaluation protocol without pretending to be the same kind of method. Ten methods execute real RL optimizers, while MPC and neutral FCFS provide non-learning comparators.
+The repository retains a twelve-controller executable matrix and one evidence protocol without claiming every method fits every environment. Ten methods execute real RL optimizers, while MPC and neutral FCFS are non-learning comparators. V6 is an 18-dimensional continuous-action contract, so discrete DQN/QR-DQN are rejected at admission; the current formal V6 champion comes from the predeclared SAC training track.
 
 面向换港的 `port_ops_v2` 提供37维观测（基础状态、12类国际港口因素和逐因素可用性掩码）与5维建议动作（BESS、服务、柔性负荷、泊位优先级、堆场流量）。既有 `port_ops_v1` 模型和指标保持可读，避免升级时丢失历史证据。港口资产容量、目标权重、安全边界和因素要求由 `config/ports/*.json` 场景包管理。
 
@@ -186,12 +194,6 @@ V3 formal evidence uses `port_ops_v3`, which retains the 37D/5D contract while c
 
 `port_ops_v4` adds a 53-state/7-action contract for maritime inspections, customs checks, detention/secondary checks, authority-resource availability, release state, and downstream recovery queues. The two new actions reserve terminal readiness and prioritize post-release recovery only; they do not alter official findings or release decisions. After three-seed SAC training, the locked candidate improves regulatory-delay TEU-hours by 58.95% (95% CI 52.14%–65.13%) against a regulator-unaware V3 engineering proxy on a 2026 out-of-period forward engineering challenge, with zero guardrail violations. This is not field performance or production authority.
 
-<p align="center">
-  <img src="docs/assets/rl-training-console-real-backend.png" alt="Real backend RL training console with Los Angeles public dataset, profile-bound objective weights, optimizer parameters, progress source, and test-only replay control" width="96%" />
-  <br />
-  <sub>图 3 · 真实训练控制台：数据集、目标权重、算法超参数、随机种子、无渲染训练与测试回放边界由后端统一承接。</sub>
-</p>
-
 | 控制器 / Controller | 类型 / Type | 动作空间 / Action space | 实现 / Implementation |
 |---|---|---|---|
 | SAC | off-policy actor–critic | 连续 / continuous | `stable_baselines3.SAC` |
@@ -206,12 +208,6 @@ V3 formal evidence uses `port_ops_v3`, which retains the 37D/5D contract while c
 | ARS | derivative-free random search | 连续 / continuous | `sb3_contrib.ARS` |
 | MPC | rolling-horizon control | 连续约束 / constrained continuous | `scipy.optimize.minimize` |
 | FCFS neutral | deterministic rule comparator | 连续中性动作 / neutral continuous | `port_dt.FCFSNeutralPolicy` |
-
-<p align="center">
-  <img src="docs/assets/seven-controller-backend-results.png" alt="Historical V2 seven-controller backend results retained as append-only evidence" width="96%" />
-  <br />
-  <sub>图 4 · V2 历史七算法评测登记（保留、不覆盖）；V3 新增控制器沿用相同后端证据协议。</sub>
-</p>
 
 上游实现说明： [Stable-Baselines3 A2C](https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html) · [SB3-Contrib TQC](https://sb3-contrib.readthedocs.io/en/master/modules/tqc.html)。
 
@@ -281,6 +277,28 @@ python -m scripts.business_kpi_benchmark --verify
 
 ## 🧬 版本演进与训练结果 / Version evolution & training results
 
+<a id="v6-current"></a>
+
+### V6 · 全业务协同与离线冠军 / Coordinated business & offline champion
+
+V6 把执行深度核查扩展为 13 个业务域。13 个域均有真实后端运行输出，其中 9 个由 RL 或独立优化器输出建议；气象海况与封复航、安全审批与回滚、成本碳峰值核算、跨港迁移与漂移治理 4 个域采用确定性安全、治理、核算或监测逻辑，不为了“AI 覆盖率”强行交给 RL。闸口、铁路、驳船使用三个独立动作；引航与拖轮分离；岸桥、水平运输、场桥形成显式三段资源链。
+
+V6 expands the execution-depth inventory to thirteen business domains. Every domain exposes a backend-owned runtime output. Nine domains use RL or an independent optimizer; weather/navigation safety, approval/rollback, cost-carbon accounting, and multi-port transfer/drift stay deterministic by design. Gate, rail, and barge have separate actions, as do pilotage and towage, while quay crane, horizontal transport, and yard crane form an explicit three-stage resource chain.
+
+| 设计面 / Design plane | V6 当前合同 / Current contract | 不越权边界 / Boundary |
+|---|---|---|
+| 观测 / Observation | **110 维**：53 个测量或场景特征、逐字段可用性掩码、归一化运行状态，以及监管、集疏运、海事服务、装卸链、冷藏、维护、岸电和能源等有记忆压力 | 缺失现场字段保留 availability mask，不填成“正常值” |
+| 动作 / Action | **18 个连续建议动作**：储能、服务、柔性负荷、泊位、堆场、查验缓冲、监管恢复、闸口、铁路、驳船、冷藏、岸电、维护、引航、拖轮、岸桥、水平运输、场桥 | 不含航行批准、监管放行、危险品许可、计划承诺、设备联锁或人工授权 |
+| 奖励 / Reward | 分项记录成本、碳、峰值、安全、延误、各资源积压/服务、三段装卸链、资源失衡、动作抖动和潜在动作修正；逐步账本可审计 | 荷电状态/爬坡/期末可达域、封航/富余水深、最低服务承诺等是硬约束，不能靠调奖励权重绕过 |
+| 数据 / Data | 2024–2025 共 17,544 小时训练包；公开吞吐汇总与洋山附近再分析为外部观测，内部码头字段为声明且可替换的工程参数 | 不是上海码头 TOS、PLC、BMS、VTS 或设备实测遥测 |
+| 训练与选模 / Training | Stable-Baselines3 SAC，随机种子 626/726/826 × 30,000 真实优化步；验证集选中 seed 726，模型 SHA-256 `9cfebff3...41942` | 训练禁渲染；2026 前向包不参与训练、归一化或选模 |
+| 独立评测 / Evaluation | 锁定后在 2026 年 3,624 小时前向挑战上做 20 个成对 48 小时窗口；相对 FCFS **+15.77%**（95% CI **10.18%–21.18%**），相对透明固定规则代理 **+22.94%**（**19.17%–26.49%**） | 固定规则是工程代理，不是上海港现行策略；数值不是现场财务节省 |
+| 晋级 / Admission | **19/19** 离线业务、安全、投影与隔离门通过；守护栏违规 0，状态 `ADMITTED_OFFLINE_CHAMPION` | “冠军”仅表示当前离线证据最优；`production_authority=false`、`dispatch_allowed=false` |
+
+失败候选、三种子模型、配对窗口指标、冠军指针和哈希均追加保留在 [`evidence/v6/coordinated_business/`](evidence/v6/coordinated_business/)；[V6 顶级港口差距核查](docs/TOP_PORT_READINESS_GAP_AUDIT_V6.md)、[V6 数据卡](docs/DATASET_CARD_public_cn_sha_coordinated_scenario_v6.md)和[只读现场接入网关](docs/SITE_INTEGRATION_GATEWAY.md)分别给出生产差距、数据真实性与替换条件。当前结论仍是：可进入只读现场映射和影子联调，不能马上取得生产控制权。
+
+Failed candidates, all three seeded models, paired-window metrics, the champion pointer, and hashes remain append-only under [`evidence/v6/coordinated_business/`](evidence/v6/coordinated_business/). The repository is ready for read-only site mapping and shadow integration—not immediate production control.
+
 ### V3.1 · Multi-port public reference training and Shanghai target training
 
 V3 保留全部历史基准并新增一条更严格的证据链：洛杉矶六分钟公开观测承担高频对照训练，新加坡官方聚合数据保留长周期覆盖，上海新数据包则把交通运输部 22 个吞吐锚点与洋山附近 17,544 小时公开再分析对齐并独立训练。当前权重未跨港继承，因此不宣称迁移学习。尚未公开的 TOS、岸桥、堆场、AGV 和闸口字段始终标记为工程派生或不可用，等现场数据按契约替换。
@@ -348,14 +366,6 @@ Technical references: [V3 technical map](docs/V3_TECHNICAL_EVIDENCE.md) · [runt
 
 V3.2 adds a paired strong-baseline gate. The selected three-seed SAC ensemble is compared on the same ten chronological blind windows with FCFS neutral control, a fixed transparent engineering SOP proxy, and receding-horizon MPC. SAC retains a strict advantage over FCFS but does not beat the engineering proxy or MPC on the fixed weighted objective, so production and group-savings admission remain closed. The proxy is not presented as measured incumbent Shanghai operations; site SOP and timestamped action/outcome logs must replace it.
 
-V6 expands the execution-depth inventory to thirteen business domains. All thirteen expose a real runtime output; nine have an RL or independent optimizer output, while weather/navigation safety, approval/rollback, cost-carbon accounting and multi-port transfer/drift remain deterministic safety, governance, accounting or monitoring functions by design. Gate, rail and barge now have three independent continuous actions; pilotage and towage are separate; quay crane, horizontal transport and yard crane form an explicit three-stage resource chain. Every card exposes runtime APIs, code hashes, site blockers and its fail-closed fallback; all thirteen remain production-pending.
-
-The coordinated policy contract uses 110 observations and 18 continuous recommendation actions. It keeps navigation approval, regulatory release, dangerous-goods permission, equipment interlocks, schedule commitment and human authorization outside RL. Training uses public aggregate/reanalysis evidence plus explicitly declared replaceable engineering resource-chain parameters; it never labels those parameters as Shanghai terminal telemetry. Failed candidates, selected models, paired forward metrics and artifact hashes are retained under [`evidence/v6/coordinated_business/`](evidence/v6/coordinated_business/).
-
-The admitted V6 offline champion is the selected seed 726 Stable-Baselines3 SAC policy after three seeds × 30,000 real optimizer steps. On twenty paired 48-hour windows from the separately sealed 2026 forward challenge, its composite business score improves by 15.77% versus FCFS (95% CI 10.18%–21.18%) and 22.94% versus the transparent fixed-rule proxy (19.17%–26.49%). All nineteen admission checks pass, including zero guardrail violations, terminal SOC recovery, absolute service floors and training/evaluation isolation. These are offline counterfactual results, not measured terminal savings or production authorization.
-
-The V6 readiness audit is available in [`docs/TOP_PORT_READINESS_GAP_AUDIT_V6.md`](docs/TOP_PORT_READINESS_GAP_AUDIT_V6.md). The data boundary is in [`docs/DATASET_CARD_public_cn_sha_coordinated_scenario_v6.md`](docs/DATASET_CARD_public_cn_sha_coordinated_scenario_v6.md), and the read-only signed site adapter contract is in [`docs/SITE_INTEGRATION_GATEWAY.md`](docs/SITE_INTEGRATION_GATEWAY.md). The repository remains a shadow-integration engineering baseline, not an immediately authorized production port system.
-
 ## 🚀 快速开始 / Quick start
 
 ### 本地运行 / Local
@@ -395,6 +405,8 @@ lock files; `requirements.txt` remains the cross-platform development input.
 - 集成中枢 / Integration hub: <http://127.0.0.1:8000/integration-hub>
 - OpenAPI（开发模式）: <http://127.0.0.1:8000/docs>
 - 来源总览 / Provenance: <http://127.0.0.1:8000/api/system/provenance>
+- V6 离线冠军证据 / V6 offline champion: <http://127.0.0.1:8000/api/rl/coordinated-business/evidence>
+- V6 现场数据准入 / V6 site-data admission: <http://127.0.0.1:8000/api/rl/datasets/public_cn_sha_integrated_scenario_v5/site-readiness>
 - 健康检查 / Health: <http://127.0.0.1:8000/health/live> · <http://127.0.0.1:8000/health/ready>
 
 ### 容器运行 / Container
@@ -404,9 +416,9 @@ docker build -t port-dt-multi:3.2.0 .
 docker run --rm -p 127.0.0.1:8000:8000 port-dt-multi:3.2.0
 ```
 
-容器包含 V3 页面、公开数据、模型登记、数据卡和实验脚本；CI 会构建镜像并检查 `/health/ready`、V3 总览和运行策略接口。容器默认以非 root 用户运行，配置项见 [.env.example](.env.example)。
+容器包含 V3 交互页面、V6 训练/证据接口、公开数据、模型登记、数据卡和实验脚本；CI 会构建镜像并检查 `/health/ready`、V3 总览和运行策略接口。容器默认以非 root 用户运行，配置项见 [.env.example](.env.example)。
 
-The image includes the V3 UI, public datasets, model registry, dataset cards, and experiment scripts. CI builds the image and checks `/health/ready`, the V3 overview, and runtime-policy endpoints. The container runs as a non-root user; configuration options are documented in [.env.example](.env.example).
+The image includes the V3 UI, V6 training/evidence APIs, public datasets, model registry, dataset cards, and experiment scripts. CI builds the image and checks `/health/ready`, the V3 overview, and runtime-policy endpoints. The container runs as a non-root user; configuration options are documented in [.env.example](.env.example).
 
 ## 🧪 启动一次训练 / Run one experiment
 
@@ -474,6 +486,10 @@ timestamp,base_load_kw,throughput_teu,vessel_arrivals,tide_m,price_per_kwh,carbo
 
 `public_cn_sha_hourly_v3` is the Shanghai target-domain package. It aligns 22 official throughput reports with 17,544 public Yangshan-area reanalysis hours, preserves the 106.57 million TEU aggregate exactly, and keeps every internal terminal factor explicitly derived or unavailable. It supports offline adaptation and blind testing—not a Shanghai telemetry or field-KPI claim.
 
+V6 不把工程场景重新包装成“新实测数据集”。`port_ops_v6` 在 17,544 小时包和独立 3,624 小时前向包之上增加可版本化、可替换的资源链合同；闸口、铁路、驳船、冷藏箱、岸电、维护、引航、拖轮、危险品、装卸链和容量仍是预声明工程参数。现场替换至少需要 720 个无间断小时、V6 全输入逐字段 99% 覆盖、授权导出声明、统一 `site_id`、来源清单哈希和 measured/authorized-derived 血缘；结构准入通过也不会自动获得控制权。详见 [V6 数据卡](docs/DATASET_CARD_public_cn_sha_coordinated_scenario_v6.md)。
+
+V6 does not relabel engineering scenarios as a newly measured dataset. `port_ops_v6` adds a versioned, replaceable resource-chain contract over the 17,544-hour package and the independent 3,624-hour forward challenge. Site replacement requires at least 720 gap-free hours, 99% per-field V6 input coverage, an authorized-export statement, one `site_id`, a source-manifest hash, and measured/authorized-derived lineage. Structural admission does not grant control authority.
+
 接入新港口无需改写算法，只需通过 `/api/rl/datasets/upload` 提供：
 
 To connect another port without rewriting algorithms, upload through `/api/rl/datasets/upload` with:
@@ -507,6 +523,9 @@ Datasets cannot overwrite an existing identifier unless `replace_existing=true` 
 进一步阅读 / Further reading:
 
 - [模型治理 / Model governance](MODEL_GOVERNANCE.md)
+- [V6 顶级港口差距核查 / V6 top-port gap audit](docs/TOP_PORT_READINESS_GAP_AUDIT_V6.md)
+- [V6 数据真实性与替换边界 / V6 dataset boundary](docs/DATASET_CARD_public_cn_sha_coordinated_scenario_v6.md)
+- [只读现场接入网关 / Read-only site integration gateway](docs/SITE_INTEGRATION_GATEWAY.md)
 - [南向执行安全契约 / Southbound execution](docs/SOUTHBOUND_EXECUTION.md)
 - [现场集成 / Site integration](docs/PRODUCTION_READINESS.md)
 - [港口靠泊事件数据网关 / Port-call event gateway](docs/PORT_CALL_DATA_GATEWAY.md)
@@ -528,12 +547,6 @@ Datasets cannot overwrite an existing identifier unless `replace_existing=true` 
 默认启动只开放可信主链；旧工程模拟器、旧 RL 产物、本机应用联动和生产执行都必须显式开启。完整变量见 [.env.example](.env.example)。
 
 The default runtime exposes the trusted core only. Legacy engineering simulators, legacy RL artifacts, local desktop launchers, and production execution require explicit opt-in. See [.env.example](.env.example).
-
-<p align="center">
-  <img src="docs/assets/xiaoyi-system-assistant-button-linkage.png" alt="Training-center button opening the Xiaoyi Q-style full-system assistant while preserving the seven-controller matrix and human confirmation boundary" width="96%" />
-  <br />
-  <sub>图 5 · 小懿按钮联动：训练中心直接打开全系统助手，指令仍进入人工确认，不能直接生产执行。</sub>
-</p>
 
 | 变量 / Variable | 作用 / Purpose | 默认 / Default |
 |---|---|---|
@@ -569,6 +582,7 @@ app/
 config/                       # safe example contracts, never site secrets
 data/rl/datasets/             # redistributable integration dataset + metadata
 docs/                         # architecture, data, RL, governance and runbooks
+evidence/v6/                  # append-only V6 readiness, candidates, champion and paired metrics
 scripts/                      # dataset regeneration and auditable benchmarks
 tests/                        # provenance, isolation, security and maturity regression
 ```
@@ -579,11 +593,13 @@ tests/                        # provenance, isolation, security and maturity reg
 python -m compileall -q app scripts tests
 python -m unittest discover -s tests -v
 python -m scripts.rl_smoke_test --steps 64
+python -m scripts.audit_ui_controls_v6
+python -m scripts.release_check
 ```
 
-完整单元测试会运行 64 步烟雾实验，覆盖 10 类 RL、MPC 与 FCFS；正式比较另要求每种 RL 至少 3 个随机种子和每次 10,000 个已观测优化步。CI 同时执行依赖漏洞审计、CodeQL、Dependency Review、OpenSSF Scorecard、SBOM 与源码证明。
+完整单元测试会运行 64 步烟雾实验，覆盖 10 类 RL、MPC 与 FCFS；V6 控件核查扫描按钮定义与交互合同，发布门禁复核数据/模型/报告哈希、追加式冠军证据、隐私边界和关键合同。正式比较另要求多种子、真实优化步、时间隔离与独立评测。CI 同时执行依赖漏洞审计、CodeQL、Dependency Review、OpenSSF Scorecard、SBOM 与源码证明。
 
-The complete unit-test suite includes a 64-step smoke experiment covering ten RL methods, MPC, and FCFS. Formal comparisons separately require at least three seeds and 10,000 observed optimizer steps per RL method. CI also runs dependency auditing, CodeQL, Dependency Review, OpenSSF Scorecard, SBOM generation, and source attestations.
+The complete unit-test suite includes a 64-step smoke experiment covering ten RL methods, MPC, and FCFS. V6 control and release audits verify interaction contracts, evidence hashes, append-only champion records, privacy boundaries, and critical contracts. Formal comparisons also require multiple seeds, real optimizer steps, chronological isolation, and independent evaluation. CI runs dependency auditing, CodeQL, Dependency Review, OpenSSF Scorecard, SBOM generation, and source attestations.
 
 ## 🤝 参与项目 / Contributing
 
