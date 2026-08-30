@@ -3,6 +3,8 @@
 The default repository is open-source research software. `/health/ready` intentionally reports `production_site_ready: false` until the full technical chain, thirty-day continuity evidence and four-week operating-model evidence are configured, semantically reproduced and bound to the same `site_id`.
 
 - [ ] Authorized port dataset mapped, quality-gated, time-synchronized and privacy/licence reviewed.
+- [ ] All eight `port-snapshot.v1` adapters bind the authorized `site_id`, owner and source system; HMAC, payload digest, freshness, units, sequence and replay checks pass without storing secrets or silently substituting public data.
+- [ ] The replacement training dataset passes `/api/rl/datasets/{dataset_id}/site-readiness`: 720+ gap-free hours, 99% coverage of every V6 input, source-manifest hash and per-field measured/authorized-derived lineage.
 - [ ] DTDL-compatible entity graph configured with source timestamps and no generated assets.
 - [ ] Twin calibration evidence passes site thresholds on a separate validation window.
 - [ ] At least 3 seeds and 5+ held-out episodes per policy; confidence intervals and guardrail rate reviewed.
@@ -37,6 +39,8 @@ The default repository is open-source research software. `/health/ready` intenti
 - [ ] Cybersecurity, electrical, operational, legal and data-governance owners sign off.
 
 Passing the software checks is necessary but not sufficient for port deployment.
+
+The read-only adapter and historical replacement contracts are documented in [SITE_INTEGRATION_GATEWAY.md](SITE_INTEGRATION_GATEWAY.md). A valid signed snapshot or a structurally complete site dataset is an input-admission result only; neither can enable dispatch or production control.
 
 The read-only shadow contract is documented in [SITE_SHADOW_ACCEPTANCE.md](SITE_SHADOW_ACCEPTANCE.md). Candidate energy, throughput and delay during this stage are counterfactual projections, not measured production benefits.
 

@@ -1,0 +1,10 @@
+{
+  "schema": "port-dt-top-port-readiness-audit-pointer.v1",
+  "run_id": "top-port-readiness-v6-20260830T063215Z",
+  "status": "NOT_READY_FOR_IMMEDIATE_PRODUCTION_SITE_CONNECTION",
+  "report_path": "evidence/v6/readiness_audit/runs/top-port-readiness-v6-20260830T063215Z/report.json",
+  "report_sha256": "4aa5c3a4931437c93d741463f6f0d0542f7a0a43cff9df4f0cf6ca299d887aa6",
+  "production_site_ready": false,
+  "production_authority": false,
+  "updated_at": "2026-08-30T06:32:15Z"
+}

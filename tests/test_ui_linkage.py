@@ -163,6 +163,35 @@ class UiLinkageTests(unittest.TestCase):
             self.assertIn(marker, home)
         self.assertIn("fallback_simulator", (ROOT / "app/services/port_call_gateway.py").read_text(encoding="utf-8"))
 
+    def test_site_integration_gateway_has_visible_adapter_and_dataset_gates(self):
+        home = (ROOT / "app/ui/index.html").read_text(encoding="utf-8")
+        for marker in (
+            'id="site-integration-gateway-panel"',
+            'id="btn-site-integration-readiness"',
+            'id="btn-site-integration-contract"',
+            'id="btn-site-integration-rejection"',
+            'id="btn-site-dataset-readiness"',
+            "/api/v3/site-integration/readiness",
+            "/api/v3/site-integration/ingest",
+            "/api/rl/datasets/public_cn_sha_integrated_scenario_v5/site-readiness",
+            "失败关闭验证通过",
+            "公开/工程场景未被冒充为现场替换数据",
+            "无生产控制权",
+        ):
+            self.assertIn(marker, home)
+
+    def test_main_ui_declares_mobile_viewport_and_wraps_long_evidence_labels(self):
+        home = (ROOT / "app/ui/index.html").read_text(encoding="utf-8")
+        self.assertIn(
+            '<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"',
+            home,
+        )
+        self.assertIn(
+            ".api-pill code{min-width:0;overflow-wrap:anywhere;white-space:normal}",
+            home,
+        )
+        self.assertIn("overflow-wrap:anywhere;", home)
+
     def test_site_twin_calibration_has_visible_holdout_and_fail_closed_flow(self):
         home = (ROOT / "app/ui/index.html").read_text(encoding="utf-8")
         for marker in (

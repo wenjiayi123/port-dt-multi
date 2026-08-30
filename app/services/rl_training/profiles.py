@@ -44,6 +44,13 @@ DEFAULT_PROFILE: Dict[str, Any] = {
         "shore_power_allocation_limit": 1.0,
         "maintenance_reserve_limit": 1.0,
         "marine_service_allocation_limit": 1.0,
+        "rail_allocation_limit": 1.0,
+        "barge_allocation_limit": 1.0,
+        "pilotage_allocation_limit": 1.0,
+        "towage_allocation_limit": 1.0,
+        "quay_crane_allocation_limit": 1.0,
+        "horizontal_transport_allocation_limit": 1.0,
+        "yard_crane_allocation_limit": 1.0,
     },
     "objectives": {
         "cost": 0.25,
@@ -93,6 +100,20 @@ DEFAULT_PROFILE: Dict[str, Any] = {
         "high_equipment_failure_risk_ratio": 0.60,
         "forecast_uncertainty_review_ratio": 0.55,
     },
+    "coordinated_operations": {
+        "rail_service_teu_per_hour": 45.0,
+        "barge_service_teu_per_hour": 80.0,
+        "pilotage_service_vessels_per_hour": 0.8,
+        "towage_service_vessels_per_hour": 1.0,
+        "quay_crane_moves_per_hour": 180.0,
+        "horizontal_transport_moves_per_hour": 200.0,
+        "yard_crane_moves_per_hour": 190.0,
+        "container_moves_per_teu": 1.35,
+        "gate_minimum_capacity_factor": 0.5,
+        "intermodal_minimum_capacity_factor": 0.5,
+        "marine_minimum_capacity_factor": 0.5,
+        "terminal_chain_minimum_capacity_factor": 0.5,
+    },
 }
 
 
@@ -110,8 +131,8 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
     merged = _merge(DEFAULT_PROFILE, profile)
     profile_id = validate_identifier(merged.get("profile_id"), field="profile_id")
     merged["profile_id"] = profile_id
-    if merged.get("environment_version") not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4", "port_ops_v5"}:
-        raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3, port_ops_v4 or port_ops_v5")
+    if merged.get("environment_version") not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4", "port_ops_v5", "port_ops_v6"}:
+        raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3, port_ops_v4, port_ops_v5 or port_ops_v6")
     if merged.get("control_authority") != "recommendation_only":
         raise ValueError("open-source port profiles must keep control_authority=recommendation_only")
     port_code = str(merged.get("port_code") or "").strip().upper()
@@ -157,6 +178,13 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         "shore_power_allocation_limit",
         "maintenance_reserve_limit",
         "marine_service_allocation_limit",
+        "rail_allocation_limit",
+        "barge_allocation_limit",
+        "pilotage_allocation_limit",
+        "towage_allocation_limit",
+        "quay_crane_allocation_limit",
+        "horizontal_transport_allocation_limit",
+        "yard_crane_allocation_limit",
     )
     for name in numeric_limits:
         limits[name] = float(limits[name])
@@ -176,6 +204,13 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         "shore_power_allocation_limit",
         "maintenance_reserve_limit",
         "marine_service_allocation_limit",
+        "rail_allocation_limit",
+        "barge_allocation_limit",
+        "pilotage_allocation_limit",
+        "towage_allocation_limit",
+        "quay_crane_allocation_limit",
+        "horizontal_transport_allocation_limit",
+        "yard_crane_allocation_limit",
     ):
         if not 0 <= limits[name] <= 1:
             raise ValueError(f"profile control_limits.{name} must be in [0, 1]")
@@ -247,6 +282,31 @@ def validate_profile(profile: Mapping[str, Any]) -> Dict[str, Any]:
         integrated[name] = float(integrated[name])
         if not 0 <= integrated[name] <= 1:
             raise ValueError(f"profile integrated_operations.{name} must be in [0, 1]")
+    coordinated = merged["coordinated_operations"]
+    for name in (
+        "rail_service_teu_per_hour",
+        "barge_service_teu_per_hour",
+        "pilotage_service_vessels_per_hour",
+        "towage_service_vessels_per_hour",
+        "quay_crane_moves_per_hour",
+        "horizontal_transport_moves_per_hour",
+        "yard_crane_moves_per_hour",
+        "container_moves_per_teu",
+    ):
+        coordinated[name] = float(coordinated[name])
+        if coordinated[name] <= 0:
+            raise ValueError(f"profile coordinated_operations.{name} must be positive")
+    for name in (
+        "gate_minimum_capacity_factor",
+        "intermodal_minimum_capacity_factor",
+        "marine_minimum_capacity_factor",
+        "terminal_chain_minimum_capacity_factor",
+    ):
+        coordinated[name] = float(coordinated[name])
+        if not 0.5 <= coordinated[name] <= 1.0:
+            raise ValueError(
+                f"profile coordinated_operations.{name} must be in [0.5, 1.0]"
+            )
     return merged
 
 

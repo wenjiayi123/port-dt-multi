@@ -103,6 +103,7 @@ from app.services.operating_model_governance import OperatingModelGovernanceServ
 from app.services.site_twin_calibration import SiteTwinCalibrationService
 from app.services.site_shadow_acceptance import SiteShadowAcceptanceService
 from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
+from app.services.site_integration_gateway import SiteIntegrationGateway
 from app.services.mlops_evidence import MLOpsEvidenceService
 from app.services.governance_evidence import GovernanceEvidenceService
 from app.operations import configure_operations, cors_origins, is_production
@@ -348,6 +349,7 @@ mas_evidence = MASEvidenceService()
 _site_twin_calibration = SiteTwinCalibrationService()
 _site_shadow_acceptance = SiteShadowAcceptanceService()
 _site_execution_acceptance = SiteExecutionAcceptanceService()
+_site_integration_gateway = SiteIntegrationGateway()
 _port_call_collaboration = PortCallCollaborationService()
 _maritime_interoperability = MaritimeInteroperabilityService()
 _forecast_uncertainty = ForecastUncertaintyService()
@@ -703,6 +705,25 @@ async def v3_external_signals_evidence() -> JSONResponse:
 @app.get("/api/v3/port-call/readiness", tags=["v3-governance"])
 async def v3_port_call_readiness() -> JSONResponse:
     return JSONResponse(_port_call.readiness())
+
+
+@app.get("/api/v3/site-integration/readiness", tags=["v3-governance"])
+async def v3_site_integration_readiness() -> JSONResponse:
+    return JSONResponse(await asyncio.to_thread(_site_integration_gateway.readiness))
+
+
+@app.post("/api/v3/site-integration/ingest", tags=["v3-governance"])
+async def v3_site_integration_ingest(
+    payload: Dict[str, Any] = Body(
+        ...,
+        description="port-snapshot.v1 只读现场快照；校验身份、签名、时效、单位与回放，不执行控制指令",
+    ),
+) -> JSONResponse:
+    result = await asyncio.to_thread(
+        _site_integration_gateway.validate_envelope,
+        payload,
+    )
+    return JSONResponse(result, status_code=200 if result["valid"] else 422)
 
 
 @app.post("/api/v3/port-call/validate", tags=["v3-governance"])

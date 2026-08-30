@@ -36,7 +36,7 @@ function renderAlgorithms(rows){
 function renderCapabilities(rows){
   $('capabilityGrid').innerHTML=rows.map((row,index)=>`<article class="capability-card">
     <span class="cap-no">OPS-${String(index+1).padStart(2,'0')}</span><i class="cap-state ${row.state}" title="${stateNames[row.state]}"></i>
-    <h3>${row.name}</h3><p>${row.engine}</p><small>${escapeHTML(row.depth?.implementation_label||stateNames[row.state])} · ${row.depth?.model_output_available?'有运行输出':'无独立模型输出'}</small><small>现场替换 · ${row.site_replacement}</small>
+    <h3>${row.name}</h3><p>${row.engine}</p><small>${escapeHTML(row.depth?.implementation_label||stateNames[row.state])} · ${row.depth?.model_output_available?'有运行输出':'运行输出不可用'} · ${row.depth?.learned_optimizer_output?'有 RL / 独立优化器':'无独立 RL 优化器'}</small><small>现场替换 · ${row.site_replacement}</small>
     <button class="card-action" type="button" data-capability="${escapeHTML(row.id)}">查看技术链路 <span>↗</span></button>
   </article>`).join('');
   const coverage=overviewData?.business_domain_coverage||{};
@@ -217,7 +217,7 @@ function openCapabilityDetail(capabilityId){
   const depth=row.depth||{};
   const list=(title,items)=>`<section class="detail-list"><h3>${title}</h3><ul>${(items||[]).map(item=>`<li>${escapeHTML(item)}</li>`).join('')}</ul></section>`;
   const artifactRows=(depth.code_artifacts||[]).map(item=>`${item.path} · ${item.exists?'SHA-256 '+item.sha256:'缺失'}`);
-  const execution=[`执行等级：${depth.implementation_label||depth.implementation_level}`,`决策来源：${depth.decision_source}`,`当前数据：${depth.current_data_mode}`,`独立模型输出：${depth.model_output_available?'有':'无'}`,`生产准入：${depth.production_ready?'通过':'关闭'}`,`失效回退：${depth.fail_closed_fallback}`];
+  const execution=[`执行等级：${depth.implementation_label||depth.implementation_level}`,`决策来源：${depth.decision_source}`,`当前数据：${depth.current_data_mode}`,`运行输出：${depth.model_output_available?'有':'无'}`,`RL / 独立优化器输出：${depth.learned_optimizer_output?'有':'无（确定性安全、治理、核算或迁移功能）'}`,`生产准入：${depth.production_ready?'通过':'关闭'}`,`失效回退：${depth.fail_closed_fallback}`];
   openDrawer({kicker:`BUSINESS DOMAIN / ${row.id.toUpperCase()}`,title:row.name,lead:`${depth.implementation_label||stateNames[row.state]} · ${row.engine}`,body:`<div class="detail-grid">${list('执行状态与真实输出来源',execution)}${list('可调用运行接口',depth.runtime_endpoints)}${list('状态输入',depth.state_inputs)}${list('决策输出',depth.decision_outputs)}${list('硬约束与失效安全',depth.hard_constraints)}${list('训练后 / 现场验收指标',depth.acceptance_metrics)}${list('代码与 SHA-256 证据',artifactRows)}${list('阻止现场准入的缺口',depth.site_blockers)}</div><section class="site-replace"><span>SITE DATA REPLACEMENT</span><p>${escapeHTML(row.site_replacement)}</p></section><p class="detail-boundary">公开数据阶段仅验证软件、仿真、监测或离线策略链；无独立优化器的域明确标注，现场字段缺失时不产生生产控制权。</p>`});
 }
 function openGateDetail(gateId){

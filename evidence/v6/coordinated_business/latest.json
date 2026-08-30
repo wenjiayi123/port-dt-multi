@@ -1,0 +1,16 @@
+{
+  "schema": "port-dt-coordinated-business-latest.v1",
+  "run_id": "coordinated-business-v6-20260830T072235Z",
+  "status": "ADMITTED_OFFLINE_CHAMPION",
+  "report_path": "evidence/v6/coordinated_business/runs/coordinated-business-v6-20260830T072235Z/report.json",
+  "report_sha256": "b4f328bb9c67a142d7920003f507a99611e95f8390072aed31a53dd7ca8647ab",
+  "selected_job_id": "rl-20260830T070107706Z",
+  "selected_model_path": "data/rl/runs/rl-20260830T070107706Z/model.zip",
+  "selected_model_sha256": "9cfebff3d4198a8520fd99ab530fae7d0d08aec180da12943bed4780eb141942",
+  "dataset_id": "public_cn_sha_integrated_scenario_v5",
+  "dataset_sha256": "5092e0c838cf5da1c97a39821e6c9658aed0354610a3603f66fc4d8175f236a9",
+  "final_evaluation_dataset_id": "public_cn_sha_integrated_forward_2026m05_v5",
+  "final_evaluation_dataset_sha256": "930529a18b06fa4b1412c21461e7ea1caa5f234205e5c50d6849ac78fc1a9e5f",
+  "production_authority": false,
+  "updated_at": "2026-08-30T07:22:35.703175Z"
+}

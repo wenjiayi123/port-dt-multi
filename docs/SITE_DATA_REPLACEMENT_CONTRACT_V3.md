@@ -7,13 +7,13 @@ V3 uses a stable canonical state/action/safety contract so a port deployment rep
 | Domain | Required site fields | Public V3 status | Admission condition |
 |---|---|---|---|
 | Vessel / berth | vessel and voyage IDs, ETA/ATA/ETB/ATB/ETD/ATD, berth plan, pilot/tug state | Aggregate/derived | TOS + VTS/AIS reconciliation and clock audit |
-| Quay crane | QC ID, task, move timestamps, productivity, outage and fault state | Derived availability | PLC/TOS event mapping and missing-event analysis |
+| Quay crane | QC ID, task, move timestamps, productivity, outage and fault state | V6 engineering resource-chain scenario | PLC/TOS event mapping and missing-event analysis |
 | Yard | container position, yard block, dwell, rehandle, YC task and availability | Derived occupancy | Container genealogy and position consistency gate |
-| Horizontal transport | AGV/IGV/truck position, mission, queue, battery/energy, road state | Unavailable | Fleet adapter, map version and command/receipt correlation |
-| Gate / rail / barge | appointment, arrival, service, departure and capacity | Unavailable | Schedule/actual reconciliation and identity mapping |
+| Horizontal transport | AGV/IGV/truck position, mission, queue, battery/energy, road state | V6 engineering resource-chain scenario | Fleet adapter, map version and command/receipt correlation |
+| Gate / rail / barge | appointment, arrival, service, departure and capacity | V6 independent engineering demand/capacity scenario | Schedule/actual reconciliation and identity mapping |
 | Energy | meter, tariff, BMS, transformer, shore power, reefer and DER state | Derived | Calibrated meter hierarchy and settlement boundary |
 | Weather / marine | port weather stations, tide/current/wave, VTS closure and reopening events | Public reanalysis | Site observations, time alignment and safety-owner approval |
-| Maintenance / safety | alarms, work orders, inspections, incidents, overrides and interlocks | Unavailable | Taxonomy mapping, severity ownership and audit retention |
+| Maintenance / safety | alarms, work orders, inspections, incidents, overrides and interlocks | V6 engineering risk/backlog scenario plus deterministic safety workflow | Taxonomy mapping, severity ownership and audit retention |
 
 Every field is mapped to:
 
@@ -34,11 +34,14 @@ Each V3 business-domain card exposes an execution class rather than treating eve
 - `executable_safety_guard`, `executable_governance_workflow`, `executable_evidence_calculator`, `executable_transfer_guard`: deterministic safety, workflow, evidence or transfer logic executes, but is not a learned business optimizer.
 - `simulation_contract_only`, `coupled_factor_contract_only`, `monitoring_only`: the domain is represented in state/simulation/monitoring contracts and explicitly has no independent optimization output.
 
+V6 adds coordinated model outputs for gate, rail, barge, reefer support, maintenance resource reserve, pilotage, towage and the quay-crane to horizontal-transport to yard-crane chain. The values behind these domains remain declared engineering scenarios until the site contracts are replaced, so `model_backed_coordinated_offline` does not mean field performance.
+
 Every card includes callable endpoints, decision source, current data mode, repository artifact SHA-256, missing site fields and fail-closed fallback. `production_ready=false` remains mandatory for all open-source public-data cards.
 
 ## Deployment sequence
 
 1. Freeze source manifests, schemas, owners, units and time semantics.
+   Use [SITE_INTEGRATION_GATEWAY.md](SITE_INTEGRATION_GATEWAY.md) for the signed read-only snapshot contract and the strict historical dataset-readiness endpoint.
 2. Run historical backfill quality gates and compare site distributions with public reference-training data.
 3. Calibrate twin parameters only on the training window; keep validation and acceptance windows untouched.
 4. Replay decisions offline with policy, FCFS, MPC and operational baselines on identical windows.

@@ -1,0 +1,50 @@
+{
+  "schema": "port-dt-coordinated-action-design-audit.v1",
+  "audit_id": "action-space-v3-20260830T064347Z",
+  "generated_at": "2026-08-30T06:43:47Z",
+  "decision": "REJECT_PREVIOUS_ACTION_PARAMETERIZATION_AND_RETRAIN",
+  "completed_candidate": {
+    "job_id": "rl-20260830T061830469Z",
+    "seed": 616,
+    "optimizer_steps": 30000,
+    "model_sha256": "7a6994af8c978a3cf37fb677e4e56a758922d9d45e0098df33f1c59cd38092d5",
+    "validation_evaluation_sha256": "f57561be5f1e758902e0eb3b829e6fb15e26450d8a1ea04aa73e0bda6fec4289",
+    "validation_metrics": {
+      "business_score_vs_fcfs_mean": 0.268428640870869,
+      "business_score_vs_fcfs_ci_low": 0.2452554296037938,
+      "business_score_vs_fixed_rule_mean": 0.2302425764875194,
+      "business_score_vs_fixed_rule_ci_low": 0.20603811254184332,
+      "gate_service_completion_ratio": 0.9994777824827643,
+      "pilotage_service_completion_ratio": 0.9501081886730418,
+      "towage_service_completion_ratio": 0.9635888065995923,
+      "terminal_chain_completion_ratio": 1.0,
+      "service_completion_ratio": 0.7877111665972094,
+      "regulatory_clearance_completion_ratio": 0.9496782504469051,
+      "shore_power_service_ratio": 0.7066286442871536,
+      "guardrail_violation_rate": 0.019791666666666666,
+      "latent_action_correction_mean": 0.3489423929092785
+    },
+    "admission": false
+  },
+  "interrupted_candidate": {
+    "job_id": "rl-20260830T063708935Z",
+    "seed": 716,
+    "completed_optimizer_steps": 4200,
+    "status_sha256": "1aaaabc832629c3c6de5bea46811f9dedc02749b7fd512d1c78542c5cfe265f0",
+    "status": "FAILED_RETAINED_AFTER_PARENT_AUDIT_STOP"
+  },
+  "root_causes": [
+    "Static service minima were applied as latent-action corrections, creating a flat infeasible region and excessive correction dependency.",
+    "At the final episode step, terminal state-of-charge recovery could consume grid headroom before discretionary shore-power allocation was reduced.",
+    "Validation selection considered guardrail rate before value but did not rank all absolute service and correction gates as one fail-closed constraint set."
+  ],
+  "corrective_actions": [
+    "Encode gate, intermodal, reefer, maintenance and terminal-chain minima directly into the smooth action mapping.",
+    "Retain state-dependent navigation closure and pilotage/towage corrections in the auditable latent-action ledger.",
+    "Reserve terminal state-of-charge grid headroom by reducing discretionary shore-power allocation before the inherited hard projection.",
+    "Treat one-part-per-million demand-cap float noise as numerical tolerance, not an operational violation.",
+    "Select only candidates that first pass every validation service, safety, projection and correction gate."
+  ],
+  "artifact_policy": "Models and metrics are retained as rejected evidence and cannot be promoted or served as the V6 offline champion.",
+  "production_authority": false
+}

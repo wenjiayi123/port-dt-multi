@@ -84,6 +84,57 @@
         "guardrail_violation_rate_max": 0.0
       },
       "claim_boundary": "Public aggregate and public reanalysis plus a predeclared replaceable engineering scenario. Business admission is offline only; field claims require authorized source replacement, calibration, shadow operation and independent approval."
+    },
+    "coordinated_business_value_v6": {
+      "name": "港口分资源协同业务价值与安全均衡",
+      "reward_weights": {
+        "cost": 0.10,
+        "carbon": 0.08,
+        "peak": 0.10,
+        "safety": 0.32,
+        "delay": 0.40
+      },
+      "regulatory_delay_penalty_weight": 0.72,
+      "projection_penalty_weight": 0.30,
+      "integrated_reward_weights": {
+        "gate_congestion": 0.40,
+        "intermodal_backlog": 0.12,
+        "reefer_risk": 0.38,
+        "shore_power_unserved": 0.16,
+        "maintenance_risk": 0.34,
+        "marine_services_delay": 0.32,
+        "dangerous_goods_safety": 0.65,
+        "under_keel_clearance": 0.75,
+        "forecast_uncertainty": 0.12,
+        "integrated_peak": 0.26
+      },
+      "coordinated_reward_weights": {
+        "rail_backlog": 0.25,
+        "barge_backlog": 0.22,
+        "pilotage_backlog": 0.50,
+        "towage_backlog": 0.45,
+        "terminal_move_chain": 0.70,
+        "resource_imbalance": 0.10,
+        "allocation_change": 0.05,
+        "latent_action_correction": 0.70
+      },
+      "admission_constraints": {
+        "integrated_business_score_95ci_relative_to_fcfs_min": 0.02,
+        "coordinated_business_score_mean_relative_to_fixed_rule_min": 0.0,
+        "gate_service_completion_ratio_min": 0.95,
+        "rail_service_completion_ratio_min": 0.80,
+        "barge_service_completion_ratio_min": 0.80,
+        "pilotage_service_completion_ratio_min": 0.80,
+        "towage_service_completion_ratio_min": 0.80,
+        "terminal_move_chain_completion_ratio_min": 0.85,
+        "service_completion_ratio_min": 0.72,
+        "regulatory_clearance_completion_ratio_min": 0.65,
+        "shore_power_service_ratio_min": 0.45,
+        "guardrail_violation_rate_max": 0.0,
+        "action_projection_severity_mean_max": 0.01,
+        "latent_action_correction_mean_max": 0.30
+      },
+      "claim_boundary": "Official aggregate throughput and public reanalysis anchor a replaceable engineering resource-chain scenario. Split resource actions are real optimizer outputs, but capacities and current-operations policy are not Shanghai terminal measurements. Production authority remains false until authorized replacement, calibration, shadow operation, interlocks and independent acceptance."
     }
   }
 }

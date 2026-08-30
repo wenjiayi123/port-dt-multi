@@ -131,6 +131,26 @@ REQUIRED = (
     "evidence/v5/integrated_business/latest.json",
     "evidence/v5/integrated_business/offline_champion.json",
     "evidence/v5/deterministic_guardrails/latest.json",
+    "app/services/rl_training/coordinated_environment.py",
+    "app/services/site_integration_gateway.py",
+    "config/ports/cn_sha_coordinated_scenario_v6.json",
+    "scripts/train_coordinated_port_business_v6.py",
+    "scripts/audit_ui_controls_v6.py",
+    "docs/DATASET_CARD_public_cn_sha_coordinated_scenario_v6.md",
+    "docs/SITE_INTEGRATION_GATEWAY.md",
+    "docs/TOP_PORT_READINESS_GAP_AUDIT_V6.md",
+    "evidence/v6/coordinated_business/latest.json",
+    "evidence/v6/coordinated_business/offline_champion.json",
+    "evidence/v6/readiness_audit/latest.json",
+    "data/rl/runs/rl-20260830T070107706Z/MODEL_CARD.md",
+    "data/rl/runs/rl-20260830T070107706Z/config.json",
+    "data/rl/runs/rl-20260830T070107706Z/manifest.json",
+    "data/rl/runs/rl-20260830T070107706Z/metrics.jsonl",
+    "data/rl/runs/rl-20260830T070107706Z/model.zip",
+    "data/rl/runs/rl-20260830T070107706Z/model_card.json",
+    "data/rl/runs/rl-20260830T070107706Z/monitor.csv",
+    "data/rl/runs/rl-20260830T070107706Z/status.json",
+    "data/rl/runs/rl-20260830T070107706Z/validation_evaluation.json",
     "data/rl/runs/rl-20260813T063524662Z/config.json",
     "data/rl/runs/rl-20260813T063524662Z/status.json",
     "data/rl/runs/rl-20260813T063524662Z/manifest.json",
@@ -579,6 +599,83 @@ def verify_integrated_business_evidence(errors: list[str]) -> None:
         errors.append("V5 deterministic guardrail report hash mismatch")
 
 
+def verify_coordinated_business_evidence(errors: list[str]) -> None:
+    root = ROOT / "evidence/v6/coordinated_business"
+    readiness_root = ROOT / "evidence/v6/readiness_audit"
+    try:
+        readiness = json.loads(
+            (readiness_root / "latest.json").read_text(encoding="utf-8")
+        )
+        readiness_report = (
+            ROOT / str(readiness.get("report_path") or "")
+        ).resolve()
+        if (
+            readiness.get("production_site_ready") is not False
+            or readiness.get("production_authority") is not False
+            or not readiness_report.is_relative_to(readiness_root.resolve())
+            or not readiness_report.is_file()
+            or hashlib.sha256(readiness_report.read_bytes()).hexdigest()
+            != readiness.get("report_sha256")
+        ):
+            errors.append("V6 top-port readiness audit is invalid or grants authority")
+    except Exception as exc:
+        errors.append(f"V6 top-port readiness audit cannot be verified: {exc}")
+    champion_path = root / "offline_champion.json"
+    try:
+        champion = json.loads(champion_path.read_text(encoding="utf-8"))
+    except Exception as exc:
+        errors.append(f"V6 coordinated champion cannot be read: {exc}")
+        return
+    if champion.get("status") != "ADMITTED_OFFLINE_CHAMPION":
+        errors.append("V6 coordinated champion is not admitted")
+    if champion.get("production_authority") is not False:
+        errors.append("V6 coordinated champion incorrectly grants production authority")
+
+    report_path = (ROOT / str(champion.get("report_path") or "")).resolve()
+    if not report_path.is_relative_to(root.resolve()) or not report_path.is_file():
+        errors.append("V6 coordinated report path is invalid")
+        return
+    report_hash = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    if report_hash != champion.get("report_sha256"):
+        errors.append("V6 coordinated report hash mismatch")
+        return
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    contract = report.get("contract") or {}
+    if contract.get("observation_dimensions") != 110:
+        errors.append("V6 coordinated observation contract changed")
+    if contract.get("action_dimensions") != 18:
+        errors.append("V6 coordinated action contract changed")
+    if contract.get("safety_revision") != "v6_feasible_parameterization_split_resource_chain_v3":
+        errors.append("V6 coordinated safety revision is stale")
+    admission = report.get("admission") or {}
+    checks = admission.get("checks") or {}
+    if admission.get("passed") is not True or admission.get("promoted") is not True:
+        errors.append("V6 coordinated admission did not pass and promote")
+    if not checks or not all(value is True for value in checks.values()):
+        errors.append("V6 coordinated admission checks are incomplete")
+    if admission.get("production_authority") is not False:
+        errors.append("V6 coordinated report incorrectly grants production authority")
+
+    model_path = (ROOT / str(champion.get("selected_model_path") or "")).resolve()
+    model_root = (ROOT / "data/rl/runs").resolve()
+    if not model_path.is_relative_to(model_root) or not model_path.is_file():
+        errors.append("V6 selected model path is invalid")
+    elif hashlib.sha256(model_path.read_bytes()).hexdigest() != champion.get(
+        "selected_model_sha256"
+    ):
+        errors.append("V6 selected model hash mismatch")
+    for identifier_key, hash_key in (
+        ("dataset_id", "dataset_sha256"),
+        ("final_evaluation_dataset_id", "final_evaluation_dataset_sha256"),
+    ):
+        try:
+            dataset = load_port_dataset(str(champion.get(identifier_key) or ""))
+            if dataset.fingerprint != champion.get(hash_key):
+                errors.append(f"V6 dataset hash mismatch: {identifier_key}")
+        except Exception as exc:
+            errors.append(f"V6 dataset verification failed for {identifier_key}: {exc}")
+
+
 def main() -> int:
     errors: list[str] = []
     report: dict = {}
@@ -588,6 +685,7 @@ def main() -> int:
             errors.append(f"missing release evidence: {relative}")
     verify_regulatory_resilience_evidence(errors)
     verify_integrated_business_evidence(errors)
+    verify_coordinated_business_evidence(errors)
     mission_api = (ROOT / "app/services/copilot/api.py").read_text(encoding="utf-8")
     mission_ui = (ROOT / "app/ui/ops_copilot.html").read_text(encoding="utf-8")
     for marker in (
@@ -1027,10 +1125,12 @@ def main() -> int:
         from app.services.v3_port_ai import BUSINESS_CAPABILITIES, _business_depth
 
         depths = [_business_depth(row["id"]) for row in BUSINESS_CAPABILITIES]
-        if len(depths) != 12:
+        if len(depths) != 13:
             errors.append("V3 business-domain coverage changed")
-        if sum(bool(row.get("model_output_available")) for row in depths) != 9:
+        if sum(bool(row.get("model_output_available")) for row in depths) != 13:
             errors.append("V3 business execution-depth classification changed")
+        if sum(bool(row.get("learned_optimizer_output")) for row in depths) != 9:
+            errors.append("V3 learned-optimizer business coverage changed")
         if any(row.get("production_ready") is not False for row in depths):
             errors.append("V3 business domain grants production readiness")
         for capability, depth in zip(BUSINESS_CAPABILITIES, depths):

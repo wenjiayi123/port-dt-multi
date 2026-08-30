@@ -503,6 +503,109 @@ def dataset_quality_report(dataset: PortDataset) -> Dict[str, Any]:
     }
 
 
+def site_replacement_readiness_report(dataset: PortDataset) -> Dict[str, Any]:
+    """Fail-closed admission check for replacing V6 public scenario inputs.
+
+    This does not authorize control or promote a model. It only proves that an
+    imported chronological dataset is structurally complete and carries an
+    explicit authorized lineage record for every state input.
+    """
+    quality = dataset_quality_report(dataset)
+    required_columns = (
+        *NUMERIC_COLUMNS,
+        *FACTOR_COLUMNS,
+        *REGULATORY_COLUMNS,
+        *PORT_WIDE_COLUMNS,
+    )
+    blockers: List[Dict[str, Any]] = []
+
+    def block(code: str, detail: str, fields: Sequence[str] = ()) -> None:
+        blockers.append({"code": code, "detail": detail, "fields": list(fields)})
+
+    metadata = dataset.metadata
+    if metadata.get("authorized_site_data") is not True:
+        block("site_authority", "metadata.authorized_site_data must be true")
+    if not str(metadata.get("site_id") or "").strip():
+        block("site_id", "metadata.site_id is required")
+    manifest_sha = str(metadata.get("source_manifest_sha256") or "").lower()
+    if not re.fullmatch(r"[0-9a-f]{64}", manifest_sha):
+        block("source_manifest", "a 64-character source_manifest_sha256 is required")
+    if str(metadata.get("provenance_type") or "") not in {
+        "port_export",
+        "audited_site_export",
+        "verified_site_export",
+    }:
+        block("provenance_type", "provenance_type must identify an authorized site export")
+    if quality["status"] == "fail":
+        block("dataset_quality", "canonical dataset quality gate failed")
+    if int(quality["time"]["irregular_gap_count"]) != 0:
+        block("timestamp_gaps", "site replacement requires a gap-free canonical time axis")
+    cadence_seconds = float(quality["time"]["median_cadence_seconds"] or 0.0)
+    coverage_hours = (
+        (dataset.rows * cadence_seconds) / 3600.0 if cadence_seconds > 0 else 0.0
+    )
+    if coverage_hours < 720.0:
+        block("history_window", "at least 720 continuous hours are required")
+
+    coverage = {
+        **{name: 1.0 for name in NUMERIC_COLUMNS},
+        **quality["factor_coverage"],
+        **quality["regulatory_factor_coverage"],
+        **quality["port_wide_factor_coverage"],
+    }
+    incomplete = [name for name in required_columns if float(coverage.get(name, 0.0)) < 0.99]
+    if incomplete:
+        block("field_coverage", "every V6 state input needs at least 99% coverage", incomplete)
+
+    provenance = metadata.get("field_provenance")
+    missing_lineage: List[str] = []
+    invalid_lineage: List[str] = []
+    for name in required_columns:
+        row = provenance.get(name) if isinstance(provenance, Mapping) else None
+        if not isinstance(row, Mapping):
+            missing_lineage.append(name)
+            continue
+        if (
+            not str(row.get("source_system") or "").strip()
+            or not str(row.get("source_field") or "").strip()
+            or not str(row.get("owner") or "").strip()
+            or str(row.get("evidence_class") or "")
+            not in {"measured", "authorized_derived"}
+        ):
+            invalid_lineage.append(name)
+    if missing_lineage:
+        block("field_lineage_missing", "per-field lineage records are required", missing_lineage)
+    if invalid_lineage:
+        block(
+            "field_lineage_invalid",
+            "lineage requires source_system, source_field, owner and measured/authorized_derived evidence class",
+            invalid_lineage,
+        )
+
+    return {
+        "schema": "port-dt-site-dataset-readiness.v1",
+        "dataset_id": dataset.dataset_id,
+        "dataset_sha256": dataset.fingerprint,
+        "site_id": metadata.get("site_id"),
+        "rows": dataset.rows,
+        "coverage_hours": coverage_hours,
+        "required_field_count": len(required_columns),
+        "complete_field_count": len(required_columns) - len(incomplete),
+        "source_manifest_sha256": manifest_sha or None,
+        "site_replacement_ready": not blockers,
+        "training_dataset_replacement_ready": not blockers,
+        "blockers": blockers,
+        "boundary": {
+            "dataset_admission_only": True,
+            "live_data_verified": False,
+            "dispatch_allowed": False,
+            "production_authority": False,
+            "requires_calibration_shadow_and_site_acceptance": True,
+        },
+        "generated_at": utc_now(),
+    }
+
+
 def _finite_number(raw: Any, column: str, line: int) -> float:
     try:
         value = float(raw)

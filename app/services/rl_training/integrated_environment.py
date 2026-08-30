@@ -264,7 +264,11 @@ class IntegratedPortOperationsEnv(RegulatoryPortOperationsEnv):
         return continuous
 
     def _decode_integrated_action(self, action: Any) -> np.ndarray:
-        raw = np.asarray(action, dtype=np.float32).reshape(self.ACTION_DIMENSIONS)
+        # Use the V5 contract width explicitly so additive subclasses can map
+        # their larger action vector into this compatibility prefix.
+        raw = np.asarray(action, dtype=np.float32).reshape(
+            IntegratedPortOperationsEnv.ACTION_DIMENSIONS
+        )
         raw = np.clip(raw, -1.0, 1.0)
         base = self._decode_action(raw[:7])
         # Zero is the declared current-operations midpoint. Negative values
@@ -292,11 +296,11 @@ class IntegratedPortOperationsEnv(RegulatoryPortOperationsEnv):
 
     def project_control(self, action: Any, **kwargs: Any) -> Dict[str, Any]:
         raw = np.asarray(action, dtype=np.float32).reshape(-1)
-        if raw.size not in {7, self.ACTION_DIMENSIONS}:
+        if raw.size not in {7, IntegratedPortOperationsEnv.ACTION_DIMENSIONS}:
             raise ValueError("port_ops_v5 control must contain 7 base or 13 integrated actions")
         base_action = raw[:7]
         projected = super().project_control(base_action, **kwargs)
-        if raw.size == self.ACTION_DIMENSIONS:
+        if raw.size == IntegratedPortOperationsEnv.ACTION_DIMENSIONS:
             integrated = self._decode_integrated_action(raw)
             projected.update(
                 gate_smoothing_ratio=round(float(integrated[7]), 6),
@@ -374,7 +378,9 @@ class IntegratedPortOperationsEnv(RegulatoryPortOperationsEnv):
         return default if value is None else float(value)
 
     def step(self, action: Any):
-        raw_action = np.asarray(action, dtype=np.float32).reshape(self.ACTION_DIMENSIONS)
+        raw_action = np.asarray(action, dtype=np.float32).reshape(
+            IntegratedPortOperationsEnv.ACTION_DIMENSIONS
+        )
         data_index = self._start + self._local_step
         row = self._row().copy()
         port, availability = self._port_values(data_index)
@@ -565,8 +571,11 @@ class IntegratedPortOperationsEnv(RegulatoryPortOperationsEnv):
         reward = float(base_reward + integrated_reward)
 
         hard_intervention = float(bool(intervention_reasons))
+        # One part per million of the configured demand cap is numerical
+        # tolerance, not an operational breach. This suppresses sub-watt
+        # float noise while retaining every material capacity exceedance.
         extra_violation = bool(
-            integrated_exceed_kw > 1e-6
+            integrated_exceed_kw > max(1e-6, self.demand_cap_kw * 1e-6)
         )
         if extra_violation and not bool(info["guardrail_violation"]):
             self._totals["violations"] += 1.0

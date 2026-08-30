@@ -28,6 +28,7 @@ from .datasets import (
 from .environment import PortOperationsEnv, dataset_quality_cadence
 from .regulatory_environment import RegulatoryPortOperationsEnv
 from .integrated_environment import IntegratedPortOperationsEnv
+from .coordinated_environment import CoordinatedPortOperationsEnv
 from .baselines import FCFSNeutralPolicy
 from .mpc import MPCPolicy
 from .model_registry import ModelRegistry
@@ -358,6 +359,34 @@ class TrainingManager:
                     "safety_revision": IntegratedPortOperationsEnv.SAFETY_REVISION,
                     "site_replacement": "all port-wide engineering scenario fields have explicit masks and require authorized site adapters",
                 },
+                "port_ops_v6": {
+                    "observation_dimensions": CoordinatedPortOperationsEnv.OBSERVATION_DIMENSIONS,
+                    "observation_fields": [
+                        "all_port_ops_v5_fields",
+                        "rail_backlog_pressure", "barge_backlog_pressure",
+                        "pilotage_backlog_pressure", "towage_backlog_pressure",
+                        "quay_move_backlog_pressure",
+                        "horizontal_move_backlog_pressure",
+                        "yard_move_backlog_pressure",
+                    ],
+                    "continuous_action_dimensions": CoordinatedPortOperationsEnv.ACTION_DIMENSIONS,
+                    "actions": list(CoordinatedPortOperationsEnv.ACTION_NAMES),
+                    "discrete_action_support": False,
+                    "feasible_parameterization": [
+                        "bess_soc_and_terminal_reachability",
+                        "channel_closure_and_under_keel_clearance",
+                        "dangerous_goods_yard_inflow",
+                        "reefer_minimum_service",
+                        "maintenance_minimum_reserve",
+                    ],
+                    "split_resource_owners": [
+                        "rail", "barge", "pilotage", "towage",
+                        "quay_crane", "horizontal_transport", "yard_crane",
+                    ],
+                    "authority": "recommendation_only_no_schedule_release_navigation_or_actuator_authority",
+                    "safety_revision": CoordinatedPortOperationsEnv.SAFETY_REVISION,
+                    "site_replacement": "public aggregate and reanalysis anchors plus explicit engineering resource capacities; every site source must be replaced and shadow-accepted",
+                },
             },
             "training_rendering": "disabled",
             "evaluation_rendering": "trajectory_json_only",
@@ -394,10 +423,10 @@ class TrainingManager:
             or profile.get("environment_version")
             or "port_ops_v1"
         )
-        if environment_version not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4", "port_ops_v5"}:
-            raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3, port_ops_v4 or port_ops_v5")
-        if environment_version == "port_ops_v5" and ALGORITHMS[algorithm].action_space != "continuous":
-            raise ValueError("port_ops_v5 supports continuous algorithms only; the 13-control discrete lattice is intentionally prohibited")
+        if environment_version not in {"port_ops_v1", "port_ops_v2", "port_ops_v3", "port_ops_v4", "port_ops_v5", "port_ops_v6"}:
+            raise ValueError("environment_version must be port_ops_v1, port_ops_v2, port_ops_v3, port_ops_v4, port_ops_v5 or port_ops_v6")
+        if environment_version in {"port_ops_v5", "port_ops_v6"} and ALGORITHMS[algorithm].action_space != "continuous":
+            raise ValueError(f"{environment_version} supports continuous algorithms only; the high-dimensional discrete lattice is intentionally prohibited")
         required_factors = list(profile["factor_requirements"].get("required_for_training") or [])
         factor_coverage = {
             **(quality.get("factor_coverage") or {}),
@@ -474,7 +503,14 @@ class TrainingManager:
             str(name): max(0.0, min(10.0, float(value)))
             for name, value in dict(raw.get("integrated_reward_weights") or {}).items()
         }
-        if environment_version == "port_ops_v5":
+        coordinated_reward_weights = {
+            str(name): max(0.0, min(10.0, float(value)))
+            for name, value in dict(raw.get("coordinated_reward_weights") or {}).items()
+        }
+        if environment_version == "port_ops_v6":
+            observation_dimensions = CoordinatedPortOperationsEnv.OBSERVATION_DIMENSIONS
+            action_dimensions = CoordinatedPortOperationsEnv.ACTION_DIMENSIONS
+        elif environment_version == "port_ops_v5":
             observation_dimensions = IntegratedPortOperationsEnv.OBSERVATION_DIMENSIONS
             action_dimensions = IntegratedPortOperationsEnv.ACTION_DIMENSIONS
         elif environment_version == "port_ops_v4":
@@ -522,7 +558,11 @@ class TrainingManager:
             "projection_penalty_weight": projection_penalty_weight,
             "regulatory_delay_penalty_weight": regulatory_delay_penalty_weight,
             "integrated_reward_weights": integrated_reward_weights,
+            "coordinated_reward_weights": coordinated_reward_weights,
             "environment_safety_revision": (
+                CoordinatedPortOperationsEnv.SAFETY_REVISION
+                if environment_version == "port_ops_v6"
+                else
                 IntegratedPortOperationsEnv.SAFETY_REVISION
                 if environment_version == "port_ops_v5"
                 else
@@ -596,7 +636,20 @@ class TrainingManager:
         else:
             train_slice, test_slice = dataset.split(config["test_ratio"])
         environment_version = config.get("environment_version")
-        if environment_version == "port_ops_v5":
+        if environment_version == "port_ops_v6":
+            environment_class = CoordinatedPortOperationsEnv
+            environment_kwargs = {
+                "regulatory_delay_penalty_weight": float(
+                    config.get("regulatory_delay_penalty_weight") or 0.35
+                ),
+                "integrated_reward_weights": dict(
+                    config.get("integrated_reward_weights") or {}
+                ),
+                "coordinated_reward_weights": dict(
+                    config.get("coordinated_reward_weights") or {}
+                ),
+            }
+        elif environment_version == "port_ops_v5":
             environment_class = IntegratedPortOperationsEnv
             environment_kwargs = {
                 "regulatory_delay_penalty_weight": float(
@@ -1036,7 +1089,20 @@ class TrainingManager:
         )
         selected_slice = validation_slice if split_name == "validation" else test_slice
         environment_version = config.get("environment_version")
-        if environment_version == "port_ops_v5":
+        if environment_version == "port_ops_v6":
+            environment_class = CoordinatedPortOperationsEnv
+            environment_kwargs = {
+                "regulatory_delay_penalty_weight": float(
+                    config.get("regulatory_delay_penalty_weight") or 0.35
+                ),
+                "integrated_reward_weights": dict(
+                    config.get("integrated_reward_weights") or {}
+                ),
+                "coordinated_reward_weights": dict(
+                    config.get("coordinated_reward_weights") or {}
+                ),
+            }
+        elif environment_version == "port_ops_v5":
             environment_class = IntegratedPortOperationsEnv
             environment_kwargs = {
                 "regulatory_delay_penalty_weight": float(
@@ -1293,7 +1359,7 @@ class TrainingManager:
                 "rendered": False,
                 "predicted_at": utc_now(),
             }
-            if config.get("environment_version") == "port_ops_v5":
+            if config.get("environment_version") in {"port_ops_v5", "port_ops_v6"}:
                 result["deterministic_business_guardrails"] = (
                     assess_integrated_business_constraints(
                         state=canonical_state,

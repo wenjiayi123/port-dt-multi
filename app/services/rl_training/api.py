@@ -11,7 +11,13 @@ from typing import Any, Dict, Optional
 from fastapi import APIRouter, Body, File, Form, HTTPException, UploadFile
 from fastapi.responses import JSONResponse
 
-from .datasets import dataset_quality_report, import_dataset, list_datasets, load_port_dataset
+from .datasets import (
+    dataset_quality_report,
+    import_dataset,
+    list_datasets,
+    load_port_dataset,
+    site_replacement_readiness_report,
+)
 from .profiles import list_profiles, load_profile
 from .trainer import TRAINING_MANAGER
 
@@ -21,6 +27,7 @@ REPO_ROOT = Path(__file__).resolve().parents[3]
 REGULATORY_EVIDENCE_ROOT = REPO_ROOT / "evidence/v4/regulatory_delay"
 INTEGRATED_EVIDENCE_ROOT = REPO_ROOT / "evidence/v5/integrated_business"
 INTEGRATED_GUARDRAIL_ROOT = REPO_ROOT / "evidence/v5/deterministic_guardrails"
+COORDINATED_EVIDENCE_ROOT = REPO_ROOT / "evidence/v6/coordinated_business"
 
 
 @router.get("/engine/capabilities")
@@ -53,6 +60,15 @@ async def dataset_quality(dataset_id: str) -> JSONResponse:
     try:
         dataset = load_port_dataset(dataset_id, TRAINING_MANAGER.data_root)
         return JSONResponse(dataset_quality_report(dataset))
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+
+
+@router.get("/datasets/{dataset_id}/site-readiness")
+async def dataset_site_readiness(dataset_id: str) -> JSONResponse:
+    try:
+        dataset = load_port_dataset(dataset_id, TRAINING_MANAGER.data_root)
+        return JSONResponse(site_replacement_readiness_report(dataset))
     except (ValueError, FileNotFoundError) as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
@@ -334,6 +350,106 @@ async def integrated_business_evidence() -> JSONResponse:
                     guardrail_report.get("challenge_suite") or {}
                 ).get("checks"),
             },
+            "production_authority": False,
+            "report": report,
+        }
+    )
+
+
+@router.get("/coordinated-business/evidence")
+async def coordinated_business_evidence() -> JSONResponse:
+    """Return the hash-bound V6 coordinated offline champion, if admitted."""
+    champion_path = COORDINATED_EVIDENCE_ROOT / "offline_champion.json"
+    if not champion_path.is_file():
+        raise HTTPException(
+            status_code=404,
+            detail="coordinated business champion is unavailable or not admitted",
+        )
+    champion = json.loads(champion_path.read_text(encoding="utf-8"))
+    if (
+        champion.get("status") != "ADMITTED_OFFLINE_CHAMPION"
+        or champion.get("production_authority") is not False
+    ):
+        raise HTTPException(status_code=409, detail="coordinated champion is blocked")
+
+    evidence_root = COORDINATED_EVIDENCE_ROOT.resolve()
+    report_path = (REPO_ROOT / str(champion.get("report_path") or "")).resolve()
+    if not report_path.is_relative_to(evidence_root) or not report_path.is_file():
+        raise HTTPException(status_code=409, detail="coordinated evidence pointer is invalid")
+    report_sha256 = hashlib.sha256(report_path.read_bytes()).hexdigest()
+    if report_sha256 != champion.get("report_sha256"):
+        raise HTTPException(status_code=409, detail="coordinated evidence hash gate failed")
+    report = json.loads(report_path.read_text(encoding="utf-8"))
+    admission = report.get("admission") or {}
+    training = report.get("training") or {}
+    if (
+        admission.get("passed") is not True
+        or admission.get("promoted") is not True
+        or admission.get("production_authority") is not False
+        or training.get("selected_job_id") != champion.get("selected_job_id")
+    ):
+        raise HTTPException(status_code=409, detail="coordinated admission binding failed")
+
+    model_path = (REPO_ROOT / str(champion.get("selected_model_path") or "")).resolve()
+    model_root = (REPO_ROOT / "data/rl/runs").resolve()
+    if (
+        not model_path.is_relative_to(model_root)
+        or not model_path.is_file()
+        or hashlib.sha256(model_path.read_bytes()).hexdigest()
+        != champion.get("selected_model_sha256")
+    ):
+        raise HTTPException(status_code=409, detail="coordinated model hash gate failed")
+
+    verified_datasets: Dict[str, Dict[str, Any]] = {}
+    dataset_root = (REPO_ROOT / "data/rl/datasets").resolve()
+    for label, report_key, id_key, sha_key in (
+        ("training", "dataset", "dataset_id", "dataset_sha256"),
+        (
+            "forward",
+            "final_evaluation_dataset",
+            "final_evaluation_dataset_id",
+            "final_evaluation_dataset_sha256",
+        ),
+    ):
+        dataset_evidence = report.get(report_key) or {}
+        artifact_path = (REPO_ROOT / str(dataset_evidence.get("artifact") or "")).resolve()
+        expected_sha256 = champion.get(sha_key)
+        if (
+            dataset_evidence.get("dataset_id") != champion.get(id_key)
+            or dataset_evidence.get("sha256") != expected_sha256
+            or not artifact_path.is_relative_to(dataset_root)
+            or not artifact_path.is_file()
+            or hashlib.sha256(artifact_path.read_bytes()).hexdigest() != expected_sha256
+        ):
+            raise HTTPException(
+                status_code=409,
+                detail=f"coordinated {label} dataset hash gate failed",
+            )
+        verified_datasets[label] = {
+            "dataset_id": champion.get(id_key),
+            "sha256": expected_sha256,
+            "rows": int(dataset_evidence.get("rows") or 0),
+        }
+
+    legacy = dict(report.get("legacy_preservation") or {})
+    report["legacy_preservation"] = {
+        "checked_artifact_count": int(legacy.get("checked_artifact_count") or 0),
+        "preserved": legacy.get("preserved") is True,
+    }
+    return JSONResponse(
+        {
+            "schema": "port-dt-coordinated-business-api.v1",
+            "status": champion["status"],
+            "report_sha256": report_sha256,
+            "selected_job_id": champion.get("selected_job_id"),
+            "selected_model_sha256": champion.get("selected_model_sha256"),
+            "business_score_vs_fcfs": champion.get("business_score_vs_fcfs"),
+            "business_score_vs_fixed_rule": champion.get(
+                "business_score_vs_fixed_rule"
+            ),
+            "champion_metrics": champion.get("champion_metrics"),
+            "training_dataset": verified_datasets["training"],
+            "forward_dataset": verified_datasets["forward"],
             "production_authority": False,
             "report": report,
         }

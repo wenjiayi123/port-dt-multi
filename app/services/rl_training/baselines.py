@@ -225,3 +225,63 @@ class IntegratedCurrentOpsRulePolicy:
             "hard_constraints": "evaluated by the same deterministic V5 gate",
             "replacement_required": "authorized site SOP replay and operator dispatch logs",
         }
+
+
+class CoordinatedCurrentOpsRulePolicy:
+    """Fixed V6 rule proxy with separate resource-owner controls.
+
+    It is intentionally transparent and predeclared. It is not a measured
+    terminal policy and therefore cannot be used for a field-value claim.
+    """
+
+    def __init__(self, integrated_policy: IntegratedCurrentOpsRulePolicy) -> None:
+        self.integrated_policy = integrated_policy
+
+    @staticmethod
+    def _raw_from_pressure(pressure: float, minimum: float = 0.30) -> float:
+        allocation = float(np.clip(minimum + 0.60 * pressure, 0.05, 0.95))
+        return 2.0 * allocation - 1.0
+
+    def predict(self, observation: Any, deterministic: bool = True):
+        obs = np.asarray(observation, dtype=np.float32).reshape(-1)
+        if obs.size < 110:
+            raise ValueError(
+                "coordinated current-operations rule requires V6 state observations"
+            )
+        v5_observation = obs[:-7]
+        v5_action, _state = self.integrated_policy.predict(
+            v5_observation, deterministic=deterministic
+        )
+        v5 = np.asarray(v5_action, dtype=np.float32).reshape(13)
+        rail, barge, pilotage, towage, quay, horizontal, yard = obs[-7:]
+        action = np.asarray(
+            [
+                *v5[:8].tolist(),
+                self._raw_from_pressure(float(rail)),
+                self._raw_from_pressure(float(barge)),
+                float(v5[9]),
+                float(v5[10]),
+                float(v5[11]),
+                self._raw_from_pressure(float(pilotage)),
+                self._raw_from_pressure(float(towage)),
+                self._raw_from_pressure(float(quay), 0.45),
+                self._raw_from_pressure(float(horizontal), 0.45),
+                self._raw_from_pressure(float(yard), 0.45),
+            ],
+            dtype=np.float32,
+        )
+        return action, None
+
+    def parameters(self) -> dict[str, Any]:
+        return {
+            "baseline_kind": "predeclared_coordinated_current_operations_rule_proxy",
+            "measured_operator_policy": False,
+            "holdout_tuning": False,
+            "integrated_policy": self.integrated_policy.parameters(),
+            "split_controls": [
+                "rail", "barge", "pilotage", "towage",
+                "quay_crane", "horizontal_transport", "yard_crane",
+            ],
+            "rule": "allocation = clip(minimum + 0.60 * normalized_backlog_pressure, 0.05, 0.95)",
+            "replacement_required": "authorized site SOP replay and operator dispatch logs",
+        }

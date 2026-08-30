@@ -11,6 +11,7 @@
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>港口 AI 运营平台 · 数字孪生 + RL 决策</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Cpath d='M13 44h38M18 35h28l-4 9H22zM29 13h6v22h-6zM20 20h24v6H20z' fill='%2360a5fa'/%3E%3C/svg%3E" />
   <style>
@@ -136,7 +137,16 @@
       .hero-title{ font-size:24px; }
       .header-wrap{ align-items:flex-start; }
       .hero-sub .en{ display:block; margin:4px 0 0; }
-      .hero-meta{ min-height:26px; font-size:12px; }
+      .hero-meta{
+        min-height:26px;
+        max-width:100%;
+        padding:6px 10px;
+        border-radius:14px;
+        font-size:12px;
+        line-height:1.4;
+        white-space:normal;
+        overflow-wrap:anywhere;
+      }
       .topnav{ margin-top:18px; }
     }
 
@@ -2130,6 +2140,15 @@ border-left:3px solid rgba(148,163,184,.22);
       border:1px solid #1e293b;
       margin:2px 4px 2px 0;
       white-space:nowrap;
+    }
+    @media (max-width:680px){
+      .api-pill{
+        max-width:100%;
+        flex-wrap:wrap;
+        white-space:normal;
+        overflow-wrap:anywhere;
+      }
+      .api-pill code{min-width:0;overflow-wrap:anywhere;white-space:normal}
     }
     .api-pill-btn{
       border:0;
@@ -5027,6 +5046,23 @@ border-left:3px solid rgba(148,163,184,.22);
         <pre id="port-call-gateway-detail" style="margin:8px 0 0;max-height:260px;overflow:auto;white-space:pre-wrap;color:#cfe0ff;background:#050b16;border:1px solid #1e2a44;border-radius:8px;padding:9px;">未配置经授权的实时靠泊事件源时，查询接口失败关闭，不生成模拟航次。</pre>
       </div>
 
+      <div id="site-integration-gateway-panel" style="margin-top:10px;padding:11px;border:1px solid rgba(45,212,191,.22);border-radius:10px;background:rgba(7,16,31,.62);">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <div>
+            <div style="font-weight:700;color:#ccfbf1;">八类现场快照与历史数据替换闸门</div>
+            <div class="small" id="site-integration-status" style="margin-top:4px;color:#fcd34d;">正在检查 TOS、AIS/VTS、海气象、SCADA、PLC、集疏运、冷藏箱和维护人员接口…</div>
+          </div>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;">
+            <button class="btn" id="btn-site-integration-readiness">刷新八类接口</button>
+            <button class="btn" id="btn-site-integration-contract">查看字段与安全门</button>
+            <button class="btn" id="btn-site-integration-rejection">验证未授权拒绝</button>
+            <button class="btn" id="btn-site-dataset-readiness">核验公开数据不可冒充现场</button>
+          </div>
+        </div>
+        <div class="small" style="margin-top:7px;color:#8aa6d8;">实时快照逐接口核验身份、签名、摘要、时效、单位、序列和回放；历史 CSV 还需 720 小时、全字段覆盖及逐字段血缘。通过输入闸门仍不授予调度权。</div>
+        <pre id="site-integration-detail" style="margin:8px 0 0;max-height:280px;overflow:auto;white-space:pre-wrap;color:#cfe0ff;background:#050b16;border:1px solid #1e2a44;border-radius:8px;padding:9px;">默认未配置私有现场密钥，所有未签名或来源不匹配的快照必须被拒绝。</pre>
+      </div>
+
       <!-- 两列：左 TOS/AIS，右 市场/潮汐 -->
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
         <div>
@@ -5088,6 +5124,7 @@ border-left:3px solid rgba(148,163,184,.22);
   const byId=(id)=>document.getElementById(id);
   let externalV3Evidence=null;
   let portCallReadiness=null;
+  let siteIntegrationReadiness=null;
   function lineChart(id,rows,color,decimals){
     const canvas=byId(id); if(!canvas)return;
     const rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
@@ -5161,6 +5198,37 @@ border-left:3px solid rgba(148,163,184,.22);
     byId('port-call-gateway-status').textContent=payload.valid?'接入前合同样例通过 · 真实数据仍未接入 · 无生产控制权':'接入前合同样例未通过';
     byId('port-call-gateway-status').style.color=payload.valid?'#86efac':'#f87171';
   }
+  async function loadSiteIntegrationReadiness(showDetail=false){
+    const response=await fetch('/api/v3/site-integration/readiness',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const payload=await response.json();siteIntegrationReadiness=payload;
+    const live=Number(payload.live_verified_adapter_count||0),total=Number(payload.adapter_count||0),boundary=payload.boundary||{};
+    byId('site-integration-status').textContent=live===total&&total>0
+      ? `八类实时源已验证 ${live}/${total} · 历史窗口和现场准入仍未完成 · 无生产控制权`
+      : `待接入港口 · 已配置 ${payload.configured_adapter_count||0}/${total} · 实时验证 ${live}/${total} · ${boundary.site_status||'失败关闭'}`;
+    byId('site-integration-status').style.color=live===total&&total>0?'#86efac':'#fcd34d';
+    if(showDetail)byId('site-integration-detail').textContent=JSON.stringify({schema_version:payload.schema_version,adapters:payload.adapters,replacement_coverage:payload.replacement_coverage,boundary:payload.boundary},null,2);
+    return payload;
+  }
+  function unauthorizedSnapshotSample(){
+    const observedAt=new Date().toISOString();
+    return {schema_version:'port-snapshot.v1',snapshot_id:'SNAP.UI.FAILCLOSED.000001',site_id:'UNAUTHORIZED.UI.SAMPLE',adapter_id:'tos',owner:'UNAUTHORIZED_UI_SAMPLE',source_system:'UNAUTHORIZED_UI_SAMPLE',sequence:1,observed_at:observedAt,payload:{throughput_teu:{value:12,unit:'TEU/hour',quality:'measured',observed_at:observedAt}},payload_sha256:'0'.repeat(64),signature:'0'.repeat(64)};
+  }
+  async function validateUnauthorizedSnapshotRejection(){
+    const response=await fetch('/api/v3/site-integration/ingest',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(unauthorizedSnapshotSample())});
+    const payload=await response.json();
+    if(response.status!==422||payload.valid!==false)throw new Error(`未授权快照没有按预期失败关闭 · HTTP ${response.status}`);
+    byId('site-integration-status').textContent='失败关闭验证通过 · 未授权/未签名快照已拒绝 · 未保存遥测 · 无生产控制权';
+    byId('site-integration-status').style.color='#86efac';
+    byId('site-integration-detail').textContent=JSON.stringify({expected_rejection:true,http_status:response.status,errors:payload.errors,lineage:payload.lineage,boundary:payload.boundary},null,2);
+  }
+  async function validatePublicDatasetBoundary(){
+    const response=await fetch('/api/rl/datasets/public_cn_sha_integrated_scenario_v5/site-readiness',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const payload=await response.json();
+    if(payload.training_dataset_replacement_ready!==false)throw new Error('公开工程场景被错误标记为现场替换数据');
+    byId('site-integration-status').textContent='数据边界校验通过 · 公开/工程场景未被冒充为现场替换数据 · 无生产控制权';
+    byId('site-integration-status').style.color='#86efac';
+    byId('site-integration-detail').textContent=JSON.stringify(payload,null,2);
+  }
   window.loadExternalV3=loadExternalV3;
   byId('btn-ext-refresh')?.addEventListener('click',(event)=>{event.preventDefault();event.stopImmediatePropagation();loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});},true);
   byId('btn-ext-provenance')?.addEventListener('click',async()=>{if(!externalV3Evidence)await loadExternalV3();byId('ext-v3-detail').textContent=JSON.stringify({dataset:externalV3Evidence.dataset,public_sources:externalV3Evidence.public_sources,adapter_status:externalV3Evidence.adapter_status},null,2);});
@@ -5169,7 +5237,11 @@ border-left:3px solid rgba(148,163,184,.22);
   byId('btn-port-call-readiness')?.addEventListener('click',async()=>{try{const payload=await loadPortCallReadiness();byId('port-call-gateway-detail').textContent=JSON.stringify({adapter_status:payload.adapter_status,boundary:payload.boundary,quality_gates:payload.quality_gates},null,2);}catch(error){byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;}});
   byId('btn-port-call-contract')?.addEventListener('click',async()=>{try{const payload=portCallReadiness||await loadPortCallReadiness();byId('port-call-gateway-detail').textContent=JSON.stringify({schema_version:payload.schema_version,event_contract:payload.event_contract,quality_gates:payload.quality_gates,boundary:payload.boundary},null,2);}catch(error){byId('port-call-gateway-status').textContent='靠泊事件合同加载失败：'+error.message;}});
   byId('btn-port-call-preflight')?.addEventListener('click',()=>validatePortCallContract().catch(error=>{byId('port-call-gateway-status').textContent='接入前校验失败：'+error.message;byId('port-call-gateway-status').style.color='#f87171';}));
-  const start=()=>{loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});loadPortCallReadiness().catch(error=>{byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;});};setTimeout(start,1200);setTimeout(start,4000);
+  byId('btn-site-integration-readiness')?.addEventListener('click',()=>loadSiteIntegrationReadiness(true).catch(error=>{byId('site-integration-status').textContent='现场接入状态加载失败：'+error.message;}));
+  byId('btn-site-integration-contract')?.addEventListener('click',async()=>{try{const payload=siteIntegrationReadiness||await loadSiteIntegrationReadiness(false);byId('site-integration-detail').textContent=JSON.stringify({schema_version:payload.schema_version,quality_gates:payload.quality_gates,adapters:(payload.adapters||[]).map(row=>({adapter_id:row.adapter_id,required_fields:row.required_fields,blockers:row.blockers})),boundary:payload.boundary},null,2);}catch(error){byId('site-integration-status').textContent='现场字段合同加载失败：'+error.message;}});
+  byId('btn-site-integration-rejection')?.addEventListener('click',()=>validateUnauthorizedSnapshotRejection().catch(error=>{byId('site-integration-status').textContent='失败关闭验证异常：'+error.message;byId('site-integration-status').style.color='#f87171';}));
+  byId('btn-site-dataset-readiness')?.addEventListener('click',()=>validatePublicDatasetBoundary().catch(error=>{byId('site-integration-status').textContent='数据替换边界核验失败：'+error.message;byId('site-integration-status').style.color='#f87171';}));
+  const start=()=>{loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});loadPortCallReadiness().catch(error=>{byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;});loadSiteIntegrationReadiness(false).catch(error=>{byId('site-integration-status').textContent='现场接入状态加载失败：'+error.message;});};setTimeout(start,1200);setTimeout(start,4000);
 })();
 </script>
 

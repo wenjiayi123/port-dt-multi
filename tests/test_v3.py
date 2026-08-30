@@ -423,12 +423,13 @@ class V3FactsApiTests(unittest.TestCase):
         self.assertEqual(payload["version"], "3.2.0")
         self.assertFalse(payload["production_authority"])
         self.assertEqual(len(payload["algorithms"]), 12)
-        self.assertEqual(len(BUSINESS_CAPABILITIES), 12)
+        self.assertEqual(len(BUSINESS_CAPABILITIES), 13)
         self.assertTrue(all(item["depth"]["code_evidence"] for item in payload["capabilities"]))
         coverage = payload["business_domain_coverage"]
-        self.assertEqual(coverage["domain_count"], 12)
-        self.assertEqual(coverage["runtime_output_available_count"], 9)
-        self.assertEqual(coverage["no_independent_optimizer_count"], 3)
+        self.assertEqual(coverage["domain_count"], 13)
+        self.assertEqual(coverage["runtime_output_available_count"], 13)
+        self.assertEqual(coverage["learned_optimizer_output_count"], 9)
+        self.assertEqual(coverage["no_independent_optimizer_count"], 4)
         self.assertTrue(coverage["all_code_artifacts_hash_verified"])
         self.assertEqual(coverage["production_ready_count"], 0)
         self.assertEqual(len(payload["deployment_gates"]), 5)
@@ -513,11 +514,12 @@ class V3FactsApiTests(unittest.TestCase):
             self.assertFalse(depth["production_ready"], domain)
             self.assertTrue(all(row["exists"] for row in depth["code_artifacts"]), domain)
             self.assertTrue(all(len(row["sha256"]) == 64 for row in depth["code_artifacts"]), domain)
-        for domain in ("gate", "reefer", "maintenance"):
-            self.assertFalse(rows[domain]["model_output_available"])
+        for domain in ("weather", "safety", "carbon", "multiport"):
+            self.assertTrue(rows[domain]["model_output_available"])
+            self.assertFalse(rows[domain]["learned_optimizer_output"])
         ui = (ROOT / "app/ui/v3/v3.js").read_text(encoding="utf-8")
         self.assertIn("执行状态与真实输出来源", ui)
-        self.assertIn("无独立模型输出", ui)
+        self.assertIn("无独立 RL 优化器", ui)
 
     def test_v32_strong_baselines_are_paired_and_fail_closed(self):
         payload = json.loads(

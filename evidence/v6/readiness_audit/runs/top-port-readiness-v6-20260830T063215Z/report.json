@@ -1,0 +1,115 @@
+{
+  "schema": "port-dt-top-port-readiness-audit.v1",
+  "run_id": "top-port-readiness-v6-20260830T063215Z",
+  "generated_at": "2026-08-30T06:32:15Z",
+  "conclusion": "NOT_READY_FOR_IMMEDIATE_PRODUCTION_SITE_CONNECTION",
+  "software_shadow_integration_baseline_ready": true,
+  "production_site_ready": false,
+  "production_authority": false,
+  "data_audit": {
+    "training_rows": 17544,
+    "independent_source_observations": 17566,
+    "forward_challenge_rows": 3624,
+    "measured_terminal_telemetry_available": false,
+    "required_site_adapters": 8,
+    "configured_site_adapters": 0,
+    "live_attested_site_adapters": 0,
+    "public_dataset_passes_site_replacement_gate": false
+  },
+  "rl_contract": {
+    "environment_version": "port_ops_v6",
+    "observation_dimensions": 110,
+    "action_dimensions": 18,
+    "business_domains": 13,
+    "runtime_output_domains": 13,
+    "rl_or_independent_optimizer_domains": 9,
+    "deterministic_safety_governance_accounting_domains": 4,
+    "production_control_actions": 0
+  },
+  "static_control_audit": {
+    "status": "PASS",
+    "source_count": 8,
+    "static_button_definition_count": 287,
+    "bound_button_definition_count": 287,
+    "unresolved_button_definition_count": 0,
+    "by_source": {
+      "app/ui/index.html": 214,
+      "app/ui/integration_hub.html": 33,
+      "app/ui/ops_copilot.html": 5,
+      "app/ui/v3/index.html": 13,
+      "app/ui/v3/v3.js": 3,
+      "app/ui/rl_future/rl_future_panel.html": 3,
+      "app/ui/rl_future/rl_future.js": 0,
+      "app/server.py": 16
+    }
+  },
+  "runtime_browser_acceptance": {
+    "v3": {
+      "impact_views_clicked": 9,
+      "algorithm_evidence_buttons_clicked": 12,
+      "business_domain_drawers_clicked": 13,
+      "data_lineage_buttons_clicked": 3,
+      "deployment_gate_buttons_clicked": 5,
+      "final_domain_summary": "13 domains / 13 runtime outputs / 9 learned-or-independent optimizers / 4 deterministic domains / 0 production-ready"
+    },
+    "twinlab": {
+      "tabs_clicked": 13,
+      "pipelines_executed_to_final_receipt": 10,
+      "pipeline_stages_per_flow": [
+        "readiness",
+        "contract",
+        "preflight"
+      ],
+      "pipelines": [
+        "site_twin_calibration",
+        "read_only_shadow_acceptance",
+        "execution_interlock_acceptance",
+        "port_call_collaboration",
+        "maritime_interoperability",
+        "forecast_uncertainty",
+        "business_benefit_attribution",
+        "end_to_end_coordination",
+        "production_continuity",
+        "operating_model_governance"
+      ]
+    },
+    "site_integration_panel": {
+      "buttons_clicked": 4,
+      "bad_snapshot_rejected_status": 422,
+      "public_dataset_rejected_as_site_replacement": true
+    },
+    "additional_workbenches": {
+      "integration_hub_button_inventory": 43,
+      "ops_copilot_button_inventory": 15,
+      "rl_panel_button_inventory": 29,
+      "future_decision_button_inventory": 3,
+      "safe_read_only_flows_executed": [
+        "integration_health_and_training_status",
+        "copilot_grounded_answer_with_fail_closed_fallback",
+        "rl_status_policy_registry_admission_and_southbound_capabilities",
+        "future_counterfactual_simulation_and_guardrail_receipt"
+      ]
+    },
+    "console_errors_after_fresh_load": 0,
+    "responsive": {
+      "mobile_viewport": "390x844",
+      "desktop_viewport": "1440x900",
+      "main_mobile_document_width_equals_viewport": true,
+      "v3_mobile_document_width_equals_viewport": true,
+      "temporary_viewport_override_reset": true
+    }
+  },
+  "site_blockers": [
+    "authorized site data and per-field lineage",
+    "same-site identity and time synchronization",
+    "measured current-operations baseline",
+    "site calibration and independent holdout",
+    "seven-day read-only shadow acceptance",
+    "PLC BMS EMS TOS interlocks and readback",
+    "identity least privilege two-person approval and secrets",
+    "continuity drills and operating-model evidence",
+    "independent maritime safety controls cybersecurity legal and data-governance acceptance",
+    "executed-action and later-metered business-benefit attribution"
+  ],
+  "boundary": "Static binding, runtime browser, offline training and public-data replay evidence do not prove site fidelity or grant production authority."
+}
