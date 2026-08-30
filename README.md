@@ -29,7 +29,7 @@
 
 ## 项目介绍 / Project introduction
 
-**港航数字孪生 AI 决策调度双端系统**是一套面向港口生产、能源、设备与安全协同的可运行工程平台。Web 端用于集团/码头指挥、数字孪生、策略试验与模型治理；Flutter 移动端面向一线巡检、告警处置、任务确认与交接班。两端共享同一后端合同、模型产物和审计链，避免“大屏是一套数、现场又是另一套结论”。
+港航数字孪生 AI 决策调度双端系统是一套面向港口生产、能源、设备与安全协同的可运行工程平台。Web 端用于集团/码头指挥、数字孪生、策略试验与模型治理；Flutter 移动端面向一线巡检、告警处置、任务确认与交接班。两端共享同一后端合同、模型产物和审计链，避免“大屏是一套数、现场又是另一套结论”。
 
 It is an executable engineering platform for coordinated port production, energy, equipment, and safety operations. The Web command center covers twin visualization, policy experiments, dispatch review, and model governance; the Flutter client supports frontline inspection, alert handling, task confirmation, and shift handover. Both clients consume the same backend contracts, model artifacts, and audit trail.
 
@@ -41,7 +41,7 @@ It is an executable engineering platform for coordinated port production, energy
 | 小懿AI / Xiaoyi AI | 基于当前孪生、预测、模型、异常和准入状态执行态势、解释、分诊、预演与交接班任务 |
 | 落地边界 / Deployment boundary | 当前是可开展只读接港与影子运行的离线工程基线；八类现场适配器、校准、联锁回读和独立验收未完成，`production_authority=false` |
 
-> **一句话闭环：**公开数据/现场数据 → 数字孪生 → 预测与 RL/MPC 策略 → 软件安全包络 → 人工审批 → 双端任务执行/回放 → 操作记录。
+> 一句话闭环：公开数据/现场数据 → 数字孪生 → 预测与 RL/MPC 策略 → 软件安全包络 → 人工审批 → 双端任务执行/回放 → 操作记录。
 
 <p align="center">
   <a href="#项目介绍--project-introduction">项目介绍 / Introduction</a> ·
@@ -152,6 +152,43 @@ This is not a monolithic “AI that does everything.” Provenance levels, envir
   <sub>图 2 · V6 当前证据摘要：13 个业务域、110D 观测、18D 建议动作、真实多种子 SAC 训练、独立前向对照和失效安全边界。</sub>
 </p>
 
+### 当前系统实机画面 / Current runtime gallery
+
+以下画面来自当前仓库在本地启动后的真实页面，保留公开数据、现场待接、无生产控制权等运行边界；不是设计稿，也没有把未接入字段修饰成优秀指标。
+
+<p align="center">
+  <img src="docs/assets/current-v6-operations-overview.jpg" alt="Current V6 operations cockpit with evidence-limited status, provenance verification, decision-first navigation, and Xiaoyi assistant" width="96%" />
+  <br />
+  <sub>图 3 · 运营总览：先给出处置结论，再下钻数据来源、管理驾驶舱、数字孪生、策略编排与审计链。</sub>
+</p>
+
+<p align="center">
+  <img src="docs/assets/current-rl-training-evidence.jpg" alt="Current RL training center showing twelve-controller matrix, public training package, observation and action contract, and Xiaoyi advisor" width="96%" />
+  <br />
+  <sub>图 4 · 强化学习训练中心：12 类控制器、真实实现、随机种子门禁、53D/7D 合同、观测因素与动作权限同屏展示。</sub>
+</p>
+
+<p align="center">
+  <img src="docs/assets/current-rl-forward-value.jpg" alt="Current RL forward evaluation showing paired business-value metrics, safety pass, dataset provenance, factors, and SHA-256 evidence" width="96%" />
+  <br />
+  <sub>图 5 · 独立前向业务价值证据：20 × 48 小时成对窗口、业务指标、安全结果、数据等级和 SHA-256 指纹可直接核验。</sub>
+</p>
+
+<table>
+  <tr>
+    <td width="50%" align="center">
+      <img src="docs/assets/current-v3-decision-center.jpg" alt="Current V3 decision center with public-data offline validation and no-production-control boundary" width="100%" />
+      <br />
+      <sub>图 6 · V3 决策中枢：多港公开数据、证据式决策与无生产控制权边界。</sub>
+    </td>
+    <td width="50%" align="center">
+      <img src="docs/assets/current-integration-flight-deck.jpg" alt="Current integration hub with policy artifact, simulation, safety gate, dry-run flight deck, and unified action stream" width="100%" />
+      <br />
+      <sub>图 7 · 项目联动中枢：策略产物、仿真、护栏与 DRY-RUN 四段验证链。</sub>
+    </td>
+  </tr>
+</table>
+
 <details>
   <summary><strong>历史界面证据 / Historical UI evidence</strong></summary>
   <p>V2 的 7 类控制器、37D/5D 合同与小懿按钮联动截图继续保留在 <a href="docs/assets/training-center-algorithm-matrix-xiaoyi.png">训练中心</a>、<a href="docs/assets/rl-training-console-real-backend.png">训练控制台</a>、<a href="docs/assets/seven-controller-backend-results.png">后端结果</a>和<a href="docs/assets/xiaoyi-system-assistant-button-linkage.png">按钮联动</a>中，仅用于版本追溯，不代表当前 V6 合同。</p>
@@ -186,9 +223,9 @@ V3 formal evidence uses `port_ops_v3`, which retains the 37D/5D contract while c
 
 ### V4 · 海事/海关检查连锁延误韧性 / Regulatory-delay resilience
 
-`port_ops_v4` 以增量合同扩展为 **53 维状态 / 7 维建议动作**：新增海事检查、海关查验、严重缺陷滞留、二次查验、监管资源可用度、放行率及“检查中—待放行—放行后追赶”内部队列；新动作仅用于预留检查窗口与放行后恢复优先级，不能改变执法结论或签发放行。旧 `port_ops_v1/v2/v3` 模型、报告和指标保持原样，V3 策略通过中性适配器在 V4 中运行时两个新增动作固定为 0。
+`port_ops_v4` 以增量合同扩展为 53 维状态 / 7 维建议动作：新增海事检查、海关查验、严重缺陷滞留、二次查验、监管资源可用度、放行率及“检查中—待放行—放行后追赶”内部队列；新动作仅用于预留检查窗口与放行后恢复优先级，不能改变执法结论或签发放行。旧 `port_ops_v1/v2/v3` 模型、报告和指标保持原样，V3 策略通过中性适配器在 V4 中运行时两个新增动作固定为 0。
 
-正式增量训练使用 17,544 小时上海公开基础包叠加预声明监管压力情景，执行 **3 个种子 × 20,000 SAC 环境步**，训练不渲染、验证集选模。候选模型锁定后，另用 2026-01-01 至 2026-05-31 的 3,624 小时前向数据做 20 个成对 48 小时挑战，该数据禁止选模和调参。相对“未感知监管的 V3 工程 SOP 代理”，监管延误 TEU·小时平均降低 **58.95%（95% CI 52.14%–65.13%）**，服务完成率相对提升 **12.55%（11.00%–14.09%）**，单位 TEU 成本改善 **9.23%（8.43%–10.06%）**，单位 TEU 碳排放改善 **9.99%（9.31%–10.64%）**，安全违规率为 0。第一轮因电池终端修正后的斜率越界而 `BLOCKED`，修复后重新训练的通过证据追加保留；两轮均未替换旧冠军，`production_authority=false`。
+正式增量训练使用 17,544 小时上海公开基础包叠加预声明监管压力情景，执行 3 个种子 × 20,000 SAC 环境步，训练不渲染、验证集选模。候选模型锁定后，另用 2026-01-01 至 2026-05-31 的 3,624 小时前向数据做 20 个成对 48 小时挑战，该数据禁止选模和调参。相对“未感知监管的 V3 工程 SOP 代理”，监管延误 TEU·小时平均降低 58.95%（95% CI 52.14%–65.13%），服务完成率相对提升 12.55%（11.00%–14.09%），单位 TEU 成本改善 9.23%（8.43%–10.06%），单位 TEU 碳排放改善 9.99%（9.31%–10.64%），安全违规率为 0。第一轮因电池终端修正后的斜率越界而 `BLOCKED`，修复后重新训练的通过证据追加保留；两轮均未替换旧冠军，`production_authority=false`。
 
 这些数字是 `OUT_OF_PERIOD_FORWARD_ENGINEERING_STRESS_CHALLENGE_NOT_FIELD_KPI`，不是上海海事局、海关或码头现场 KPI。检查选择率、时长和资源能力必须由经授权的监管/TOS/船舶事件替换后，才能进行影子验证。机器可读证据：[`evidence/v4/regulatory_delay/latest.json`](evidence/v4/regulatory_delay/latest.json)；接口：`GET /api/rl/regulatory-resilience/evidence`；数据卡：[`docs/DATASET_CARD_public_cn_sha_regulatory_scenario_v4.md`](docs/DATASET_CARD_public_cn_sha_regulatory_scenario_v4.md)。
 
@@ -287,13 +324,13 @@ V6 expands the execution-depth inventory to thirteen business domains. Every dom
 
 | 设计面 / Design plane | V6 当前合同 / Current contract | 不越权边界 / Boundary |
 |---|---|---|
-| 观测 / Observation | **110 维**：53 个测量或场景特征、逐字段可用性掩码、归一化运行状态，以及监管、集疏运、海事服务、装卸链、冷藏、维护、岸电和能源等有记忆压力 | 缺失现场字段保留 availability mask，不填成“正常值” |
-| 动作 / Action | **18 个连续建议动作**：储能、服务、柔性负荷、泊位、堆场、查验缓冲、监管恢复、闸口、铁路、驳船、冷藏、岸电、维护、引航、拖轮、岸桥、水平运输、场桥 | 不含航行批准、监管放行、危险品许可、计划承诺、设备联锁或人工授权 |
+| 观测 / Observation | 110 维：53 个测量或场景特征、逐字段可用性掩码、归一化运行状态，以及监管、集疏运、海事服务、装卸链、冷藏、维护、岸电和能源等有记忆压力 | 缺失现场字段保留 availability mask，不填成“正常值” |
+| 动作 / Action | 18 个连续建议动作：储能、服务、柔性负荷、泊位、堆场、查验缓冲、监管恢复、闸口、铁路、驳船、冷藏、岸电、维护、引航、拖轮、岸桥、水平运输、场桥 | 不含航行批准、监管放行、危险品许可、计划承诺、设备联锁或人工授权 |
 | 奖励 / Reward | 分项记录成本、碳、峰值、安全、延误、各资源积压/服务、三段装卸链、资源失衡、动作抖动和潜在动作修正；逐步账本可审计 | 荷电状态/爬坡/期末可达域、封航/富余水深、最低服务承诺等是硬约束，不能靠调奖励权重绕过 |
 | 数据 / Data | 2024–2025 共 17,544 小时训练包；公开吞吐汇总与洋山附近再分析为外部观测，内部码头字段为声明且可替换的工程参数 | 不是上海码头 TOS、PLC、BMS、VTS 或设备实测遥测 |
 | 训练与选模 / Training | Stable-Baselines3 SAC，随机种子 626/726/826 × 30,000 真实优化步；验证集选中 seed 726，模型 SHA-256 `9cfebff3...41942` | 训练禁渲染；2026 前向包不参与训练、归一化或选模 |
-| 独立评测 / Evaluation | 锁定后在 2026 年 3,624 小时前向挑战上做 20 个成对 48 小时窗口；相对 FCFS **+15.77%**（95% CI **10.18%–21.18%**），相对透明固定规则代理 **+22.94%**（**19.17%–26.49%**） | 固定规则是工程代理，不是上海港现行策略；数值不是现场财务节省 |
-| 晋级 / Admission | **19/19** 离线业务、安全、投影与隔离门通过；守护栏违规 0，状态 `ADMITTED_OFFLINE_CHAMPION` | “冠军”仅表示当前离线证据最优；`production_authority=false`、`dispatch_allowed=false` |
+| 独立评测 / Evaluation | 锁定后在 2026 年 3,624 小时前向挑战上做 20 个成对 48 小时窗口；相对 FCFS +15.77%（95% CI 10.18%–21.18%），相对透明固定规则代理 +22.94%（19.17%–26.49%） | 固定规则是工程代理，不是上海港现行策略；数值不是现场财务节省 |
+| 晋级 / Admission | 19/19 离线业务、安全、投影与隔离门通过；守护栏违规 0，状态 `ADMITTED_OFFLINE_CHAMPION` | “冠军”仅表示当前离线证据最优；`production_authority=false`、`dispatch_allowed=false` |
 
 失败候选、三种子模型、配对窗口指标、冠军指针和哈希均追加保留在 [`evidence/v6/coordinated_business/`](evidence/v6/coordinated_business/)；[V6 顶级港口差距核查](docs/TOP_PORT_READINESS_GAP_AUDIT_V6.md)、[V6 数据卡](docs/DATASET_CARD_public_cn_sha_coordinated_scenario_v6.md)和[只读现场接入网关](docs/SITE_INTEGRATION_GATEWAY.md)分别给出生产差距、数据真实性与替换条件。当前结论仍是：可进入只读现场映射和影子联调，不能马上取得生产控制权。
 
@@ -313,8 +350,8 @@ Open the new evidence-driven decision center after startup: <http://127.0.0.1:80
 | Time isolation | 70% train / 10% validation / 20% untouched blind test |
 | Shanghai target package | 17,544 hours + 22 official reporting anchors; SHA-256 pinned |
 | Advantage claim | Version-pinned five-metric comparison; validation selects the algorithm, then 3 seeds × ≥10,000 steps × 10 untouched blind windows report the result |
-| Selected SAC blind-test result | Weighted advantage **+2.95%** (95% CI **+1.68% to +4.00%**); throughput **+8.40%** (95% CI **+3.56% to +11.47%**) and delay improvement **+16.77%** (95% CI **+9.78% to +21.38%**) versus neutral FCFS |
-| Equivalent-throughput value | Cost/TEU **+4.11%** (95% CI **+2.33% to +5.03%**) and carbon/TEU **+3.90%** (95% CI **+1.49% to +5.54%**) improvement; annualized values are mechanical 48-hour extrapolations, not audited group savings |
+| Selected SAC blind-test result | Weighted advantage +2.95% (95% CI +1.68% to +4.00%); throughput +8.40% (95% CI +3.56% to +11.47%) and delay improvement +16.77% (95% CI +9.78% to +21.38%) versus neutral FCFS |
+| Equivalent-throughput value | Cost/TEU +4.11% (95% CI +2.33% to +5.03%) and carbon/TEU +3.90% (95% CI +1.49% to +5.54%) improvement; annualized values are mechanical 48-hour extrapolations, not audited group savings |
 | Causal environment | `port_ops_v3` couples service/allocation gains to operational electric load; cross-version comparison is rejected |
 | 3D runtime chain | Continuous calibrated public replay → fitted Ridge P10/P50/P90 → hash-verified SAC inference → control projection and software safety envelope |
 | Offline visual runtime | Repository-bundled ECharts + zero-CDN perspective Canvas twin; a first clone keeps charts, assets and three-state linkage without public JS CDNs |
@@ -333,15 +370,15 @@ Open the new evidence-driven decision center after startup: <http://127.0.0.1:80
 
 ### 五个专项 V3.1 评测 / Five asset-specific V3.1 evaluations
 
-五个专项 V3.1 晋级策略均为**带安全投影的教师策略蒸馏**：网络通过教师动作的均方误差学习，再用固定验证集的奖励、业务与安全门禁选检查点。V3.1 岸电/场内储能中的 Stable-Baselines3 PPO 只承担策略网络与确定性推理载体。V3.2 岸电追加实验则真实执行了 3 种子 × 30,000 个 PPO 环境步，但因成本、碳、峰值综合门未通过而拒绝晋级；场内储能的新增纯电网侧档案继续采用验证选模和 2026 前向验收。全港 `port_ops_v3` 的 10 类算法仍是独立的真实环境交互式 RL 训练，各证据轨不混称。
+五个专项 V3.1 晋级策略均为带安全投影的教师策略蒸馏：网络通过教师动作的均方误差学习，再用固定验证集的奖励、业务与安全门禁选检查点。V3.1 岸电/场内储能中的 Stable-Baselines3 PPO 只承担策略网络与确定性推理载体。V3.2 岸电追加实验则真实执行了 3 种子 × 30,000 个 PPO 环境步，但因成本、碳、峰值综合门未通过而拒绝晋级；场内储能的新增纯电网侧档案继续采用验证选模和 2026 前向验收。全港 `port_ops_v3` 的 10 类算法仍是独立的真实环境交互式 RL 训练，各证据轨不混称。
 
 | 专项模块 | 后端合同与盲测 | 当前公开/工程场景结果 | 不越界声明 |
 |---|---|---|---|
-| 岸电储能 | 34 状态 / 2 动作 / 8 奖励项 / 12 硬约束；3/3 种子收敛，20 个盲测窗 | 成本 **-0.648%**、峰值 **-1.436%**，但碳 **+0.219%**；碳门禁明确阻断 | 公开数据工程场景；不是上海港实测节省或碳核证 |
-| 场内储能 | 40 状态 / 2 动作 / 9 奖励项 / 15 硬约束；3/3 种子收敛，20 个盲测窗 | 成本 **-3.440%**、峰值 **-0.021%**、碳 **-0.008%**、工程事件履约 **100%** | DR/备用事件是工程日历，不是市场结算记录 |
-| 暖通空调 | 30 状态 / 3 动作 / 8 奖励项 / 12 硬约束；3/3 种子收敛，8 个盲测窗 | 成本 **-2.698%**、能耗 **-2.862%**、峰值 **-1.984%**、碳 **-2.860%**，冷量满足 **100%** | 5,760 行时序工程回放；待接 BMS/BA、冷机和末端实测点位 |
-| 场桥 | 36 状态 / 2 动作 / 9 奖励项 / 16 硬约束；3/3 种子收敛，8 个盲测窗 | 成本 **-3.148%**、能耗 **-3.714%**、碳 **-3.711%**，作业量与 SLA 保持 **100%** | 92,160 条设备记录与 8,559 个作业是可复现工程遥测；待接 TOS/PLC |
-| 堆场照明 | 42 状态 / 3 动作 / 10 奖励项 / 17 硬约束；3/3 种子收敛，5 个盲测窗 | 成本 **-1.770%**、能耗 **-2.175%**、峰值 **-1.207%**，最低/关键照度合规 **100%** | 公开气象/港口信号增强工程回放；待接照度计、网关与回执 |
+| 岸电储能 | 34 状态 / 2 动作 / 8 奖励项 / 12 硬约束；3/3 种子收敛，20 个盲测窗 | 成本 -0.648%、峰值 -1.436%，但碳 +0.219%；碳门禁明确阻断 | 公开数据工程场景；不是上海港实测节省或碳核证 |
+| 场内储能 | 40 状态 / 2 动作 / 9 奖励项 / 15 硬约束；3/3 种子收敛，20 个盲测窗 | 成本 -3.440%、峰值 -0.021%、碳 -0.008%、工程事件履约 100% | DR/备用事件是工程日历，不是市场结算记录 |
+| 暖通空调 | 30 状态 / 3 动作 / 8 奖励项 / 12 硬约束；3/3 种子收敛，8 个盲测窗 | 成本 -2.698%、能耗 -2.862%、峰值 -1.984%、碳 -2.860%，冷量满足 100% | 5,760 行时序工程回放；待接 BMS/BA、冷机和末端实测点位 |
+| 场桥 | 36 状态 / 2 动作 / 9 奖励项 / 16 硬约束；3/3 种子收敛，8 个盲测窗 | 成本 -3.148%、能耗 -3.714%、碳 -3.711%，作业量与 SLA 保持 100% | 92,160 条设备记录与 8,559 个作业是可复现工程遥测；待接 TOS/PLC |
+| 堆场照明 | 42 状态 / 3 动作 / 10 奖励项 / 17 硬约束；3/3 种子收敛，5 个盲测窗 | 成本 -1.770%、能耗 -2.175%、峰值 -1.207%，最低/关键照度合规 100% | 公开气象/港口信号增强工程回放；待接照度计、网关与回执 |
 
 每个百分比都来自所列模块的时序隔离盲测，不是前端定时器。前端按钮可继续下钻到原始检查点、收敛判据、状态/动作/奖励/约束、模型哈希、历史运行、失败门禁和待接现场字段。年化金额与碳量仅是固定场景的机械外推，代码和界面均保持 `claim_eligible=false`、`production_authority=false`。
 
@@ -615,23 +652,23 @@ Contributions should be provenance-aware, reproducible, and explicit about safet
 
 ### [Hamid Reza Karimi 教授 / Prof. Dr. Hamid Reza Karimi](https://www.ae-info.org/ae/Member/Karimi_Hamid_Reza)
 
-- **米兰理工大学机械工程系应用力学教授**
+- 米兰理工大学机械工程系应用力学教授
   （Professor of Applied Mechanics, Department of Mechanical Engineering, Politecnico di Milano）
-- **欧洲科学院院士**
+- 欧洲科学院院士
   （Ordinary Member of Academia Europaea, MAE）
-- **欧洲科学与艺术院院士**
+- 欧洲科学与艺术院院士
   （Member of the European Academy of Sciences and Arts, MEASA）
-- **欧洲科学院院士**
+- 欧洲科学院院士
   （Member of the European Academy of Sciences, MEurASc）
-- **国家人工智能科学院院士**
+- 国家人工智能科学院院士
   （Member of the National Academy of Artificial Intelligence, MNAAI）
-- **国际声学与振动研究所杰出会士**
+- 国际声学与振动研究所杰出会士
   （Distinguished Fellow of the International Institute of Acoustics and Vibration, DFIIAV）
-- **国际状态监测学会会士**
+- 国际状态监测学会会士
   （Fellow of the International Society for Condition Monitoring, FISCM）
-- **亚太人工智能学会会士**
+- 亚太人工智能学会会士
   （Fellow of the Asia-Pacific Artificial Intelligence Association, FAAIA）
-- **国际声学与振动研究所理事**
+- 国际声学与振动研究所理事
   （Member of the Board of Directors of the International Institute of Acoustics and Vibration, IIAV）
 
 > 谨向 Karimi 教授为本项目提供的学术支持与指导致以诚挚谢意。

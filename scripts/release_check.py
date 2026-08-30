@@ -252,6 +252,11 @@ REQUIRED = (
     "docs/assets/hero.svg",
     "docs/assets/v6-coordinated-business-evidence.svg",
     "docs/assets/system-overview-provenance-governance.png",
+    "docs/assets/current-v6-operations-overview.jpg",
+    "docs/assets/current-v3-decision-center.jpg",
+    "docs/assets/current-rl-training-evidence.jpg",
+    "docs/assets/current-rl-forward-value.jpg",
+    "docs/assets/current-integration-flight-deck.jpg",
     "docs/assets/training-center-algorithm-matrix-xiaoyi.png",
     "docs/assets/xiaoyi-system-assistant-button-linkage.png",
     "docs/assets/rl-training-console-real-backend.png",
@@ -1220,6 +1225,11 @@ def main() -> int:
         "docs/assets/hero.svg",
         "docs/assets/system-overview-provenance-governance.png",
         "docs/assets/v6-coordinated-business-evidence.svg",
+        "docs/assets/current-v6-operations-overview.jpg",
+        "docs/assets/current-v3-decision-center.jpg",
+        "docs/assets/current-rl-training-evidence.jpg",
+        "docs/assets/current-rl-forward-value.jpg",
+        "docs/assets/current-integration-flight-deck.jpg",
     )
     historical_screenshot_paths = (
         "docs/assets/training-center-algorithm-matrix-xiaoyi.png",
@@ -1229,6 +1239,8 @@ def main() -> int:
     )
     if any(readme.count(path) != 1 for path in current_visual_paths):
         errors.append("README must embed each current V6 visual exactly once")
+    if "**" in readme:
+        errors.append("README must not contain double-asterisk emphasis markers")
     if any(readme.count(path) != 1 for path in historical_screenshot_paths):
         errors.append("README must retain one traceable link to each historical evidence screenshot")
     for script_path in (
