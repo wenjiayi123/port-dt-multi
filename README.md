@@ -51,7 +51,7 @@ It is an executable engineering platform for coordinated port production, energy
   <a href="#-版本演进与训练结果--version-evolution--training-results">版本与训练 / Versions</a> ·
   <a href="#-快速开始--quick-start">快速开始 / Quick start</a> ·
   <a href="#-数据与接港契约--data--port-adapter-contract">数据契约 / Data</a> ·
-  <a href="#-安全和治理边界--safety--governance-boundaries">安全治理 / Safety</a>
+  <a href="#safety-current">安全治理 / Safety</a>
 </p>
 
 <table>
@@ -502,6 +502,8 @@ To connect another port without rewriting algorithms, upload through `/api/rl/da
 同名数据集默认禁止覆盖，只有显式 `replace_existing=true` 才允许替换。详细说明见 [数据与接港契约](docs/DATASET_AND_PORT_ADAPTER.md)、[数据卡](docs/DATASET_CARD_public_port_ops_v1.md) 和 [数据血缘](docs/RL_DATA_LINEAGE.md)。
 
 Datasets cannot overwrite an existing identifier unless `replace_existing=true` is explicitly supplied. See the [dataset and port-adapter contract](docs/DATASET_AND_PORT_ADAPTER.md), [dataset card](docs/DATASET_CARD_public_port_ops_v1.md), and [RL data lineage](docs/RL_DATA_LINEAGE.md).
+
+<a id="safety-current"></a>
 
 ## 🛡️ 安全和治理边界 / Safety & governance boundaries
 
