@@ -2,7 +2,8 @@
   if (window.__xiaoyiSpriteInstalled) return;
   window.__xiaoyiSpriteInstalled = true;
 
-  const SPRITE_VERSION = "2026-08-14-evidence-context-v3";
+  const SPRITE_VERSION = "2026-08-31-navigation-recovery-v5";
+  const CHARACTER_SRC = "/static/xiaoyi_maritime_officer.png?v=20260831-navigation-recovery-v5";
   // V3 resets legacy drag coordinates that may place the assistant over the
   // realtime control rail after the dashboard layout upgrade.
   const STORAGE_KEY = "xiaoyi_sprite_position_v3";
@@ -77,8 +78,13 @@
       .xiaoyi-sprite-root{position:fixed;right:24px;bottom:24px;z-index:3600;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,"Noto Sans",sans-serif;color:#eaf2ff;touch-action:none}
       .xiaoyi-sprite-orb{width:96px;height:136px;border:0;background:transparent;padding:0;cursor:grab;position:relative;overflow:visible}
       .xiaoyi-sprite-orb:active{cursor:grabbing}
-      .xiaoyi-sprite-character{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;pointer-events:none;user-select:none;transform-origin:50% 82%;filter:drop-shadow(0 13px 17px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(34,211,238,.22));animation:xiaoyiCharacterIdle 3.4s ease-in-out infinite}
-      .xiaoyi-sprite-orb:hover .xiaoyi-sprite-character{filter:drop-shadow(0 15px 20px rgba(0,0,0,.46)) drop-shadow(0 0 11px rgba(34,211,238,.38));animation-duration:2.1s}
+      .xiaoyi-sprite-character-shell{position:absolute;inset:0;display:block;pointer-events:none;transform-origin:50% 82%;filter:drop-shadow(0 13px 17px rgba(0,0,0,.42)) drop-shadow(0 0 8px rgba(34,211,238,.22));animation:xiaoyiCharacterIdle 3.4s ease-in-out infinite}
+      .xiaoyi-sprite-character{width:100%;height:100%;display:block;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+      .xiaoyi-sprite-root[data-character-state="loading"] .xiaoyi-sprite-character{opacity:.01}
+      .xiaoyi-sprite-root[data-character-state="ready"] .xiaoyi-sprite-character{opacity:1;transition:opacity .12s ease-out}
+      .xiaoyi-sprite-root[data-character-state="failed"] .xiaoyi-sprite-character{opacity:.01}
+      .xiaoyi-sprite-root[data-character-state="failed"] .xiaoyi-sprite-character-shell::after{content:"小懿";position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:48px;height:48px;border:1px solid rgba(56,189,248,.72);border-radius:50%;background:linear-gradient(145deg,#0b4b80,#082745);color:#eaf8ff;font-size:14px;font-weight:900;box-shadow:0 0 18px rgba(56,189,248,.28)}
+      .xiaoyi-sprite-orb:hover .xiaoyi-sprite-character-shell{filter:drop-shadow(0 15px 20px rgba(0,0,0,.46)) drop-shadow(0 0 11px rgba(34,211,238,.38));animation-duration:2.1s}
       .xiaoyi-sprite-speech{position:absolute;right:72px;top:-28px;width:224px;min-height:94px;display:grid;align-content:center;gap:5px;padding:14px 17px 13px;border:1px solid rgba(31,181,255,.78);border-radius:17px 17px 5px 17px;background:linear-gradient(145deg,rgba(7,48,87,.97),rgba(4,28,58,.98));box-shadow:0 16px 38px rgba(0,0,0,.34),inset 0 1px 0 rgba(143,225,255,.12),0 0 18px rgba(14,165,233,.12);text-align:left;pointer-events:none;transition:opacity .2s ease,visibility .2s ease;animation:xiaoyiSpeechGlow 3.4s ease-in-out infinite}
       .xiaoyi-sprite-speech::after{content:"";position:absolute;right:20px;bottom:-13px;width:22px;height:15px;background:linear-gradient(135deg,rgba(5,39,75,.98) 0 52%,transparent 53%);clip-path:polygon(0 0,100% 0,0 100%);filter:drop-shadow(-1px 1px 0 rgba(31,181,255,.72))}
       .xiaoyi-sprite-speech strong{font-size:16px;line-height:1.2;font-weight:900;letter-spacing:.2px;color:#f4fbff;text-shadow:0 0 12px rgba(125,211,252,.18);white-space:nowrap}
@@ -111,7 +117,7 @@
       @keyframes xiaoyiSpeechGlow{0%,100%{box-shadow:0 16px 38px rgba(0,0,0,.34),inset 0 1px 0 rgba(143,225,255,.12),0 0 14px rgba(14,165,233,.10)}50%{box-shadow:0 18px 42px rgba(0,0,0,.38),inset 0 1px 0 rgba(143,225,255,.16),0 0 23px rgba(14,165,233,.22)}}
       @keyframes xiaoyiSpeechWave{0%,100%{transform:scaleY(.55);opacity:.55}50%{transform:scaleY(1);opacity:1}}
       @media(max-width:720px){.xiaoyi-sprite-root{right:max(12px,env(safe-area-inset-right));bottom:max(12px,env(safe-area-inset-bottom))}.xiaoyi-sprite-orb{width:76px;height:108px}.xiaoyi-sprite-speech{display:none}.xiaoyi-sprite-panel{position:fixed;left:12px;right:12px;bottom:calc(126px + env(safe-area-inset-bottom));width:auto;max-height:calc(100dvh - 154px - env(safe-area-inset-top));overflow:auto;overscroll-behavior:contain}.xiaoyi-sprite-actions{display:grid;grid-template-columns:1fr 1fr}.xiaoyi-sprite-btn{min-height:42px}.xiaoyi-sprite-input{font-size:16px}}
-      @media(prefers-reduced-motion:reduce){.xiaoyi-sprite-character,.xiaoyi-sprite-speech,.xiaoyi-sprite-wave i{animation:none}}
+      @media(prefers-reduced-motion:reduce){.xiaoyi-sprite-character-shell,.xiaoyi-sprite-speech,.xiaoyi-sprite-wave i{animation:none}}
     `;
     document.head.appendChild(style);
   }
@@ -121,6 +127,7 @@
     root.className = "xiaoyi-sprite-root";
     root.dataset.spriteVersion = SPRITE_VERSION;
     root.dataset.page = window.location.pathname;
+    root.dataset.characterState = "loading";
     root.innerHTML = `
       <div class="xiaoyi-sprite-panel" role="dialog" aria-label="小懿AI随身助手">
         <div class="xiaoyi-sprite-head">
@@ -156,11 +163,70 @@
           <small>您的港航智能助手</small>
           <span class="xiaoyi-sprite-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
         </span>
-        <img class="xiaoyi-sprite-character" src="/static/xiaoyi_maritime_officer.png?v=20260725-q" alt="小懿Q版海事运营助手" draggable="false" />
+        <span class="xiaoyi-sprite-character-shell">
+          <img class="xiaoyi-sprite-character" src="${CHARACTER_SRC}" alt="小懿Q版海事运营助手" width="96" height="136" loading="eager" decoding="async" fetchpriority="high" draggable="false" />
+        </span>
       </button>
     `;
     document.body.appendChild(root);
     return root;
+  }
+
+  function ensureCharacterReady(root){
+    const image = root.querySelector(".xiaoyi-sprite-character");
+    if(!image) return;
+    let retries = 0;
+    let retryTimer = null;
+
+    const clearRetry = ()=>{
+      if(!retryTimer) return;
+      window.clearTimeout(retryTimer);
+      retryTimer = null;
+    };
+    const markReady = ()=>{
+      if(!(image.complete && image.naturalWidth > 0)) return false;
+      clearRetry();
+      root.dataset.characterState = "ready";
+      retries = 0;
+      return true;
+    };
+    const scheduleRetry = (delay)=>{
+      if(root.dataset.characterState === "ready") return;
+      clearRetry();
+      retryTimer = window.setTimeout(retry, delay);
+    };
+    const retry = ()=>{
+      retryTimer = null;
+      if(markReady()) return;
+      retries += 1;
+      root.dataset.characterState = retries >= 3 ? "failed" : "loading";
+      const url = new URL(CHARACTER_SRC, window.location.origin);
+      url.searchParams.set("retry", String(Date.now()));
+      image.src = url.pathname + url.search;
+      scheduleRetry(Math.min(6000, 700 + retries * 550));
+    };
+
+    image.addEventListener("load", ()=>{
+      // WKWebView can leave decode() pending while a recovered page is laying
+      // out.  A positive naturalWidth is already sufficient to show the asset.
+      markReady();
+      image.decode?.().catch(()=>{});
+    });
+    image.addEventListener("error", ()=>{
+      root.dataset.characterState = retries >= 2 ? "failed" : "loading";
+      scheduleRetry(450);
+    });
+    if(!markReady()) scheduleRetry(900);
+    window.addEventListener("pageshow", ()=>{
+      protectNavigationFromStoredPosition(root);
+      if(!markReady()) scheduleRetry(100);
+    });
+    document.addEventListener("visibilitychange", ()=>{
+      if(!document.hidden && !markReady()) scheduleRetry(100);
+    });
+    window.addEventListener("online", ()=>{
+      if(!markReady()) scheduleRetry(100);
+    });
   }
 
   function applyStoredPosition(root){
@@ -396,6 +462,7 @@
     const form = root.querySelector(".xiaoyi-sprite-form");
     applyStoredPosition(root);
     protectNavigationFromStoredPosition(root);
+    ensureCharacterReady(root);
     installDrag(root, orb);
     orb?.addEventListener("click", ()=>{
       if(root.classList.contains("open")) refreshOperationalContext(root);

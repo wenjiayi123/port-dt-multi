@@ -245,6 +245,7 @@ REQUIRED = (
     "scripts/export_rl_evidence.py",
     "app/ui/adapters/rl_evidence_console.js",
     "app/ui/adapters/xiaoyi_sprite.js",
+    "app/ui/adapters/runtime_recovery.js",
     "app/ui/ops_copilot.html",
     "app/static/xiaoyi_maritime_officer.png",
     "app/static/vendor/echarts/echarts.min.js",

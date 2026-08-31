@@ -2798,7 +2798,7 @@ border-left:3px solid rgba(148,163,184,.22);
         </div>
 
         <div class="nav-group">
-          <a class="nav-trigger is-route" href="/v3" data-route="/v3"><span class="nav-label"><span class="nav-cn">V3 决策中枢</span><span class="nav-en">V3 Decision Center</span></span></a>
+          <a class="nav-trigger is-route" href="/v3?from=home" data-route="/v3?from=home"><span class="nav-label"><span class="nav-cn">V3 决策中枢</span><span class="nav-en">V3 Decision Center</span></span></a>
         </div>
         <div class="nav-group">
           <a class="nav-trigger is-route" href="/rl-panel" data-route="/rl-panel"><span class="nav-label"><span class="nav-cn">强化学习面板</span><span class="nav-en">RL Panel</span></span></a>
@@ -2826,7 +2826,7 @@ border-left:3px solid rgba(148,163,184,.22);
 
 
           <div class="home-action-row">
-            <a class="home-action primary" href="/v3"><span>打开 V3 决策中枢</span><span class="en">V3 Decision Center</span></a>
+            <a class="home-action primary" href="/v3?from=home"><span>打开 V3 决策中枢</span><span class="en">V3 Decision Center</span></a>
             <a class="home-action" href="#exec-cockpit" data-panel="cockpit"><span>查看管理驾驶舱</span><span class="en">Executive Cockpit</span></a>
             <a class="home-action" href="#twin-section" data-panel="twin"><span>进入孪生场景</span><span class="en">Digital Twin</span></a>
             <a class="home-action" href="#strategy-exec-module" data-panel="strategy"><span>进入策略编排</span><span class="en">Strategy Orchestration</span></a>
@@ -6898,7 +6898,7 @@ border-left:3px solid rgba(148,163,184,.22);
      * WebGL or a public CDN is unavailable. Geometry is driven by /api/assets and colour
      * is refreshed from the same model-backed asset curves used by the KPI cards.
      */
-    const localTwin={canvas:null,ctx:null,assets:[],values:new Map(),hitboxes:[],raf:0,timer:0,yaw:-.34,zoom:1,panX:0,panY:0};
+    const localTwin={canvas:null,ctx:null,assets:[],values:new Map(),hitboxes:[],raf:0,timer:0,observer:null,visible:false,yaw:-.34,zoom:1,panX:0,panY:0};
     function localTwinProject(x,y,z,width,height){
       const c=Math.cos(localTwin.yaw),s=Math.sin(localTwin.yaw);
       const rx=x*c-z*s, rz=x*s+z*c;
@@ -6926,6 +6926,8 @@ border-left:3px solid rgba(148,163,184,.22);
       return `hsl(${hue} 78% 55%)`;
     }
     function drawLocalTwin(){
+      localTwin.raf=0;
+      if(!localTwin.visible||document.hidden)return;
       const canvas=localTwin.canvas,ctx=localTwin.ctx;
       if(!canvas||!ctx)return;
       const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);
@@ -6969,6 +6971,10 @@ border-left:3px solid rgba(148,163,184,.22);
       ctx.fillStyle='rgba(209,232,255,.78)';ctx.font='600 11px ui-sans-serif,system-ui';ctx.fillText('PUBLIC-DATA CALIBRATED PORT STATE',16,height-18);
       localTwin.raf=requestAnimationFrame(drawLocalTwin);
     }
+    function syncLocalTwinAnimation(){
+      if(localTwin.visible&&!document.hidden&&!localTwin.raf) localTwin.raf=requestAnimationFrame(drawLocalTwin);
+      else if((!localTwin.visible||document.hidden)&&localTwin.raf){cancelAnimationFrame(localTwin.raf);localTwin.raf=0;}
+    }
     function initLocalCanvasTwin(host,assets){
       const no3d=document.getElementById('no3d');if(no3d)no3d.style.display='none';
       localTwin.assets=Array.isArray(assets)?assets:[];
@@ -6982,8 +6988,17 @@ border-left:3px solid rgba(148,163,184,.22);
         const release=e=>{if(!down)return;down=false;if(!moved){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;const hit=localTwin.hitboxes.slice().sort((a,b)=>Math.hypot(x-a.x,y-a.y)-Math.hypot(x-b.x,y-b.y))[0];if(hit&&Math.hypot(x-hit.x,y-hit.y)<=hit.r*1.8)switchAsset(hit.id);}};
         canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',()=>{down=false;});
       }
-      cancelAnimationFrame(localTwin.raf);drawLocalTwin();
-      clearInterval(localTwin.timer);localTwin.timer=setInterval(()=>{if(VIEW_MODE==='now')refresh3DColors();},2000);
+      const rect=host.getBoundingClientRect();
+      localTwin.visible=rect.bottom>=-180&&rect.top<=innerHeight+180;
+      if(!localTwin.observer&&'IntersectionObserver' in window){
+        localTwin.observer=new IntersectionObserver(entries=>{
+          entries.forEach(entry=>{if(entry.target===host){localTwin.visible=entry.isIntersecting;syncLocalTwinAnimation();}});
+        },{rootMargin:'220px 0px'});
+        localTwin.observer.observe(host);
+        document.addEventListener('visibilitychange',syncLocalTwinAnimation);
+      }
+      cancelAnimationFrame(localTwin.raf);localTwin.raf=0;syncLocalTwinAnimation();
+      clearInterval(localTwin.timer);localTwin.timer=setInterval(()=>{if(localTwin.visible&&VIEW_MODE==='now')refresh3DColors();},2000);
     }
 
     function init3DOnce(){
@@ -10519,16 +10534,23 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     const vi=j.value_improvement||{};
     $('#b-v3-status').textContent=`旧IQL=${h.records||0}条/权重已保留且OOD拦截 · 数据=${f.dataset?.rows?.toLocaleString('zh-CN')||'—'}（${f.dataset?.train_rows||0}/${f.dataset?.validation_rows||0}/${f.dataset?.blind_test_rows||0}） · 分区=${f.dataset?.zones||0} · 公开观测=${Number(f.dataset?.public_source_observations||0).toLocaleString('zh-CN')} · 收敛=${c.passed?'通过':'失败'} · 业务=${q.business_advantage_passed?'通过':'失败'} · V3.2=${vi.status_cn||vi.status||'待验收'} · 低照度区步=${nfmt(m.under_lux_zone_steps,0)} · 权重=${p.policy_loaded?'已重载':'不可用'} · 生产=${b.site_status||'待接入港口'}`;
     $('#b-algo-table tbody').innerHTML=(j.algorithm_registry||[]).map(row=>`<tr><td>${row.name}</td><td>${row.state}</td><td class="mono">${row.artifact||'待训练'}</td><td>${row.admission}</td></tr>`).join('');
-    drawCheckpointRewardReplay(document.getElementById('b-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
-    drawTrainingProcessChart(document.getElementById('b-train-reward'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
-    drawTrainingProcessChart(document.getElementById('b-train-peak'),j.training_process,'validation_reward_mean',{yDecimals:3});
-    drawV3Series('b-train-dkwh',j.history_series,'validation_cost_std_cny','#e879f9',' CNY');
-    drawV3Series('b-train-ulx',j.history_series,'validation_lux_compliance_mean','#f59e0b','');
+    const renderEvidenceCharts=()=>{
+      drawCheckpointRewardReplay(document.getElementById('b-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
+      drawTrainingProcessChart(document.getElementById('b-train-reward'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
+      drawTrainingProcessChart(document.getElementById('b-train-peak'),j.training_process,'validation_reward_mean',{yDecimals:3});
+      drawV3Series('b-train-dkwh',j.history_series,'validation_cost_std_cny','#e879f9',' CNY');
+      drawV3Series('b-train-ulx',j.history_series,'validation_lux_compliance_mean','#f59e0b','');
+    };
+    if(window.__portDtDeferHeavyRender) window.__portDtDeferHeavyRender('yl-section',renderEvidenceCharts);
+    else window.setTimeout(renderEvidenceCharts,0);
     $('#b-evidence-detail').textContent=`V3.1结论：旧${h.records||0}条IQL训练与原权重完整保留，但正确布尔解析后旧权重继续被OOD门禁拦截。新42维/3动作照度安全策略经3种子固定验证选型，只在5个封存盲测窗口读取结果：成本 ${nfmt(m.cost_reduction_vs_historical_control_percent,3)}%、能耗 ${nfmt(m.energy_reduction_vs_historical_control_percent,3)}%、峰值 ${nfmt(m.peak_reduction_vs_historical_control_percent,3)}%、碳 ${nfmt(m.carbon_reduction_vs_historical_control_percent,3)}%，最低照度合规 ${nfmt(m.minimum_lux_compliance_rate_percent,1)}%、低照度区步 ${nfmt(m.under_lux_zone_steps,0)}。公开信号真实联动，96分区设备数据仍为工程模拟器，现场待接入。`;
     return j;
   }
+  const loadYardLightingV3=()=>window.__portDtTrackEvidenceLoad
+    ? window.__portDtTrackEvidenceLoad('b',refreshYardLightingV3)
+    : refreshYardLightingV3();
   const yardLightingRefreshButton = document.getElementById('btn-b-refresh');
-  yardLightingRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(yardLightingRefreshButton,refreshYardLightingV3));
+  yardLightingRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(yardLightingRefreshButton,loadYardLightingV3));
   document.getElementById('btn-b-model')?.addEventListener('click',()=>{ if(yardLightingV3Evidence) $('#b-evidence-detail').textContent=JSON.stringify(yardLightingV3Evidence.current_model_output,null,2); });
   document.getElementById('btn-b-convergence')?.addEventListener('click',()=>{ if(yardLightingV3Evidence) $('#b-evidence-detail').textContent=JSON.stringify({convergence:yardLightingV3Evidence.formal_training?.convergence,checkpoint_reward_replay:yardLightingV3Evidence.checkpoint_reward_replay,training_process:yardLightingV3Evidence.training_process},null,2); });
   document.getElementById('btn-b-business')?.addEventListener('click',()=>{ if(yardLightingV3Evidence) $('#b-evidence-detail').textContent=JSON.stringify({business_metrics:yardLightingV3Evidence.business_metrics,blind_test_protocol:yardLightingV3Evidence.formal_training?.blind_test_protocol,quality_gates:yardLightingV3Evidence.quality_gates},null,2); });
@@ -10537,8 +10559,9 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-b-public')?.addEventListener('click',()=>{ if(yardLightingV3Evidence) $('#b-evidence-detail').textContent=JSON.stringify({public_linkage:yardLightingV3Evidence.data_manifest?.public_linkage,dataset:yardLightingV3Evidence.formal_training?.dataset},null,2); });
   document.getElementById('btn-b-history')?.addEventListener('click',()=>{ if(yardLightingV3Evidence) $('#b-evidence-detail').textContent=JSON.stringify({historical_evidence:yardLightingV3Evidence.historical_evidence,historical_business_metrics:yardLightingV3Evidence.historical_business_metrics,legacy_model_probe:yardLightingV3Evidence.model_probe,legacy_history_points:yardLightingV3Evidence.legacy_history_series?.length},null,2); });
   document.getElementById('btn-b-contract')?.addEventListener('click',()=>{ if(yardLightingV3Evidence) $('#b-evidence-detail').textContent=JSON.stringify({boundary:yardLightingV3Evidence.boundary,site_contract:yardLightingV3Evidence.site_contract},null,2); });
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>refreshYardLightingV3().catch(e=>{$('#b-v3-status').textContent='证据加载失败：'+e;}),400),{once:true});
-  else setTimeout(()=>refreshYardLightingV3().catch(e=>{$('#b-v3-status').textContent='证据加载失败：'+e;}),400);
+  const handleYardLightingLoadFailure=e=>{$('#b-v3-status').textContent='证据加载失败：'+e;};
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>loadYardLightingV3().catch(handleYardLightingLoadFailure),100),{once:true});
+  else setTimeout(()=>loadYardLightingV3().catch(handleYardLightingLoadFailure),100);
 
 })();
 </script>
@@ -10890,16 +10913,23 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     $('#c-algo-table tbody').innerHTML=(j.algorithm_registry||[]).map(row=>`<tr><td>${row.name}</td><td>${row.state}</td><td class="mono">${row.artifact||'待接入'}</td><td>${row.admission}</td></tr>`).join('');
     const series=(j.history_series||[]);
     const plot=(id,points,color,unit,decimals)=>drawSparkAxes(document.getElementById(id),smoothEvidenceSeries(points,18),{color,yUnit:unit,yDecimals:decimals,evidenceSmooth:true,showRawPoints:true,xValueLabel:'E'});
-    drawCheckpointRewardReplay(document.getElementById('c-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
-    drawTrainingProcessChart(document.getElementById('c-train-reward'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
-    drawTrainingProcessChart(document.getElementById('c-train-econ'),j.training_process,'validation_reward_mean',{yDecimals:2});
-    plot('c-train-carbon',series.map(x=>({v:Number(x.validation_cost_std_cny),x:Number(x.epoch)})),'#e879f9',' CNY',0);
-    plot('c-train-comfort',series.map(x=>({v:Number(x.validation_cooling_satisfaction_mean)*100,x:Number(x.epoch)})),'#f59e0b',' %',2);
+    const renderEvidenceCharts=()=>{
+      drawCheckpointRewardReplay(document.getElementById('c-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
+      drawTrainingProcessChart(document.getElementById('c-train-reward'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
+      drawTrainingProcessChart(document.getElementById('c-train-econ'),j.training_process,'validation_reward_mean',{yDecimals:2});
+      plot('c-train-carbon',series.map(x=>({v:Number(x.validation_cost_std_cny),x:Number(x.epoch)})),'#e879f9',' CNY',0);
+      plot('c-train-comfort',series.map(x=>({v:Number(x.validation_cooling_satisfaction_mean)*100,x:Number(x.epoch)})),'#f59e0b',' %',2);
+    };
+    if(window.__portDtDeferHeavyRender) window.__portDtDeferHeavyRender('hvac-section',renderEvidenceCharts);
+    else window.setTimeout(renderEvidenceCharts,0);
     $('#c-evidence-detail').textContent=`V3.1结论：原SAC权重与${Number(h.records||0).toLocaleString('zh-CN')}条历史未覆盖；新30维/3动作安全策略经3种子固定验证选型后，只在独立盲测读取业务结果：成本 ${nfmt(b.cost_reduction_vs_historical_control_percent,3)}%、能耗 ${nfmt(b.energy_reduction_vs_historical_control_percent,3)}%、峰值 ${nfmt(b.peak_reduction_vs_historical_control_percent,3)}%、碳 ${nfmt(b.carbon_reduction_vs_historical_control_percent,3)}%，冷量满足 ${nfmt(b.cooling_satisfaction_rate_percent,2)}%。均为工程时序场景，现场性能图、流量/阀位、舒适度与结算计量待接入港口。`;
     return j;
   }
+  const loadHvacV3=()=>window.__portDtTrackEvidenceLoad
+    ? window.__portDtTrackEvidenceLoad('c',refreshHvacV3)
+    : refreshHvacV3();
   const hvacRefreshButton = document.getElementById('btn-c-refresh');
-  hvacRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(hvacRefreshButton,refreshHvacV3));
+  hvacRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(hvacRefreshButton,loadHvacV3));
   document.getElementById('btn-c-model')?.addEventListener('click',()=>{if(hvacV3Evidence) $('#c-evidence-detail').textContent=JSON.stringify(hvacV3Evidence.current_model_output,null,2);});
   document.getElementById('btn-c-convergence')?.addEventListener('click',()=>{if(hvacV3Evidence) $('#c-evidence-detail').textContent=JSON.stringify({convergence:hvacV3Evidence.formal_training?.convergence,checkpoint_reward_replay:hvacV3Evidence.checkpoint_reward_replay,training_process:hvacV3Evidence.training_process},null,2);});
   document.getElementById('btn-c-business')?.addEventListener('click',()=>{if(hvacV3Evidence) $('#c-evidence-detail').textContent=JSON.stringify({business_metrics:hvacV3Evidence.business_metrics,blind_test_protocol:hvacV3Evidence.formal_training?.blind_test_protocol,quality_gates:hvacV3Evidence.quality_gates},null,2);});
@@ -10909,7 +10939,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-c-contract')?.addEventListener('click',()=>{if(hvacV3Evidence) $('#c-evidence-detail').textContent=JSON.stringify({boundary:hvacV3Evidence.boundary,site_contract:hvacV3Evidence.site_contract},null,2);});
   // Inline module scripts are already parsed after the cards exist; schedule directly
   // so a delayed DOMContentLoaded handler cannot leave the first view empty.
-  setTimeout(()=>refreshHvacV3().catch(e=>{$('#c-v3-status').textContent='证据加载失败：'+e;}),800);
+  setTimeout(()=>loadHvacV3().catch(e=>{$('#c-v3-status').textContent='证据加载失败：'+e;}),180);
 })();
 </script>
 <!-- === [Module C · HVAC Cooling · END] =============================== -->
@@ -11183,16 +11213,23 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     $('#d-v3-status').textContent = `模型权重=${m.policy_loaded?'已按SHA-256重载':'不可用'} · 数据=${f.dataset?.rows?.toLocaleString('zh-CN')||'—'}小时（${f.dataset?.train_rows||0}/${f.dataset?.validation_rows||0}/${f.dataset?.blind_test_rows||0}） · 收敛=${c.passed?'通过':'失败'} · 经济/削峰=${q.business_advantage_passed?'通过':'失败'} · 碳门禁=${q.carbon_guardrail_passed?'通过':'拦截'} · V3.2=${vi.status_cn||vi.status||'待验收'} · 安全违规=${nfmt(q.guardrail_violation_rate,4)} · 生产=${q.production_admitted?'准入':'待接入港口'}`;
     $('#d-algo-body').innerHTML=(j.algorithm_registry||[]).map(x=>`<tr><td>${x.name}</td><td>${x.state}</td><td><code>${x.artifact||'—'}</code></td><td>${x.admission}</td></tr>`).join('');
     const series=j.history_series||[];
-    drawCheckpointRewardReplay(document.getElementById('d-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
-    drawTrainingProcessChart(document.getElementById('d-train-reward'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
-    drawTrainingProcessChart(document.getElementById('d-train-econ'),j.training_process,'validation_reward_mean',{yDecimals:3});
-    drawLine('d-train-carbon',series.map(x=>({v:Number(x.validation_cost_std_cny),x:Number(x.epoch)})),'#e879f9',' CNY',0);
-    drawLine('d-train-service',series.map(x=>({v:Number(x.validation_peak_mean_kw),x:Number(x.epoch)})),'#f59e0b',' kW',0);
+    const renderEvidenceCharts=()=>{
+      drawCheckpointRewardReplay(document.getElementById('d-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
+      drawTrainingProcessChart(document.getElementById('d-train-reward'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
+      drawTrainingProcessChart(document.getElementById('d-train-econ'),j.training_process,'validation_reward_mean',{yDecimals:3});
+      drawLine('d-train-carbon',series.map(x=>({v:Number(x.validation_cost_std_cny),x:Number(x.epoch)})),'#e879f9',' CNY',0);
+      drawLine('d-train-service',series.map(x=>({v:Number(x.validation_peak_mean_kw),x:Number(x.epoch)})),'#f59e0b',' kW',0);
+    };
+    if(window.__portDtDeferHeavyRender) window.__portDtDeferHeavyRender('sbess-section',renderEvidenceCharts);
+    else window.setTimeout(renderEvidenceCharts,0);
     $('#d-evidence-detail').textContent=`V3.1结论：旧SAC的${Number(h.records||0).toLocaleString('zh-CN')}条历史与2000步展示曲线完整保留；旧数据145/145动作全零，因此不再用它证明收敛。新策略使用固定验证窗口判断平台期并在独立盲测上得到成本 ${nfmt(r.cost_reduction_vs_no_bess_percent,3)}%、峰值 ${nfmt(r.peak_reduction_vs_no_bess_percent,3)}%。当前经济策略的碳变化为 ${carbonAnnual>=0?'减':'增'} ${nfmt(Math.abs(carbonAnnual),1)} t/年（公开工程场景）；负减排不会包装为减碳，现场仍待接入港口。`;
     return j;
   }
+  const loadShoreBessV3=()=>window.__portDtTrackEvidenceLoad
+    ? window.__portDtTrackEvidenceLoad('d',refreshShoreBessV3)
+    : refreshShoreBessV3();
   const shoreBessRefreshButton = document.getElementById('btn-d-refresh');
-  shoreBessRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(shoreBessRefreshButton,refreshShoreBessV3));
+  shoreBessRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(shoreBessRefreshButton,loadShoreBessV3));
   document.getElementById('btn-d-model')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({current_model_output:shoreBessV3Evidence.current_model_output,quality_gates:shoreBessV3Evidence.quality_gates},null,2);});
   document.getElementById('btn-d-convergence')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({convergence:shoreBessV3Evidence.formal_training?.convergence,checkpoint_reward_replay:shoreBessV3Evidence.checkpoint_reward_replay,training_process:shoreBessV3Evidence.training_process},null,2);});
   document.getElementById('btn-d-business')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({business_metrics:shoreBessV3Evidence.business_metrics,blind_test_protocol:shoreBessV3Evidence.formal_training?.blind_test_protocol,quality_gates:shoreBessV3Evidence.quality_gates},null,2);});
@@ -11200,7 +11237,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-d-contract-tech')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.formal_training?.contract||{},null,2);});
   document.getElementById('btn-d-history')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({historical_evidence:shoreBessV3Evidence.historical_evidence,historical_business_replay:shoreBessV3Evidence.historical_business_replay,legacy_history_points:shoreBessV3Evidence.legacy_history_series?.length,data_manifest:shoreBessV3Evidence.data_manifest},null,2);});
   document.getElementById('btn-d-contract')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({boundary:shoreBessV3Evidence.boundary,site_contract:shoreBessV3Evidence.site_contract},null,2);});
-  setTimeout(()=>refreshShoreBessV3().catch(e=>{$('#d-v3-status').textContent='证据加载失败：'+e;}),900);
+  setTimeout(()=>loadShoreBessV3().catch(e=>{$('#d-v3-status').textContent='证据加载失败：'+e;}),260);
 })();
 </script>
 <!-- === [Module D · Shore BESS · END] ================================= -->
@@ -11544,17 +11581,24 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     $('#be-v3-status').textContent=`模型权重=${m.policy_loaded?'已按SHA-256重载':'不可用'} · 数据=${f.dataset?.rows?.toLocaleString('zh-CN')||'—'}小时（${f.dataset?.train_rows||0}/${f.dataset?.validation_rows||0}/${f.dataset?.blind_test_rows||0}） · 收敛=${c.passed?'通过':'失败'} · 经济/削峰=${q.business_advantage_passed?'通过':'失败'} · 碳=${q.carbon_guardrail_passed?'通过':'拦截'} · V3.2=${vi.status_cn||vi.status||'待验收'} · 工程事件履约=${nfmt(Number(q.event_compliance_rate||0)*100,0)}% · 安全违规=${nfmt(q.guardrail_violation_rate,4)} · 生产=${q.production_admitted?'准入':'待接入港口'}`;
     $('#be-algo-body').innerHTML=(j.algorithm_registry||[]).map(x=>`<tr><td>${x.name}</td><td>${x.state}</td><td><code>${x.artifact||'—'}</code></td><td>${x.admission}</td></tr>`).join('');
     const s=j.history_series||[];
-    drawCheckpointRewardReplay(document.getElementById('be-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
-    drawTrainingProcessChart(document.getElementById('be-train-reward'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
-    drawTrainingProcessChart(document.getElementById('be-train-econ'),j.training_process,'validation_reward_mean',{yDecimals:3});
-    drawLine('be-train-carbon',s.map(x=>({v:Number(x.validation_cost_std_cny),x:Number(x.epoch)})),'#e879f9',' CNY',0);
-    drawLine('be-train-service',s.map(x=>({v:Number(x.validation_peak_mean_kw),x:Number(x.epoch)})),'#f59e0b',' kW',0);
+    const renderEvidenceCharts=()=>{
+      drawCheckpointRewardReplay(document.getElementById('be-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
+      drawTrainingProcessChart(document.getElementById('be-train-reward'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
+      drawTrainingProcessChart(document.getElementById('be-train-econ'),j.training_process,'validation_reward_mean',{yDecimals:3});
+      drawLine('be-train-carbon',s.map(x=>({v:Number(x.validation_cost_std_cny),x:Number(x.epoch)})),'#e879f9',' CNY',0);
+      drawLine('be-train-service',s.map(x=>({v:Number(x.validation_peak_mean_kw),x:Number(x.epoch)})),'#f59e0b',' kW',0);
+    };
+    if(window.__portDtDeferHeavyRender) window.__portDtDeferHeavyRender('be-section',renderEvidenceCharts);
+    else window.setTimeout(renderEvidenceCharts,0);
     const legacy=q.legacy_audit||{};
     $('#be-evidence-detail').textContent=`V3.1结论：旧SAC的${Number(h.records||0).toLocaleString('zh-CN')}步与${Number(h.offline_rows||0).toLocaleString('zh-CN')}条transition完整保留；旧数据dR非零=${legacy.nonzero_dR_rows||0}、事件=${legacy.event_active_rows||0}、时间盲测=${legacy.heldout_evaluation_rows||0}，不再用它证明业务价值。新策略3种子收敛，在独立盲测得到综合成本 ${nfmt(r.cost_reduction_vs_no_bess_percent,3)}%、峰值 ${nfmt(r.peak_reduction_vs_no_bess_percent,3)}%、碳 ${nfmt(r.carbon_reduction_vs_no_bess_percent,3)}%，工程事件履约 ${nfmt(r.event_compliance_rate_percent,0)}%。事件/备用收益不是上海结算实绩，现场仍待接入港口。`;
     return j;
   }
+  const loadBessEnergyV3=()=>window.__portDtTrackEvidenceLoad
+    ? window.__portDtTrackEvidenceLoad('be',refreshBessEnergyV3)
+    : refreshBessEnergyV3();
   const bessEnergyRefreshButton = document.getElementById('btn-be-refresh');
-  bessEnergyRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(bessEnergyRefreshButton,refreshBessEnergyV3));
+  bessEnergyRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(bessEnergyRefreshButton,loadBessEnergyV3));
   document.getElementById('btn-be-model')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify({current_model_output:bessEnergyV3Evidence.current_model_output,quality_gates:bessEnergyV3Evidence.quality_gates},null,2);});
   document.getElementById('btn-be-convergence')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify({convergence:bessEnergyV3Evidence.formal_training?.convergence,checkpoint_reward_replay:bessEnergyV3Evidence.checkpoint_reward_replay,training_process:bessEnergyV3Evidence.training_process},null,2);});
   document.getElementById('btn-be-business')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify({business_metrics:bessEnergyV3Evidence.business_metrics,blind_test_protocol:bessEnergyV3Evidence.formal_training?.blind_test_protocol,scenario_supplement:bessEnergyV3Evidence.formal_training?.scenario_supplement,quality_gates:bessEnergyV3Evidence.quality_gates},null,2);});
@@ -11562,7 +11606,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-be-contract-tech')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify(bessEnergyV3Evidence.formal_training?.contract||{},null,2);});
   document.getElementById('btn-be-history')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify({historical_evidence:bessEnergyV3Evidence.historical_evidence,training_diagnostics:bessEnergyV3Evidence.training_diagnostics,excluded_static_card:bessEnergyV3Evidence.excluded_static_card,data_manifest:bessEnergyV3Evidence.data_manifest},null,2);});
   document.getElementById('btn-be-contract')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify({boundary:bessEnergyV3Evidence.boundary,site_contract:bessEnergyV3Evidence.site_contract},null,2);});
-  setTimeout(()=>refreshBessEnergyV3().catch(e=>{$('#be-v3-status').textContent='证据加载失败：'+e;}),1000);
+  setTimeout(()=>loadBessEnergyV3().catch(e=>{$('#be-v3-status').textContent='证据加载失败：'+e;}),340);
 })();
 </script>
 
@@ -12121,23 +12165,30 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     $('#f-v3-status').textContent=`旧历史=${Number(h.records||0).toLocaleString('zh-CN')}条与0B旧策略已保留 · 数据=${f.dataset?.rows?.toLocaleString('zh-CN')||'—'}（${f.dataset?.train_rows||0}/${f.dataset?.validation_rows||0}/${f.dataset?.blind_test_rows||0}） · 吊机=${f.dataset?.cranes||0} · TOS作业=${Number(f.dataset?.tos_job_rows||0).toLocaleString('zh-CN')} · 收敛=${c.passed?'通过':'失败'} · 业务=${q.business_advantage_passed?'通过':'失败'} · 安全违规=${nfmt(q.guardrail_violation_rate,4)} · 权重=${p.policy_loaded?'已重载':'不可用'} · 生产=待接入港口`;
     $('#f-algo-body').innerHTML=(j.algorithm_registry||[]).map(x=>`<tr><td>${x.name}</td><td>${x.state}</td><td><code>${x.artifact||'—'}</code></td><td>${x.admission}</td></tr>`).join('');
     const s=j.history_series||[];
-    drawCheckpointRewardReplay(document.getElementById('f-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
-    drawTrainingProcessChart(document.getElementById('f-power'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
-    drawTrainingProcessChart(document.getElementById('f-intensity'),j.training_process,'validation_reward_mean',{yDecimals:2});
-    drawLine('f-cost-bars',s.map(x=>({v:Number(x.validation_cost_std_cny),x:Number(x.epoch)})),'#e879f9',' CNY',0);
-    drawLine('f-heat',s.map(x=>({v:Number(x.validation_peak_mean_kw),x:Number(x.epoch)})),'#f59e0b',' kW',0);
+    const renderEvidenceCharts=()=>{
+      drawCheckpointRewardReplay(document.getElementById('f-reward-convergence'),j.checkpoint_reward_replay,{yDecimals:5});
+      drawTrainingProcessChart(document.getElementById('f-power'),j.training_process,'imitation_loss',{logScale:true,yDecimals:6});
+      drawTrainingProcessChart(document.getElementById('f-intensity'),j.training_process,'validation_reward_mean',{yDecimals:2});
+      drawLine('f-cost-bars',s.map(x=>({v:Number(x.validation_cost_std_cny),x:Number(x.epoch)})),'#e879f9',' CNY',0);
+      drawLine('f-heat',s.map(x=>({v:Number(x.validation_peak_mean_kw),x:Number(x.epoch)})),'#f59e0b',' kW',0);
+    };
+    if(window.__portDtDeferHeavyRender) window.__portDtDeferHeavyRender('yc-section',renderEvidenceCharts);
+    else window.setTimeout(renderEvidenceCharts,0);
     $('#f-evidence-detail').textContent=`V3.1结论：旧1000步、${Number(legacy.base_offline_rows||0).toLocaleString('zh-CN')}条基线、${legacy.augmented_rows||0}条增强和0字节旧策略全部保留，首次未过削峰门槛的V3.1运行也留痕。新36维/2动作策略经3种子固定验证选型后，只在8个封存盲测窗口读取结果：成本 ${nfmt(m.cost_reduction_vs_historical_control_percent,3)}%、能耗 ${nfmt(m.energy_reduction_vs_historical_control_percent,3)}%、峰值 ${nfmt(m.peak_reduction_vs_historical_control_percent,3)}%、碳 ${nfmt(m.carbon_reduction_vs_historical_control_percent,3)}%，作业/SLA非劣化 ${nfmt(m.historical_moves_retention_rate_percent,1)}%/${nfmt(m.job_sla_non_degradation_rate_percent,1)}%。温度是工程代理，PLC/TOS回执和现场性能曲线待接入港口。`;
     return j;
   }
+  const loadYardCraneV3=()=>window.__portDtTrackEvidenceLoad
+    ? window.__portDtTrackEvidenceLoad('f',refreshYardCraneV3)
+    : refreshYardCraneV3();
   const yardCraneRefreshButton = document.getElementById('btn-f-refresh');
-  yardCraneRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(yardCraneRefreshButton,refreshYardCraneV3));
+  yardCraneRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(yardCraneRefreshButton,loadYardCraneV3));
   document.getElementById('btn-f-model')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify(yardCraneV3Evidence.current_model_output,null,2);});
   document.getElementById('btn-f-convergence')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify({convergence:yardCraneV3Evidence.formal_training?.convergence,checkpoint_reward_replay:yardCraneV3Evidence.checkpoint_reward_replay,training_process:yardCraneV3Evidence.training_process},null,2);});
   document.getElementById('btn-f-business')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify({business_metrics:yardCraneV3Evidence.business_metrics,blind_test_protocol:yardCraneV3Evidence.formal_training?.blind_test_protocol,quality_gates:yardCraneV3Evidence.quality_gates},null,2);});
   document.getElementById('btn-f-contract-tech')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify({contract:yardCraneV3Evidence.formal_training?.contract,counterfactual_model:yardCraneV3Evidence.formal_training?.counterfactual_model},null,2);});
   document.getElementById('btn-f-history')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify({historical_evidence:yardCraneV3Evidence.historical_evidence,historical_training_diagnostics:yardCraneV3Evidence.historical_training_diagnostics,run_history:yardCraneV3Evidence.formal_training?.run_history,data_manifest:yardCraneV3Evidence.data_manifest},null,2);});
   document.getElementById('btn-f-contract')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify({boundary:yardCraneV3Evidence.boundary,site_contract:yardCraneV3Evidence.site_contract},null,2);});
-  setTimeout(()=>refreshYardCraneV3().catch(e=>{$('#f-v3-status').textContent='证据加载失败：'+e;}),1100);
+  setTimeout(()=>loadYardCraneV3().catch(e=>{$('#f-v3-status').textContent='证据加载失败：'+e;}),420);
 })();
 </script>
 
@@ -13382,7 +13433,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   };
 
   // 运行态
-  let running = true, speed = 1.0, fps = 0, lastTs = 0;
+  let running = true, speed = 1.0, fps = 0, lastTs = 0, portvizVisible = false, frameRequest = 0;
 
   // 世界坐标（米）
   const WORLD = { W:1800, H:520, pad:24 };
@@ -13589,6 +13640,8 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
 
   // —— 主循环（含伪 3D 遮挡） —— //
   function frame(){
+    frameRequest=0;
+    if(!running||!portvizVisible||document.hidden) return;
     const t0=performance.now();
     clearHits();                       // 每帧重建命中盒
     drawBackground();
@@ -13613,7 +13666,11 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     drawStaticLabels();   // 固定注释：让首次观看者一眼懂
     drawTooltip();        // 悬停讲解：看哪里点哪里
     const dt=performance.now()-t0; fps=0.9*fps+0.1*(1000/Math.max(16,dt)); drawHUD();
-    if (running) requestAnimationFrame(frame);
+    if(running&&portvizVisible&&!document.hidden) frameRequest=requestAnimationFrame(frame);
+  }
+  function syncPortvizAnimation(){
+    if(running&&portvizVisible&&!document.hidden&&!frameRequest) frameRequest=requestAnimationFrame(frame);
+    else if((!running||!portvizVisible||document.hidden)&&frameRequest){cancelAnimationFrame(frameRequest);frameRequest=0;}
   }
 
   // —— 单体绘制（供排序后调用） —— //
@@ -13686,7 +13743,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   playBtn?.addEventListener('click',()=>{
     if(!running){
       running=true;
-      requestAnimationFrame(frame);
+      syncPortvizAnimation();
       pullOnce().finally(schedulePull);
     }
     syncPortvizControls();
@@ -13699,7 +13756,16 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   const spd=document.getElementById('pv-speed'), spdLbl=document.getElementById('pv-speed-lbl'); spd?.addEventListener('input',()=>{ speed=Number(spd.value||'1'); spdLbl.textContent=speed.toFixed(1)+'x'; });
 
   // —— 启动 —— //
-  requestAnimationFrame(frame);
+  const portvizRect=cv.getBoundingClientRect();
+  portvizVisible=portvizRect.bottom>=-180&&portvizRect.top<=innerHeight+180;
+  if('IntersectionObserver' in window){
+    const portvizObserver=new IntersectionObserver(entries=>{
+      entries.forEach(entry=>{if(entry.target===cv){portvizVisible=entry.isIntersecting;if(portvizVisible)resize();syncPortvizAnimation();}});
+    },{rootMargin:'220px 0px'});
+    portvizObserver.observe(cv);
+  }
+  document.addEventListener('visibilitychange',syncPortvizAnimation);
+  syncPortvizAnimation();
   syncPortvizControls();
   pullOnce().finally(()=> schedulePull());
 })();

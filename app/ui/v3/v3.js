@@ -7,6 +7,20 @@ let overviewData = null;
 let readinessData = null;
 let impactRenderGeneration = 0;
 
+function returnToHome(event){
+  event.preventDefault();
+  const launchedFromHome = new URLSearchParams(window.location.search).get('from') === 'home';
+  let previous = null;
+  try{ previous = document.referrer ? new URL(document.referrer) : null; }catch(_){ previous = null; }
+  if((launchedFromHome || (previous?.origin === window.location.origin && previous.pathname === '/')) && window.history.length > 1){
+    // Restore the already-rendered homepage from WebKit's back/forward cache.
+    // A direct V3 launch still uses the canonical homepage URL below.
+    window.history.back();
+    return;
+  }
+  window.location.assign('/');
+}
+
 function safeNumber(value, digits=1){
   const n = Number(value);
   return Number.isFinite(n) ? n.toFixed(digits) : '—';
@@ -309,4 +323,5 @@ document.addEventListener('click',event=>{
   if(event.target===$('detailBackdrop')) closeDrawer();
 });
 $('detailClose').addEventListener('click',closeDrawer);
+$('returnHome')?.addEventListener('click',returnToHome);
 document.addEventListener('keydown',event=>{ if(event.key==='Escape'&&!$('detailBackdrop').hidden) closeDrawer(); });

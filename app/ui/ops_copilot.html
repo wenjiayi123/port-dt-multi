@@ -110,9 +110,10 @@
     .action.blocked{border-left-color:var(--red);opacity:.78}.action-link{display:block}.action-link:hover{background:#0d1d35}
     .engine-proof{margin:10px 0;border:1px solid rgba(34,211,238,.24);border-radius:12px;background:#071523;padding:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.engine-proof div{min-width:0}.engine-proof small{display:block;color:#7089ad;font-size:10px}.engine-proof b{display:block;margin-top:4px;font-size:11px;color:#bfeeff;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .handoff-panel{margin-top:14px;border:1px solid rgba(167,139,250,.25);border-radius:14px;background:linear-gradient(160deg,rgba(76,29,149,.15),rgba(9,20,38,.9));padding:12px}.handoff-panel[hidden]{display:none}.handoff-meta{color:#aebfe0;font-size:12px;line-height:1.6;word-break:break-all}
-    .context-list,.evidence-list,.connector-list{display:grid;gap:8px}
+    .context-list,.evidence-list,.connector-list{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
     .context-item,.evidence,.connector{border:1px solid rgba(148,163,184,.16);border-radius:12px;background:#091426;padding:10px}
-    .context-item{display:flex;justify-content:space-between;gap:10px}.context-item b{font-size:13px}.context-item span{font-size:12px;color:#91a7c7}
+    .context-item,.evidence,.connector{min-width:0}
+    .context-item{display:flex;justify-content:space-between;gap:10px}.context-item>div{min-width:0}.context-item b{font-size:13px;overflow-wrap:anywhere}.context-item span{font-size:12px;color:#91a7c7;overflow-wrap:anywhere}
     .level{font-size:11px;border-radius:999px;padding:3px 7px;background:#13233d;color:#cfe0ff}.level.major{background:#2b1d0a;color:#ffe49b}.level.ok{background:#06291d;color:#b7f7d7}
     .evidence b{display:block;color:#dbeafe;font-size:13px}.evidence p{margin:5px 0 0;color:#91a7c7;font-size:12px;line-height:1.55}.evidence .type{display:inline-flex;margin-bottom:6px;border:1px solid #284363;border-radius:999px;padding:2px 7px;color:#9bdcff;font-size:10px;font-weight:900}
     .audit-box{white-space:pre-wrap;word-break:break-word;border:1px solid #203456;border-radius:12px;background:#07101e;padding:10px;max-height:180px;overflow:auto;color:#c7d7f2;font-size:12px}

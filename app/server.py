@@ -1101,15 +1101,32 @@ _UI_INDEX = Path(__file__).resolve().parent / "ui" / "index.html"
 _OPS_COPILOT_UI = Path(__file__).resolve().parent / "ui" / "ops_copilot.html"
 _INTEGRATION_HUB_UI = Path(__file__).resolve().parent / "ui" / "integration_hub.html"
 _XIAOYI_SPRITE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "xiaoyi_sprite.js"
+_RUNTIME_RECOVERY_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "runtime_recovery.js"
 _BILINGUAL_UI_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "bilingual_ui.js"
 _RL_EVIDENCE_CONSOLE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "rl_evidence_console.js"
 
 
 def _inject_xiaoyi_sprite(html: str) -> str:
     marker = "/ui/adapters/xiaoyi_sprite.js"
+    preload_marker = "xiaoyi-character-preload"
+    if preload_marker not in html:
+        preload = (
+            '  <link id="xiaoyi-character-preload" rel="preload" as="image" '
+            'href="/static/xiaoyi_maritime_officer.png?v=20260831-navigation-recovery-v5" '
+            'fetchpriority="high">\n'
+        )
+        html = html.replace("</head>", f"{preload}</head>") if "</head>" in html else preload + html
+    if marker not in html:
+        tag = '  <script src="/ui/adapters/xiaoyi_sprite.js?v=20260831-navigation-recovery-v5"></script>\n'
+        html = html.replace("</body>", f"{tag}</body>") if "</body>" in html else html + tag
+    return html
+
+
+def _inject_runtime_recovery(html: str) -> str:
+    marker = "/ui/adapters/runtime_recovery.js"
     if marker in html:
         return html
-    tag = '  <script src="/ui/adapters/xiaoyi_sprite.js?v=20260814-evidence-context-v3"></script>\n'
+    tag = '  <script src="/ui/adapters/runtime_recovery.js?v=20260831-progress-v5"></script>\n'
     if "</body>" in html:
         return html.replace("</body>", f"{tag}</body>")
     return html + tag
@@ -2832,6 +2849,7 @@ async def home() -> HTMLResponse:
     except Exception:
         pass
     html = _inject_bilingual_ui(html)
+    html = _inject_runtime_recovery(html)
     html = _inject_xiaoyi_sprite(html)
     return HTMLResponse(html, status_code=200)
 
@@ -2871,6 +2889,25 @@ async def xiaoyi_sprite_adapter_js() -> HTMLResponse:
         )
     except Exception:
         return HTMLResponse("// xiaoyi sprite adapter unavailable", media_type="application/javascript", status_code=500)
+
+
+@app.get("/ui/adapters/runtime_recovery.js", response_class=HTMLResponse, tags=["ui"])
+async def runtime_recovery_adapter_js() -> HTMLResponse:
+    """Homepage backend-health supervision and automatic evidence recovery."""
+    try:
+        if _RUNTIME_RECOVERY_JS.exists():
+            return HTMLResponse(
+                _RUNTIME_RECOVERY_JS.read_text(encoding="utf-8"),
+                media_type="application/javascript",
+                status_code=200,
+            )
+        return HTMLResponse(
+            "// runtime recovery adapter not found: app/ui/adapters/runtime_recovery.js",
+            media_type="application/javascript",
+            status_code=404,
+        )
+    except Exception:
+        return HTMLResponse("// runtime recovery adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 @app.get("/ui/adapters/bilingual_ui.js", response_class=HTMLResponse, tags=["ui"])
