@@ -1,0 +1,1114 @@
+{
+  "schema": "port-sb3-public-metadata-export.v1",
+  "models": [
+    {
+      "training_model_sha256": "5974def88e4351d2f2894913ea892f0abb5aabc74c113be1e3f14be70dea5c25",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T025743Z/seed_917/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/5974def88e4351d2f2894913ea892f0abb5aabc74c113be1e3f14be70dea5c25.zip",
+      "public_model_sha256": "c0436f674b8309662c1b90da1fd3db53052ba9ed15bdc302b8d8eefc6d346d48",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "3c95ac636a1f013cb3830580accc5440937203ec98ad7a2c044f5d1e851a81ed",
+        "policy.optimizer.pth": "288cb22aed02943c85e8f739a3fd949a4d82fb587ac727ca02b6e03917509bee",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "0951e5fdca27d600630dec93addc2c313a9237cf4ee457b5a778286ee3022855",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T025743Z/seed_1017/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/0951e5fdca27d600630dec93addc2c313a9237cf4ee457b5a778286ee3022855.zip",
+      "public_model_sha256": "514144083e17213484e240d79ca799eb03ea9f782ef7e4dd12b48fe2d3f20d59",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "0e94ecb7a53079941197ec8252057061019cb624efb7a27df864654a2cc3179c",
+        "policy.optimizer.pth": "74ac25e59d5ef6d009f916ba0fad8854172fe0f1a73128458f3c564ecd071540",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "c686a60d3310039bd418a74aa693ab52d9cba94251693dcaef90d1c2be2c6110",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T025743Z/seed_1117/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/c686a60d3310039bd418a74aa693ab52d9cba94251693dcaef90d1c2be2c6110.zip",
+      "public_model_sha256": "94115ac1490b7e7ed01b269926eb1559ecba8198b0fba165057d458c79ef4174",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "6d33f4d346780b6feae760ab972b244ca49d689885601c82fd124638a798cc06",
+        "policy.optimizer.pth": "b847412d99145e7099b110f0f423e5509f6d252e60cc05eade19ef5d0844b4ca",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "afa728e467dc961a15cbd8f658213496f1c5c013714785223f3a5f68a9baf256",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T030216Z/seed_927/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/afa728e467dc961a15cbd8f658213496f1c5c013714785223f3a5f68a9baf256.zip",
+      "public_model_sha256": "30de4140ca00c8e8d215535d5817ee660f1fe6e238bc65d673d520bdfa5e6755",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "0a1e65c76555070fbdfebde9c15ffe267f7ef0c63cc82b506845799ccd67ed88",
+        "policy.optimizer.pth": "1a13c3c1d8ff32bb5e4e4fda51535f2739ad8ea74e61ff9ee2efa6b411339633",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "8dae56563b9169f6f6a65540f06a848c7af4914f1d7339ca9c650a2a4a31a913",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T030216Z/seed_1027/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/8dae56563b9169f6f6a65540f06a848c7af4914f1d7339ca9c650a2a4a31a913.zip",
+      "public_model_sha256": "dbe194f31f73905321ce89e2049bf818ed2503972bb0630d17aafc1b4d741a0b",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "93cda4899102f2ff3608390ddffe969de2c24c9a3f158e3f0a54586181d53f14",
+        "policy.optimizer.pth": "36147fd493d9c243f3f0a379b7c323ae8164c79bc9ff3d545862b916da8d97e1",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "113f18cee3ff9079585f86adea674786d131241f9f238ff9b66cf9675306c353",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T030216Z/seed_1127/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/113f18cee3ff9079585f86adea674786d131241f9f238ff9b66cf9675306c353.zip",
+      "public_model_sha256": "bb9832d5cb84437f564fdc84980eb6ae86fb640584461c0b41323589cf94ceef",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "3149bf505072000ad7b7b83200940639c28d2cdb5e38581ca64b814461a0e44e",
+        "policy.optimizer.pth": "519877b6bd780276caa5d67730adbead1fa5dee7247c4ef8baa047afb1afe1d3",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "3d176435c67e741eff2c4d1cce11bbc32b92c556724776c5218484a8d03b9343",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T031025Z/seed_937/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/3d176435c67e741eff2c4d1cce11bbc32b92c556724776c5218484a8d03b9343.zip",
+      "public_model_sha256": "06db3f1c66cdce240fbdd88f749709eacaa95390fd669492fd866ecb3499875f",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "1af3dd20be0e46f1f4c1671b868470162e1c48bd4c9c0ccf497468c7deee1981",
+        "policy.optimizer.pth": "2ae6f693cb2bd91f5bca809e23177af9828f6ea585f83373d232ded34ab2036b",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "37d483fa8bf3e44f97bfc7acbda68e0864d6e4078c2601e41c72d7389f1d1fc6",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T031025Z/seed_1037/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/37d483fa8bf3e44f97bfc7acbda68e0864d6e4078c2601e41c72d7389f1d1fc6.zip",
+      "public_model_sha256": "f999259afc8e258070e8930d9df462a54623be2a558faaeb13165be8c44ba53b",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "3cea6eb5d232c62f5c4f3b153aa45c4360c875cdc9b6959b8fee0fc4bcc98efc",
+        "policy.optimizer.pth": "4d7f8b28ba6ae01d317f0f500e1f52038cfc9a7db2fddc418e7f60518f85acd3",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "f4c7fe43884be428b63c89166c02fb4d8e24f49a572a7e804a87b8de8ae67527",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T031025Z/seed_1137/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/f4c7fe43884be428b63c89166c02fb4d8e24f49a572a7e804a87b8de8ae67527.zip",
+      "public_model_sha256": "3054e202c4337d198eb400563ded900685a0fae2275fbf7b01737049d82660cc",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "324198348ee5949b078f49318a265aff2f8dd2ebacbf88938f9605bc8764d6fe",
+        "policy.optimizer.pth": "01fdbd6c2130663e0f8afee537236410daf1f3958a0aa8f88029c3c457c76354",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "fc4890fa360664e564bf14ffdcd1db2786d426d4117a4fa2bc0d07b5a2d0bc1b",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-sac-v7-20260907T025525Z/seed_907/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/fc4890fa360664e564bf14ffdcd1db2786d426d4117a4fa2bc0d07b5a2d0bc1b.zip",
+      "public_model_sha256": "6ceb43bd4710a13064c166fd5753f26e2bf4561ef1d9fbae57527552f922602f",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "0863ee262af2227de7d2967e8b33b4934171361d715f69f21326970a5aed756c",
+        "actor.optimizer.pth": "5f8505b4d5a6f654e67262da2aa4cbb38b39aec897c6ad6a160686abbdd790b9",
+        "critic.optimizer.pth": "2fcffcb39fa0392d9682b68494af383021634289fca81e91f596041d54a1cdd2",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "99949b9680940df1804ba5229dab4492c903d3e238f97c88a2622ba2109d9db7",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-sac-v7-20260907T025525Z/seed_1007/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/99949b9680940df1804ba5229dab4492c903d3e238f97c88a2622ba2109d9db7.zip",
+      "public_model_sha256": "49565f8b921d22edb7335aa91496de7d8bb414747526e8b77af9547a9b0157f4",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "c599b56b1d24618a2eb98f7fb1ba99d43ee52ebf2c94c15d3c48d21ef9aea861",
+        "actor.optimizer.pth": "7737e970bb5bcd4285a7c7dccfe37f1ffe523ddebc8d8e78826f5df1d6bf6f8f",
+        "critic.optimizer.pth": "4fd3b86ea5fc61990802f6069ce1edc45f030332d1b4a14bdfe56942e9c6211b",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "770d8fd4c70d07fdbde75348da1be35e8a4697ad0e1cb9df53317ed1b573643e",
+      "source_paths": [
+        "evidence/v7/bess_energy/runs/bess_energy-sac-v7-20260907T025525Z/seed_1107/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/770d8fd4c70d07fdbde75348da1be35e8a4697ad0e1cb9df53317ed1b573643e.zip",
+      "public_model_sha256": "2ca53c971a0bd5cf92fde23bf3165f604f0dec00804180bee5fd836f62eb4e11",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "888c75b87ef973f726c1f0994f14a1c1d88ff1cec9fceac4d9ba996489219d81",
+        "actor.optimizer.pth": "1bb2693374c113deed6b63ce3cfd55d9610463214c39b89c32c573320dc5f6e9",
+        "critic.optimizer.pth": "d033fba11e1672952e9a9354e9538dbbdc2e7565c3b13d6f45703c81a20baf17",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "8f0c400bee33520e46386f8d4294160317766790cd3d7d5b80bc56d221b3875b",
+      "source_paths": [
+        "evidence/v7/coordinated_business/runs/coordinated-sac-v7-20260907T025350Z/seed_626/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/8f0c400bee33520e46386f8d4294160317766790cd3d7d5b80bc56d221b3875b.zip",
+      "public_model_sha256": "bffbcd4d4fd0793fd208781da1e1f2159658b9fb64a35cb7fda6a92441beabc4",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "381b12831e6ed00b9c1c4aceaf88b47efb96a5f57d2bf8148a811bdf50552652",
+        "policy.pth": "bf5261c1a838aad7da67fec2591c0cab5032739a3518c10d8d70c82f727f74aa",
+        "actor.optimizer.pth": "430d6c175353a837ddd7e1fabd0d70e326f69c7ce372aef95f144cb1c57502ec",
+        "critic.optimizer.pth": "342f14f9a620646d8713d408130073fecaf758f53a75dd00b2cfe9bb9c5f631d",
+        "ent_coef_optimizer.pth": "32eafa3793d9914e0b9087940f381ca63adabbb43c5a7c3130f707870f89ee5a",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "6ec8099229c641806d76f2b17715189ee75ea0987c02a37925a028c851af7b71",
+      "source_paths": [
+        "evidence/v7/coordinated_business/runs/coordinated-sac-v7-20260907T025350Z/seed_726/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/6ec8099229c641806d76f2b17715189ee75ea0987c02a37925a028c851af7b71.zip",
+      "public_model_sha256": "bb74178205ee3938f9d316e99b099c2dac20a5ae882d3f3b5c6925fa54d91fc1",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "7bdccc65b72288288e14a3ecf70230cf768a50f0b4827ab5d8fa35fd7c8e9977",
+        "policy.pth": "2b8b27dac0000758f9833a7037197de61acdb2cb9b4e021112f1b7bb8dc0d1c1",
+        "actor.optimizer.pth": "85f3e813ad9b49dacebcf64b15e31d843916bb8d2ae434e411ac307afba5cd37",
+        "critic.optimizer.pth": "307666acd39af4693e5ed63d5fde47a3f10082deced9fc36af6c6896cc0d38f5",
+        "ent_coef_optimizer.pth": "300e9a0bc09fa0d1e7f900aeb0672370b2b229417d6c2027b5883dc634d0b284",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "9c6d6145ffbaacee94cf8834109f77885863d2ddf01977c59fd56aac37787aa8",
+      "source_paths": [
+        "evidence/v7/coordinated_business/runs/coordinated-sac-v7-20260907T025350Z/seed_826/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/9c6d6145ffbaacee94cf8834109f77885863d2ddf01977c59fd56aac37787aa8.zip",
+      "public_model_sha256": "6488ec983c6562f08f7fa62d890c7fa554d5611a17087c9fff0f09a3dde423b7",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "2eb1549e4802b151326d8516e18f658337d1b4c6ee9e074113af975a22689c3d",
+        "policy.pth": "c76e9a31cbd81e6672c5db136cf92148730080ebb2ec3a087aa71343ab203e0c",
+        "actor.optimizer.pth": "26092b0ef7bdcf0be2f0d2ad53664d82359ad4e5b0d4bf71fb75d015c2025f1d",
+        "critic.optimizer.pth": "3712a075e2437a932f12ad8482c3a02412c99e2e9885f01c79261503927b3383",
+        "ent_coef_optimizer.pth": "627818388a1588ae8941fc312c6d83bb5985b9ce553376a60dd32b68597fc5c6",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "da4853d9262ecdccab6bf50f7ae16095ed7b1d59279e3fd40dc2e1f00f22048d",
+      "source_paths": [
+        "data/rl/runs/rl-20260830T064347110Z/model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/da4853d9262ecdccab6bf50f7ae16095ed7b1d59279e3fd40dc2e1f00f22048d.zip",
+      "public_model_sha256": "98b8e64868a45f7e37a0f2cb014c1d692aa5b747768bd08cac91f1471f606d0e",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e6521f4c96d42e2d8d8f99b28ee735f344efef557cd3bf92e768938fd18ce83c",
+        "policy.pth": "c1144b7f8d3d90b9fd0bfffb01ded6652ba0374c4503256f4dc9e0386f40d1fe",
+        "actor.optimizer.pth": "62d5dfb8eb04b176ba93a30d9b17b1e50e35ae73fa1b4689c056013ee12083f7",
+        "critic.optimizer.pth": "9fa408bbbb0ffb49b6e97ec1335a6fe88481435ba14be7c9337917eaed247a1d",
+        "ent_coef_optimizer.pth": "55e9accbbaccfac95533590c0470a97ea0bf099c7cb263e70b60038a3dc9d7fb",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "023f29a287f0e0cc20c5ec9b24a834a1706da632274e8d936c307bba56f3f4da"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "d3af45e4935db355a90778d299393cf798587fb34bab633c5780003bfd07fac3",
+      "source_paths": [
+        "data/rl/runs/rl-20260830T071312066Z/model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/d3af45e4935db355a90778d299393cf798587fb34bab633c5780003bfd07fac3.zip",
+      "public_model_sha256": "d99d9489e2621e50724b41dae0c3f0f7c3ffacf86443e33a1ae6c4c2646d0591",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "8ad608ca77a935197adb963cc3cb21cdc9adaead9ba972c27f858f2c15cfe3d0",
+        "policy.pth": "4bc38def1e4f04c16f4eef4d88bd8441c93828a3ce3b5dad50aeb34ebc698b73",
+        "actor.optimizer.pth": "51fac8b85397059da045606ce6e132569dfc7c10147351414fe6f9fa9536850e",
+        "critic.optimizer.pth": "2a2bad7e56bb60d86bcf40cb9b453362f1a06dc10ce66b18dc82678aabc8acbd",
+        "ent_coef_optimizer.pth": "774da47a88055dd6fbe74860ec5c8ee9989f6144203a8b72687c89ade052e43d",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "023f29a287f0e0cc20c5ec9b24a834a1706da632274e8d936c307bba56f3f4da"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "c717f9e2a959ffb9159b3024e31a8fe8e4f8d8664031c579c8ff4470715f0add",
+      "source_paths": [
+        "evidence/v7/hvac/runs/hvac-sac-v7-20260907T025157Z/seed_907/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/c717f9e2a959ffb9159b3024e31a8fe8e4f8d8664031c579c8ff4470715f0add.zip",
+      "public_model_sha256": "06e04081517cb6894d59010a0508d87840ca4bfb6db854bb521cfcc33f5afae8",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "b89080f458399ddf658f4a968284de24d5172e2f3fa0d5ef999a73f5d516417d",
+        "actor.optimizer.pth": "6c9d8f842a79a05c17e2e4e2fba47f07ffc3f62c2027495682e6628f89fbee89",
+        "critic.optimizer.pth": "e3d6bf0fdee0d680e0e8be8e714f73b0f83990c994e5c951bd4f739b67f99adb",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "227f7b3e2f31039146f2c1ac3ed68368ed905079b101a9f0951f8017118112b6",
+      "source_paths": [
+        "evidence/v7/hvac/runs/hvac-sac-v7-20260907T025157Z/seed_1007/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/227f7b3e2f31039146f2c1ac3ed68368ed905079b101a9f0951f8017118112b6.zip",
+      "public_model_sha256": "9279bfc50dc95aeadc0a04617d132172498b38c71b45e335251c4f91e25dc549",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "dc44230a12c8a1454d40196453b942b054a3c466a768a3d94826f55dcb435e32",
+        "actor.optimizer.pth": "3623a43872b1be61176b0e9895c5bb1a48caa159fcd3e6b2ec537d83c563ed9b",
+        "critic.optimizer.pth": "c072c4fda9a4219220e9996671652378fda800447f2cc36d6042890c84add671",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "c7b214a650f8e0e97e621b2efe5bca44794f4e0fbd2ae8ff6c89381291b959de",
+      "source_paths": [
+        "evidence/v7/hvac/runs/hvac-sac-v7-20260907T025157Z/seed_1107/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/c7b214a650f8e0e97e621b2efe5bca44794f4e0fbd2ae8ff6c89381291b959de.zip",
+      "public_model_sha256": "3ff2fc9abd164da04c67a56b8650d5fef4e41a47fdd416ec454ebbd93d0a9370",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "eec3f85443a5c40f1b15c47d9323afcf0bc44fad39801cf1b751785830324ec4",
+        "actor.optimizer.pth": "a1e1c20a9480fadde420fbdf5fffee3054ee9085a803d46d8c3f81e6fad4dee2",
+        "critic.optimizer.pth": "f9a6050f09b83359df25b53b1abcdadde67d5cadbcfafd7878dabf8f4687dfd7",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "1b195e7ca92a1d8d882d0329723cf1098d74d7b9fa2044e5592521da8499fbb4",
+      "source_paths": [
+        "evidence/v7/hvac/runs/hvac-sac-v7-20260907T030201Z/seed_927/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/1b195e7ca92a1d8d882d0329723cf1098d74d7b9fa2044e5592521da8499fbb4.zip",
+      "public_model_sha256": "f49ae8dd080f8d70f6dd36b27c276f32f51749366bc1c3c29de500dc4922edd5",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "019618bebc2d79c70a0e85fb13cc93a0dbd97ccbbf183bf1edfc6fef833542cf",
+        "actor.optimizer.pth": "d8e1f1752b8c21510f47eaaeb0c355d9dd7617647e7dcead3b48acad9fe295f8",
+        "critic.optimizer.pth": "9bda497c2c86700ca45209c360eacf9768ec64e7d97f41272a1a1821a0d9d4b0",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "f383ffed04793e020f203fe5614e97dfd2830a8d033335f4f6eb6045d77d8d9f",
+      "source_paths": [
+        "evidence/v7/hvac/runs/hvac-sac-v7-20260907T030201Z/seed_1027/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/f383ffed04793e020f203fe5614e97dfd2830a8d033335f4f6eb6045d77d8d9f.zip",
+      "public_model_sha256": "dd0b9570eab956e075169c09c62ae334608bb3ec8fb49cb2fb6837f72a7615c0",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "ac60ff56b244ecdd13f5361e0fe52a57d599231b49a86583e5b7d33cdc7e19c1",
+        "actor.optimizer.pth": "77d0a2612c947c3c27775215fae2ecd7201f551ab77735747261908c87733a22",
+        "critic.optimizer.pth": "c17f9bb0fa1341694d31667f334740ac07eab110094003f5a761c759cee57974",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "ddf4fba4ce4e4e1a6f56fa648105c7d2e69da2c9bcfced83dc963d06b89498e7",
+      "source_paths": [
+        "evidence/v7/hvac/runs/hvac-sac-v7-20260907T030201Z/seed_1127/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/ddf4fba4ce4e4e1a6f56fa648105c7d2e69da2c9bcfced83dc963d06b89498e7.zip",
+      "public_model_sha256": "327fa6fd13424b9057f40d5f4d26ca4c2b787dfd61851935d6c412de77539394",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "aa99e1b3a3457cc2313ab69bb2c86fb5b3e82543b88476277540ea2219522ae6",
+        "actor.optimizer.pth": "ae113bc4a03915c5589049fbcc16a2658c74af7821113b090958f808a4c675dd",
+        "critic.optimizer.pth": "13734710ce70d7731eb083cd236f17f4085638e345a58380593fe75ab22531de",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "d9a6fa74532e1f17475c353740f458c9e2f05c482b5d5d8b0c29ceed5c106522",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T025730Z/seed_917/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/d9a6fa74532e1f17475c353740f458c9e2f05c482b5d5d8b0c29ceed5c106522.zip",
+      "public_model_sha256": "2a8825d0f7d18cdb3df88184ae6fcf40ddb6a93d6d14320fcd0fafaa23bb2082",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "a908924727d3ae775e603aa5a494c800ee7c2dac1c230eb03b0a03f600833c3f",
+        "policy.optimizer.pth": "aae92bfbff883ecc04f0f8a900a1c86b755336c4d484f7fc59651ac943b422b1",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "ad4e62fe3ae609a6ee7c89fd1b90b78220e494df5b1f7d5fbff566589db3d7a4",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T025730Z/seed_1017/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/ad4e62fe3ae609a6ee7c89fd1b90b78220e494df5b1f7d5fbff566589db3d7a4.zip",
+      "public_model_sha256": "ef1c8aa884a61ecdd9eca5e86fcd5abf79faf7ec0379420c7d73bfcfb1f9e295",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "f1e4cf830d92c4909c57976da0d0d8f2a1f9169cf1d756870ee509509e3cd0c5",
+        "policy.optimizer.pth": "7c36ef1ca9c26b8121516577caa0e67ad7134397e0e6f5bdb62e900d27b0814a",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "d957e498ae3d7935e303630e026250b67eeae44ce17e2a3fcf3c280a48dd37d7",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T025730Z/seed_1117/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/d957e498ae3d7935e303630e026250b67eeae44ce17e2a3fcf3c280a48dd37d7.zip",
+      "public_model_sha256": "9fd5fafdd57819aed512f7114668978a467ca9306792e2fd270f63a2f70c7e3e",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "22fdad11c7be48821fad9e3037f35c956e7ae2100a99db598673e625cef406f4",
+        "policy.optimizer.pth": "128876e90dbb3a4645a9ecbbcda42f711ae8454a5572e7626c3005b9dd2c3023",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "8d4d566ce7b18d78abcb4948b68fcea8a3d92038e6f496eaa077e3b7a72c3972",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/8d4d566ce7b18d78abcb4948b68fcea8a3d92038e6f496eaa077e3b7a72c3972.zip",
+      "public_model_sha256": "06e1d8d247b099f149720b0624ed7e2bc77458ddf1680adfffcc99d059ab57b0",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "dda5118ffea159364e5896fb5a47faa40397ef45ed979cdee003be9d2a955f63",
+        "policy.optimizer.pth": "b9eaec66fa047f29485688d0b22c19d14f0a2857a92c4eb7886ef67b881dabf4",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "b44d51b90960c569770f59e3a333a43eb78c683a253595a9e612aaf26c988d03",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_1027/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/b44d51b90960c569770f59e3a333a43eb78c683a253595a9e612aaf26c988d03.zip",
+      "public_model_sha256": "c5f06bd35ea434c15dc9278d9f7578fbff2a36bc9b18c2171cb9270f17fac3fe",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "1c0f311507cfb763af43e122457fb8a7bac32c802f1ec60aafd15a48d6ef0868",
+        "policy.optimizer.pth": "94ee1e3f5429890122cc86bfc94d6cad8e38f5d56244770ac3104accc2334ebc",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "843809a4fa29dc2dfe47a0083de85304780fa754be74c96358ce385716d71e5c",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_1127/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/843809a4fa29dc2dfe47a0083de85304780fa754be74c96358ce385716d71e5c.zip",
+      "public_model_sha256": "5da1de0c334532e4fefc2e006fc079168520b6739202af4d61f2d9135bfd7c74",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "a587357855b31fd658c4997b536a52d2089d132c283dacfc1f637ccd79ec9ad2",
+        "policy.optimizer.pth": "3e816cb9551e16495e62f10e6d99a788a4f8496ba833704da151161f813b1bd1",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "ff8b5764395dd66b70f872f4ef7dcd9944b5cd5c3bf609332ab7ef239554614c",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T031026Z/seed_937/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/ff8b5764395dd66b70f872f4ef7dcd9944b5cd5c3bf609332ab7ef239554614c.zip",
+      "public_model_sha256": "dd020b1461ef8a767e561e377190fab62ff70fa78f22e817946b2c1f527d81ca",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "2d15a8856c187d017cc27c2bae00b9f38aa460b6865a03f80174f4bb12641eb2",
+        "policy.optimizer.pth": "68f6d3b8f4043ae58d7580395b6927dc8e13089e5562bd05ce9d7668f5551aef",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "a6c0ae0b85bfc036bc7c8cdeb46bd858fd7e44fb7775c4c810e9d06277009715",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T031026Z/seed_1037/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/a6c0ae0b85bfc036bc7c8cdeb46bd858fd7e44fb7775c4c810e9d06277009715.zip",
+      "public_model_sha256": "dda9ea7677f945655cc23f621cb29e8b6b3b63a127b557349b6305f65292292b",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "e1a9a077c66276e9b5555563ec6935c14474ac96d461ec900736c43e12f03290",
+        "policy.optimizer.pth": "b2571311633ed7948a6b5cbacea6a27b4e6a28d22f4760d235c181c9946efdf8",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "a7e4fb2783f46c831a2419886081ec7ce1f1301f9ba730cf2d23aec1a94f8969",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T031026Z/seed_1137/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "public_model_path": "evidence/v7/public_models/a7e4fb2783f46c831a2419886081ec7ce1f1301f9ba730cf2d23aec1a94f8969.zip",
+      "public_model_sha256": "26ea18d74aad6aeedb77b3dce877da503a7e0775940f91ca6740570bccc4373f",
+      "removed_regenerable_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "b7328d70762a47d7affd61995f490f58cd3b2e1c4a8bece864a6c0cf2c264cf3",
+        "policy.optimizer.pth": "2a40dc846178da01f3b975a4f09fa6e506c3d98bc0aae12e629f4edda32a9cfc",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "65979b17088af4cd8f5542e157d278b6b5c5d5da5dae6378e7b0aefbf0029012",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-sac-v7-20260907T025158Z/seed_907/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/65979b17088af4cd8f5542e157d278b6b5c5d5da5dae6378e7b0aefbf0029012.zip",
+      "public_model_sha256": "8d42ceb506aaef91eeb090b2a8c22e415f74dc2acd4db27dae9e8d0293426ce1",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "068763e51c97348eb9d3f15a2a8f4d64cb52bc2b4e0b50d0cadc1aed7bebae67",
+        "actor.optimizer.pth": "20583f88847b6b3a2aa1b6f3b94f1a0210459bbc89c8bf8a2c9731e9af25d261",
+        "critic.optimizer.pth": "56fee82c1bc1f356e3f4f438111c8c2a910a253d5600c7547e0a1c2743239bbc",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "3e880dc3152c7e1ec95f11db490a03b54851ab60474cfa7b83ac1144aa41577c",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-sac-v7-20260907T025158Z/seed_1007/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/3e880dc3152c7e1ec95f11db490a03b54851ab60474cfa7b83ac1144aa41577c.zip",
+      "public_model_sha256": "622474f7868b94f5b4375dc6f8ab091d14d320aef61583dd9f15065949ec83da",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "608a40fd7bc032e6df63c7545325fe6f925efa3c39d2f83b90f06f67b530e801",
+        "actor.optimizer.pth": "3505f9275ab6975c8508753d678f5ef97573feb5d670f70a7b5d5bac00e9d581",
+        "critic.optimizer.pth": "4d4f9dceb6d92fd001d94eedff522105ea5757cccbb5b42612e612f5974d4875",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "631127716af1e74210c2173ad325f38af9f8aef87a4092d989ea791e438a96d3",
+      "source_paths": [
+        "evidence/v7/shore_bess/runs/shore_bess-sac-v7-20260907T025158Z/seed_1107/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/631127716af1e74210c2173ad325f38af9f8aef87a4092d989ea791e438a96d3.zip",
+      "public_model_sha256": "61a0b1084429eceb174a528be6bbafdcf2c3fdceac611f39e59073a6b56224a3",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "4fbcadb4bd51ed80317cb8bfc68ff7c288296f67f805a01ded76278bf9f87f67",
+        "actor.optimizer.pth": "bbd776f6606c3d3818b047d4370f2b5d5e8b9d370ff13b7440d310ad2c4c7b99",
+        "critic.optimizer.pth": "d4121fa970b3cdd19fe0055fe05e643a896cb70e71e6896022dc5561b74a62c1",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "12446d8d05fd7a9cd9184b828504a862dbf1f364a545b63774ec6d63737f667a",
+      "source_paths": [
+        "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_907/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/12446d8d05fd7a9cd9184b828504a862dbf1f364a545b63774ec6d63737f667a.zip",
+      "public_model_sha256": "0ec6b933b819db401a935ac53cbdee451b5d925d7759da0a28cd9a72e84fbdf4",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "96287ff0645d9b6463090e25f92991678589dd82a030c838a2caabe05c349878",
+        "actor.optimizer.pth": "eed4dbcec43f1306820f71f66a32b16d5798f1444023af846efc394bddc05e31",
+        "critic.optimizer.pth": "c90d35d7b2df0359ef189b374fbc878bfed0476584b86703a980c86f31082e92",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "b1bdc19781d713bbd408aa2aaad73431896e1fbdfc04afe2928e3f0328f3c800",
+      "source_paths": [
+        "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_1007/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/b1bdc19781d713bbd408aa2aaad73431896e1fbdfc04afe2928e3f0328f3c800.zip",
+      "public_model_sha256": "4239d6861fa248aeca6773d83c90e93218e18dcfe624e1dd6e84bf43a2797a7c",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "3d834c21d26c7af83a8ecf3da69402c93bc907f753a7e6ced4892c9fd730df0a",
+        "actor.optimizer.pth": "7808b4074a8eb6d21f173468f8d414f66686ccac5be66c95294a790fda3374c7",
+        "critic.optimizer.pth": "f7e34d7942dafe3e4839f9cbb01a9d89f236fc5412f23cd38c9481c422712ed6",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "9aef0be5149e5c46559a231abd4c814a080c718c6fad1a166519e0d368688a1f",
+      "source_paths": [
+        "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_1107/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/9aef0be5149e5c46559a231abd4c814a080c718c6fad1a166519e0d368688a1f.zip",
+      "public_model_sha256": "88130f40f8f768672c3afaaf9d282575c4c926290543bd9759cf3bf11e995f4f",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "c41eddf8ae1007d7e25e56d9fbdd1ba34019cf2cea185ff60ae382099c660fc9",
+        "actor.optimizer.pth": "18876fced123db4cd13a268d968cd7c49edd302daf1a35d6f5128762ebbeb3b6",
+        "critic.optimizer.pth": "259d8d0808aea3e9a4725cd2f373bd277d5f17cfe30241156febbd0d89bdb5df",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "585e5d62f04e16b2cedb40500c4ef300409e0f11ab271336195f17aa69dffba4",
+      "source_paths": [
+        "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T030204Z/seed_927/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/585e5d62f04e16b2cedb40500c4ef300409e0f11ab271336195f17aa69dffba4.zip",
+      "public_model_sha256": "5081b09d863837b6bc60f1fe06ce270f51733337bcb7a0ea0565dd089eda79ec",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "df4b0bc57552c84f5f28f31dd15e6b9e27f87eab2f159e7ad9601631dc31cb3f",
+        "actor.optimizer.pth": "3b09fb442fdb7c04dbe7c9216169c259ae779a38aaf173a8b56537c8148194f0",
+        "critic.optimizer.pth": "1868404d19b2717e9fe17623bba0cefa34d2e425677e124bfb416210b4d13a08",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "bad65e84ccc989cbc6a45d888c99d3bc46b25477399088d7b41b6e689cb05ff9",
+      "source_paths": [
+        "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T030204Z/seed_1027/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/bad65e84ccc989cbc6a45d888c99d3bc46b25477399088d7b41b6e689cb05ff9.zip",
+      "public_model_sha256": "898a18f0039d242c65904b6c6f7244f1b948046a6b38c66df53f3c1128478da9",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "db5aa20aa6bd85852f58e48d430c07690c96617ebc412ba57e5312f8a40e9e70",
+        "actor.optimizer.pth": "44703c6633f4896071e8b4ef8bc62e3a3897badfd1ae06518a73ed9011b76b12",
+        "critic.optimizer.pth": "b65bb7a4b38810feebbb004cfb342878bc9cad386f51dbdd222aa46ddbf670c1",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "2e410d888cd9d90bf6f3a1d9e63a39c5a38ee297c1707a1e74edecf3b63ab03a",
+      "source_paths": [
+        "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T030204Z/seed_1127/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/2e410d888cd9d90bf6f3a1d9e63a39c5a38ee297c1707a1e74edecf3b63ab03a.zip",
+      "public_model_sha256": "4cdc0969b78b51a4bf0e8d285268b3d302e75d37927922d446334cb204f4c7c1",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "164ec410872a38c8273f042bea7adf85c6d0e929684429a6b8d3203073c73a42",
+        "actor.optimizer.pth": "e362e5c37958ccf5f9c3b053a008c49453f20f211367274ecc65f2a70d5b3e55",
+        "critic.optimizer.pth": "b1f468412292f7aa21d1d306f2d7b027f9b8b9403ec65e129fe31353b4a51400",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "c811389ce95898415cec88c1571f51d9523f2ebbc2d232f01ffb14cea51a785c",
+      "source_paths": [
+        "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_907/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/c811389ce95898415cec88c1571f51d9523f2ebbc2d232f01ffb14cea51a785c.zip",
+      "public_model_sha256": "8eeb41b7dd3685f9d2b3b2786293e15ea70fd4ef99491650434cdcbe823377db",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "658afdf4cc19eb208cafb7c2d1b6fa72cd1ca8b31ac002384d0ba32ae3194af0",
+        "actor.optimizer.pth": "da148650e6331e898ea66d546ba06b2358eabef9d224515df4058257ca6d4ded",
+        "critic.optimizer.pth": "42ddde91ad41cb657b417335b6ebd9ff481e2e59ceaca22fc513f7ca1fcd96ff",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "a28cd3a63e833456302af5944ebccb295084807287982e635d38d63713e9a071",
+      "source_paths": [
+        "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/a28cd3a63e833456302af5944ebccb295084807287982e635d38d63713e9a071.zip",
+      "public_model_sha256": "eaa48f10297d6a10a86206554cc9112174e0263b86e289e9761f6cf8ae15077d",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "1e5ad2b543ae99bf19fef47d119a4380d8b357020f0d6ebe9d5ca9026f5c1671",
+        "actor.optimizer.pth": "b3708e685ff3c6f72eb4bed8342347049c9e5e9223203149d05b07c2dfa3b406",
+        "critic.optimizer.pth": "175a5b6e7359a44e240db16ea5672e56eeea5fcf1473db6bfd06c952f365ae90",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    },
+    {
+      "training_model_sha256": "2e6abfd60f8f099a352eed02809b2003027acd926627dc8bd1f7e8fd3d6db664",
+      "source_paths": [
+        "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1107/selected_model.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "public_model_path": "evidence/v7/public_models/2e6abfd60f8f099a352eed02809b2003027acd926627dc8bd1f7e8fd3d6db664.zip",
+      "public_model_sha256": "7493bc0fc68b9368a3077453bb68b8a48ceb9b313b539fe920f0ba6645a84695",
+      "removed_regenerable_fields": [
+        "lr_schedule"
+      ],
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "32e9b53a440cf5dc6fc867e6292a045b7613e1199ff813bbf1452d65110d4cb5",
+        "policy.pth": "16924c434fa1db48d0e4213ea8440ab88268013ce7a120b45edd58bb427de147",
+        "actor.optimizer.pth": "ae620d9f14cc98715eff146ea4d9cdc5c33752ae0795dcbdb4331c540d4963f8",
+        "critic.optimizer.pth": "fb2378f7e445a3be3141cd0f99aa5701713fa8dfaed132eaa489ad397891c730",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 32,
+      "schedules_identical": true,
+      "training_counters_identical": true
+    }
+  ],
+  "method": "Remove cached scalar learning-rate and DQN exploration schedules; SB3 load rebuilds them from unchanged hyperparameters. Network and optimizer bytes are unchanged.",
+  "source_model_archives_modified": false,
+  "historical_reports_modified": false,
+  "production_authority": false
+}

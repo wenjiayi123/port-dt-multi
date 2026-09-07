@@ -1,0 +1,68 @@
+{
+  "mean": {
+    "reward": -211.89487288948732,
+    "baseline_energy_kwh": 122507.32499999997,
+    "energy_kwh": 119409.83185077886,
+    "baseline_energy_cost_cny": 107085.99500000005,
+    "energy_cost_cny": 104486.31826685768,
+    "baseline_carbon_kg": 63781.10049999999,
+    "carbon_kg": 62171.203652439595,
+    "historical_moves": 5745.0,
+    "policy_moves": 5745.0,
+    "baseline_peak_kw": 5887.35,
+    "peak_kw": 5831.838181781897,
+    "baseline_total_cost_cny": 136522.74500000005,
+    "total_cost_cny": 133645.50917576716,
+    "moves_retention_rate": 1.0,
+    "job_sla_non_degradation_rate": 1.0,
+    "projection_rate": 0.8203125,
+    "guardrail_violation_rate": 0.0,
+    "delay_delta_minutes": 0.0
+  },
+  "rows": [
+    {
+      "reward": -213.0491283736092,
+      "baseline_energy_kwh": 128504.6,
+      "energy_kwh": 125264.69352803631,
+      "baseline_energy_cost_cny": 112307.61000000003,
+      "energy_cost_cny": 109604.72076897368,
+      "baseline_carbon_kg": 66913.05700000002,
+      "carbon_kg": 65229.20825981892,
+      "historical_moves": 6285.0,
+      "policy_moves": 6285.0,
+      "baseline_peak_kw": 6211.2,
+      "peak_kw": 6156.399322090215,
+      "baseline_total_cost_cny": 143363.61000000004,
+      "total_cost_cny": 140386.71737942475,
+      "moves_retention_rate": 1.0,
+      "job_sla_non_degradation_rate": 1.0,
+      "projection_rate": 0.7864583333333334,
+      "guardrail_violation_rate": 0.0,
+      "delay_delta_minutes": 0.0
+    },
+    {
+      "reward": -210.74061740536547,
+      "baseline_energy_kwh": 116510.04999999993,
+      "energy_kwh": 113554.97017352142,
+      "baseline_energy_cost_cny": 101864.38000000006,
+      "energy_cost_cny": 99367.91576474167,
+      "baseline_carbon_kg": 60649.14399999997,
+      "carbon_kg": 59113.19904506027,
+      "historical_moves": 5205.0,
+      "policy_moves": 5205.0,
+      "baseline_peak_kw": 5563.5,
+      "peak_kw": 5507.27704147358,
+      "baseline_total_cost_cny": 129681.88000000006,
+      "total_cost_cny": 126904.30097210957,
+      "moves_retention_rate": 1.0,
+      "job_sla_non_degradation_rate": 1.0,
+      "projection_rate": 0.8541666666666666,
+      "guardrail_violation_rate": 0.0,
+      "delay_delta_minutes": 0.0
+    }
+  ],
+  "starts": [
+    0,
+    192
+  ]
+}

@@ -1,0 +1,8 @@
+{
+  "run_id": "yard_crane-sac-v7-20260907T025527Z",
+  "status": "SETUP_FAILED",
+  "environment_steps": 0,
+  "optimizer_updates": 0,
+  "cause": "dataset.describe signature mismatch; fixed before the following run",
+  "prior_models_preserved": true
+}

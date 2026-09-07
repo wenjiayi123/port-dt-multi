@@ -1,0 +1,536 @@
+[
+  {
+    "step": 5000,
+    "updates": 1000,
+    "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_907/step_5000.zip",
+    "model_sha256": "12446d8d05fd7a9cd9184b828504a862dbf1f364a545b63774ec6d63737f667a",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 1,
+        "mean": 3.655921227047304,
+        "std": 0.0,
+        "median": 3.655921227047304,
+        "ci_low": 3.655921227047304,
+        "ci_high": 3.655921227047304,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "carbon_kg": {
+        "n": 1,
+        "mean": 4.320310209311327,
+        "std": 0.0,
+        "median": 4.320310209311327,
+        "ci_low": 4.320310209311327,
+        "ci_high": 4.320310209311327,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "peak_kw": {
+        "n": 1,
+        "mean": 0.9335181607418869,
+        "std": 0.0,
+        "median": 0.9335181607418869,
+        "ci_low": 0.9335181607418869,
+        "ci_high": 0.9335181607418869,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "energy_kwh": {
+        "n": 1,
+        "mean": 4.32091682088353,
+        "std": 0.0,
+        "median": 4.32091682088353,
+        "ci_low": 4.32091682088353,
+        "ci_high": 4.32091682088353,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "moves_retention_rate": true,
+      "job_sla_non_degradation_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -417.642222117637,
+      "baseline_energy_kwh": 245014.65000000017,
+      "energy_kwh": 234427.77077452125,
+      "baseline_energy_cost_cny": 214171.99000000002,
+      "energy_cost_cny": 205497.5863599266,
+      "baseline_carbon_kg": 127562.20100000012,
+      "carbon_kg": 122051.98051300294,
+      "historical_moves": 11490.0,
+      "policy_moves": 11490.0,
+      "baseline_peak_kw": 6211.2,
+      "peak_kw": 6153.21732,
+      "baseline_total_cost_cny": 245227.99000000002,
+      "total_cost_cny": 236263.6729599266,
+      "moves_retention_rate": 1.0,
+      "job_sla_non_degradation_rate": 1.0,
+      "projection_rate": 2.546875,
+      "guardrail_violation_rate": 0.0,
+      "delay_delta_minutes": 0.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 1000.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -3.4031131267547607,
+      "train/critic_loss": 0.26412075757980347
+    }
+  },
+  {
+    "step": 10000,
+    "updates": 2250,
+    "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_907/step_10000.zip",
+    "model_sha256": "cfa34395a397c9dd1c71f83fa91bd51f760b68309d3f3435420ff73985e35442",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 1,
+        "mean": 3.605801133946207,
+        "std": 0.0,
+        "median": 3.605801133946207,
+        "ci_low": 3.605801133946207,
+        "ci_high": 3.605801133946207,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "carbon_kg": {
+        "n": 1,
+        "mean": 4.283859425105787,
+        "std": 0.0,
+        "median": 4.283859425105787,
+        "ci_low": 4.283859425105787,
+        "ci_high": 4.283859425105787,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "peak_kw": {
+        "n": 1,
+        "mean": 0.7907921174652288,
+        "std": 0.0,
+        "median": 0.7907921174652288,
+        "ci_low": 0.7907921174652288,
+        "ci_high": 0.7907921174652288,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "energy_kwh": {
+        "n": 1,
+        "mean": 4.284526928421076,
+        "std": 0.0,
+        "median": 4.284526928421076,
+        "ci_low": 4.284526928421076,
+        "ci_high": 4.284526928421076,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "moves_retention_rate": true,
+      "job_sla_non_degradation_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -417.67207499852185,
+      "baseline_energy_kwh": 245014.65000000017,
+      "energy_kwh": 234516.9313421735,
+      "baseline_energy_cost_cny": 214171.99000000002,
+      "energy_cost_cny": 205576.17039010234,
+      "baseline_carbon_kg": 127562.20100000012,
+      "carbon_kg": 122098.47826412725,
+      "historical_moves": 11490.0,
+      "policy_moves": 11490.0,
+      "baseline_peak_kw": 6211.2,
+      "peak_kw": 6162.0823199999995,
+      "baseline_total_cost_cny": 245227.99000000002,
+      "total_cost_cny": 236386.58199010234,
+      "moves_retention_rate": 1.0,
+      "job_sla_non_degradation_rate": 1.0,
+      "projection_rate": 2.4401041666666665,
+      "guardrail_violation_rate": 0.0,
+      "delay_delta_minutes": 0.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 2250.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -6.785943984985352,
+      "train/critic_loss": 0.7093355655670166
+    }
+  },
+  {
+    "step": 15000,
+    "updates": 3500,
+    "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_907/step_15000.zip",
+    "model_sha256": "96309b4fdf44713e2eb075d2c0e015b1c0bb4d50c672321f7e0cc001af383448",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 1,
+        "mean": 3.276472295882983,
+        "std": 0.0,
+        "median": 3.276472295882983,
+        "ci_low": 3.276472295882983,
+        "ci_high": 3.276472295882983,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "carbon_kg": {
+        "n": 1,
+        "mean": 4.047184994337682,
+        "std": 0.0,
+        "median": 4.047184994337682,
+        "ci_low": 4.047184994337682,
+        "ci_high": 4.047184994337682,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "peak_kw": {
+        "n": 1,
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "energy_kwh": {
+        "n": 1,
+        "mean": 4.0484736673310096,
+        "std": 0.0,
+        "median": 4.0484736673310096,
+        "ci_low": 4.0484736673310096,
+        "ci_high": 4.0484736673310096,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": false,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "moves_retention_rate": true,
+      "job_sla_non_degradation_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -418.2523966366441,
+      "baseline_energy_kwh": 245014.65000000017,
+      "energy_kwh": 235095.29641364692,
+      "baseline_energy_cost_cny": 214171.99000000002,
+      "energy_cost_cny": 206138.19198423397,
+      "baseline_carbon_kg": 127562.20100000012,
+      "carbon_kg": 122400.38751022982,
+      "historical_moves": 11490.0,
+      "policy_moves": 11490.0,
+      "baseline_peak_kw": 6211.2,
+      "peak_kw": 6211.2,
+      "baseline_total_cost_cny": 245227.99000000002,
+      "total_cost_cny": 237194.19198423397,
+      "moves_retention_rate": 1.0,
+      "job_sla_non_degradation_rate": 1.0,
+      "projection_rate": 2.3489583333333335,
+      "guardrail_violation_rate": 0.0,
+      "delay_delta_minutes": 0.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 3500.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -10.503475189208984,
+      "train/critic_loss": 0.6152417659759521
+    }
+  },
+  {
+    "step": 20000,
+    "updates": 4750,
+    "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_907/step_20000.zip",
+    "model_sha256": "1f41594c4c245f737a936dd4d77d15fac27d58447163fcebf686b6b619b3495d",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 1,
+        "mean": 3.4173482731347504,
+        "std": 0.0,
+        "median": 3.4173482731347504,
+        "ci_low": 3.4173482731347504,
+        "ci_high": 3.4173482731347504,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "carbon_kg": {
+        "n": 1,
+        "mean": 4.19514830195486,
+        "std": 0.0,
+        "median": 4.19514830195486,
+        "ci_low": 4.19514830195486,
+        "ci_high": 4.19514830195486,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "peak_kw": {
+        "n": 1,
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "energy_kwh": {
+        "n": 1,
+        "mean": 4.196223013998654,
+        "std": 0.0,
+        "median": 4.196223013998654,
+        "ci_low": 4.196223013998654,
+        "ci_high": 4.196223013998654,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": false,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "moves_retention_rate": true,
+      "job_sla_non_degradation_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -417.8929455241038,
+      "baseline_energy_kwh": 245014.65000000017,
+      "energy_kwh": 234733.2888690319,
+      "baseline_energy_cost_cny": 214171.99000000002,
+      "energy_cost_cny": 205792.7231579062,
+      "baseline_carbon_kg": 127562.20100000012,
+      "carbon_kg": 122211.64092485273,
+      "historical_moves": 11490.0,
+      "policy_moves": 11490.0,
+      "baseline_peak_kw": 6211.2,
+      "peak_kw": 6211.2,
+      "baseline_total_cost_cny": 245227.99000000002,
+      "total_cost_cny": 236848.7231579062,
+      "moves_retention_rate": 1.0,
+      "job_sla_non_degradation_rate": 1.0,
+      "projection_rate": 2.4296875,
+      "guardrail_violation_rate": 0.0,
+      "delay_delta_minutes": 0.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 4750.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -13.661392211914062,
+      "train/critic_loss": 1.3959474563598633
+    }
+  },
+  {
+    "step": 25000,
+    "updates": 6000,
+    "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_907/step_25000.zip",
+    "model_sha256": "98643fa814413d1ddc921c2701f09ac7e6e87e525d9d44a7cf13b088170a28a0",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 1,
+        "mean": 3.3999991720894025,
+        "std": 0.0,
+        "median": 3.3999991720894025,
+        "ci_low": 3.3999991720894025,
+        "ci_high": 3.3999991720894025,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "carbon_kg": {
+        "n": 1,
+        "mean": 4.181547793119714,
+        "std": 0.0,
+        "median": 4.181547793119714,
+        "ci_low": 4.181547793119714,
+        "ci_high": 4.181547793119714,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "peak_kw": {
+        "n": 1,
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "energy_kwh": {
+        "n": 1,
+        "mean": 4.182934397360462,
+        "std": 0.0,
+        "median": 4.182934397360462,
+        "ci_low": 4.182934397360462,
+        "ci_high": 4.182934397360462,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": false,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "moves_retention_rate": true,
+      "job_sla_non_degradation_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -417.89739201089805,
+      "baseline_energy_kwh": 245014.65000000017,
+      "energy_kwh": 234765.84792657782,
+      "baseline_energy_cost_cny": 214171.99000000002,
+      "energy_cost_cny": 205835.26819427722,
+      "baseline_carbon_kg": 127562.20100000012,
+      "carbon_kg": 122228.99015584361,
+      "historical_moves": 11490.0,
+      "policy_moves": 11490.0,
+      "baseline_peak_kw": 6211.2,
+      "peak_kw": 6211.2,
+      "baseline_total_cost_cny": 245227.99000000002,
+      "total_cost_cny": 236891.26819427722,
+      "moves_retention_rate": 1.0,
+      "job_sla_non_degradation_rate": 1.0,
+      "projection_rate": 2.4088541666666665,
+      "guardrail_violation_rate": 0.0,
+      "delay_delta_minutes": 0.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 6000.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -16.962438583374023,
+      "train/critic_loss": 1.183894157409668
+    }
+  },
+  {
+    "step": 30000,
+    "updates": 7250,
+    "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_907/step_30000.zip",
+    "model_sha256": "16376ce13f88cc1d5fc1df0b00a936315b4788d672c6eb9df7c7b2ac11650149",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 1,
+        "mean": 3.435730837524676,
+        "std": 0.0,
+        "median": 3.435730837524676,
+        "ci_low": 3.435730837524676,
+        "ci_high": 3.435730837524676,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "carbon_kg": {
+        "n": 1,
+        "mean": 4.220250064116228,
+        "std": 0.0,
+        "median": 4.220250064116228,
+        "ci_low": 4.220250064116228,
+        "ci_high": 4.220250064116228,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "peak_kw": {
+        "n": 1,
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "energy_kwh": {
+        "n": 1,
+        "mean": 4.221511327387312,
+        "std": 0.0,
+        "median": 4.221511327387312,
+        "ci_low": 4.221511327387312,
+        "ci_high": 4.221511327387312,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": false,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "moves_retention_rate": true,
+      "job_sla_non_degradation_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -417.7903950556553,
+      "baseline_energy_kwh": 245014.65000000017,
+      "energy_kwh": 234671.32879649178,
+      "baseline_energy_cost_cny": 214171.99000000002,
+      "energy_cost_cny": 205747.64376915185,
+      "baseline_carbon_kg": 127562.20100000012,
+      "carbon_kg": 122179.62033832216,
+      "historical_moves": 11490.0,
+      "policy_moves": 11490.0,
+      "baseline_peak_kw": 6211.2,
+      "peak_kw": 6211.2,
+      "baseline_total_cost_cny": 245227.99000000002,
+      "total_cost_cny": 236803.64376915185,
+      "moves_retention_rate": 1.0,
+      "job_sla_non_degradation_rate": 1.0,
+      "projection_rate": 2.421875,
+      "guardrail_violation_rate": 0.0,
+      "delay_delta_minutes": 0.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 7250.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -20.03239631652832,
+      "train/critic_loss": 2.3993420600891113
+    }
+  }
+]

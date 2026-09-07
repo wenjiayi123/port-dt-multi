@@ -1,0 +1,9 @@
+{
+  "run_id": "yard_crane-sac-v7-20260907T030204Z",
+  "status": "ADMITTED_OFFLINE_RL",
+  "report_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T030204Z/report.json",
+  "report_sha256": "f3febb80b570df40490ccc2874d59440d83ef24ab625977fb494325f062d3132",
+  "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T030204Z/seed_927/selected_model.zip",
+  "model_sha256": "585e5d62f04e16b2cedb40500c4ef300409e0f11ab271336195f17aa69dffba4",
+  "production_authority": false
+}

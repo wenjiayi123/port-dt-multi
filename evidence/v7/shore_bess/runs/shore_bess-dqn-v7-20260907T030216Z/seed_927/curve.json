@@ -1,0 +1,494 @@
+[
+  {
+    "step": 10000,
+    "updates": 2250,
+    "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/step_10000.zip",
+    "model_sha256": "f6a57a1b607fce5fc8e8ff5d0bfff3ec525295bd546184200c7086283deb762f",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 8,
+        "mean": -0.1218840488579513,
+        "std": 0.047865160494233616,
+        "median": -0.13119247397928996,
+        "ci_low": -0.14677992981532834,
+        "ci_high": -0.08656419237708524,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 8,
+        "mean": -0.015615067262887514,
+        "std": 0.00047867260991570423,
+        "median": -0.015676427823946012,
+        "ci_low": -0.015914229832190194,
+        "ci_high": -0.015288567260200265,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 8,
+        "mean": -0.7299827679138314,
+        "std": 0.6206173334994902,
+        "median": -0.9152476148627529,
+        "ci_low": -1.0361595012597609,
+        "ci_high": -0.27346082414350603,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": false,
+      "peak_kw_business_gate": false,
+      "carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "terminal_flex_backlog_kwh": true,
+      "shore_sla_violation_kwh": true,
+      "positive_cost_value_95ci": false
+    },
+    "metrics": {
+      "aux_shift_kwh": 37501.90957313731,
+      "bess_throughput_kwh": 17367.75449101807,
+      "carbon_kg": 2218041.4267542274,
+      "degradation_cost_cny": 1389.4203592814383,
+      "demand_charge_cny": 228464.22781426396,
+      "energy_cost_cny": 2802914.8750714725,
+      "guardrail_violation_rate": 0.0,
+      "guardrail_violations": 0.0,
+      "nonzero_bess_action_rate": 1.0,
+      "nonzero_bess_actions": 168.0,
+      "nonzero_flex_action_rate": 0.9642857142857142,
+      "nonzero_flex_actions": 162.0,
+      "peak_kw": 26142.40576728067,
+      "projection_count": 162.0,
+      "projection_rate": 0.9642857142857143,
+      "reserve_shortfall_kwh": 0.0,
+      "reward": -3.8702771762984978,
+      "shore_sla_violation_kwh": 0.0,
+      "soc_max_observed": 0.58,
+      "soc_min_observed": 0.4064670658682634,
+      "temperature_max_c": 30.856250047683716,
+      "terminal_flex_backlog_kwh": 0.0,
+      "terminal_soc_error": 0.0,
+      "total_cost_cny": 3032768.523245018
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 2250.0,
+      "train/loss": 0.9851745367050171
+    }
+  },
+  {
+    "step": 20000,
+    "updates": 4750,
+    "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/step_20000.zip",
+    "model_sha256": "1f3355f9806ce11bcb2a4892d7b84438a42cd2e331b18b9ad436305dbe608821",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 8,
+        "mean": -0.10867450601939732,
+        "std": 0.04789648169905292,
+        "median": -0.11785388394863773,
+        "ci_low": -0.13361557108704045,
+        "ci_high": -0.07333296895612355,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 8,
+        "mean": -0.0181543880933997,
+        "std": 0.0004666940102873833,
+        "median": -0.018240843584644922,
+        "ci_low": -0.018435656225316895,
+        "ci_high": -0.017831615079474155,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 8,
+        "mean": -0.7299827679138314,
+        "std": 0.6206173334994902,
+        "median": -0.9152476148627529,
+        "ci_low": -1.0361595012597609,
+        "ci_high": -0.27346082414350603,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": false,
+      "peak_kw_business_gate": false,
+      "carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "terminal_flex_backlog_kwh": true,
+      "shore_sla_violation_kwh": true,
+      "positive_cost_value_95ci": false
+    },
+    "metrics": {
+      "aux_shift_kwh": 37574.83319695016,
+      "bess_throughput_kwh": 17583.502994012084,
+      "carbon_kg": 2218097.744441975,
+      "degradation_cost_cny": 1406.6802395209597,
+      "demand_charge_cny": 228464.22781426396,
+      "energy_cost_cny": 2802497.522965518,
+      "guardrail_violation_rate": 0.0,
+      "guardrail_violations": 0.0,
+      "nonzero_bess_action_rate": 1.0,
+      "nonzero_bess_actions": 168.0,
+      "nonzero_flex_action_rate": 0.9680059523809523,
+      "nonzero_flex_actions": 162.625,
+      "peak_kw": 26142.40576728067,
+      "projection_count": 164.0,
+      "projection_rate": 0.9761904761904762,
+      "reserve_shortfall_kwh": 0.0,
+      "reward": -4.4002202157803545,
+      "shore_sla_violation_kwh": 0.0,
+      "soc_max_observed": 0.58,
+      "soc_min_observed": 0.4043113772455089,
+      "temperature_max_c": 30.927831279993057,
+      "terminal_flex_backlog_kwh": 0.0,
+      "terminal_soc_error": 0.0,
+      "total_cost_cny": 3032368.431019303
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 4750.0,
+      "train/loss": 1.0847012996673584
+    }
+  },
+  {
+    "step": 30000,
+    "updates": 7250,
+    "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/step_30000.zip",
+    "model_sha256": "aac1679ac9ccdde72be7004016d4e4ba7a6135b66ad6d841d86fdc77c699a02b",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 8,
+        "mean": -0.11849312431564532,
+        "std": 0.04829938388658002,
+        "median": -0.12827120874140568,
+        "ci_low": -0.14393331372948356,
+        "ci_high": -0.08340884416483847,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 8,
+        "mean": -0.017344643437170754,
+        "std": 0.0004444574568006995,
+        "median": -0.017489793988809586,
+        "ci_low": -0.017611123363108334,
+        "ci_high": -0.017045081083206973,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 8,
+        "mean": -0.7172949176257513,
+        "std": 0.6300990954610317,
+        "median": -0.9250042608556585,
+        "ci_low": -1.0442533506006593,
+        "ci_high": -0.2624959649828855,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": false,
+      "peak_kw_business_gate": false,
+      "carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "terminal_flex_backlog_kwh": true,
+      "shore_sla_violation_kwh": true,
+      "positive_cost_value_95ci": false
+    },
+    "metrics": {
+      "aux_shift_kwh": 37594.71442274189,
+      "bess_throughput_kwh": 17152.00598802405,
+      "carbon_kg": 2218079.7912631854,
+      "degradation_cost_cny": 1372.1604790419165,
+      "demand_charge_cny": 228435.42640886083,
+      "energy_cost_cny": 2802858.3134325016,
+      "guardrail_violation_rate": 0.0,
+      "guardrail_violations": 0.0,
+      "nonzero_bess_action_rate": 1.0,
+      "nonzero_bess_actions": 168.0,
+      "nonzero_flex_action_rate": 0.9575892857142857,
+      "nonzero_flex_actions": 160.875,
+      "peak_kw": 26139.110117743243,
+      "projection_count": 160.0,
+      "projection_rate": 0.9523809523809523,
+      "reserve_shortfall_kwh": 0.0,
+      "reward": -2.9375834614860215,
+      "shore_sla_violation_kwh": 0.0,
+      "soc_max_observed": 0.58,
+      "soc_min_observed": 0.4086227544910179,
+      "temperature_max_c": 30.907312538623806,
+      "terminal_flex_backlog_kwh": 0.0,
+      "terminal_soc_error": 0.0,
+      "total_cost_cny": 3032665.900320404
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 7250.0,
+      "train/loss": 0.8818634748458862
+    }
+  },
+  {
+    "step": 40000,
+    "updates": 9750,
+    "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/step_40000.zip",
+    "model_sha256": "9fb7ccf67036abb64433b763348f85dfb49992156080e7966b19b7f53af20f28",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 8,
+        "mean": -0.11845187746631673,
+        "std": 0.048278731239413196,
+        "median": -0.12813198536030335,
+        "ci_low": -0.14389087468382056,
+        "ci_high": -0.08339194055916957,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 8,
+        "mean": -0.017444606204873946,
+        "std": 0.00043843289975549883,
+        "median": -0.017572858331741267,
+        "ci_low": -0.017700880231774394,
+        "ci_high": -0.01714525050205255,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 8,
+        "mean": -0.7172949176257513,
+        "std": 0.6300990954610317,
+        "median": -0.9250042608556585,
+        "ci_low": -1.0442533506006593,
+        "ci_high": -0.2624959649828855,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": false,
+      "peak_kw_business_gate": false,
+      "carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "terminal_flex_backlog_kwh": true,
+      "shore_sla_violation_kwh": true,
+      "positive_cost_value_95ci": false
+    },
+    "metrics": {
+      "aux_shift_kwh": 37577.785400215915,
+      "bess_throughput_kwh": 17152.00598802405,
+      "carbon_kg": 2218082.0107554616,
+      "degradation_cost_cny": 1372.1604790419165,
+      "demand_charge_cny": 228435.42640886083,
+      "energy_cost_cny": 2802857.066338681,
+      "guardrail_violation_rate": 0.0,
+      "guardrail_violations": 0.0,
+      "nonzero_bess_action_rate": 1.0,
+      "nonzero_bess_actions": 168.0,
+      "nonzero_flex_action_rate": 0.9575892857142857,
+      "nonzero_flex_actions": 160.875,
+      "peak_kw": 26139.110117743243,
+      "projection_count": 160.0,
+      "projection_rate": 0.9523809523809523,
+      "reserve_shortfall_kwh": 0.0,
+      "reward": -2.940060626687587,
+      "shore_sla_violation_kwh": 0.0,
+      "soc_max_observed": 0.58,
+      "soc_min_observed": 0.4086227544910179,
+      "temperature_max_c": 30.907312538623806,
+      "terminal_flex_backlog_kwh": 0.0,
+      "terminal_soc_error": 0.0,
+      "total_cost_cny": 3032664.653226584
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 9750.0,
+      "train/loss": 1.692474365234375
+    }
+  },
+  {
+    "step": 50000,
+    "updates": 12250,
+    "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/step_50000.zip",
+    "model_sha256": "30f56d4fc7a5ed4c82f457c3dc893675e35007e7650beebcff6240928cfa873c",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 8,
+        "mean": -0.2544660096955748,
+        "std": 0.05986117345524577,
+        "median": -0.2757978481555262,
+        "ci_low": -0.28867912820536507,
+        "ci_high": -0.21042664907503827,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 8,
+        "mean": -0.0063374128674350974,
+        "std": 0.0017072999084091077,
+        "median": -0.006175856246225422,
+        "ci_low": -0.0074248628272806805,
+        "ci_high": -0.005221575083636885,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 8,
+        "mean": -0.7172949176257513,
+        "std": 0.6300990954610317,
+        "median": -0.9250042608556585,
+        "ci_low": -1.0442533506006593,
+        "ci_high": -0.2624959649828855,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": false,
+      "peak_kw_business_gate": false,
+      "carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "terminal_flex_backlog_kwh": true,
+      "shore_sla_violation_kwh": true,
+      "positive_cost_value_95ci": false
+    },
+    "metrics": {
+      "aux_shift_kwh": 37598.46753501681,
+      "bess_throughput_kwh": 19424.139676459483,
+      "carbon_kg": 2217835.614220175,
+      "degradation_cost_cny": 1553.9311741167567,
+      "demand_charge_cny": 228435.42640886083,
+      "energy_cost_cny": 2806797.5747307697,
+      "guardrail_violation_rate": 0.0,
+      "guardrail_violations": 0.0,
+      "nonzero_bess_action_rate": 0.9992559523809523,
+      "nonzero_bess_actions": 167.875,
+      "nonzero_flex_action_rate": 0.9583333333333334,
+      "nonzero_flex_actions": 161.0,
+      "peak_kw": 26139.110117743243,
+      "projection_count": 141.25,
+      "projection_rate": 0.8407738095238095,
+      "reserve_shortfall_kwh": 0.0,
+      "reward": -3.808351428228524,
+      "shore_sla_violation_kwh": 0.0,
+      "soc_max_observed": 0.6229119990408425,
+      "soc_min_observed": 0.4288323353293413,
+      "temperature_max_c": 30.825000047683716,
+      "terminal_flex_backlog_kwh": 0.0,
+      "terminal_soc_error": 0.0,
+      "total_cost_cny": 3036786.9323137477
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 12250.0,
+      "train/loss": 1.5620018243789673
+    }
+  },
+  {
+    "step": 60000,
+    "updates": 14750,
+    "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/step_60000.zip",
+    "model_sha256": "8d4d566ce7b18d78abcb4948b68fcea8a3d92038e6f496eaa077e3b7a72c3972",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 8,
+        "mean": -0.10346122011982899,
+        "std": 0.048763695525358926,
+        "median": -0.11270545470250039,
+        "ci_low": -0.12968698548057364,
+        "ci_high": -0.06796906216316811,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 8,
+        "mean": -0.019123650031548887,
+        "std": 0.0006345013266243465,
+        "median": -0.01930823276811576,
+        "ci_low": -0.019478072969555737,
+        "ci_high": -0.018678377051520534,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 8,
+        "mean": -0.7172949176257513,
+        "std": 0.6300990954610317,
+        "median": -0.9250042608556585,
+        "ci_low": -1.0442533506006593,
+        "ci_high": -0.2624959649828855,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": false,
+      "peak_kw_business_gate": false,
+      "carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "terminal_flex_backlog_kwh": true,
+      "shore_sla_violation_kwh": true,
+      "positive_cost_value_95ci": false
+    },
+    "metrics": {
+      "aux_shift_kwh": 37581.12812927971,
+      "bess_throughput_kwh": 17523.198301792756,
+      "carbon_kg": 2218119.2069583954,
+      "degradation_cost_cny": 1401.8558641434133,
+      "demand_charge_cny": 228435.42640886083,
+      "energy_cost_cny": 2802373.541313385,
+      "guardrail_violation_rate": 0.0,
+      "guardrail_violations": 0.0,
+      "nonzero_bess_action_rate": 1.0,
+      "nonzero_bess_actions": 168.0,
+      "nonzero_flex_action_rate": 0.9583333333333334,
+      "nonzero_flex_actions": 161.0,
+      "peak_kw": 26139.110117743243,
+      "projection_count": 163.125,
+      "projection_rate": 0.9709821428571428,
+      "reserve_shortfall_kwh": 0.0,
+      "reward": -3.3828969078798745,
+      "shore_sla_violation_kwh": 0.0,
+      "soc_max_observed": 0.58,
+      "soc_min_observed": 0.40491392204703425,
+      "temperature_max_c": 30.927831279993057,
+      "terminal_flex_backlog_kwh": 0.0,
+      "terminal_soc_error": 0.0,
+      "total_cost_cny": 3032210.8235863894
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 14750.0,
+      "train/loss": 1.28642737865448
+    }
+  }
+]

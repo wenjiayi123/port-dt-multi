@@ -96,6 +96,8 @@ app/services/rl_model/yard_lighting/artifacts/*
 !app/services/rl_model/yard_crane/data/**
 !app/services/rl_model/yard_lighting/data/
 !app/services/rl_model/yard_lighting/data/**
+!app/services/rl_model/agv_charge/data/
+!app/services/rl_model/agv_charge/data/**
 
 # Local command/validation remnants
 /--*
@@ -120,6 +122,7 @@ soft_copyright_materials/
 !data/rl/runs/rl-20260812T070452272Z/model.zip
 !data/rl/runs/rl-20260821T065745532Z/model.zip
 !data/rl/runs/rl-20260830T070107706Z/model.zip
+!evidence/v7/public_models/*.zip
 !evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_*/selected_model.zip
 !evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_*/selected_model.zip
 !evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_*/selected_model.zip

@@ -1,0 +1,6 @@
+{
+  "selected_seed": 1007,
+  "model_path": "evidence/v7/bess_energy/runs/bess_energy-sac-v7-20260907T025525Z/seed_1007/selected_model.zip",
+  "model_sha256": "99949b9680940df1804ba5229dab4492c903d3e238f97c88a2622ba2109d9db7",
+  "selection_access_to_test": false
+}

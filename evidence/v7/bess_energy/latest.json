@@ -1,0 +1,9 @@
+{
+  "run_id": "bess_energy-dqn-v7-20260907T031025Z",
+  "status": "CANDIDATE_NOT_ADMITTED",
+  "report_path": "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T031025Z/report.json",
+  "report_sha256": "10d14a7d9de451d9704ac2dc5ad7540f17ec7cf9a1ec5bf24b50f62cb4eba3db",
+  "model_path": "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T031025Z/seed_937/selected_model.zip",
+  "model_sha256": "3d176435c67e741eff2c4d1cce11bbc32b92c556724776c5218484a8d03b9343",
+  "production_authority": false
+}

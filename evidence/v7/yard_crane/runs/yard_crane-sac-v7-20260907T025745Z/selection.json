@@ -1,0 +1,6 @@
+{
+  "selected_seed": 1007,
+  "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/seed_1007/selected_model.zip",
+  "model_sha256": "b1bdc19781d713bbd408aa2aaad73431896e1fbdfc04afe2928e3f0328f3c800",
+  "selection_access_to_test": false
+}

@@ -1,0 +1,536 @@
+[
+  {
+    "step": 5000,
+    "updates": 1000,
+    "model_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/step_5000.zip",
+    "model_sha256": "f374e6b24293d03d63ca7d173622491d24967958e58def61aa1547789c3718df",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 2,
+        "mean": 2.5040445702130096,
+        "std": 0.0036006817596013468,
+        "median": 2.5040445702130096,
+        "ci_low": 2.501498503723901,
+        "ci_high": 2.5065906367021187,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 2,
+        "mean": 2.9187765833111916,
+        "std": 0.009934016437060706,
+        "median": 2.9187765833111916,
+        "ci_low": 2.9117521729241274,
+        "ci_high": 2.925800993698256,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 2,
+        "mean": 1.9815044229829502,
+        "std": 0.05401963371112339,
+        "median": 1.9815044229829502,
+        "ci_low": 1.9433067736686014,
+        "ci_high": 2.019702072297299,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_kwh": {
+        "n": 2,
+        "mean": 2.918400690649978,
+        "std": 0.007157464509420422,
+        "median": 2.918400690649978,
+        "ci_low": 2.913339598959265,
+        "ci_high": 2.9234617823406914,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "minimum_lux_compliance_rate": true,
+      "critical_lux_compliance_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -94.4244110400694,
+      "baseline_energy_kwh": 2329.137499999999,
+      "energy_kwh": 2261.1639399640244,
+      "baseline_energy_cost_cny": 1549.9896736111114,
+      "energy_cost_cny": 1504.9665282395417,
+      "baseline_carbon_kg": 1339.4877501270835,
+      "carbon_kg": 1300.3916395688877,
+      "baseline_peak_kw": 296.85,
+      "peak_kw": 290.9679614168491,
+      "baseline_total_cost_cny": 2737.3896736111114,
+      "total_cost_cny": 2668.838373906938,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 1.0416666666666665,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 8170.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 1000.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -1.8037868738174438,
+      "train/critic_loss": 0.025211839005351067
+    }
+  },
+  {
+    "step": 10000,
+    "updates": 2250,
+    "model_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/step_10000.zip",
+    "model_sha256": "50395e028f7e693fd0061e6ba2173ba46854ba308029b74314904e42fe19cae4",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 2,
+        "mean": 2.5042888870361555,
+        "std": 0.0035919816244325544,
+        "median": 2.5042888870361555,
+        "ci_low": 2.501748972471622,
+        "ci_high": 2.5068288016006894,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 2,
+        "mean": 2.919231017798925,
+        "std": 0.009672814688179264,
+        "median": 2.919231017798925,
+        "ci_low": 2.9123913049397525,
+        "ci_high": 2.9260707306580973,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 2,
+        "mean": 1.9815044229829502,
+        "std": 0.05401963371112339,
+        "median": 1.9815044229829502,
+        "ci_low": 1.9433067736686014,
+        "ci_high": 2.019702072297299,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_kwh": {
+        "n": 2,
+        "mean": 2.9188547338229,
+        "std": 0.0069126219426058275,
+        "median": 2.9188547338229,
+        "ci_low": 2.9139667719715043,
+        "ci_high": 2.9237426956742953,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "minimum_lux_compliance_rate": true,
+      "critical_lux_compliance_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -94.44833042830228,
+      "baseline_energy_kwh": 2329.137499999999,
+      "energy_kwh": 2261.153364508302,
+      "baseline_energy_cost_cny": 1549.9896736111114,
+      "energy_cost_cny": 1504.9598544522903,
+      "baseline_carbon_kg": 1339.4877501270835,
+      "carbon_kg": 1300.3855381648189,
+      "baseline_peak_kw": 296.85,
+      "peak_kw": 290.9679614168491,
+      "baseline_total_cost_cny": 2737.3896736111114,
+      "total_cost_cny": 2668.8317001196865,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 1.2604166666666665,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 8173.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 2250.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -3.3615541458129883,
+      "train/critic_loss": 0.15820007026195526
+    }
+  },
+  {
+    "step": 15000,
+    "updates": 3500,
+    "model_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/step_15000.zip",
+    "model_sha256": "a28cd3a63e833456302af5944ebccb295084807287982e635d38d63713e9a071",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 2,
+        "mean": 2.5041802867527516,
+        "std": 0.0034087495884602037,
+        "median": 2.5041802867527516,
+        "ci_low": 2.5017699368033846,
+        "ci_high": 2.5065906367021187,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 2,
+        "mean": 2.9191228971183767,
+        "std": 0.009444254754102812,
+        "median": 2.9191228971183767,
+        "ci_low": 2.912444800538497,
+        "ci_high": 2.925800993698256,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 2,
+        "mean": 1.9815044229829502,
+        "std": 0.05401963371112339,
+        "median": 1.9815044229829502,
+        "ci_low": 1.9433067736686014,
+        "ci_high": 2.019702072297299,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_kwh": {
+        "n": 2,
+        "mean": 2.918740524468852,
+        "std": 0.006676866913815719,
+        "median": 2.918740524468852,
+        "ci_low": 2.914019266597013,
+        "ci_high": 2.9234617823406914,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "minimum_lux_compliance_rate": true,
+      "critical_lux_compliance_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -94.44772647925639,
+      "baseline_energy_kwh": 2329.137499999999,
+      "energy_kwh": 2261.1560244414372,
+      "baseline_energy_cost_cny": 1549.9896736111114,
+      "energy_cost_cny": 1504.9631245648293,
+      "baseline_carbon_kg": 1339.4877501270835,
+      "carbon_kg": 1300.386973906578,
+      "baseline_peak_kw": 296.85,
+      "peak_kw": 290.9679614168491,
+      "baseline_total_cost_cny": 2737.3896736111114,
+      "total_cost_cny": 2668.8349702322257,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 1.25,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 8173.5
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 3500.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -5.237776756286621,
+      "train/critic_loss": 0.28878605365753174
+    }
+  },
+  {
+    "step": 20000,
+    "updates": 4750,
+    "model_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/step_20000.zip",
+    "model_sha256": "e613f056ef283a7e73e294c08576b3e74b9b16f38e2c2df42274856fc3545374",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 2,
+        "mean": 2.503942083942502,
+        "std": 0.0037456192333103523,
+        "median": 2.503942083942502,
+        "ci_low": 2.5012935311828857,
+        "ci_high": 2.5065906367021187,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 2,
+        "mean": 2.918515064629764,
+        "std": 0.010303859703149306,
+        "median": 2.918515064629764,
+        "ci_low": 2.9112291355612725,
+        "ci_high": 2.925800993698256,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 2,
+        "mean": 1.9815044229829502,
+        "std": 0.05401963371112339,
+        "median": 1.9815044229829502,
+        "ci_low": 1.9433067736686014,
+        "ci_high": 2.019702072297299,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_kwh": {
+        "n": 2,
+        "mean": 2.918144065328158,
+        "std": 0.00752038751998682,
+        "median": 2.918144065328158,
+        "ci_low": 2.9128263483156247,
+        "ci_high": 2.9234617823406914,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "minimum_lux_compliance_rate": true,
+      "critical_lux_compliance_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -94.45264830992821,
+      "baseline_energy_kwh": 2329.137499999999,
+      "energy_kwh": 2261.169917366562,
+      "baseline_energy_cost_cny": 1549.9896736111114,
+      "energy_cost_cny": 1504.969098522633,
+      "baseline_carbon_kg": 1339.4877501270835,
+      "carbon_kg": 1300.39516284122,
+      "baseline_peak_kw": 296.85,
+      "peak_kw": 290.9679614168491,
+      "baseline_total_cost_cny": 2737.3896736111114,
+      "total_cost_cny": 2668.8409441900294,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 1.2708333333333335,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 8170.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 4750.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -6.619725227355957,
+      "train/critic_loss": 0.9974845051765442
+    }
+  },
+  {
+    "step": 25000,
+    "updates": 6000,
+    "model_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/step_25000.zip",
+    "model_sha256": "0d4e25a6357a57a6cbaf61d17bba0a89d80a8b87105cbc187a92f0a278453f51",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 2,
+        "mean": 2.5039915632237824,
+        "std": 0.0036756449626671275,
+        "median": 2.5039915632237824,
+        "ci_low": 2.5013924897454465,
+        "ci_high": 2.5065906367021187,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 2,
+        "mean": 2.9186413230674537,
+        "std": 0.010125303308204719,
+        "median": 2.9186413230674537,
+        "ci_low": 2.9114816524366516,
+        "ci_high": 2.925800993698256,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 2,
+        "mean": 1.9815044229829502,
+        "std": 0.05401963371112339,
+        "median": 1.9815044229829502,
+        "ci_low": 1.9433067736686014,
+        "ci_high": 2.019702072297299,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_kwh": {
+        "n": 2,
+        "mean": 2.9182679613038798,
+        "std": 0.007345172150797729,
+        "median": 2.9182679613038798,
+        "ci_low": 2.913074140267068,
+        "ci_high": 2.9234617823406914,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "minimum_lux_compliance_rate": true,
+      "critical_lux_compliance_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -94.4594351781605,
+      "baseline_energy_kwh": 2329.137499999999,
+      "energy_kwh": 2261.167031540197,
+      "baseline_energy_cost_cny": 1549.9896736111114,
+      "energy_cost_cny": 1504.967857617296,
+      "baseline_carbon_kg": 1339.4877501270835,
+      "carbon_kg": 1300.3934618428143,
+      "baseline_peak_kw": 296.85,
+      "peak_kw": 290.9679614168491,
+      "baseline_total_cost_cny": 2737.3896736111114,
+      "total_cost_cny": 2668.8397032846924,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 1.2760416666666667,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 8170.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 6000.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -7.713237762451172,
+      "train/critic_loss": 0.7440953850746155
+    }
+  },
+  {
+    "step": 30000,
+    "updates": 7250,
+    "model_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/step_30000.zip",
+    "model_sha256": "299a4bfc6cb95b8ea183e8f9f44235858c81830c6934c505d969141cb13fa9bd",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 2,
+        "mean": 2.5039925439179056,
+        "std": 0.003674258051737498,
+        "median": 2.5039925439179056,
+        "ci_low": 2.501394451133693,
+        "ci_high": 2.5065906367021187,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 2,
+        "mean": 2.9186438255473672,
+        "std": 0.010121764267171462,
+        "median": 2.9186438255473672,
+        "ci_low": 2.9114866573964786,
+        "ci_high": 2.925800993698256,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 2,
+        "mean": 1.9815044229829502,
+        "std": 0.05401963371112339,
+        "median": 1.9815044229829502,
+        "ci_low": 1.9433067736686014,
+        "ci_high": 2.019702072297299,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_kwh": {
+        "n": 2,
+        "mean": 2.918270416959098,
+        "std": 0.007341699329883523,
+        "median": 2.918270416959098,
+        "ci_low": 2.9130790515775047,
+        "ci_high": 2.9234617823406914,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "minimum_lux_compliance_rate": true,
+      "critical_lux_compliance_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -94.45719244202068,
+      "baseline_energy_kwh": 2329.137499999999,
+      "energy_kwh": 2261.166974342257,
+      "baseline_energy_cost_cny": 1549.9896736111114,
+      "energy_cost_cny": 1504.9678330221818,
+      "baseline_carbon_kg": 1339.4877501270835,
+      "carbon_kg": 1300.3934281285183,
+      "baseline_peak_kw": 296.85,
+      "peak_kw": 290.9679614168491,
+      "baseline_total_cost_cny": 2737.3896736111114,
+      "total_cost_cny": 2668.8396786895782,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 1.2708333333333333,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 8170.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 7250.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -8.595216751098633,
+      "train/critic_loss": 1.587141990661621
+    }
+  }
+]

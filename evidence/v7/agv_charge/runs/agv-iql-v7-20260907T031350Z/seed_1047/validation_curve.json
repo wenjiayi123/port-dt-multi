@@ -1,0 +1,92 @@
+[
+  {
+    "optimizer_steps": 1000,
+    "validation_bellman_mse": 32.17149353027344,
+    "validation_action_mae_vs_behavior": 0.09235907346010208,
+    "charge_ratio_mean": 0.07607956230640411,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 2000,
+    "validation_bellman_mse": 45.54454803466797,
+    "validation_action_mae_vs_behavior": 0.06863898783922195,
+    "charge_ratio_mean": 0.04876021668314934,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 3000,
+    "validation_bellman_mse": 65.26766204833984,
+    "validation_action_mae_vs_behavior": 0.06720279902219772,
+    "charge_ratio_mean": 0.047320012003183365,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 4000,
+    "validation_bellman_mse": 84.61428833007812,
+    "validation_action_mae_vs_behavior": 0.05938555672764778,
+    "charge_ratio_mean": 0.038284409791231155,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 5000,
+    "validation_bellman_mse": 95.07042694091797,
+    "validation_action_mae_vs_behavior": 0.06083505228161812,
+    "charge_ratio_mean": 0.04012705758213997,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 6000,
+    "validation_bellman_mse": 110.02375793457031,
+    "validation_action_mae_vs_behavior": 0.07489190250635147,
+    "charge_ratio_mean": 0.05700870230793953,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 7000,
+    "validation_bellman_mse": 130.76812744140625,
+    "validation_action_mae_vs_behavior": 0.08440566807985306,
+    "charge_ratio_mean": 0.06842928379774094,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 8000,
+    "validation_bellman_mse": 148.82598876953125,
+    "validation_action_mae_vs_behavior": 0.09409890323877335,
+    "charge_ratio_mean": 0.0800098106265068,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 9000,
+    "validation_bellman_mse": 180.31488037109375,
+    "validation_action_mae_vs_behavior": 0.08622173219919205,
+    "charge_ratio_mean": 0.0706106647849083,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  },
+  {
+    "optimizer_steps": 10000,
+    "validation_bellman_mse": 186.974609375,
+    "validation_action_mae_vs_behavior": 0.08145924657583237,
+    "charge_ratio_mean": 0.06507536768913269,
+    "behavior_charge_ratio_mean": 0.028055302798748016,
+    "finite_outputs": true,
+    "metric_scope": "fixed_validation_behavior_transition_diagnostics_not_counterfactual_business_value"
+  }
+]

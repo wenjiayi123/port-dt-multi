@@ -138,14 +138,23 @@ def main() -> None:
             old, train_slice, config=config, normalization_slice=train_slice,
             episode_steps=episode, seed=seed, training=True, record_trace=False,
         )
-        model = PPO.load(str(seed_dir / "warm_start_v31.zip"), env=env, device="cpu")
+        # load() restores saved hyperparameters unless explicitly overridden;
+        # the V3.1 file is a BC actor with zero RL steps and ent_coef=0.
+        model = PPO.load(
+            str(seed_dir / "warm_start_v31.zip"), env=env, device="cpu",
+            learning_rate=float(config["training"]["learning_rate"]),
+            ent_coef=float(config["training"]["entropy_coefficient"]),
+            gamma=float(config["training"]["gamma"]),
+        )
+        model.set_random_seed(seed)
+        initial_timesteps = int(model.num_timesteps)
         curve: list[dict[str, Any]] = []
         best: dict[str, Any] | None = None
         elapsed = 0
         while elapsed < steps:
             current = min(block, steps - elapsed)
             model.learn(total_timesteps=current, reset_num_timesteps=False, progress_bar=False)
-            elapsed += current
+            elapsed = int(model.num_timesteps) - initial_timesteps
             validation = evaluate_windows(
                 factory(old, validation_slice, config, train_slice, seed),
                 model_policy(model), validation_starts,
@@ -161,7 +170,9 @@ def main() -> None:
             ):
                 best = record
             print(f"seed={seed} step={elapsed}/{steps} cost={values['cost_reduction_vs_no_bess_percent']:.4f}% carbon={values['carbon_reduction_vs_no_bess_percent']:.4f}% peak={values['peak_reduction_vs_no_bess_percent']:.4f}% admitted={admitted(values, gate, 'validation')}", flush=True)
-        result = {"seed": seed, "curve": curve, "validation_candidate": best, "validation_admitted": best is not None, "render_calls_during_training": env.render_calls}
+        result = {"seed": seed, "curve": curve, "validation_candidate": best, "validation_admitted": best is not None, "render_calls_during_training": env.render_calls,
+                  "actual_environment_steps": elapsed, "optimizer_updates": int(model._n_updates),
+                  "actual_learning_rate": float(model.learning_rate), "actual_entropy_coefficient": float(model.ent_coef)}
         if best:
             selected_path = seed_dir / "selected_model.zip"
             shutil.copy2(ROOT / best["checkpoint"], selected_path)
@@ -171,6 +182,8 @@ def main() -> None:
         seed_results.append(result)
         env.close()
 
+    # Freeze the seed on validation before accessing forward results.
+    validation_champion = max(selected, key=lambda item: item["validation_candidate"]["validation"]["cost_reduction_vs_no_bess_percent"]) if selected else None
     forward_results: list[dict[str, Any]] = []
     if selected:
         combined = combine(old, forward)
@@ -188,7 +201,8 @@ def main() -> None:
             values = metrics(evaluation["mean"], forward_neutral["mean"])
             forward_results.append({"seed": result["seed"], "metrics": values, "admitted": admitted(values, gate, "forward")})
     pass_rate = sum(bool(item["admitted"]) for item in forward_results) / max(1, len(config["training"]["seeds"]))
-    promoted = bool(pass_rate + 1e-9 >= float(config["convergence_gate"]["minimum_seed_pass_rate"]))
+    selected_forward_pass = bool(validation_champion and any(item["seed"] == validation_champion["seed"] and item["admitted"] for item in forward_results))
+    promoted = bool(selected_forward_pass and pass_rate + 1e-9 >= float(config["convergence_gate"]["minimum_seed_pass_rate"]))
     report = {
         "schema": "port-dt-shore-bess-v32-value-report.v1", "version": config["version"],
         "run_id": run_id, "generated_at": utc_now(),
@@ -206,9 +220,7 @@ def main() -> None:
     entry = {"schema": "port-dt-shore-bess-v32-value-pointer.v1", "run_id": run_id, "report_path": relative(report_path), "report_sha256": sha256(report_path), "status": report["status"], "promotion_state": "promoted" if promoted else "candidate_not_promoted", "updated_at": utc_now()}
     append_jsonl(OUTPUT_ROOT / "history_index.jsonl", entry)
     if promoted:
-        admitted_models = [item for item in forward_results if item["admitted"]]
-        champion_seed = max(admitted_models, key=lambda item: item["metrics"]["cost_reduction_vs_no_bess_percent"])["seed"]
-        champion = next(item for item in selected if item["seed"] == champion_seed)
+        champion = validation_champion
         write_json(OUTPUT_ROOT / "latest.json", {**entry, "model_path": champion["selected_model_path"], "model_sha256": champion["selected_model_sha256"]})
     print(json.dumps(entry, ensure_ascii=False, indent=2))
 

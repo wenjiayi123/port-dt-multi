@@ -1,0 +1,33 @@
+{
+  "run_id": "agv-iql-v7-20260907T031350Z",
+  "algorithm": "IQL",
+  "seeds": [
+    947,
+    1047,
+    1147
+  ],
+  "optimizer_steps_per_seed": 10000,
+  "train_rows": 78390,
+  "validation_rows": 11180,
+  "test_rows": 22490,
+  "normalization": "float64_training_rows_only_near_constant_features_use_unit_scale",
+  "split": "chronological_70_10_20_with_one_transition_purge",
+  "input_hashes": {
+    "app/services/rl_model/agv_charge/data/charge_sessions.csv": "17ecc46c376c074e4235dac7950dcad7b99740ddbb6acf56cbe40bc40528df09",
+    "app/services/rl_model/agv_charge/data/chargers_master.csv": "8ac6d06b482d4a8a908d6f4682516cc03f9c122ab80fbaf6b1ba4cb5ecef5e55",
+    "app/services/rl_model/agv_charge/data/grid_ef.csv": "a0411745a15b9ec6c5f640c9978d5ed2e2d244e3ecc6a1e6b707180817a4efc1",
+    "app/services/rl_model/agv_charge/data/grid_meter.csv": "a1364e978dae112b8dab382abec8f6d3e5c551dba21608c3af7376a14a65b942",
+    "app/services/rl_model/agv_charge/data/market_price.csv": "9cec91472ec9d6bd9ab1014814fdab5b98a4d5ec767a0c64261e1e7458779548",
+    "app/services/rl_model/agv_charge/data/port_grid_config.json": "d48af0a6809d5de5493e35a951cee945e667f0b421d22b6b5581c2e43fca15f9",
+    "app/services/rl_model/agv_charge/data/tos_jobs.csv": "b0648a0de088c5fec354dc7734c16e3d36d196d7e9984cb3b87e18cf5e290f52",
+    "app/services/rl_model/agv_charge/data/vehicle_state.csv": "4a82f5fe62e25ca2dc3cb0e726b8efe9d22fa9e951e11bb4604f8fc9ff8a4c31",
+    "app/services/rl_model/agv_charge/data/vehicles_master.csv": "bec7f981c9ea8bedb3c84758d37f05db07a4b5a8abb4a28f47961d0030d5b708"
+  },
+  "source_sha256": "49753b5e039f2859e9cb83c8ebf71dec49f283e8186b4a8b5cec84c438a0af27",
+  "prior_model_hashes": {
+    "app/services/rl_model/agv_charge/policy.bin": "5b370a15c6468abc96a536e96a0afafdbb3a2276d7221c1a0caf900a31cb385d",
+    "app/services/rl_model/agv_charge/policy_meta.json": "1b4daad98b5ef12aecf9e490046422b9ebb7d6e764b29d2a37c8b447410ce606"
+  },
+  "policy_value_estimator_available": false,
+  "production_authority": false
+}

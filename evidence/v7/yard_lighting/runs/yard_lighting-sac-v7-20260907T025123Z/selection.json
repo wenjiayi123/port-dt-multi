@@ -1,0 +1,6 @@
+{
+  "selected_seed": 1007,
+  "model_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/selected_model.zip",
+  "model_sha256": "a28cd3a63e833456302af5944ebccb295084807287982e635d38d63713e9a071",
+  "selection_access_to_test": false
+}

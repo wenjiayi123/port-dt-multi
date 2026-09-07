@@ -1,0 +1,52 @@
+{
+  "schema": "port-business-rl-final-verification.v7",
+  "verified_at": "2026-09-07T03:32:24.908815+00:00",
+  "status": "PASS",
+  "full_regression": {
+    "command": ".venv312/bin/python -m unittest discover -s tests -v",
+    "tests": 288,
+    "seconds": 114.554,
+    "log_sha256": "1be3eaa9766f25a14e4f6eaf5058273ece57a7540c566bfff0c7f59d3770ba1f"
+  },
+  "targeted_rl_regression": {
+    "tests": 10,
+    "seconds": 26.343,
+    "log_sha256": "9d71addadd2d85f189d9750a283aa1cb01d94a52b9a62f83e65be458cd7766e6"
+  },
+  "http_and_environment_verification": {
+    "path": "evidence/v7/runtime_verification.json",
+    "sha256": "8e0f487bf5a44a86ac24b16ec2d60650d4e864f4da82a84613fe3e904367a4a0"
+  },
+  "training_audit": {
+    "path": "evidence/v7/audit_summary.json",
+    "sha256": "5fb1ad0469f51a41f9caa42b05d1639ccf9519124ebcf4d11178581dce9933bb",
+    "completed_seed_runs": 45,
+    "selected_model_hashes_verified": 45,
+    "new_environment_steps": 1800000,
+    "new_optimizer_updates": 469500
+  },
+  "current_source_sha256": {
+    "app/services/rl_training/trainer.py": "dc68ec6885c2e589b440cad2a01cde130f345f57c9d456de8535ee657210a7e1",
+    "app/services/rl_training/business_learning.py": "4be82891689f32fa55089268f7734a55d979523df4380bda6a914cabd26c4c26",
+    "app/services/rl_training/business_api.py": "84dd8b7272bf7a2b759b0e8334caec0f0a5b0c9ea6f2024133a0dded5110e5ed",
+    "app/services/rl_training/business_runtime.py": "d8008772aace08d90e58a4f9d58f898aad3fdf468126f36856a239060559bc77",
+    "scripts/train_business_rl_v7.py": "61c3ac61a685ab3aa6ddcced9cfa045ecc951a9f1b619b002c35f204b520d4eb",
+    "scripts/refine_coordinated_rl_v7.py": "5d1faa4eb70e01324955938f7c6ca035eb66f0577e660429138b143dc895cc53",
+    "scripts/audit_agv_iql_v7.py": "7cf371e02c764565ba84fc794072b64692f7bc8c53ec97e56fee0c68a19145e9",
+    "scripts/train_shore_bess_v32_value.py": "1ecd447ee4211f116142925415b062aa839c268daa40a0e0fbcb06dd31479cf2",
+    "scripts/verify_business_rl_v7.py": "84377442d745c2125b7f280141391933ce5d05d482e8a51e34f9884ce7c78ce8",
+    "scripts/export_business_rl_audit_v7.py": "57c27be3c9e827f98b84dfbb44a50ec90eae0ddf6d7ab1d4db059cb6536d3532",
+    "app/services/rl_model/agv_charge/train_iql.py": "49753b5e039f2859e9cb83c8ebf71dec49f283e8186b4a8b5cec84c438a0af27",
+    "app/services/rl_model/hvac_cooling/rl_engine.py": "0d067e33d3e18021b6a225c5179287021836b6ffadc138b6edfdc44ea88f1cf0",
+    "app/services/rl_model/bess_energy/rl_engine.py": "084b2c76760fe0357214b64b6b0401914e1cfee9c68f9c626fd2e19fbd3f07be",
+    "app/services/rl_model/bess_energy/v3_environment.py": "fbfb4e059cb64cf415b044c66a7cefd71392fb2258e95b3c984da3770cee12f1",
+    "app/services/rl_model/port_G_qc_mvp/rl_engine_g.py": "a88c3373407fab145eecb8ea1b5ee621476aaf7da0e9c27cb3ed8b002150581c",
+    "tests/test_business_rl_v7.py": "45371226d3ebdd96d37ba92480235155fbb682f0c7cdd7abf23a3498081b6822"
+  },
+  "diff_whitespace_check": "PASS",
+  "external_device_commands": 0,
+  "simulation_mode": true,
+  "live_data_verified": false,
+  "dispatch_allowed": false,
+  "production_authority": false
+}

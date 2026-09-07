@@ -1,0 +1,84 @@
+{
+  "schema": "port-business-real-rl.v7",
+  "run_id": "hvac-sac-v7-20260907T030201Z",
+  "dataset": {
+    "dataset_id": "hvac_engineering_replay_v3",
+    "rows": 5760,
+    "time_range": {
+      "start": "2025-01-01 00:00:00",
+      "end": "2025-03-01 23:45:00"
+    },
+    "train_rows": 4032,
+    "validation_rows": 576,
+    "blind_test_rows": 1152,
+    "split": "chronological_70_10_20",
+    "measured": false,
+    "evidence_tier": "checked_in_engineering_emulator_replay",
+    "quality": {
+      "training_eligible": true,
+      "finite_numeric_rate": 1.0,
+      "duplicate_timestamp_count": 0,
+      "interval_minutes": 15.0,
+      "maximum_interval_minutes": 15.0
+    },
+    "files": [
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/hvac_telemetry.csv",
+        "rows": 5760,
+        "sha256": "12f998512b7741540ac0c2bf23d488fca8408a70374eebb248f2ea6864f4e8c7"
+      },
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/load_forecast.csv",
+        "rows": 5760,
+        "sha256": "297ca2d0e6d4b22b1db3482de100a5a79c19a3846e2a36d8dcb4cf18e03119c8"
+      },
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/weather_forecast.csv",
+        "rows": 5760,
+        "sha256": "3c12d8ff12b5d6c5019f3d38e3ddf53ebc8cbf2322baa1ed30e897241af83356"
+      },
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/plant_efficiency_map.csv",
+        "rows": 165,
+        "sha256": "1dc9851db9410d179523ad11d990d2de526d700b9d79aa6da3aa4918b7a8814f"
+      },
+      {
+        "path": "app/services/rl_model/hvac_cooling/data/plant_master.json",
+        "rows": null,
+        "sha256": "5ce8254d6c9f5340f31f7967b65a1818387f20d2b42e5e1d58796c9200a13f01"
+      }
+    ]
+  },
+  "protocol": {
+    "selection": "fixed_chronological_validation_only",
+    "validation_starts": [
+      0,
+      192
+    ],
+    "test_starts": [
+      0,
+      192,
+      384,
+      576,
+      768
+    ],
+    "window_overlap": false,
+    "test_status": "previously_used_chronological_benchmark_not_fresh_blind_data",
+    "teacher_actions_used": false,
+    "seeds": [
+      927,
+      1027,
+      1127
+    ]
+  },
+  "code_sha256": {
+    "scripts/train_business_rl_v7.py": "d723a9c545881d14c6983f6738768d059e243550d74a822dcd353fe15ef32d72",
+    "app/services/rl_model/hvac_cooling/v3_environment.py": "3f4c64b2267473fe496650e1adeb6fa21024d1bad14475fe4e11798b123a1473",
+    "app/services/rl_training/business_learning.py": "382abb9467d5222f7209e7b2afa0e0ed1b3f9d9d5844e5f50e27c8bfb3f496cc",
+    "config/hvac_v3.json": "c6173fedb2b0c40a450da9303c46176210bc7b1c3518bf0ce7da71d3dd2322b9"
+  },
+  "historical_pointer_sha256": {
+    "evidence/v3/hvac/latest.json": "8cad3cea1b86f41044e3c7bd2d9774c00a93bb12538bfa18b13f1c0291d32fc5"
+  },
+  "production_authority": false
+}

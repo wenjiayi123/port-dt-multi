@@ -224,44 +224,6 @@ class DisplayMetricBuilder:
         self.ef_scale = float(max(0.1, ef_scale))
         self.acc = DisplayCumulative()
 
-        # 偏置幅度：与站级规模绑定，但前期允许更大胆地下探，后期自动衰减到平台
-        self.econ_bias_scale = max(26.0, 0.018 * self.cfg.rated_power_kW * self.dt_h * self.price_scale)
-        self.carbon_bias_scale = max(14.0, 0.026 * self.cfg.rated_power_kW * self.dt_h * self.ef_scale)
-        self.peak_bias_scale = max(18.0, 0.00022 * self.soft_cap_kw)
-        self.reward_anchor_scale = max(16.0, 0.14 * self.econ_bias_scale + 0.12 * self.carbon_bias_scale + 0.24 * self.peak_bias_scale)
-
-    def _shape(self, step: int, total_steps: int) -> float:
-        if total_steps <= 1:
-            return 0.0
-        x = float(step - 1) / float(total_steps - 1)
-        if x < 0.22:
-            z = x / 0.22
-            return -1.45 + 0.55 * z                       # 前期明显劣势/下行
-        if x < 0.68:
-            z = (x - 0.22) / 0.46
-            return -0.90 + 1.95 * z                       # 中期持续回升
-        z = (x - 0.68) / 0.32
-        return 1.05 - 0.18 * z                            # 后期平台并略收敛
-
-    def _front_anchor(self, step: int, total_steps: int) -> float:
-        if total_steps <= 1:
-            return 0.0
-        x = float(step - 1) / float(total_steps - 1)
-        if x < 0.12:
-            return -1.0
-        if x < 0.40:
-            return -1.0 + (x - 0.12) / 0.28
-        return 0.0
-
-    def _late_decay(self, step: int, total_steps: int) -> float:
-        if total_steps <= 1:
-            return 1.0
-        x = float(step - 1) / float(total_steps - 1)
-        if x < 0.70:
-            return 1.0
-        z = (x - 0.70) / 0.30
-        return max(0.22, 1.0 - 0.78 * z)
-
     def _power_to_energy_cost(self, p_kw: float, price: float) -> float:
         e_ch = max(0.0, -p_kw) * self.cfg.eff_ch * self.dt_h
         e_dis = max(0.0, p_kw) / self.cfg.eff_dis * self.dt_h
@@ -303,26 +265,13 @@ class DisplayMetricBuilder:
             event_support_ratio = max(0.0, min(1.0, max(0.0, p_ref - p_act) / event_target_kw))
         raw_peak_component = float(peak_relief_kw / 1000.0 + 6.0 * event_support_ratio)
 
-        # ---------- bias / anchor / three-stage schedule ----------
-        shape = self._shape(step=step, total_steps=total_steps)
-        front_anchor = self._front_anchor(step=step, total_steps=total_steps)
-        late_decay = self._late_decay(step=step, total_steps=total_steps)
-
-        price_pressure = float(np.clip((price / self.price_scale) - 0.58, -1.0, 1.0))
-        carbon_pressure = float(np.clip((ef / self.ef_scale) - 0.55, -1.0, 1.0))
-        load_pressure = float(np.clip((pcc_base - 0.92 * self.soft_cap_kw) / max(1.0, 0.42 * self.soft_cap_kw), -1.0, 1.0))
-        support_pressure = float(np.clip((max(0.0, p_ref - p_act) / max(1.0, 0.10 * self.cfg.rated_power_kW)) + 0.65 * event_active, -1.0, 1.0))
-
-        bias_econ_component = float(self.econ_bias_scale * (0.88 * shape + 0.34 * front_anchor + 0.22 * price_pressure) * late_decay)
-        bias_carbon_component = float(self.carbon_bias_scale * (0.84 * shape + 0.28 * front_anchor + 0.26 * carbon_pressure) * late_decay)
-        bias_peak_component = float(self.peak_bias_scale * (0.98 * shape + 0.42 * front_anchor + 0.20 * load_pressure + 0.18 * support_pressure) * late_decay)
-        reward_anchor = float(self.reward_anchor_scale * (0.78 * front_anchor + 0.22 * shape) * late_decay)
-
-        # ---------- 8 个展示指标 ----------
-        econ_save = float(raw_econ_component + bias_econ_component)
-        carbon_save = float(raw_carbon_component + bias_carbon_component)
-        service_support_score = float(raw_peak_component + bias_peak_component)
-        step_reward = float(raw_reward + reward_anchor + 0.26 * bias_econ_component + 0.18 * bias_carbon_component + 0.38 * bias_peak_component)
+        # Keep raw environment accounting. Training-step schedules cannot
+        # create business savings or an apparent convergence plateau.
+        bias_econ_component = bias_carbon_component = bias_peak_component = reward_anchor = 0.0
+        econ_save = float(raw_econ_component)
+        carbon_save = float(raw_carbon_component)
+        service_support_score = float(raw_peak_component)
+        step_reward = float(raw_reward)
 
         self.acc.cumulative_reward += step_reward
         self.acc.cumulative_econ_save += econ_save
@@ -330,6 +279,8 @@ class DisplayMetricBuilder:
         self.acc.cumulative_service_support_score += service_support_score
 
         record = {
+            "metric_provenance": "unmodified_environment_transition_statistics",
+            "business_claim_eligible": False,
             "key": "rl_train_step",
             "stage": "sac",
             "step": int(step),

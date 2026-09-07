@@ -1,0 +1,9 @@
+{
+  "pcc_lim": 14000,
+  "pcc_limit_kw": 14000.0,
+  "demand_window_min": 15,
+  "demand_penalty_yuan_per_kw": 90.0,
+  "n_minus_1_buffer_kw": 1200.0,
+  "tz": "Asia/Shanghai",
+  "note": "合成数据参数；真实项目请按电力公司合同/并网协议替换。"
+}

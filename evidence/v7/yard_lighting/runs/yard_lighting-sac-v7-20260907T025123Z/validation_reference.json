@@ -1,0 +1,68 @@
+{
+  "mean": {
+    "reward": -97.07320924772358,
+    "baseline_energy_kwh": 2329.137499999999,
+    "energy_kwh": 2329.137499999999,
+    "baseline_energy_cost_cny": 1549.9896736111114,
+    "energy_cost_cny": 1549.9896736111114,
+    "baseline_carbon_kg": 1339.4877501270835,
+    "carbon_kg": 1339.4877501270835,
+    "baseline_peak_kw": 296.85,
+    "peak_kw": 296.85,
+    "baseline_total_cost_cny": 2737.3896736111114,
+    "total_cost_cny": 2737.3896736111114,
+    "minimum_lux_compliance_rate": 1.0,
+    "critical_lux_compliance_rate": 1.0,
+    "complaint_lux_compliance_rate": 1.0,
+    "under_lux_zone_count": 0.0,
+    "projection_rate": 0.0,
+    "guardrail_violation_rate": 0.0,
+    "zone_projection_count": 0.0
+  },
+  "rows": [
+    {
+      "reward": -97.06701110375973,
+      "baseline_energy_kwh": 2329.0416666666656,
+      "energy_kwh": 2329.0416666666656,
+      "baseline_energy_cost_cny": 1778.850159722223,
+      "energy_cost_cny": 1778.850159722223,
+      "baseline_carbon_kg": 1331.740070172222,
+      "carbon_kg": 1331.740070172222,
+      "baseline_peak_kw": 297.0,
+      "peak_kw": 297.0,
+      "baseline_total_cost_cny": 2966.850159722223,
+      "total_cost_cny": 2966.850159722223,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 0.0,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 0.0
+    },
+    {
+      "reward": -97.07940739168745,
+      "baseline_energy_kwh": 2329.2333333333327,
+      "energy_kwh": 2329.2333333333327,
+      "baseline_energy_cost_cny": 1321.1291874999997,
+      "energy_cost_cny": 1321.1291874999997,
+      "baseline_carbon_kg": 1347.235430081945,
+      "carbon_kg": 1347.235430081945,
+      "baseline_peak_kw": 296.7,
+      "peak_kw": 296.7,
+      "baseline_total_cost_cny": 2507.9291875,
+      "total_cost_cny": 2507.9291875,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 0.0,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 0.0
+    }
+  ],
+  "starts": [
+    0,
+    96
+  ]
+}

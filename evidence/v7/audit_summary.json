@@ -1,0 +1,475 @@
+{
+  "schema": "port-rl-convergence-audit.v7",
+  "scope": "RL only; no control algorithm training",
+  "completed_runs": [
+    {
+      "run_id": "agv-iql-v7-20260907T031350Z",
+      "module": "agv_charge",
+      "status": "OFFLINE_IQL_TRAINED_NOT_BUSINESS_ADMITTED",
+      "report_path": "evidence/v7/agv_charge/runs/agv-iql-v7-20260907T031350Z/report.json",
+      "report_sha256": "fa0dbb9c4a461daaf81cab6de55977ba98c658279065ac912c206aa961aed152",
+      "seed_count": 3,
+      "environment_steps": 0,
+      "optimizer_updates": 30000
+    },
+    {
+      "run_id": "bess_energy-dqn-v7-20260907T025743Z",
+      "module": "bess_energy",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T025743Z/report.json",
+      "report_sha256": "9becafa03e4ffb00e4b0185b4547cab38effb2d82e539ecb577887481af965e2",
+      "seed_count": 3,
+      "environment_steps": 180000,
+      "optimizer_updates": 44250
+    },
+    {
+      "run_id": "bess_energy-dqn-v7-20260907T030216Z",
+      "module": "bess_energy",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T030216Z/report.json",
+      "report_sha256": "ddce33c28bc93678d42454fccda66d33ae6a1a1e1c43fe1a8755a8a6ae07cca0",
+      "seed_count": 3,
+      "environment_steps": 180000,
+      "optimizer_updates": 44250
+    },
+    {
+      "run_id": "bess_energy-dqn-v7-20260907T031025Z",
+      "module": "bess_energy",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T031025Z/report.json",
+      "report_sha256": "10d14a7d9de451d9704ac2dc5ad7540f17ec7cf9a1ec5bf24b50f62cb4eba3db",
+      "seed_count": 3,
+      "environment_steps": 180000,
+      "optimizer_updates": 44250
+    },
+    {
+      "run_id": "bess_energy-sac-v7-20260907T025525Z",
+      "module": "bess_energy",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/bess_energy/runs/bess_energy-sac-v7-20260907T025525Z/report.json",
+      "report_sha256": "4fe37136c675ff65d7135a0db8fdce216eedeb68b1ea9b8fc7c41f3500438c24",
+      "seed_count": 3,
+      "environment_steps": 90000,
+      "optimizer_updates": 21750
+    },
+    {
+      "run_id": "coordinated-sac-v7-20260907T025350Z",
+      "module": "coordinated_business",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/coordinated_business/runs/coordinated-sac-v7-20260907T025350Z/report.json",
+      "report_sha256": "af36bd74743cd701237bd0bcc63e231036b0b113abf4b884b15c75636e865de8",
+      "seed_count": 3,
+      "environment_steps": 90000,
+      "optimizer_updates": 21750
+    },
+    {
+      "run_id": "hvac-sac-v7-20260907T025157Z",
+      "module": "hvac",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/hvac/runs/hvac-sac-v7-20260907T025157Z/report.json",
+      "report_sha256": "deda6bed215af91509d360a2bbbd506daaafb08366fd432d7f6605a08dceb6fd",
+      "seed_count": 3,
+      "environment_steps": 90000,
+      "optimizer_updates": 21750
+    },
+    {
+      "run_id": "hvac-sac-v7-20260907T030201Z",
+      "module": "hvac",
+      "status": "ADMITTED_OFFLINE_RL",
+      "report_path": "evidence/v7/hvac/runs/hvac-sac-v7-20260907T030201Z/report.json",
+      "report_sha256": "0d131e87a59b70e4151efbad36cfc25b8760b0efb0c691c7cb2f8d0689683bb2",
+      "seed_count": 3,
+      "environment_steps": 90000,
+      "optimizer_updates": 21750
+    },
+    {
+      "run_id": "shore_bess-dqn-v7-20260907T025730Z",
+      "module": "shore_bess",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T025730Z/report.json",
+      "report_sha256": "e803de4ece04682135a8254e0d61df07dbeeb92b0e11f074a828f1b091e490e0",
+      "seed_count": 3,
+      "environment_steps": 180000,
+      "optimizer_updates": 44250
+    },
+    {
+      "run_id": "shore_bess-dqn-v7-20260907T030216Z",
+      "module": "shore_bess",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/report.json",
+      "report_sha256": "ac7b731c157618b08b52db8204f0c12517eaa7562c5158f16d7e9af8a91b56a3",
+      "seed_count": 3,
+      "environment_steps": 180000,
+      "optimizer_updates": 44250
+    },
+    {
+      "run_id": "shore_bess-dqn-v7-20260907T031026Z",
+      "module": "shore_bess",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T031026Z/report.json",
+      "report_sha256": "e8105d85b5bfaf3982d455b462f8e426b4caa5bd6de096911a7c7e5bba951a71",
+      "seed_count": 3,
+      "environment_steps": 180000,
+      "optimizer_updates": 44250
+    },
+    {
+      "run_id": "shore_bess-sac-v7-20260907T025158Z",
+      "module": "shore_bess",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/shore_bess/runs/shore_bess-sac-v7-20260907T025158Z/report.json",
+      "report_sha256": "84b83188bc83e318bafd712b2224526f60a901700800367a22044d5f7ed59ed7",
+      "seed_count": 3,
+      "environment_steps": 90000,
+      "optimizer_updates": 21750
+    },
+    {
+      "run_id": "yard_crane-sac-v7-20260907T025745Z",
+      "module": "yard_crane",
+      "status": "CANDIDATE_NOT_ADMITTED",
+      "report_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T025745Z/report.json",
+      "report_sha256": "a2cf539857c7ee2909e5045380f5e8180f1a17bcc09f43c4dfd57b1d9baa26a9",
+      "seed_count": 3,
+      "environment_steps": 90000,
+      "optimizer_updates": 21750
+    },
+    {
+      "run_id": "yard_crane-sac-v7-20260907T030204Z",
+      "module": "yard_crane",
+      "status": "ADMITTED_OFFLINE_RL",
+      "report_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T030204Z/report.json",
+      "report_sha256": "f3febb80b570df40490ccc2874d59440d83ef24ab625977fb494325f062d3132",
+      "seed_count": 3,
+      "environment_steps": 90000,
+      "optimizer_updates": 21750
+    },
+    {
+      "run_id": "yard_lighting-sac-v7-20260907T025123Z",
+      "module": "yard_lighting",
+      "status": "ADMITTED_OFFLINE_RL",
+      "report_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/report.json",
+      "report_sha256": "5aab5576d055417759a979069ca056f1f52bd5a734631548eccf510785eceb4a",
+      "seed_count": 3,
+      "environment_steps": 90000,
+      "optimizer_updates": 21750
+    }
+  ],
+  "completed_seed_runs": 45,
+  "new_environment_steps": 1800000,
+  "new_optimizer_updates": 469500,
+  "admitted_specialists": [
+    {
+      "module": "yard_lighting",
+      "name_cn": "堆场照明",
+      "run_id": "yard_lighting-sac-v7-20260907T025123Z",
+      "seed": 1007,
+      "converged_seeds": 3,
+      "test_window_count": 5,
+      "window_hours": 8.0,
+      "cost_reduction_percent": {
+        "n": 5,
+        "mean": 1.8190715862885714,
+        "std": 0.23437973963318337,
+        "median": 1.955136480060048,
+        "ci_low": 1.635709135949861,
+        "ci_high": 1.9950396265571544,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_reduction_percent": {
+        "n": 5,
+        "mean": 2.225068706219426,
+        "std": 0.28030659372968725,
+        "median": 2.398482577831572,
+        "ci_low": 2.014733285457416,
+        "ci_high": 2.435404126981436,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_reduction_percent": {
+        "n": 5,
+        "mean": 2.2250440354737826,
+        "std": 0.28044105178756173,
+        "median": 2.399031166702165,
+        "ci_low": 2.014686143295189,
+        "ci_high": 2.4354019276523764,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_reduction_percent": {
+        "n": 5,
+        "mean": 1.2792728177807213,
+        "std": 0.1731688893554423,
+        "median": 1.3164653656723617,
+        "ci_low": 1.1420247081096082,
+        "ci_high": 1.4165209274518344,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "comparison_vs_previous_actor": {
+        "total_cost_cny": {
+          "n": 5,
+          "mean": -0.0011894052600362759,
+          "std": 0.0017900391697795292,
+          "median": -0.00024585327925027485,
+          "ci_low": -0.00281393476850035,
+          "ci_high": -4.642280876692692e-05,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "carbon_kg": {
+          "n": 5,
+          "mean": -0.001488689637061746,
+          "std": 0.002112217062097013,
+          "median": -0.0006093600367511153,
+          "ci_low": -0.003375965151071616,
+          "ci_high": -0.0001168514573663713,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "peak_kw": {
+          "n": 5,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "energy_kwh": {
+          "n": 5,
+          "mean": -0.0015429537766954548,
+          "std": 0.002201024874856798,
+          "median": -0.0006026699552110845,
+          "ci_low": -0.0035130358250753295,
+          "ci_high": -0.00011565358353819307,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      },
+      "model_path": "evidence/v7/yard_lighting/runs/yard_lighting-sac-v7-20260907T025123Z/seed_1007/selected_model.zip",
+      "model_sha256": "a28cd3a63e833456302af5944ebccb295084807287982e635d38d63713e9a071"
+    },
+    {
+      "module": "hvac",
+      "name_cn": "空调与冷站",
+      "run_id": "hvac-sac-v7-20260907T030201Z",
+      "seed": 927,
+      "converged_seeds": 3,
+      "test_window_count": 5,
+      "window_hours": 48.0,
+      "cost_reduction_percent": {
+        "n": 5,
+        "mean": 2.659913006280047,
+        "std": 0.010199808605501806,
+        "median": 2.6603250830863203,
+        "ci_low": 2.65183802729909,
+        "ci_high": 2.667987985261006,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_reduction_percent": {
+        "n": 5,
+        "mean": 2.9536804254176863,
+        "std": 0.08423277323230598,
+        "median": 2.921262569843612,
+        "ci_low": 2.9123608485938832,
+        "ci_high": 3.0289867554631322,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_reduction_percent": {
+        "n": 5,
+        "mean": 2.950791365928808,
+        "std": 0.0852234151758219,
+        "median": 2.9181693027170303,
+        "ci_low": 2.9090054725394894,
+        "ci_high": 3.0269118398678905,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_reduction_percent": {
+        "n": 5,
+        "mean": 1.8696926212032374,
+        "std": 0.34593329485383834,
+        "median": 2.0233875201967217,
+        "ci_low": 1.5601718515286152,
+        "ci_high": 2.02510178776993,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "comparison_vs_previous_actor": {
+        "total_cost_cny": {
+          "n": 5,
+          "mean": 0.07722504934144833,
+          "std": 0.005677152307431668,
+          "median": 0.0772417880390849,
+          "ci_low": 0.07323969785639725,
+          "ci_high": 0.08191245956592753,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "carbon_kg": {
+          "n": 5,
+          "mean": 0.09917257957525526,
+          "std": 0.008319661970997,
+          "median": 0.09743008841732104,
+          "ci_low": 0.09355764074479919,
+          "ci_high": 0.10629173442103985,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "peak_kw": {
+          "n": 5,
+          "mean": 0.011132823211642223,
+          "std": 0.006624251102261595,
+          "median": 0.013389309497991842,
+          "ci_low": 0.005300251170732606,
+          "ci_high": 0.015479197841348219,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "energy_kwh": {
+          "n": 5,
+          "mean": 0.09940537239925887,
+          "std": 0.008228037974177382,
+          "median": 0.09772109879817802,
+          "ci_low": 0.0938226612702443,
+          "ci_high": 0.10643988315870156,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      },
+      "model_path": "evidence/v7/hvac/runs/hvac-sac-v7-20260907T030201Z/seed_927/selected_model.zip",
+      "model_sha256": "1b195e7ca92a1d8d882d0329723cf1098d74d7b9fa2044e5592521da8499fbb4"
+    },
+    {
+      "module": "yard_crane",
+      "name_cn": "场桥作业",
+      "run_id": "yard_crane-sac-v7-20260907T030204Z",
+      "seed": 927,
+      "converged_seeds": 3,
+      "test_window_count": 5,
+      "window_hours": 48.0,
+      "cost_reduction_percent": {
+        "n": 5,
+        "mean": 3.3575625729020815,
+        "std": 0.30248886947812015,
+        "median": 3.2720305451492036,
+        "ci_low": 3.1463717022300353,
+        "ci_high": 3.61019595144056,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "energy_reduction_percent": {
+        "n": 5,
+        "mean": 4.33532497499579,
+        "std": 0.3435517342370017,
+        "median": 4.182880897215418,
+        "ci_low": 4.109629549221603,
+        "ci_high": 4.624848481894741,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_reduction_percent": {
+        "n": 5,
+        "mean": 4.333231948635211,
+        "std": 0.34282690137044863,
+        "median": 4.179905789417123,
+        "ci_low": 4.107983166242214,
+        "ci_high": 4.621945830501672,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_reduction_percent": {
+        "n": 5,
+        "mean": 0.8110860773274249,
+        "std": 0.31298542197481344,
+        "median": 0.88555356503045,
+        "ci_low": 0.5235711045700975,
+        "ci_high": 1.0250570315222294,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "comparison_vs_previous_actor": {
+        "total_cost_cny": {
+          "n": 5,
+          "mean": 0.45829810554877604,
+          "std": 0.03835847850547957,
+          "median": 0.45409523914131483,
+          "ci_low": 0.4348421536289818,
+          "ci_high": 0.4918634850386748,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "carbon_kg": {
+          "n": 5,
+          "mean": 0.6655944532589129,
+          "std": 0.0634461832669566,
+          "median": 0.652598667985665,
+          "ci_low": 0.6253594480997299,
+          "ci_high": 0.7194589060654006,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "peak_kw": {
+          "n": 5,
+          "mean": 0.0003902128173356118,
+          "std": 0.0006489870114103988,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0009887986161866088,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "energy_kwh": {
+          "n": 5,
+          "mean": 0.6640909458371486,
+          "std": 0.06370140752998593,
+          "median": 0.6516943872275449,
+          "ci_low": 0.6236045024254653,
+          "ci_high": 0.7181510798724737,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      },
+      "model_path": "evidence/v7/yard_crane/runs/yard_crane-sac-v7-20260907T030204Z/seed_927/selected_model.zip",
+      "model_sha256": "585e5d62f04e16b2cedb40500c4ef300409e0f11ab271336195f17aa69dffba4"
+    }
+  ],
+  "joint_strategy": "retained_hash_verified_V6_SAC",
+  "still_not_admitted": [
+    "shore_bess_balanced",
+    "bess_energy_balanced",
+    "agv_charge_business_value"
+  ],
+  "legacy_qc": "linear_IQL_lite_preserved; corrected_KL_metric; core_QC_allocation_is_in_retained_V6_SAC",
+  "production_authority": false,
+  "dispatch_allowed": false,
+  "live_data_verified": false,
+  "evaluation_boundary": "previously used chronological/public engineering benchmarks; not a fresh blind dataset or measured field benefit"
+}

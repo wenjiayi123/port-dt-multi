@@ -1,0 +1,325 @@
+{
+  "schema": "port-real-rl-runtime-verification.v7",
+  "verified_at": "2026-09-07T04:00:35.165821+00:00",
+  "status": "PASS",
+  "active_champions_distinguished_from_latest_candidates": true,
+  "specialist_receipts": [
+    {
+      "module": "yard_lighting",
+      "http_status": 200,
+      "receipt": {
+        "module": "yard_lighting",
+        "run_id": "yard_lighting-sac-v7-20260907T025123Z",
+        "algorithm": "stable_baselines3.SAC",
+        "model_sha256": "a28cd3a63e833456302af5944ebccb295084807287982e635d38d63713e9a071",
+        "model_sha256_kind": "training_archive_identity",
+        "loaded_artifact_path": "evidence/v7/public_models/a28cd3a63e833456302af5944ebccb295084807287982e635d38d63713e9a071.zip",
+        "loaded_artifact_sha256": "eaa48f10297d6a10a86206554cc9112174e0263b86e289e9761f6cf8ae15077d",
+        "report_sha256": "5aab5576d055417759a979069ca056f1f52bd5a734631548eccf510785eceb4a",
+        "observation_dimensions": 42,
+        "action": [
+          -0.9780428409576416,
+          -0.10520285367965698,
+          0.8319823741912842
+        ],
+        "action_dimensions": 3,
+        "decision_source": "trained_rl_actor",
+        "requires_environment_projection": true,
+        "simulation_mode": true,
+        "production_authority": false,
+        "dispatch_allowed": false,
+        "live_data_verified": false
+      },
+      "derived_business_step": {
+        "baseline_power_kw": 293.4,
+        "power_kw": 286.85014254549765,
+        "baseline_energy_kwh": 24.449999999999996,
+        "energy_kwh": 23.904178545458137,
+        "baseline_energy_cost_cny": 26.406,
+        "energy_cost_cny": 25.81651282909479,
+        "baseline_carbon_kg": 13.333452974999997,
+        "carbon_kg": 13.035797159176685,
+        "minimum_lux_compliance_rate": 1.0,
+        "critical_lux_compliance_rate": 1.0,
+        "complaint_lux_compliance_rate": 1.0,
+        "under_lux_zone_count": 0.0,
+        "zone_projection_count": 67.0,
+        "projection_count": 2.0,
+        "mean_final_dimming_ratio": 0.20308699020713358,
+        "mean_predicted_lux": 20.2418274869373
+      },
+      "invalid_observation_rejected": true,
+      "comparison_vs_previous_distilled_actor_same_windows": {
+        "total_cost_cny": {
+          "n": 5,
+          "mean": -0.0011894052600362759,
+          "std": 0.0017900391697795292,
+          "median": -0.00024585327925027485,
+          "ci_low": -0.00281393476850035,
+          "ci_high": -4.642280876692692e-05,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "carbon_kg": {
+          "n": 5,
+          "mean": -0.001488689637061746,
+          "std": 0.002112217062097013,
+          "median": -0.0006093600367511153,
+          "ci_low": -0.003375965151071616,
+          "ci_high": -0.0001168514573663713,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "peak_kw": {
+          "n": 5,
+          "mean": 0.0,
+          "std": 0.0,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "energy_kwh": {
+          "n": 5,
+          "mean": -0.0015429537766954548,
+          "std": 0.002201024874856798,
+          "median": -0.0006026699552110845,
+          "ci_low": -0.0035130358250753295,
+          "ci_high": -0.00011565358353819307,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      },
+      "previous_actor_sha256": "fd77d74b406dadefd3fed29e1a6db0d93f899b172786375d805f578d67180426"
+    },
+    {
+      "module": "hvac",
+      "http_status": 200,
+      "receipt": {
+        "module": "hvac",
+        "run_id": "hvac-sac-v7-20260907T030201Z",
+        "algorithm": "stable_baselines3.SAC",
+        "model_sha256": "1b195e7ca92a1d8d882d0329723cf1098d74d7b9fa2044e5592521da8499fbb4",
+        "model_sha256_kind": "training_archive_identity",
+        "loaded_artifact_path": "evidence/v7/public_models/1b195e7ca92a1d8d882d0329723cf1098d74d7b9fa2044e5592521da8499fbb4.zip",
+        "loaded_artifact_sha256": "f49ae8dd080f8d70f6dd36b27c276f32f51749366bc1c3c29de500dc4922edd5",
+        "report_sha256": "0d131e87a59b70e4151efbad36cfc25b8760b0efb0c691c7cb2f8d0689683bb2",
+        "observation_dimensions": 30,
+        "action": [
+          0.9967230558395386,
+          0.9919724464416504,
+          -0.9978091716766357
+        ],
+        "action_dimensions": 3,
+        "decision_source": "trained_rl_actor",
+        "requires_environment_projection": true,
+        "simulation_mode": true,
+        "production_authority": false,
+        "dispatch_allowed": false,
+        "live_data_verified": false
+      },
+      "derived_business_step": {
+        "baseline_power_kw": 498.96,
+        "power_kw": 488.75339468934476,
+        "baseline_energy_kwh": 124.74,
+        "energy_kwh": 122.18834867233619,
+        "baseline_energy_cost_cny": 98.94376799999999,
+        "energy_cost_cny": 96.91979816689707,
+        "baseline_carbon_kg": 66.074778,
+        "carbon_kg": 64.72316829173647,
+        "cooling_satisfaction": 1.0,
+        "cooling_shortfall": 0.0,
+        "humidity_risk": 0.0,
+        "projection_count": 1.0
+      },
+      "invalid_observation_rejected": true,
+      "comparison_vs_previous_distilled_actor_same_windows": {
+        "total_cost_cny": {
+          "n": 5,
+          "mean": 0.07722504934144833,
+          "std": 0.005677152307431668,
+          "median": 0.0772417880390849,
+          "ci_low": 0.07323969785639725,
+          "ci_high": 0.08191245956592753,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "carbon_kg": {
+          "n": 5,
+          "mean": 0.09917257957525526,
+          "std": 0.008319661970997,
+          "median": 0.09743008841732104,
+          "ci_low": 0.09355764074479919,
+          "ci_high": 0.10629173442103985,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "peak_kw": {
+          "n": 5,
+          "mean": 0.011132823211642223,
+          "std": 0.006624251102261595,
+          "median": 0.013389309497991842,
+          "ci_low": 0.005300251170732606,
+          "ci_high": 0.015479197841348219,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "energy_kwh": {
+          "n": 5,
+          "mean": 0.09940537239925887,
+          "std": 0.008228037974177382,
+          "median": 0.09772109879817802,
+          "ci_low": 0.0938226612702443,
+          "ci_high": 0.10643988315870156,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      },
+      "previous_actor_sha256": "9c1ce9fe479307e29de40c6f21b43d2065501f4aa16943f234916f3eacdcdb4c"
+    },
+    {
+      "module": "yard_crane",
+      "http_status": 200,
+      "receipt": {
+        "module": "yard_crane",
+        "run_id": "yard_crane-sac-v7-20260907T030204Z",
+        "algorithm": "stable_baselines3.SAC",
+        "model_sha256": "585e5d62f04e16b2cedb40500c4ef300409e0f11ab271336195f17aa69dffba4",
+        "model_sha256_kind": "training_archive_identity",
+        "loaded_artifact_path": "evidence/v7/public_models/585e5d62f04e16b2cedb40500c4ef300409e0f11ab271336195f17aa69dffba4.zip",
+        "loaded_artifact_sha256": "5081b09d863837b6bc60f1fe06ce270f51733337bcb7a0ea0565dd089eda79ec",
+        "report_sha256": "f3febb80b570df40490ccc2874d59440d83ef24ab625977fb494325f062d3132",
+        "observation_dimensions": 36,
+        "action": [
+          -0.9996614456176758,
+          -0.9999864101409912
+        ],
+        "action_dimensions": 2,
+        "decision_source": "trained_rl_actor",
+        "requires_environment_projection": true,
+        "simulation_mode": true,
+        "production_authority": false,
+        "dispatch_allowed": false,
+        "live_data_verified": false
+      },
+      "derived_business_step": {
+        "baseline_power_kw": 3041.6999999999994,
+        "power_kw": 2896.83646,
+        "baseline_energy_kwh": 760.4249999999998,
+        "energy_kwh": 724.209115,
+        "baseline_energy_cost_cny": 593.13,
+        "energy_cost_cny": 564.8831097,
+        "baseline_carbon_kg": 402.00499999999994,
+        "carbon_kg": 382.88935910049986,
+        "historical_moves": 37.0,
+        "policy_moves": 37.0,
+        "moves_retention": 1.0,
+        "job_sla_non_degradation": 1.0,
+        "delay_delta_minutes": 0.0,
+        "projection_count": 1.0
+      },
+      "invalid_observation_rejected": true,
+      "comparison_vs_previous_distilled_actor_same_windows": {
+        "total_cost_cny": {
+          "n": 5,
+          "mean": 0.45829810554877604,
+          "std": 0.03835847850547957,
+          "median": 0.45409523914131483,
+          "ci_low": 0.4348421536289818,
+          "ci_high": 0.4918634850386748,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "carbon_kg": {
+          "n": 5,
+          "mean": 0.6655944532589129,
+          "std": 0.0634461832669566,
+          "median": 0.652598667985665,
+          "ci_low": 0.6253594480997299,
+          "ci_high": 0.7194589060654006,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "peak_kw": {
+          "n": 5,
+          "mean": 0.0003902128173356118,
+          "std": 0.0006489870114103988,
+          "median": 0.0,
+          "ci_low": 0.0,
+          "ci_high": 0.0009887986161866088,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "energy_kwh": {
+          "n": 5,
+          "mean": 0.6640909458371486,
+          "std": 0.06370140752998593,
+          "median": 0.6516943872275449,
+          "ci_low": 0.6236045024254653,
+          "ci_high": 0.7181510798724737,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      },
+      "previous_actor_sha256": "63f48c979129d7c2a509d318070f78eebf39e164682dbbcdf5741294252f5c6b"
+    }
+  ],
+  "retained_joint_rl_receipt": {
+    "module": "coordinated_business",
+    "run_id": "coordinated-business-v6-20260830T072235Z",
+    "algorithm": "stable_baselines3.SAC",
+    "model_sha256": "9cfebff3d4198a8520fd99ab530fae7d0d08aec180da12943bed4780eb141942",
+    "model_sha256_kind": "training_archive_identity",
+    "loaded_artifact_path": "data/rl/runs/rl-20260830T070107706Z/model.zip",
+    "loaded_artifact_sha256": "9cfebff3d4198a8520fd99ab530fae7d0d08aec180da12943bed4780eb141942",
+    "report_sha256": "b4f328bb9c67a142d7920003f507a99611e95f8390072aed31a53dd7ca8647ab",
+    "observation_dimensions": 110,
+    "action": [
+      -0.908013641834259,
+      0.9970211982727051,
+      -0.9929972290992737,
+      0.5433765649795532,
+      0.006388545036315918,
+      0.9990880489349365,
+      0.9969899654388428,
+      0.7558760643005371,
+      0.19775891304016113,
+      0.9965102672576904,
+      0.9783742427825928,
+      0.9857869148254395,
+      0.06724750995635986,
+      0.6963316202163696,
+      0.8676918745040894,
+      -0.8991988301277161,
+      0.6153731346130371,
+      -0.8936566114425659
+    ],
+    "action_dimensions": 18,
+    "decision_source": "trained_rl_actor",
+    "requires_environment_projection": true,
+    "simulation_mode": true,
+    "production_authority": false,
+    "dispatch_allowed": false,
+    "live_data_verified": false
+  },
+  "rejected_candidates_blocked": {
+    "shore_bess": 409,
+    "bess_energy": 409
+  },
+  "production_authority": false,
+  "dispatch_allowed": false,
+  "external_device_commands": 0
+}

@@ -1,0 +1,9 @@
+{
+  "run_id": "coordinated-sac-v7-20260907T025350Z",
+  "status": "CANDIDATE_NOT_ADMITTED",
+  "report_path": "evidence/v7/coordinated_business/runs/coordinated-sac-v7-20260907T025350Z/report.json",
+  "report_sha256": "af36bd74743cd701237bd0bcc63e231036b0b113abf4b884b15c75636e865de8",
+  "model_path": "evidence/v7/coordinated_business/runs/coordinated-sac-v7-20260907T025350Z/seed_826/selected_model.zip",
+  "model_sha256": "9c6d6145ffbaacee94cf8834109f77885863d2ddf01977c59fd56aac37787aa8",
+  "production_authority": false
+}

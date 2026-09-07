@@ -1,0 +1,131 @@
+{
+  "seed": 927,
+  "steps": 60000,
+  "optimizer_updates": 14750,
+  "selected": {
+    "step": 60000,
+    "updates": 14750,
+    "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/step_60000.zip",
+    "model_sha256": "8d4d566ce7b18d78abcb4948b68fcea8a3d92038e6f496eaa077e3b7a72c3972",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 8,
+        "mean": -0.10346122011982899,
+        "std": 0.048763695525358926,
+        "median": -0.11270545470250039,
+        "ci_low": -0.12968698548057364,
+        "ci_high": -0.06796906216316811,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 8,
+        "mean": -0.019123650031548887,
+        "std": 0.0006345013266243465,
+        "median": -0.01930823276811576,
+        "ci_low": -0.019478072969555737,
+        "ci_high": -0.018678377051520534,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 8,
+        "mean": -0.7172949176257513,
+        "std": 0.6300990954610317,
+        "median": -0.9250042608556585,
+        "ci_low": -1.0442533506006593,
+        "ci_high": -0.2624959649828855,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": false,
+      "peak_kw_business_gate": false,
+      "carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "terminal_flex_backlog_kwh": true,
+      "shore_sla_violation_kwh": true,
+      "positive_cost_value_95ci": false
+    },
+    "metrics": {
+      "aux_shift_kwh": 37581.12812927971,
+      "bess_throughput_kwh": 17523.198301792756,
+      "carbon_kg": 2218119.2069583954,
+      "degradation_cost_cny": 1401.8558641434133,
+      "demand_charge_cny": 228435.42640886083,
+      "energy_cost_cny": 2802373.541313385,
+      "guardrail_violation_rate": 0.0,
+      "guardrail_violations": 0.0,
+      "nonzero_bess_action_rate": 1.0,
+      "nonzero_bess_actions": 168.0,
+      "nonzero_flex_action_rate": 0.9583333333333334,
+      "nonzero_flex_actions": 161.0,
+      "peak_kw": 26139.110117743243,
+      "projection_count": 163.125,
+      "projection_rate": 0.9709821428571428,
+      "reserve_shortfall_kwh": 0.0,
+      "reward": -3.3828969078798745,
+      "shore_sla_violation_kwh": 0.0,
+      "soc_max_observed": 0.58,
+      "soc_min_observed": 0.40491392204703425,
+      "temperature_max_c": 30.927831279993057,
+      "terminal_flex_backlog_kwh": 0.0,
+      "terminal_soc_error": 0.0,
+      "total_cost_cny": 3032210.8235863894
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 14750.0,
+      "train/loss": 1.28642737865448
+    }
+  },
+  "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_927/selected_model.zip",
+  "model_sha256": "8d4d566ce7b18d78abcb4948b68fcea8a3d92038e6f496eaa077e3b7a72c3972",
+  "convergence": {
+    "passed": false,
+    "tail_cost_gain_range_pp": 0.1510047895757458,
+    "tolerance_pp": 0.1,
+    "tail_checkpoints": 3
+  },
+  "initial_comparison": {
+    "total_cost_cny": {
+      "n": 8,
+      "mean": -0.06732209311878543,
+      "std": 0.024369426172449297,
+      "median": -0.07015769741870341,
+      "ci_low": -0.08357560662525067,
+      "ci_high": -0.05125415373498553,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 2000
+    },
+    "carbon_kg": {
+      "n": 8,
+      "mean": -0.010378385665264212,
+      "std": 0.0004585790921590317,
+      "median": -0.010213521563357409,
+      "ci_low": -0.010692545932173227,
+      "ci_high": -0.010121765619714522,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 2000
+    },
+    "peak_kw": {
+      "n": 8,
+      "mean": -0.1436423333528286,
+      "std": 0.32438233585759135,
+      "median": -0.17204670189911866,
+      "ci_low": -0.35853106188171857,
+      "ci_high": 0.07122875773087252,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 2000
+    }
+  },
+  "render_calls": 0
+}

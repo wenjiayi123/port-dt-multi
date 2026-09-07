@@ -18,3 +18,5 @@ data/rl/datasets/public_cn_sha_integrated_forward_2026m05_v5.csv binary
 data/rl/runs/rl-20260821T065745532Z/monitor.csv binary
 data/rl/datasets/public_us_la_6min_v1.csv binary -eol
 app/services/rl_model/hvac_cooling/data/*.csv binary
+evidence/v7/**/monitor.csv binary -eol
+app/services/rl_model/agv_charge/data/*.csv binary -eol

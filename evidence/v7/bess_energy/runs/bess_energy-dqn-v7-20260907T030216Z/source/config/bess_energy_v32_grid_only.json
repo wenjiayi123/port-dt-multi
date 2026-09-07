@@ -1,0 +1,47 @@
+{
+  "schema": "port-dt-bess-energy-v3.2-grid-only",
+  "version": "3.2.0-grid-only",
+  "dataset_id": "public_cn_sha_hourly_v3",
+  "port_profile_id": "cn_sha_public_benchmark_v3",
+  "control_authority": "recommendation_only",
+  "checkpoint_selection": "cost_carbon_peak_non_regression",
+  "split": {"train_ratio": 0.70, "validation_ratio": 0.10, "blind_test_ratio": 0.20, "shuffle": false},
+  "asset": {
+    "rated_energy_kwh": 120000.0, "rated_power_kw": 30000.0,
+    "charge_efficiency": 0.965, "discharge_efficiency": 0.965,
+    "soc_min": 0.15, "soc_max": 0.95, "soc_initial": 0.70,
+    "terminal_soc_tolerance": 0.015, "soh_initial": 0.98,
+    "ramp_kw_per_hour": 8000.0, "cycle_cost_cny_per_kwh": 0.08,
+    "temperature_derate_c": 40.0, "temperature_trip_c": 47.0, "c_rate_max": 0.8
+  },
+  "grid": {
+    "hard_pcc_limit_kw": 52000.0, "soft_cap_train_quantile": 0.86,
+    "demand_charge_cny_per_kw_month": 38.0, "export_allowed": false,
+    "n_minus_1_margin_kw": 4000.0, "carbon_shadow_price_cny_per_kg": 0.08
+  },
+  "services": {
+    "reserve_min_kw": 0.0, "reserve_critical_kw": 0.0,
+    "critical_hours_local": [], "dr_event_hours_local": [], "dr_event_weekdays": [],
+    "dr_target_min_kw": 0.0, "dr_target_max_kw": 0.0,
+    "reserve_capacity_price_cny_per_kw_h": 0.0, "dr_performance_price_cny_per_kwh": 0.0,
+    "event_provenance": "disabled_grid_only_profile_no_unobserved_market_revenue"
+  },
+  "reward_weights": {
+    "energy_cost": 0.34, "demand_peak": 0.26, "carbon": 0.22,
+    "degradation": 0.08, "reserve_service": 0.01, "dr_performance": 0.01,
+    "safety_projection": 0.04, "thermal_health": 0.02, "terminal_soc": 0.02
+  },
+  "training": {
+    "algorithm": "Constrained grid-only BC actor without market revenue",
+    "episode_hours": 168, "behavior_trajectories_per_seed": 160,
+    "behavior_epochs": 160, "behavior_validation_every_epochs": 10,
+    "behavior_batch_size": 256, "behavior_learning_rate": 0.0003,
+    "seeds": [71, 171, 271], "gamma": 0.995, "network": [128, 128]
+  },
+  "convergence_gate": {
+    "fixed_validation_windows": 8, "tail_checkpoints": 3,
+    "tail_relative_range_max": 0.01, "loss_reduction_min": 0.40,
+    "minimum_seed_pass_rate": 0.6666667
+  },
+  "claim_boundary": "场内储能V3.2保守电网侧候选：禁用没有公开结算证据的备用与DR收入，只验证能量、电需量、碳、退化和安全。公开电价与碳强度仍为工程派生，结论不是上海港结算实绩。"
+}

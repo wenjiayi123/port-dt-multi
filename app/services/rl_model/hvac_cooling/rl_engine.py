@@ -303,79 +303,6 @@ def three_stage_bias(step: int, low: float, base: float, high: float, up1: int =
     return base
 
 
-def reward_bias_schedule(step: int) -> float:
-    return three_stage_bias(step, low=0.03, base=0.13, high=0.22)
-
-
-def econ_signal_schedule(step: int) -> float:
-    # 先明显为负，随后强转正，最后回到接近 0 的小正值
-    return three_stage_bias(step, low=-0.65, base=-0.10, high=0.58)
-
-
-def carbon_signal_schedule(step: int) -> float:
-    return three_stage_bias(step, low=-0.32, base=-0.06, high=0.30)
-
-
-def comfort_signal_schedule(step: int) -> float:
-    # 舒适性做成“改善增量”而非绝对分：前段明显为负，中段转正，后段回到 0 附近但不再明显转负
-    return three_stage_bias(step, low=-1.55, base=0.08, high=1.05)
-
-
-def early_strong_decay(step: int, total_steps: int, floor: float = 0.08) -> float:
-    total_steps = max(int(total_steps), 1)
-    x = max(0.0, min(1.0, step / float(total_steps)))
-    if x <= 0.22:
-        return 1.0
-    if x <= 0.55:
-        p = smooth_cos((x - 0.22) / 0.33)
-        return 1.0 + (0.42 - 1.0) * p
-    if x <= 0.82:
-        p = smooth_cos((x - 0.55) / 0.27)
-        return 0.42 + (0.16 - 0.42) * p
-    p = smooth_cos((x - 0.82) / 0.18)
-    return 0.16 + (floor - 0.16) * p
-
-
-def metric_noise(step: int, total_steps: int, metric_id: int, base_amp: float, spike_amp: float, seed: int) -> float:
-    decay = early_strong_decay(step, total_steps, floor=0.06)
-    rng = random.Random(int(seed) * 1000003 + metric_id * 9176 + step * 37)
-
-    # 每个指标独立频率 / 相位，避免看起来像同一张图
-    freq1 = 0.020 + metric_id * 0.0047
-    freq2 = 0.061 + metric_id * 0.0063
-    phase1 = 0.90 * metric_id + 0.35
-    phase2 = 1.70 * metric_id + 0.80
-
-    wave = (
-        0.72 * math.sin(step * freq1 + phase1) +
-        0.38 * math.sin(step * freq2 + phase2) +
-        0.16 * math.cos(step * (freq1 * 0.53 + 0.011) + 0.4 * metric_id)
-    )
-    gaussian = rng.gauss(0.0, 0.95)
-    micro = rng.uniform(-1.0, 1.0)
-
-    # 前期稀疏尖刺特别强，后期快速减弱
-    spike_prob = 0.22 * decay + 0.01
-    spike = 0.0
-    if rng.random() < spike_prob:
-        sign = -1.0 if rng.random() < 0.5 else 1.0
-        spike = sign * spike_amp * decay * (0.65 + 0.70 * rng.random())
-
-    return decay * base_amp * (0.55 * wave + 0.60 * gaussian + 0.18 * micro) + spike
-
-
-def apply_metric_noise(step: int, total_steps: int, value: float, metric_name: str, seed: int) -> float:
-    if metric_name == "reward":
-        noise = metric_noise(step, total_steps, metric_id=1, base_amp=0.78, spike_amp=1.15, seed=seed)
-    elif metric_name == "econ":
-        noise = metric_noise(step, total_steps, metric_id=2, base_amp=6.80, spike_amp=13.50, seed=seed)
-    elif metric_name == "carbon":
-        noise = metric_noise(step, total_steps, metric_id=3, base_amp=4.60, spike_amp=8.80, seed=seed)
-    elif metric_name == "comfort":
-        noise = metric_noise(step, total_steps, metric_id=4, base_amp=10.80, spike_amp=19.50, seed=seed)
-    else:
-        noise = 0.0
-    return value + noise
 
 def train_sac(data_dir: str, out_dir: str, cfg: argparse.Namespace) -> None:
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -401,8 +328,7 @@ def train_sac(data_dir: str, out_dir: str, cfg: argparse.Namespace) -> None:
     ensure_dir(out_dir)
     hist_path = cfg.jsonl if cfg.jsonl else os.path.join(out_dir, "policy_evaluate_history.jsonl")
     ensure_dir(os.path.dirname(hist_path))
-    with open(hist_path, "w", encoding="utf-8") as _:
-        pass
+    # Each train_start marks a new run; never truncate earlier evidence.
 
     def log_json(payload: Dict) -> None:
         with open(hist_path, "a", encoding="utf-8") as f:
@@ -427,8 +353,8 @@ def train_sac(data_dir: str, out_dir: str, cfg: argparse.Namespace) -> None:
 
     for step in range(1, cfg.steps + 1):
         idx, s, a, r_base, ns, d = ds.sample(cfg.batch, device)
-        reward_bias = reward_bias_schedule(step)
-        r = r_base + reward_bias
+        reward_bias = 0.0
+        r = r_base
         with torch.no_grad():
             na, nlogp, _ = actor.sample(ns)
             alpha = log_alpha.exp()
@@ -479,30 +405,22 @@ def train_sac(data_dir: str, out_dir: str, cfg: argparse.Namespace) -> None:
         with torch.no_grad():
             sm = summarize_action(pi.detach().cpu().numpy())
         bm = summarize_business_metrics(ds, idx, pi.detach(), a)
-        econ_bias = econ_signal_schedule(step)
-        carbon_bias = carbon_signal_schedule(step)
-        comfort_bias = comfort_signal_schedule(step)
-
-        # 为了保证曲线形状可控，业务指标采用“弱原始量 + 强形状项”的方式
-        raw_econ_component = 0.18 * bm["econ_saving_mean"]
-        raw_carbon_component = 0.25 * bm["carbon_saving_mean"]
-        raw_comfort_component = 0.10 * (bm["comfort_score_mean"] - 96.0)
-
-        econ_value = raw_econ_component + econ_bias
-        carbon_value = raw_carbon_component + carbon_bias
-        comfort_value = raw_comfort_component + comfort_bias
-
-        noisy_step_reward = apply_metric_noise(step, cfg.steps, batch_reward_mean, "reward", cfg.seed)
-        noisy_econ_value = apply_metric_noise(step, cfg.steps, econ_value, "econ", cfg.seed)
-        noisy_carbon_value = apply_metric_noise(step, cfg.steps, carbon_value, "carbon", cfg.seed)
-        noisy_comfort_value = apply_metric_noise(step, cfg.steps, comfort_value, "comfort", cfg.seed)
-
-        cumulative_reward += (noisy_step_reward - batch_reward_mean)
-        cumulative_econ += noisy_econ_value
-        cumulative_carbon += noisy_carbon_value
-        cumulative_comfort += noisy_comfort_value
+        # Reward and business observations must not depend on training progress.
+        econ_bias = carbon_bias = comfort_bias = 0.0
+        raw_econ_component = econ_value = bm["econ_saving_mean"]
+        raw_carbon_component = carbon_value = bm["carbon_saving_mean"]
+        raw_comfort_component = comfort_value = bm["comfort_score_mean"]
+        noisy_step_reward = batch_reward_mean  # Historical field-name compatibility.
+        noisy_econ_value = econ_value
+        noisy_carbon_value = carbon_value
+        noisy_comfort_value = comfort_value
+        cumulative_econ += econ_value
+        cumulative_carbon += carbon_value
+        cumulative_comfort += comfort_value
 
         metrics_payload = {
+            "metric_provenance": "unmodified_training_batch_statistics",
+            "business_claim_eligible": False,
             "step": step,
             "elapsed_sec": elapsed,
             "steps_per_sec": sps,

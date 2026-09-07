@@ -1,0 +1,541 @@
+{
+  "schema": "port-v6-descriptive-annual-value.v1",
+  "run_id": "v6-annual-value-20260907T034459690976Z",
+  "calculated_at": "2026-09-07T03:44:59.690976+00:00",
+  "source_model_version": "V6",
+  "selected_job_id": "rl-20260830T070107706Z",
+  "model_sha256": "9cfebff3d4198a8520fd99ab530fae7d0d08aec180da12943bed4780eb141942",
+  "source_sha256": {
+    "evidence/v6/coordinated_business/runs/coordinated-business-v6-20260830T072235Z/report.json": "b4f328bb9c67a142d7920003f507a99611e95f8390072aed31a53dd7ca8647ab",
+    "evidence/v6/coordinated_business/runs/coordinated-business-v6-20260830T072235Z/blind_window_metrics.json": "df535bef744bc79cfbd1235a0dcd3be7f8b8dfa4b2b51aa21f52da6986c4b136",
+    "data/rl/runs/rl-20260830T070107706Z/config.json": "ef1ef595014c9b0f5b8e083345fb55df67034185e8eebb102a5489ac3ff60c45",
+    "scripts/export_v6_annualized_value.py": "c582cf227527d59bad394bdfe76ef7359391a523f60180ae2509eecd59bfddfa"
+  },
+  "method": {
+    "episode_hours": 48.0,
+    "assumed_annual_hours": 8760,
+    "annualization_factor": 182.5,
+    "formula": "mean((baseline_cost_per_teu_i - rl_cost_per_teu_i) * rl_throughput_teu_i) * 8760 / episode_hours",
+    "comparison_basis": "linear equivalent-throughput unit-intensity accounting, not a baseline rerun at increased throughput",
+    "confidence_interval": "2000 paired-window bootstrap resamples; conditional on fixed engineering assumptions; not annual forecast uncertainty",
+    "post_evaluation_calculation": true,
+    "new_training_or_model_selection": false
+  },
+  "comparisons": {
+    "fcfs_neutral": {
+      "paired_windows": [
+        {
+          "window_start_index": 0,
+          "rl_throughput_teu": 219505.5830411387,
+          "baseline_throughput_teu": 155269.14367389277,
+          "unit_cost_reduction_percent": 19.405149882592497,
+          "equivalent_throughput_annual_cost_avoidance_cny": 44389496.29697234,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 34189.835112902634,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -22552568.610892043
+        },
+        {
+          "window_start_index": 188,
+          "rl_throughput_teu": 255168.446329238,
+          "baseline_throughput_teu": 183571.7746673152,
+          "unit_cost_reduction_percent": 20.297371586716707,
+          "equivalent_throughput_annual_cost_avoidance_cny": 46191115.20892277,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 34654.42936419515,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -17662355.722362727
+        },
+        {
+          "window_start_index": 376,
+          "rl_throughput_teu": 254079.83610951697,
+          "baseline_throughput_teu": 182937.98567695887,
+          "unit_cost_reduction_percent": 20.34946370295173,
+          "equivalent_throughput_annual_cost_avoidance_cny": 46046275.34103949,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 33703.28903796515,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -17311000.326395135
+        },
+        {
+          "window_start_index": 564,
+          "rl_throughput_teu": 247938.33330167597,
+          "baseline_throughput_teu": 178512.2438341311,
+          "unit_cost_reduction_percent": 20.366864024223695,
+          "equivalent_throughput_annual_cost_avoidance_cny": 45886502.69167601,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 35019.59771811418,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -17200489.332739636
+        },
+        {
+          "window_start_index": 752,
+          "rl_throughput_teu": 272683.0280773348,
+          "baseline_throughput_teu": 197157.04790052812,
+          "unit_cost_reduction_percent": 20.81994424515833,
+          "equivalent_throughput_annual_cost_avoidance_cny": 47628756.80792186,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 35772.6493725146,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -15733107.317844242
+        },
+        {
+          "window_start_index": 940,
+          "rl_throughput_teu": 260921.4216237052,
+          "baseline_throughput_teu": 188500.9307121201,
+          "unit_cost_reduction_percent": 21.259495731600275,
+          "equivalent_throughput_annual_cost_avoidance_cny": 48729827.15910036,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 36787.19396550111,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -14890169.25663954
+        },
+        {
+          "window_start_index": 1128,
+          "rl_throughput_teu": 276689.26486315066,
+          "baseline_throughput_teu": 201474.46019094557,
+          "unit_cost_reduction_percent": 22.248771264362222,
+          "equivalent_throughput_annual_cost_avoidance_cny": 51205305.274654746,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 37692.20591382447,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -11358038.350505712
+        },
+        {
+          "window_start_index": 1317,
+          "rl_throughput_teu": 264229.84758883575,
+          "baseline_throughput_teu": 191432.49459532756,
+          "unit_cost_reduction_percent": 20.857996040804515,
+          "equivalent_throughput_annual_cost_avoidance_cny": 47953378.66532234,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 36084.02466685236,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -15386954.725255625
+        },
+        {
+          "window_start_index": 1505,
+          "rl_throughput_teu": 242540.15123592602,
+          "baseline_throughput_teu": 171644.9618365116,
+          "unit_cost_reduction_percent": 19.979025388562565,
+          "equivalent_throughput_annual_cost_avoidance_cny": 45012729.09507092,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 32211.816081661847,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -20843092.014080968
+        },
+        {
+          "window_start_index": 1693,
+          "rl_throughput_teu": 243573.57285476473,
+          "baseline_throughput_teu": 174552.91140581656,
+          "unit_cost_reduction_percent": 18.33813051665949,
+          "equivalent_throughput_annual_cost_avoidance_cny": 40742750.60860152,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 30370.933883113394,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -22214280.054584716
+        },
+        {
+          "window_start_index": 1881,
+          "rl_throughput_teu": 265200.57784222934,
+          "baseline_throughput_teu": 189742.02835553585,
+          "unit_cost_reduction_percent": 18.980651250778557,
+          "equivalent_throughput_annual_cost_avoidance_cny": 42450040.732732855,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 30726.75656874733,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -21185683.097100575
+        },
+        {
+          "window_start_index": 2069,
+          "rl_throughput_teu": 251551.35992666124,
+          "baseline_throughput_teu": 179099.18814168632,
+          "unit_cost_reduction_percent": 18.50455040311538,
+          "equivalent_throughput_annual_cost_avoidance_cny": 41019408.85783802,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 30044.888525397833,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -22826871.154000916
+        },
+        {
+          "window_start_index": 2257,
+          "rl_throughput_teu": 237745.78289091447,
+          "baseline_throughput_teu": 170700.66802761788,
+          "unit_cost_reduction_percent": 20.766749859491828,
+          "equivalent_throughput_annual_cost_avoidance_cny": 46939173.065549724,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 35246.20372293504,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -16802171.38465396
+        },
+        {
+          "window_start_index": 2446,
+          "rl_throughput_teu": 289674.65719347826,
+          "baseline_throughput_teu": 210242.24685270747,
+          "unit_cost_reduction_percent": 20.524658284750828,
+          "equivalent_throughput_annual_cost_avoidance_cny": 47698055.34633453,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 35716.31507653682,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -16027257.677549213
+        },
+        {
+          "window_start_index": 2634,
+          "rl_throughput_teu": 243804.25951481683,
+          "baseline_throughput_teu": 175075.7913965012,
+          "unit_cost_reduction_percent": 21.65526971611168,
+          "equivalent_throughput_annual_cost_avoidance_cny": 49699811.346721806,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 36867.72473465787,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -14997542.493372837
+        },
+        {
+          "window_start_index": 2822,
+          "rl_throughput_teu": 224064.34517537258,
+          "baseline_throughput_teu": 160686.17383616784,
+          "unit_cost_reduction_percent": 19.90737565071755,
+          "equivalent_throughput_annual_cost_avoidance_cny": 45232735.595109016,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 34847.24965526546,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -19036893.37681976
+        },
+        {
+          "window_start_index": 3010,
+          "rl_throughput_teu": 239549.457546925,
+          "baseline_throughput_teu": 171666.54860482886,
+          "unit_cost_reduction_percent": 20.25452385000421,
+          "equivalent_throughput_annual_cost_avoidance_cny": 45423460.94700978,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 33964.76237149121,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -18127692.308047682
+        },
+        {
+          "window_start_index": 3198,
+          "rl_throughput_teu": 242597.9487742583,
+          "baseline_throughput_teu": 174356.8744689345,
+          "unit_cost_reduction_percent": 20.258934839037124,
+          "equivalent_throughput_annual_cost_avoidance_cny": 45488185.8590391,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 33599.08921941248,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -17671613.250685234
+        },
+        {
+          "window_start_index": 3386,
+          "rl_throughput_teu": 251686.2012061906,
+          "baseline_throughput_teu": 180358.57597389087,
+          "unit_cost_reduction_percent": 19.328793832559743,
+          "equivalent_throughput_annual_cost_avoidance_cny": 43271307.666611604,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 31512.89450910144,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -20173140.634253364
+        },
+        {
+          "window_start_index": 3575,
+          "rl_throughput_teu": 268929.69513397355,
+          "baseline_throughput_teu": 192042.43367377328,
+          "unit_cost_reduction_percent": 18.8981129806457,
+          "equivalent_throughput_annual_cost_avoidance_cny": 42468761.876425765,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 30529.61715812346,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -21780300.17308827
+        }
+      ],
+      "summary": {
+        "rl_throughput_teu": {
+          "n": 20,
+          "mean": 252606.6885115054,
+          "std": 17291.779378820534,
+          "median": 251618.78056642594,
+          "ci_low": 245219.57959061497,
+          "ci_high": 260118.00489439006,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "baseline_throughput_teu": {
+          "n": 20,
+          "mean": 181451.22419125956,
+          "std": 13360.508032705216,
+          "median": 179728.8820577886,
+          "ci_low": 175800.11875707406,
+          "ci_high": 187349.08201479432,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "unit_cost_reduction_percent": {
+          "n": 20,
+          "mean": 20.150091652542233,
+          "std": 1.0194443949373346,
+          "median": 20.278153212876916,
+          "ci_low": 19.723603269211708,
+          "ci_high": 20.574930820262477,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "equivalent_throughput_annual_cost_avoidance_cny": {
+          "n": 20,
+          "mean": 45673853.92213272,
+          "std": 2773065.066212221,
+          "median": 45687344.27535756,
+          "ci_low": 44499447.96931918,
+          "ci_high": 46822343.72244651,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "equivalent_throughput_annual_carbon_avoidance_tonnes": {
+          "n": 20,
+          "mean": 33977.07383291569,
+          "std": 2351.0816253947214,
+          "median": 34422.13223854889,
+          "ci_low": 32969.00973413716,
+          "ci_high": 34964.53836964772,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "absolute_annual_cost_difference_baseline_minus_rl_cny": {
+          "n": 20,
+          "mean": -18189061.06304361,
+          "std": 3085081.2369475015,
+          "median": -17666984.48652398,
+          "ci_low": -19468245.825178728,
+          "ci_high": -16855454.680129673,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      }
+    },
+    "coordinated_current_operations_rule_proxy": {
+      "paired_windows": [
+        {
+          "window_start_index": 0,
+          "rl_throughput_teu": 219505.5830411387,
+          "baseline_throughput_teu": 192474.41261572624,
+          "unit_cost_reduction_percent": 9.186422126508543,
+          "equivalent_throughput_annual_cost_avoidance_cny": 18649453.889849212,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 14763.37805970875,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -6350488.098011518
+        },
+        {
+          "window_start_index": 188,
+          "rl_throughput_teu": 255168.446329238,
+          "baseline_throughput_teu": 219446.79607376622,
+          "unit_cost_reduction_percent": 12.255603548183592,
+          "equivalent_throughput_annual_cost_avoidance_cny": 25334165.39723873,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 19677.71674411972,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -3604363.0230298694
+        },
+        {
+          "window_start_index": 376,
+          "rl_throughput_teu": 254079.83610951697,
+          "baseline_throughput_teu": 222058.39302033396,
+          "unit_cost_reduction_percent": 10.858049662837288,
+          "equivalent_throughput_annual_cost_avoidance_cny": 21953306.163974084,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 17404.407861385575,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -3527831.251555059
+        },
+        {
+          "window_start_index": 564,
+          "rl_throughput_teu": 247938.33330167597,
+          "baseline_throughput_teu": 216628.01444689132,
+          "unit_cost_reduction_percent": 11.273799305717757,
+          "equivalent_throughput_annual_cost_avoidance_cny": 22796754.771504156,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 18991.33749566374,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -2738873.1171682994
+        },
+        {
+          "window_start_index": 752,
+          "rl_throughput_teu": 272683.0280773348,
+          "baseline_throughput_teu": 235675.20457689845,
+          "unit_cost_reduction_percent": 12.894049617700265,
+          "equivalent_throughput_annual_cost_avoidance_cny": 26813098.304893404,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 21123.27277733783,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -1409246.8842144795
+        },
+        {
+          "window_start_index": 940,
+          "rl_throughput_teu": 260921.4216237052,
+          "baseline_throughput_teu": 227481.00182072417,
+          "unit_cost_reduction_percent": 12.938742521495893,
+          "equivalent_throughput_annual_cost_avoidance_cny": 26822993.149580568,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 20744.896076543293,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": 253874.21852653963
+        },
+        {
+          "window_start_index": 1128,
+          "rl_throughput_teu": 276689.26486315066,
+          "baseline_throughput_teu": 242713.33839260024,
+          "unit_cost_reduction_percent": 14.209617919471984,
+          "equivalent_throughput_annual_cost_avoidance_cny": 29638757.127374884,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 21549.239576728636,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": 4025984.9693337055
+        },
+        {
+          "window_start_index": 1317,
+          "rl_throughput_teu": 264229.84758883575,
+          "baseline_throughput_teu": 230628.35005651042,
+          "unit_cost_reduction_percent": 12.510638808829299,
+          "equivalent_throughput_annual_cost_avoidance_cny": 26018239.934548303,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 20020.23466011445,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -428685.29621502326
+        },
+        {
+          "window_start_index": 1505,
+          "rl_throughput_teu": 242540.15123592602,
+          "baseline_throughput_teu": 209155.82847027472,
+          "unit_cost_reduction_percent": 10.40240355104849,
+          "equivalent_throughput_annual_cost_avoidance_cny": 20931590.07511669,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 15862.884573832198,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -6765073.1091244565
+        },
+        {
+          "window_start_index": 1693,
+          "rl_throughput_teu": 243573.57285476473,
+          "baseline_throughput_teu": 214155.23242711442,
+          "unit_cost_reduction_percent": 8.360168465346241,
+          "equivalent_throughput_annual_cost_avoidance_cny": 16551804.61303217,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 13413.897445334338,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -7360328.779973986
+        },
+        {
+          "window_start_index": 1881,
+          "rl_throughput_teu": 265200.57784222934,
+          "baseline_throughput_teu": 228702.6789774979,
+          "unit_cost_reduction_percent": 10.48704529451866,
+          "equivalent_throughput_annual_cost_avoidance_cny": 21228680.489268504,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 15849.644975002753,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -6630173.951318026
+        },
+        {
+          "window_start_index": 2069,
+          "rl_throughput_teu": 251551.35992666124,
+          "baseline_throughput_teu": 214825.7100247125,
+          "unit_cost_reduction_percent": 10.513177425723718,
+          "equivalent_throughput_annual_cost_avoidance_cny": 21223603.60707395,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 15817.877315688826,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -8249641.25558958
+        },
+        {
+          "window_start_index": 2257,
+          "rl_throughput_teu": 237745.78289091447,
+          "baseline_throughput_teu": 208734.90485601022,
+          "unit_cost_reduction_percent": 11.637213709088112,
+          "equivalent_throughput_annual_cost_avoidance_cny": 23585983.0279801,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 17711.306325734015,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -1145663.0451621476
+        },
+        {
+          "window_start_index": 2446,
+          "rl_throughput_teu": 289674.65719347826,
+          "baseline_throughput_teu": 249996.35049676496,
+          "unit_cost_reduction_percent": 13.139060949344561,
+          "equivalent_throughput_annual_cost_avoidance_cny": 27938105.232716143,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 21037.511654691472,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -1187519.5244339192
+        },
+        {
+          "window_start_index": 2634,
+          "rl_throughput_teu": 243804.25951481683,
+          "baseline_throughput_teu": 213415.92457360736,
+          "unit_cost_reduction_percent": 12.115800598497895,
+          "equivalent_throughput_annual_cost_avoidance_cny": 24788043.46883009,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 19679.84412921548,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -712870.5876033835
+        },
+        {
+          "window_start_index": 2822,
+          "rl_throughput_teu": 224064.34517537258,
+          "baseline_throughput_teu": 199636.05812567682,
+          "unit_cost_reduction_percent": 8.89542621553806,
+          "equivalent_throughput_annual_cost_avoidance_cny": 17768793.79496028,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 15403.829578161023,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -4008877.908689258
+        },
+        {
+          "window_start_index": 3010,
+          "rl_throughput_teu": 239549.457546925,
+          "baseline_throughput_teu": 209695.5770346008,
+          "unit_cost_reduction_percent": 10.98201569659285,
+          "equivalent_throughput_annual_cost_avoidance_cny": 22063202.0818774,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 17305.243982220152,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -2974362.424232347
+        },
+        {
+          "window_start_index": 3198,
+          "rl_throughput_teu": 242597.9487742583,
+          "baseline_throughput_teu": 211517.03344311973,
+          "unit_cost_reduction_percent": 11.43505570125618,
+          "equivalent_throughput_annual_cost_avoidance_cny": 23117479.033846557,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 17453.687514480025,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -2783063.649540856
+        },
+        {
+          "window_start_index": 3386,
+          "rl_throughput_teu": 251686.2012061906,
+          "baseline_throughput_teu": 218089.0348707666,
+          "unit_cost_reduction_percent": 10.823222435957735,
+          "equivalent_throughput_annual_cost_avoidance_cny": 21918893.45657308,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 15686.816549565789,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -5114793.799244524
+        },
+        {
+          "window_start_index": 3575,
+          "rl_throughput_teu": 268929.69513397355,
+          "baseline_throughput_teu": 229274.6734976576,
+          "unit_cost_reduction_percent": 11.239218327693068,
+          "equivalent_throughput_annual_cost_avoidance_cny": 23077943.591483235,
+          "equivalent_throughput_annual_carbon_avoidance_tonnes": 16019.211011785754,
+          "absolute_annual_cost_difference_baseline_minus_rl_cny": -7199585.593852596
+        }
+      ],
+      "summary": {
+        "rl_throughput_teu": {
+          "n": 20,
+          "mean": 252606.6885115054,
+          "std": 17291.779378820534,
+          "median": 251618.78056642594,
+          "ci_low": 245219.57959061497,
+          "ci_high": 260118.00489439006,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "baseline_throughput_teu": {
+          "n": 20,
+          "mean": 219715.22589006275,
+          "std": 13972.31923811497,
+          "median": 217358.52465882897,
+          "ci_low": 213870.5817670496,
+          "ci_high": 225957.05163876043,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "unit_cost_reduction_percent": {
+          "n": 20,
+          "mean": 11.307836594067508,
+          "std": 1.482444019228956,
+          "median": 11.256508816705413,
+          "ci_low": 10.692697753741196,
+          "ci_high": 11.926760227458164,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "equivalent_throughput_annual_cost_avoidance_cny": {
+          "n": 20,
+          "mean": 23111044.560586076,
+          "std": 3380373.210716453,
+          "median": 22937349.181493696,
+          "ci_low": 21709000.411523305,
+          "ci_high": 24507531.15769866,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "equivalent_throughput_annual_carbon_avoidance_tonnes": {
+          "n": 20,
+          "mean": 17775.811915365695,
+          "std": 2422.5153894470704,
+          "median": 17429.047687932798,
+          "ci_low": 16783.207539042312,
+          "ci_high": 18770.702253897598,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        },
+        "absolute_annual_cost_difference_baseline_minus_rl_cny": {
+          "n": 20,
+          "mean": -3395579.105554954,
+          "std": 3136849.3640140803,
+          "median": -3251096.837893703,
+          "ci_low": -4700905.8940485325,
+          "ci_high": -2033714.5084134385,
+          "confidence": 0.95,
+          "method": "percentile_bootstrap_of_mean",
+          "resamples": 2000
+        }
+      }
+    }
+  },
+  "claim_boundary": [
+    "Throughput, tariff, load, carbon and resource assumptions retain the V6 public/engineering source boundaries.",
+    "Assumes window-average conditions persist through a 8760-hour year; excludes seasonal, downtime and implementation-cost uncertainty.",
+    "Cost avoidance is a unit-intensity counterfactual; it is not an observed bill reduction, revenue, net profit or field ROI.",
+    "Actual paired total energy cost increases because the RL policy processes more work; signed absolute differences are reported alongside normalized value.",
+    "Do not sum this value with V3, V4 or V7 estimates or compare version differences as measured incremental annual savings."
+  ],
+  "simulation_mode": true,
+  "live_data_verified": false,
+  "dispatch_allowed": false,
+  "production_authority": false
+}

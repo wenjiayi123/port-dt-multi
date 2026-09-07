@@ -1,0 +1,6 @@
+{
+  "selected_seed": 937,
+  "model_path": "evidence/v7/bess_energy/runs/bess_energy-dqn-v7-20260907T031025Z/seed_937/selected_model.zip",
+  "model_sha256": "3d176435c67e741eff2c4d1cce11bbc32b92c556724776c5218484a8d03b9343",
+  "selection_access_to_test": false
+}

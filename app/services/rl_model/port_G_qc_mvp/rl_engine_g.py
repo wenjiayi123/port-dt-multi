@@ -27,6 +27,15 @@ def set_seed(seed: int = 42):
     random.seed(seed)
     np.random.seed(seed)
 
+
+def gaussian_policy_kl(old_mean, old_log_std, new_mean, new_log_std):
+    """Mean KL(old || new) of the unclipped diagonal Gaussian actors."""
+    old_var = np.exp(2.0 * np.asarray(old_log_std, dtype=np.float64))
+    new_var = np.exp(2.0 * np.asarray(new_log_std, dtype=np.float64))
+    delta = np.asarray(old_mean, dtype=np.float64) - np.asarray(new_mean, dtype=np.float64)
+    terms = np.asarray(new_log_std) - np.asarray(old_log_std) + (old_var + delta ** 2) / (2.0 * new_var) - 0.5
+    return float(max(0.0, np.mean(np.sum(terms, axis=-1))))
+
 def _append_jsonl(path: str, d: Dict[str, Any]):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "a", encoding="utf-8") as fh:
@@ -256,6 +265,8 @@ def train_offline(algo:str="iql", steps:int=30000, batch:int=256, tau:float=0.7,
     for it in range(1, steps+1):
         idx = np.random.randint(0, n, size=min(batch, n))
         x, a, r, x2, d = X[idx], A[idx], R[idx], X2[idx], D[idx]
+        old_mean = x @ pi.W.T + pi.b
+        old_log_std = pi.log_std.copy()
 
         # 期望分位更新 V
         if algo.lower()=="iql":
@@ -273,13 +284,14 @@ def train_offline(algo:str="iql", steps:int=30000, batch:int=256, tau:float=0.7,
             pi.update_awac(x, adv, a, beta=beta, kl_reg=1e-3)
 
         if it % log_every == 0:
-            # 估计 KL（相对上一步的参数变化，近似）
-            kl_est = float(np.linalg.norm(pi.W) * 0.0 + np.mean(np.exp(pi.log_std)))
+            kl_est = gaussian_policy_kl(old_mean, old_log_std, x @ pi.W.T + pi.b, pi.log_std)
             _append_jsonl(JSONL_PATH, {
                 "key":"policy_update","stage":"offline_"+algo,"step":it,
                 "roll_metrics":{"dataset":n},
                 "lambdas":{"mask_rate":0.0,"sla_pen":0.0,"thermal":0.0},
-                "kl_last": kl_est
+                "kl_last": kl_est,
+                "kl_definition": "mean_KL_old_to_new_unclipped_diagonal_gaussian_on_training_batch",
+                "metric_provenance": "unmodified_optimizer_statistics"
             })
 
     # 保存权重与 meta

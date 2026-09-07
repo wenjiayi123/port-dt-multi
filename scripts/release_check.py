@@ -694,6 +694,11 @@ def main() -> int:
     verify_regulatory_resilience_evidence(errors)
     verify_integrated_business_evidence(errors)
     verify_coordinated_business_evidence(errors)
+    try:
+        from scripts.verify_business_rl_artifacts_v7 import verify
+        verify(ROOT)
+    except Exception as exc:
+        errors.append(f"V7 RL artifact verification failed: {exc}")
     mission_api = (ROOT / "app/services/copilot/api.py").read_text(encoding="utf-8")
     mission_ui = (ROOT / "app/ui/ops_copilot.html").read_text(encoding="utf-8")
     for marker in (

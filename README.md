@@ -29,6 +29,10 @@
 
 ## 项目介绍 / Project introduction
 
+2026-09-07 强化学习专项复核：新增照明、空调、场桥的三种子真实 SAC 训练与模型接口；联合业务保留 V6 SAC，岸电和储能的综合候选仍未通过门禁。旧训练展示噪声及奖励偏置已经修复。完整结果、失败实验与切换方式见 [V7 强化学习收敛与业务价值复核](docs/RL_CONVERGENCE_AUDIT_V7.md)。
+
+当前 V6 相对固定规则代理的单箱用能成本改善为 11.31%；在等吞吐、固定工程参数和全年 8,760 小时线性外推的假设下，情景年化成本避免额约 2,311.10 万元。该数值不是实际电费下降或净利润，不能与历史版本及专项收益相加；完整公式、20 个窗口和总费用差额见 [年化测算原始记录](evidence/v6/coordinated_business/value_estimates/v6-annual-value-20260907T034459690976Z/annualized_value.json)。
+
 港航数字孪生 AI 决策调度双端系统是一套面向港口生产、能源、设备与安全协同的可运行工程平台。Web 端用于集团/码头指挥、数字孪生、策略试验与模型治理；Flutter 移动端面向一线巡检、告警处置、任务确认与交接班。两端共享同一后端合同、模型产物和审计链，避免“大屏是一套数、现场又是另一套结论”。
 
 It is an executable engineering platform for coordinated port production, energy, equipment, and safety operations. The Web command center covers twin visualization, policy experiments, dispatch review, and model governance; the Flutter client supports frontline inspection, alert handling, task confirmation, and shift handover. Both clients consume the same backend contracts, model artifacts, and audit trail.

@@ -1,0 +1,6 @@
+{
+  "selected_seed": 1027,
+  "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T030216Z/seed_1027/selected_model.zip",
+  "model_sha256": "b44d51b90960c569770f59e3a333a43eb78c683a253595a9e612aaf26c988d03",
+  "selection_access_to_test": false
+}

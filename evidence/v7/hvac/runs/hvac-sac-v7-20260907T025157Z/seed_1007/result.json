@@ -1,0 +1,144 @@
+{
+  "seed": 1007,
+  "steps": 30000,
+  "optimizer_updates": 7250,
+  "selected": {
+    "step": 25000,
+    "updates": 6000,
+    "model_path": "evidence/v7/hvac/runs/hvac-sac-v7-20260907T025157Z/seed_1007/step_25000.zip",
+    "model_sha256": "227f7b3e2f31039146f2c1ac3ed68368ed905079b101a9f0951f8017118112b6",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 1,
+        "mean": 2.7284896774899354,
+        "std": 0.0,
+        "median": 2.7284896774899354,
+        "ci_low": 2.7284896774899354,
+        "ci_high": 2.7284896774899354,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "carbon_kg": {
+        "n": 1,
+        "mean": 2.885861684218259,
+        "std": 0.0,
+        "median": 2.885861684218259,
+        "ci_low": 2.885861684218259,
+        "ci_high": 2.885861684218259,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "peak_kw": {
+        "n": 1,
+        "mean": 2.001434123156478,
+        "std": 0.0,
+        "median": 2.001434123156478,
+        "ci_low": 2.001434123156478,
+        "ci_high": 2.001434123156478,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      },
+      "energy_kwh": {
+        "n": 1,
+        "mean": 2.8888107557927247,
+        "std": 0.0,
+        "median": 2.8888107557927247,
+        "ci_low": 2.8888107557927247,
+        "ci_high": 2.8888107557927247,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 0
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "energy_kwh_business_gate": true,
+      "carbon_non_regression": true,
+      "guardrail_violation_rate": true,
+      "cooling_satisfaction_rate": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "reward": -383.5600848723511,
+      "baseline_energy_kwh": 44787.32999999995,
+      "energy_kwh": 43493.14566537212,
+      "baseline_energy_cost_cny": 37458.95518889999,
+      "energy_cost_cny": 36395.19620896791,
+      "baseline_carbon_kg": 23296.22822790004,
+      "carbon_kg": 22623.739459540397,
+      "baseline_peak_kw": 713.448,
+      "peak_kw": 699.1688082770225,
+      "baseline_total_cost_cny": 43166.539188899995,
+      "total_cost_cny": 41988.54667518409,
+      "cooling_satisfaction_rate": 1.0,
+      "projection_rate": 1.1223958333333333,
+      "guardrail_violation_rate": 0.0
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 6000.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": -9.25026798248291,
+      "train/critic_loss": 0.6119569540023804
+    }
+  },
+  "model_path": "evidence/v7/hvac/runs/hvac-sac-v7-20260907T025157Z/seed_1007/selected_model.zip",
+  "model_sha256": "227f7b3e2f31039146f2c1ac3ed68368ed905079b101a9f0951f8017118112b6",
+  "convergence": {
+    "passed": true,
+    "tail_cost_gain_range_pp": 0.07486561883979936,
+    "tolerance_pp": 0.26951622681524084,
+    "tail_checkpoints": 3
+  },
+  "initial_comparison": {
+    "total_cost_cny": {
+      "n": 1,
+      "mean": -0.05929129875984448,
+      "std": 0.0,
+      "median": -0.05929129875984448,
+      "ci_low": -0.05929129875984448,
+      "ci_high": -0.05929129875984448,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 0
+    },
+    "carbon_kg": {
+      "n": 1,
+      "mean": -0.047411528697584956,
+      "std": 0.0,
+      "median": -0.047411528697584956,
+      "ci_low": -0.047411528697584956,
+      "ci_high": -0.047411528697584956,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 0
+    },
+    "peak_kw": {
+      "n": 1,
+      "mean": -0.05747018302751157,
+      "std": 0.0,
+      "median": -0.05747018302751157,
+      "ci_low": -0.05747018302751157,
+      "ci_high": -0.05747018302751157,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 0
+    },
+    "energy_kwh": {
+      "n": 1,
+      "mean": -0.04826280794040608,
+      "std": 0.0,
+      "median": -0.04826280794040608,
+      "ci_low": -0.04826280794040608,
+      "ci_high": -0.04826280794040608,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 0
+    }
+  },
+  "render_calls": 0
+}

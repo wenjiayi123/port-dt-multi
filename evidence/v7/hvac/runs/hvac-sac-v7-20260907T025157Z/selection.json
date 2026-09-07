@@ -1,0 +1,6 @@
+{
+  "selected_seed": 1007,
+  "model_path": "evidence/v7/hvac/runs/hvac-sac-v7-20260907T025157Z/seed_1007/selected_model.zip",
+  "model_sha256": "227f7b3e2f31039146f2c1ac3ed68368ed905079b101a9f0951f8017118112b6",
+  "selection_access_to_test": false
+}

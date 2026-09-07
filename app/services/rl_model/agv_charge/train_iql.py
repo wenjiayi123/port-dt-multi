@@ -107,17 +107,8 @@ def append_history_row(row: dict, fname: str = "policy_evaluate_history.jsonl"):
 
 
 def reset_history_files(fname: str = "policy_evaluate_history.jsonl"):
-    """每次训练启动前清空历史 JSONL，避免新旧训练记录混在一起。"""
-    for _dir in (ART_DIR, MIRROR_DIR):
-        p = _dir / fname
-        try:
-            if p.exists():
-                p.unlink()
-                print(f"[RESET] removed old history -> {p}")
-            else:
-                print(f"[RESET] no old history -> {p}")
-        except Exception as e:
-            print(f"[WARN] failed to reset history {p}: {e}")
+    """Start an append-only training section without erasing earlier evidence."""
+    append_history_row({"kind": "train_start", "metric_provenance": "unmodified_training_batch_statistics"}, fname)
 # === [/ARTIFACT PATHS] ===
 
 # === [END ADDED] ===
@@ -130,161 +121,14 @@ DT_MIN = 5  # 步长 5 分钟
 # === [ADDED] cost accumulators for savings / diagnostics ===
 CUM_RL_COST = 0.0
 CUM_BASE_COST = 0.0
-WEIGHTED_CUM_REWARD = 0.0
-WEIGHTED_CUM_PEAK_REDUCTION_KW = 0.0
-WEIGHTED_CUM_SAVINGS_YUAN = 0.0
-WEIGHT_DECAY_END_STEP = 2000
-REWARD_GLOBAL_SHIFT = 3.0
+REWARD_GLOBAL_SHIFT = 0.0  # Absolute reward offset must not determine positive-sample labels.
 BEST_Q_LOSS = None
 BEST_V_LOSS = None
 BEST_PI_LOSS = None
-_RANDOM_DECAY_CACHE: dict[int, np.ndarray] = {}
-_DISPLAY_NOISE_SEED = 20260406
 
 # -------------------------
 # 工具
 # -------------------------
-def _linear_decay_weight(step: int, end_step: int | None = None) -> float:
-    """
-    线性递减权重：
-    - step=1 时权重=1
-    - step=end_step 时权重=0
-    - step>end_step 时权重保持 0
-    """
-    step = int(step)
-    if end_step is None:
-        end_step = WEIGHT_DECAY_END_STEP
-    end_step = max(2, int(end_step))
-    if step >= end_step:
-        return 0.0
-    return max(0.0, 1.0 - float(step - 1) / float(end_step - 1))
-
-def _random_decay_schedule(end_step: int | None = None) -> np.ndarray:
-    """生成一个整体递减、但局部不平滑的随机权重序列；end_step 后固定为 0。"""
-    if end_step is None:
-        end_step = WEIGHT_DECAY_END_STEP
-    end_step = max(2, int(end_step))
-    cache_key = int(end_step)
-    if cache_key in _RANDOM_DECAY_CACHE:
-        return _RANDOM_DECAY_CACHE[cache_key]
-
-    rng = np.random.default_rng(20260406 + cache_key)
-    schedule = np.zeros(end_step + 1, dtype=np.float64)
-    current = 1.0
-    schedule[1] = current
-    # 每一步都有随机下降，前期可能掉得快一点，后期保留一些平台和突降感，让曲线别太平滑。
-    for s in range(2, end_step):
-        progress = float(s - 1) / float(end_step - 1)
-        mean_drop = 1.0 / float(end_step - 1)
-        jitter = rng.uniform(0.25, 1.85)
-        plateau_gate = rng.uniform()
-        if plateau_gate < (0.10 + 0.18 * progress):
-            drop = mean_drop * rng.uniform(0.02, 0.25)
-        else:
-            drop = mean_drop * jitter
-        current = max(0.0, current - drop)
-        schedule[s] = current
-
-    schedule[end_step] = 0.0
-    for s in range(end_step + 1, len(schedule)):
-        schedule[s] = 0.0
-    # 保证整体单调不增，并且起点为 1、终点为 0
-    schedule[1:end_step] = np.minimum.accumulate(schedule[1:end_step])
-    schedule[1] = 1.0
-    schedule[end_step] = 0.0
-    _RANDOM_DECAY_CACHE[cache_key] = schedule
-    return schedule
-
-def _step_decay_weight(step: int, end_step: int | None = None) -> float:
-    """随机扰动下的递减权重：整体递减，但不是平滑直线。"""
-    step = int(step)
-    if end_step is None:
-        end_step = WEIGHT_DECAY_END_STEP
-    end_step = max(2, int(end_step))
-    if step <= 0:
-        return 1.0
-    if step >= end_step:
-        return 0.0
-    schedule = _random_decay_schedule(end_step)
-    return float(schedule[step])
-
-def _stochastic_decay_scale(step: int, end_step: int | None = None, salt: int = 0) -> float:
-    """
-    稀疏型随机递减尺度：
-    - 前 500 步更容易出现“大扰动脉冲”，但不是每一步都有
-    - 500~1300 步逐步减小
-    - 1300~2000 步保持 1300 步附近的扰动级别，不再继续减小
-    - 到 end_step 后为 0
-    """
-    if end_step is None:
-        end_step = WEIGHT_DECAY_END_STEP
-    step = int(step)
-    base = _step_decay_weight(step, end_step)
-    if base <= 0.0:
-        return 0.0
-
-    rng = np.random.default_rng(_DISPLAY_NOISE_SEED + int(step) * 7919 + int(salt) * 101)
-    progress = min(max(float(step) / float(max(1, end_step)), 0.0), 1.0)
-
-    # 前 500 步之前给更高包络，之后开始明显衰减
-    burst_phase_end = min(max(50, int(end_step * 0.25)), 500)
-    plateau_start_step = min(max(burst_phase_end + 1, 1300), end_step)
-    if step <= burst_phase_end:
-        envelope = 1.0 - 0.08 * (float(step - 1) / float(max(1, burst_phase_end - 1)))
-        gate_open = 0.34
-        multiplier_loc = 1.55
-        multiplier_std = 0.30
-        multiplier_hi = 2.10
-    else:
-        effective_step = min(step, plateau_start_step)
-        tail_progress = float(effective_step - burst_phase_end) / float(max(1, plateau_start_step - burst_phase_end))
-        # 中段（大约 600~1300 步附近）稍微把扰动抬一点；到 1300 步后保持这一档，不再继续减小。
-        mid_boost = 1.0 + 0.16 * math.exp(-((tail_progress - 0.52) / 0.24) ** 2)
-        envelope = max(0.0, 0.94 * (1.0 - 0.45 * tail_progress) ** 1.10) * mid_boost
-        gate_open = max(0.10, 0.24 * (1.0 - 0.35 * tail_progress)) * (1.0 + 0.12 * math.exp(-((tail_progress - 0.52) / 0.24) ** 2))
-        multiplier_loc = max(0.56, 1.08 - 0.34 * tail_progress) * (1.0 + 0.10 * math.exp(-((tail_progress - 0.52) / 0.24) ** 2))
-        multiplier_std = max(0.12, 0.24 * (1.0 - 0.30 * tail_progress))
-        multiplier_hi = max(0.90, 1.42 - 0.18 * tail_progress) * (1.0 + 0.10 * math.exp(-((tail_progress - 0.52) / 0.24) ** 2))
-
-    # 稀疏：不是每步都开扰动；没开时只给很小余波
-    if rng.random() < gate_open:
-        pulse = float(rng.normal(loc=multiplier_loc, scale=multiplier_std))
-        pulse = float(np.clip(pulse, 0.0, multiplier_hi))
-    else:
-        pulse = float(rng.normal(loc=0.10 + 0.12 * (1.0 - progress), scale=0.06))
-        pulse = float(np.clip(pulse, 0.0, 0.28))
-
-    return float(np.clip(base * envelope * pulse, 0.0, 2.10))
-
-def _centered_gaussian_noise(step: int, center_amplitude: float, end_step: int | None = None, salt: int = 0) -> float:
-    """
-    以给定幅度为中心的稀疏正态型扰动：
-    - 前期扰动更大、更稀疏
-    - 500 步后逐渐减小
-    - 特别大/特别小的扰动偏少
-    - end_step 后为 0
-    返回带符号扰动。
-    """
-    if end_step is None:
-        end_step = WEIGHT_DECAY_END_STEP
-    center_amplitude = float(max(0.0, center_amplitude))
-    scale = _stochastic_decay_scale(step, end_step, salt=salt)
-    if center_amplitude <= 0.0 or scale <= 0.0:
-        return 0.0
-    rng = np.random.default_rng(_DISPLAY_NOISE_SEED + int(step) * 9973 + int(salt) * 131)
-    center = center_amplitude * scale
-    std = max(center * 0.22, center_amplitude * 0.03)
-    magnitude = float(rng.normal(loc=center, scale=std))
-    magnitude = float(np.clip(magnitude, 0.0, 2.0 * center_amplitude * scale))
-    sign = -1.0 if rng.random() < 0.5 else 1.0
-    return float(sign * magnitude)
-
-
-def _decaying_display_noise(step: int, initial_amplitude: float, end_step: int | None = None, salt: int = 0) -> float:
-    """展示曲线用随机扰动：前期可达约 2 倍设定幅度，极端值较少，并整体随机递减。"""
-    if end_step is None:
-        end_step = WEIGHT_DECAY_END_STEP
-    return _centered_gaussian_noise(step, initial_amplitude, end_step, salt=salt)
 
 def parse_ts(s: str) -> datetime:
     s = s.strip().replace("/", "-")
@@ -711,9 +555,11 @@ def build_dataset(base_dir: Path, hours: int = 72, time_col: str="timestamp"
     Dn = done_sorted[inv_idx]
 
     # 归一化统计
-    mean = S.mean(axis=0)
-    std = S.std(axis=0)
-    std[std == 0.0] = 1.0
+    # Float32 accumulation made constant calendar/target features appear to
+    # have tiny variance and amplified a later weekday by thousands of sigma.
+    mean = S.astype(np.float64).mean(axis=0)
+    std = S.astype(np.float64).std(axis=0)
+    std[std < 1e-3] = 1.0
 
     meta = {
         "feature_names": [
@@ -723,6 +569,7 @@ def build_dataset(base_dir: Path, hours: int = 72, time_col: str="timestamp"
             "available","priority","eta_min","temp","c_rate_cap"
         ],
         "standardize": {"mean": mean.tolist(), "std": std.tolist()},
+        "transition_timestamps": [value.isoformat() for value in T_list],
         "reward_cfg": reward_cfg,
         "pcc_limit_kw": pcc_limit
     }
@@ -780,8 +627,8 @@ def train_iql_np(S: np.ndarray, A: np.ndarray, R: np.ndarray, S2: np.ndarray, Dn
                  tau=0.005, expectile=0.7, temperature=3.0, lr=3e-4,
                  seed=42, log_every=1, pause_every: int = 0, pause_secs: int = 60,
                  adv_weight_cap: float = 20.0,
-                 positive_align_coef: float = 2.5,
-                 positive_push_coef: float = 1.2,
+                 positive_align_coef: float = 0.0,
+                 positive_push_coef: float = 0.0,
                  critical_soc_quantile: float = 0.18,
                  critical_gap_quantile: float = 0.80,
                  critical_action_quantile: float = 0.70,
@@ -789,7 +636,8 @@ def train_iql_np(S: np.ndarray, A: np.ndarray, R: np.ndarray, S2: np.ndarray, Dn
                  critical_target_ratio_min: float = 0.12,
                  critical_target_ratio_max: float = 0.35,
                  strong_critical_coef: float = 3.0,
-                 medium_critical_coef: float = 1.5):
+                 medium_critical_coef: float = 1.5,
+                 evaluation_callback=None):
     device = torch.device("cpu")
     np.random.seed(seed); torch.manual_seed(seed)
     st = time.time()
@@ -967,6 +815,8 @@ def train_iql_np(S: np.ndarray, A: np.ndarray, R: np.ndarray, S2: np.ndarray, Dn
         pi_opt.zero_grad(); pi_loss.backward(); pi_opt.step()
 
         agent._update_target(tau)
+        if evaluation_callback is not None and (it % 1000 == 0 or it == steps):
+            evaluation_callback(agent, it)
 
         if it % log_every == 0 or it == 1:
             elapsed = time.time() - st
@@ -1042,13 +892,9 @@ def train_iql_np(S: np.ndarray, A: np.ndarray, R: np.ndarray, S2: np.ndarray, Dn
                 reward_mean_raw = float(r_b.mean().item())
                 p_on = float(np.clip(a_rl.mean(), 1e-9, 1.0 - 1e-9))
                 entropy_standard = float(-(p_on * np.log(p_on) + (1.0 - p_on) * np.log(1.0 - p_on)))
-                # Reverse the full sequence rather than only negating values.
-                # 所以这里改成：在标准熵前整体做负向平移，让曲线保持原来的时间趋势，
-                # 但整体落在 0 以下，视觉上就是原曲线翻到负值区间。
-                entropy_display_shift = 1.0
-                entropy_raw = float(entropy_standard - entropy_display_shift)
-                entropy_noise = _decaying_display_noise(steps_val, 0.06, WEIGHT_DECAY_END_STEP, salt=4)
-                entropy = float(entropy_raw - entropy_noise)
+                # Direct batch diagnostic; no sign shift or presentation noise.
+                entropy_raw = entropy_standard
+                entropy = entropy_standard
                 q_loss_val = float(q_loss.detach().item())
                 v_loss_val = float(v_loss.detach().item())
                 pi_loss_val = float(pi_loss.detach().item())
@@ -1057,18 +903,10 @@ def train_iql_np(S: np.ndarray, A: np.ndarray, R: np.ndarray, S2: np.ndarray, Dn
                 weight_mean = float(weights.detach().mean().item())
                 weight_max = float(weights.detach().max().item())
 
-                # 三个展示字段：递减权重累计 + 递减随机扰动；1500 步后冻结不再变化
-                decay_weight = _step_decay_weight(steps_val, WEIGHT_DECAY_END_STEP)
-                global WEIGHTED_CUM_REWARD, WEIGHTED_CUM_PEAK_REDUCTION_KW, WEIGHTED_CUM_SAVINGS_YUAN
-                WEIGHTED_CUM_REWARD += decay_weight * reward_mean_raw
-                WEIGHTED_CUM_PEAK_REDUCTION_KW += decay_weight * peak_reduction_kW
-                WEIGHTED_CUM_SAVINGS_YUAN += decay_weight * savings
-                reward_noise = _decaying_display_noise(steps_val, 700.0, WEIGHT_DECAY_END_STEP, salt=1)
-                peak_noise = _decaying_display_noise(steps_val, 2000.0, WEIGHT_DECAY_END_STEP, salt=2)
-                savings_noise = _decaying_display_noise(steps_val, 200000.0, WEIGHT_DECAY_END_STEP, salt=3)
-                reward_display = float(WEIGHTED_CUM_REWARD + reward_noise)
-                peak_display = float(WEIGHTED_CUM_PEAK_REDUCTION_KW + peak_noise)
-                savings_display = float(-(WEIGHTED_CUM_SAVINGS_YUAN + savings_noise))
+                reward_display = reward_mean_raw
+                # Signed batch power difference; this is not a metered PCC peak.
+                peak_display = float((power_base - power_rl).mean())
+                savings_display = float(savings)
 
                 # 更细 reward 诊断：当前 batch 是否抽到了正奖励样本，以及策略在这些状态上的 proxy reward 是否变好
                 beh = reward_breakdown_np(meta["reward_cfg"], price_np, ef_np, float(meta.get("pcc_limit_kw", 0.0)), grid_room,
@@ -1156,14 +994,10 @@ def train_iql_np(S: np.ndarray, A: np.ndarray, R: np.ndarray, S2: np.ndarray, Dn
                     "reward_raw": reward_mean_raw,
                     "peak_reduction_kW_raw": peak_reduction_kW,
                     "savings_yuan_raw": savings,
-                    "decay_weight": decay_weight,
-                    "decay_end_step": int(WEIGHT_DECAY_END_STEP),
-                    "reward_noise": reward_noise,
-                    "peak_reduction_kW_noise": peak_noise,
-                    "savings_yuan_noise": savings_noise,
+                    "metric_provenance": "unmodified_training_batch_statistics",
+                    "business_claim_eligible": False,
                     "entropy": entropy,
                     "entropy_raw": entropy_raw,
-                    "entropy_noise": entropy_noise,
                     "q_loss": q_loss_val,
                     "v_loss": v_loss_val,
                     "pi_loss": pi_loss_val,
@@ -1307,16 +1141,16 @@ def train_iql_np(S: np.ndarray, A: np.ndarray, R: np.ndarray, S2: np.ndarray, Dn
             "strong_critical_coef": float(strong_critical_coef),
             "medium_critical_coef": float(medium_critical_coef),
             "reward_global_shift": float(REWARD_GLOBAL_SHIFT),
-            "reward_curve_decay_end_step": int(WEIGHT_DECAY_END_STEP),
             "monitoring_notes": {
                 "reward": "batch mean offline shaped reward, not rollout return",
                 "peak_reduction_kW": "batch proxy = mean(max(power_baseline - power_rl, 0))",
                 "reward_design": "task-oriented stable reward: cost penalties + SOC progress + urgent/low-SOC charge bonuses + low-price/low-carbon bonuses",
                 "reward_global_shift": float(REWARD_GLOBAL_SHIFT),
-                "entropy_display_rule": "display entropy = standard entropy - 1.0 - sparse decaying noise",
-                "reward_display_rule": "display reward = weighted cumulative reward + sparse random noise; noise decays until step 1300, then stays roughly flat through step 2000",
-                "peak_display_rule": "display peak_reduction_kW = weighted cumulative peak reduction + sparse random noise; noise decays until step 1300, then stays roughly flat through step 2000",
-                "savings_display_rule": "display savings_yuan = -(weighted cumulative savings + sparse random noise); noise decays until step 1300, then stays roughly flat through step 2000"
+                "entropy_display_rule": "binary entropy of mean charge ratio; diagnostic only",
+                "reward_display_rule": "unmodified batch reward mean; not a policy evaluation return",
+                "peak_display_rule": "signed mean power difference in sampled rows; not PCC peak reduction",
+                "savings_display_rule": "signed sampled-row cost difference; not accumulated operational savings"
+
             }
         },
         "reward_cfg": meta["reward_cfg"],

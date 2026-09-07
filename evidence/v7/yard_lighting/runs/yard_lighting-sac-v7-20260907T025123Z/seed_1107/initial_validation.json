@@ -1,0 +1,68 @@
+{
+  "mean": {
+    "reward": -95.18392211360867,
+    "baseline_energy_kwh": 2329.137499999999,
+    "energy_kwh": 2280.5008965661823,
+    "baseline_energy_cost_cny": 1549.9896736111114,
+    "energy_cost_cny": 1519.0348223620624,
+    "baseline_carbon_kg": 1339.4877501270835,
+    "carbon_kg": 1311.4350649433488,
+    "baseline_peak_kw": 296.85,
+    "peak_kw": 292.2217945054904,
+    "baseline_total_cost_cny": 2737.3896736111114,
+    "total_cost_cny": 2687.9220003840237,
+    "minimum_lux_compliance_rate": 1.0,
+    "critical_lux_compliance_rate": 1.0,
+    "complaint_lux_compliance_rate": 1.0,
+    "under_lux_zone_count": 0.0,
+    "projection_rate": 1.0104166666666667,
+    "guardrail_violation_rate": 0.0,
+    "zone_projection_count": 6422.5
+  },
+  "rows": [
+    {
+      "reward": -95.08128400017466,
+      "baseline_energy_kwh": 2329.0416666666656,
+      "energy_kwh": 2278.004972908777,
+      "baseline_energy_cost_cny": 1778.850159722223,
+      "energy_cost_cny": 1742.2708662013322,
+      "baseline_carbon_kg": 1331.740070172222,
+      "carbon_kg": 1302.4501171935817,
+      "baseline_peak_kw": 297.0,
+      "peak_kw": 292.54504323854695,
+      "baseline_total_cost_cny": 2966.850159722223,
+      "total_cost_cny": 2912.45103915552,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 1.0104166666666667,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 6596.0
+    },
+    {
+      "reward": -95.28656022704268,
+      "baseline_energy_kwh": 2329.2333333333327,
+      "energy_kwh": 2282.9968202235877,
+      "baseline_energy_cost_cny": 1321.1291874999997,
+      "energy_cost_cny": 1295.7987785227926,
+      "baseline_carbon_kg": 1347.235430081945,
+      "carbon_kg": 1320.420012693116,
+      "baseline_peak_kw": 296.7,
+      "peak_kw": 291.89854577243386,
+      "baseline_total_cost_cny": 2507.9291875,
+      "total_cost_cny": 2463.392961612528,
+      "minimum_lux_compliance_rate": 1.0,
+      "critical_lux_compliance_rate": 1.0,
+      "complaint_lux_compliance_rate": 1.0,
+      "under_lux_zone_count": 0.0,
+      "projection_rate": 1.0104166666666667,
+      "guardrail_violation_rate": 0.0,
+      "zone_projection_count": 6249.0
+    }
+  ],
+  "starts": [
+    0,
+    96
+  ]
+}

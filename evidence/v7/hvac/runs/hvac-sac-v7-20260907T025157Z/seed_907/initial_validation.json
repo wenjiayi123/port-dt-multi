@@ -1,0 +1,39 @@
+{
+  "mean": {
+    "reward": -393.18072552932654,
+    "baseline_energy_kwh": 44787.32999999995,
+    "energy_kwh": 44750.14775075829,
+    "baseline_energy_cost_cny": 37458.95518889999,
+    "energy_cost_cny": 37431.29539177599,
+    "baseline_carbon_kg": 23296.22822790004,
+    "carbon_kg": 23277.056929329774,
+    "baseline_peak_kw": 713.448,
+    "peak_kw": 714.6921848799683,
+    "baseline_total_cost_cny": 43166.539188899995,
+    "total_cost_cny": 43148.832870815735,
+    "cooling_satisfaction_rate": 1.0,
+    "projection_rate": 0.13020833333333334,
+    "guardrail_violation_rate": 0.0
+  },
+  "rows": [
+    {
+      "reward": -393.18072552932654,
+      "baseline_energy_kwh": 44787.32999999995,
+      "energy_kwh": 44750.14775075829,
+      "baseline_energy_cost_cny": 37458.95518889999,
+      "energy_cost_cny": 37431.29539177599,
+      "baseline_carbon_kg": 23296.22822790004,
+      "carbon_kg": 23277.056929329774,
+      "baseline_peak_kw": 713.448,
+      "peak_kw": 714.6921848799683,
+      "baseline_total_cost_cny": 43166.539188899995,
+      "total_cost_cny": 43148.832870815735,
+      "cooling_satisfaction_rate": 1.0,
+      "projection_rate": 0.13020833333333334,
+      "guardrail_violation_rate": 0.0
+    }
+  ],
+  "starts": [
+    0
+  ]
+}

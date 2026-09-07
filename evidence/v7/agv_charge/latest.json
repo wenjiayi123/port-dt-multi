@@ -1,0 +1,7 @@
+{
+  "run_id": "agv-iql-v7-20260907T031350Z",
+  "status": "OFFLINE_IQL_TRAINED_NOT_BUSINESS_ADMITTED",
+  "report_path": "evidence/v7/agv_charge/runs/agv-iql-v7-20260907T031350Z/report.json",
+  "report_sha256": "fa0dbb9c4a461daaf81cab6de55977ba98c658279065ac912c206aa961aed152",
+  "production_authority": false
+}

@@ -549,7 +549,7 @@ class TrainingManager:
             "gamma": min(0.9999, max(0.80, float(raw.get("gamma") or 0.99))),
             "tau": min(1.0, max(1e-4, float(raw.get("tau") or 0.005))),
             "replay_buffer": max(1000, min(5_000_000, int(raw.get("replay_buffer") or 100000))),
-            "seed": int(raw.get("seed") or 42),
+            "seed": int(raw["seed"] if raw.get("seed") is not None else 42),
             "demand_cap_kw": max(
                 100.0,
                 float(raw.get("demand_cap_kw") or profile["assets"]["demand_cap_kw"]),
@@ -688,6 +688,7 @@ class TrainingManager:
 
     def _run_training(self, job: TrainingJob) -> None:
         env: Optional[PortOperationsEnv] = None
+        monitored = None
         try:
             with self.policy_load_lock:
                 from sb3_contrib import ARS, QRDQN, RecurrentPPO, TQC, TRPO
@@ -758,7 +759,10 @@ class TrainingManager:
                             metrics=metrics,
                         )
                         self.last_flush = step
-                    return step < config["total_steps"]
+                    # SB3 owns the timestep budget. Returning False here drops
+                    # the last transition (off-policy) or the entire final
+                    # rollout (PPO/A2C), before the optimizer can consume it.
+                    return True
 
             common = {
                 "policy": "MlpPolicy",
@@ -863,6 +867,7 @@ class TrainingManager:
                 "seed": config["seed"],
                 "total_steps_requested": config["total_steps"],
                 "total_steps_observed": int(model.num_timesteps),
+                "optimizer_updates_observed": int(model._n_updates),
                 "training_device": str(model.device),
                 "model_sha256": file_sha256(model_path),
                 "runtime": self.capabilities().get("runtime"),
@@ -895,7 +900,9 @@ class TrainingManager:
             (job.run_dir / "error.log").write_text(traceback.format_exc(), encoding="utf-8")
             job.update(status="FAILED", stage="failed", error="training failed; inspect server-side diagnostics", evaluation_available=False)
         finally:
-            if env is not None:
+            if monitored is not None:
+                monitored.close()
+            elif env is not None:
                 env.close()
 
     def _resolve_status(self, job_id: Optional[str]) -> Dict[str, Any]:

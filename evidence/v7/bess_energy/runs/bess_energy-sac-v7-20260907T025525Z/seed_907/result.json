@@ -1,0 +1,133 @@
+{
+  "seed": 907,
+  "steps": 30000,
+  "optimizer_updates": 7250,
+  "selected": {
+    "step": 10000,
+    "updates": 2250,
+    "model_path": "evidence/v7/bess_energy/runs/bess_energy-sac-v7-20260907T025525Z/seed_907/step_10000.zip",
+    "model_sha256": "fc4890fa360664e564bf14ffdcd1db2786d426d4117a4fa2bc0d07b5a2d0bc1b",
+    "comparison": {
+      "total_cost_cny": {
+        "n": 8,
+        "mean": 0.4003121590905582,
+        "std": 0.03980466703130793,
+        "median": 0.3986340196667743,
+        "ci_low": 0.37421317345055255,
+        "ci_high": 0.4255580984675545,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "carbon_kg": {
+        "n": 8,
+        "mean": -0.1598287010269005,
+        "std": 0.007345838468486862,
+        "median": -0.16076658228914767,
+        "ci_low": -0.16453386043879253,
+        "ci_high": -0.15471267029657837,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      },
+      "peak_kw": {
+        "n": 8,
+        "mean": 0.0,
+        "std": 0.0,
+        "median": 0.0,
+        "ci_low": 0.0,
+        "ci_high": 0.0,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 2000
+      }
+    },
+    "gates": {
+      "total_cost_cny_business_gate": true,
+      "peak_kw_business_gate": true,
+      "carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "positive_cost_value_95ci": true
+    },
+    "metrics": {
+      "bess_throughput_kwh": 72591.99174148633,
+      "carbon_kg": 2221239.1861033095,
+      "degradation_cost_cny": 5807.359339318897,
+      "demand_charge_cny": 226805.8370764887,
+      "dr_revenue_cny": 0.0,
+      "energy_cost_cny": 2784335.470647495,
+      "event_compliance_rate": 1.0,
+      "event_hours": 0.0,
+      "event_shortfall_kwh": 0.0,
+      "guardrail_violation_rate": 0.0,
+      "guardrail_violations": 0.0,
+      "nonzero_dispatch_action_rate": 0.6808035714285714,
+      "nonzero_dispatch_actions": 114.375,
+      "nonzero_reserve_action_rate": 0.0,
+      "nonzero_reserve_actions": 0.0,
+      "peak_kw": 25952.6416015625,
+      "projection_count": 83.375,
+      "projection_rate": 0.49627976190476186,
+      "reserve_commitment_kwh": 0.0,
+      "reserve_revenue_cny": 0.0,
+      "reward": -0.0989322375984376,
+      "soc_max_observed": 0.749579953589189,
+      "soc_min_observed": 0.6576037967113206,
+      "temperature_max_c": 30.825000047683716,
+      "terminal_soc_error": 1.3877787807814457e-17,
+      "total_cost_cny": 3016948.6670633024
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 2250.0,
+      "train/ent_coef": 0.009999999776482582,
+      "train/actor_loss": 0.581226110458374,
+      "train/critic_loss": 0.008298537693917751
+    }
+  },
+  "model_path": "evidence/v7/bess_energy/runs/bess_energy-sac-v7-20260907T025525Z/seed_907/selected_model.zip",
+  "model_sha256": "fc4890fa360664e564bf14ffdcd1db2786d426d4117a4fa2bc0d07b5a2d0bc1b",
+  "convergence": {
+    "passed": false,
+    "tail_cost_gain_range_pp": 0.10278727563402175,
+    "tolerance_pp": 0.1,
+    "tail_checkpoints": 3
+  },
+  "initial_comparison": {
+    "total_cost_cny": {
+      "n": 8,
+      "mean": -0.5435243772876157,
+      "std": 0.03647414222526247,
+      "median": -0.552037508557552,
+      "ci_low": -0.5657134772753306,
+      "ci_high": -0.5195716502512601,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 2000
+    },
+    "carbon_kg": {
+      "n": 8,
+      "mean": 0.02901553598802668,
+      "std": 0.0006690016265534413,
+      "median": 0.028965069360725453,
+      "ci_low": 0.028617166562909604,
+      "ci_high": 0.029464286384566697,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 2000
+    },
+    "peak_kw": {
+      "n": 8,
+      "mean": 0.0,
+      "std": 0.0,
+      "median": 0.0,
+      "ci_low": 0.0,
+      "ci_high": 0.0,
+      "confidence": 0.95,
+      "method": "percentile_bootstrap_of_mean",
+      "resamples": 2000
+    }
+  },
+  "render_calls": 0
+}

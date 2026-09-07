@@ -20,9 +20,11 @@ from .datasets import (
 )
 from .profiles import list_profiles, load_profile
 from .trainer import TRAINING_MANAGER
+from .business_api import router as business_rl_router
 
 
 router = APIRouter(prefix="/api/rl", tags=["rl-training-real"])
+router.include_router(business_rl_router)
 REPO_ROOT = Path(__file__).resolve().parents[3]
 REGULATORY_EVIDENCE_ROOT = REPO_ROOT / "evidence/v4/regulatory_delay"
 INTEGRATED_EVIDENCE_ROOT = REPO_ROOT / "evidence/v5/integrated_business"
