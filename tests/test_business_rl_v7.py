@@ -60,6 +60,24 @@ class BusinessRLTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 registry.evidence("../shore_bess")
 
+    def test_evidence_pointer_cannot_follow_a_symlink_outside_repository(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp) / "repository"
+            outside = Path(tmp) / "outside.json"
+            outside.write_text("{}")
+            registry = BusinessPolicyRegistry(root)
+            for relative, module, champion in (
+                ("evidence/v7/shore_bess/latest.json", "shore_bess", False),
+                ("evidence/v7/shore_bess/offline_champion.json", "shore_bess", True),
+                ("evidence/v6/coordinated_business/offline_champion.json", "coordinated_business", True),
+            ):
+                with self.subTest(pointer=relative):
+                    pointer = root / relative
+                    pointer.parent.mkdir(parents=True, exist_ok=True)
+                    pointer.symlink_to(outside)
+                    with self.assertRaisesRegex(ValueError, "artifact must stay within repository"):
+                        registry.evidence(module, champion=champion)
+
     def test_real_admitted_actor_matches_direct_inference_and_rejects_bad_input(self):
         from app.services.rl_training.business_runtime import ROOT
         from app.services.rl_model.yard_lighting import v3_environment as lighting

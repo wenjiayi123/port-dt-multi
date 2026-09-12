@@ -12,12 +12,15 @@ import json
 from pathlib import Path
 from typing import Any
 
+from app.services.rl_training.model_artifacts import resolve_model_artifact
+
 
 class StoryEvidenceService:
     def __init__(self, run_root: Path, strategy_runtime: Any) -> None:
         self.run_root = Path(run_root)
         self.strategy_runtime = strategy_runtime
-        self.runtime_root = self.run_root.parents[2] / "evidence/v3/runtime"
+        self.repo_root = self.run_root.parents[2]
+        self.runtime_root = self.repo_root / "evidence/v3/runtime"
         self._baseline_cache: dict[str, dict[str, Any]] = {}
 
     @staticmethod
@@ -43,13 +46,22 @@ class StoryEvidenceService:
         model_path = self.runtime_root / str(metadata.get("model_artifact") or "")
         config_path = self.runtime_root / str(metadata.get("config_artifact") or "")
         try:
-            model_sha = hashlib.sha256(model_path.read_bytes()).hexdigest()
+            model_path = resolve_model_artifact(
+                self.repo_root,
+                model_path.relative_to(self.repo_root).as_posix(),
+                metadata.get("model_sha256"),
+            )
+            loaded_model_sha = hashlib.sha256(model_path.read_bytes()).hexdigest()
             config_sha = hashlib.sha256(config_path.read_bytes()).hexdigest()
-        except OSError:
+        except (OSError, ValueError, KeyError, TypeError):
             return {}
-        if model_sha != metadata.get("model_sha256") or config_sha != metadata.get("config_sha256"):
+        if config_sha != metadata.get("config_sha256"):
             return {}
-        return metadata
+        return {
+            **metadata,
+            "loaded_model_path": model_path.relative_to(self.repo_root.resolve()).as_posix(),
+            "loaded_model_sha256": loaded_model_sha,
+        }
 
     @staticmethod
     def _trajectory_signature(bundle: dict[str, Any]) -> tuple[Any, ...]:
@@ -234,6 +246,8 @@ class StoryEvidenceService:
                 "dataset_id": (selected.get("config") or {}).get("dataset_id"),
                 "dataset_sha256": (selected.get("config") or {}).get("dataset_fingerprint"),
                 "model_sha256": runtime_metadata.get("model_sha256"),
+                "loaded_model_path": runtime_metadata.get("loaded_model_path"),
+                "loaded_model_sha256": runtime_metadata.get("loaded_model_sha256"),
                 "split": "chronological_blind_test_only",
                 "aligned_frames": count,
             },

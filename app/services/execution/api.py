@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 
 from app.adapters.actuators import Command, PortSouthboundGateway
 from app.services.rl_training.trainer import TRAINING_MANAGER
+from app.services.rl_training.runtime_policy import predict_runtime
 from app.services.site_execution_acceptance import SiteExecutionAcceptanceService
 
 
@@ -114,7 +115,7 @@ async def stage_rl_recommendation(payload: Dict[str, Any] = Body(...)) -> JSONRe
     if not all(str(payload.get(name) or "").strip() for name in ("asset_id", "asset_type", "action", "requested_by")):
         raise HTTPException(status_code=422, detail="asset_id, asset_type, action and requested_by are required")
     try:
-        prediction = await asyncio.to_thread(TRAINING_MANAGER.predict, job_id, {"state": state})
+        prediction = await asyncio.to_thread(predict_runtime, TRAINING_MANAGER, job_id, {"state": state})
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=f"unknown model run: {job_id}") from exc
     except (ValueError, FileNotFoundError) as exc:

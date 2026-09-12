@@ -2,7 +2,14 @@
 // Numeric validity reproduces HTML min/max/step semantics; this is not a browser run.
 const assert=require('node:assert/strict'), fs=require('node:fs'), vm=require('node:vm'), test=require('node:test');
 const html=fs.readFileSync('app/ui/integration_hub.html','utf8');
-const script=html.match(/<script>([\s\S]*?)<\/script>/)[1].split('    init().catch')[0];
+// Exact boundaries of the trusted inline controller; do not treat this as a sanitizer.
+const scriptStart=html.indexOf('<script>');
+assert(scriptStart>=0,'integration inline script opening marker must exist');
+const scriptEnd=html.indexOf('</script>',scriptStart+'<script>'.length);
+assert(scriptEnd>scriptStart,'integration inline script closing marker must exist');
+const initStart=html.indexOf('    init().catch',scriptStart+'<script>'.length);
+assert(initStart>scriptStart&&initStart<scriptEnd,'integration bootstrap boundary must exist inside the script');
+const script=html.slice(scriptStart+'<script>'.length,initStart);
 function harness(){
  const nodes=new Map(), controls=[];
  function element(id,attrs={}){

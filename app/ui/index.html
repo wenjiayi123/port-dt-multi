@@ -14251,6 +14251,8 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   const fmt = (n, unit='') => (n==null||isNaN(n))?'—':(Math.round(n*100)/100).toLocaleString()+unit;
   let masScenario = 'replay';
   let masEvidence = null;
+  let masRequestRevision = 0;
+  let masLoading = false;
 
   // ECharts 句柄
   let gChart=null, gantt=null;
@@ -14371,12 +14373,32 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
 }
 
   // —— 数据拉取与交互（补全缺失） —— //
+function clearMasView(message, pending=false){
+  masEvidence=null;
+  for(const id of ['teu','wp95','kw','kwh','co2']) $('#mas-kpi-'+id).textContent=pending?'读取中':'—';
+  gChart?.clear?.();
+  gantt?.clear?.();
+  $('#mas-agents').textContent=pending?'正在读取当前场景协同契约…':'证据接口不可用；未生成替代设备或动作';
+  $('#mas-conflicts').textContent=pending?'正在核验当前场景约束…':'无法核验约束冲突；旧结果已清除';
+  $('#mas-plan-meta').textContent=message;
+  $('#mas-plan-meta').setAttribute('role','status');
+  $('#mas-plan-meta').setAttribute('aria-live','polite');
+  $('#mas-dispatch').disabled=true;
+  $('#mas-dispatch').title=pending?'当前场景证据正在读取':'当前无有效证据，请刷新或重新选择场景';
+}
 async function pullOverview(scenario=masScenario){
+  const revision=++masRequestRevision;
+  masScenario=scenario;
+  masLoading=true;
+  const label={replay:'公开回放',dense:'高密压测',degraded:'降级压测'}[scenario]||scenario;
+  clearMasView(`正在读取${label}的模型与计划证据…旧计划和 KPI 已清除，未执行设备指令。`,true);
+  $('#mas-section')?.setAttribute('aria-busy','true');
   try{
-    masScenario=scenario;
     const r = await fetch(`/api/v3/mas/evidence?scenario=${encodeURIComponent(scenario)}`, {cache:'no-store'});
     if (!r.ok) throw new Error(await r.text());
     const data = await r.json();
+    if(revision!==masRequestRevision) return null;
+    if(data?.available!==true || data?.scenario?.id!==scenario) throw new Error('当前场景证据不可用或响应场景不匹配');
     masEvidence=data;
 
     // KPI
@@ -14427,13 +14449,17 @@ async function pullOverview(scenario=masScenario){
 
     return data;
   }catch(e){
+    if(revision!==masRequestRevision) return null;
     console.warn('[mas] evidence endpoint unavailable:', e);
-    const ul = document.querySelector('#mas-agents');
-    if (ul) ul.innerHTML = `<li class="small hint">证据接口不可用；未生成替代设备或动作</li>`;
-    const cl = document.querySelector('#mas-conflicts');
-    if (cl) cl.innerHTML = `<li class="small hint">待接入港口：无法核验约束冲突</li>`;
-    $('#mas-plan-meta').textContent='证据接口不可用；未生成替代协同计划或 KPI。';
+    clearMasView(`${label}证据读取失败：${e.message||'接口不可用'}。旧计划和 KPI 已清除；请刷新重试，未执行设备指令。`);
     return null;
+  }finally{
+    if(revision===masRequestRevision){
+      masLoading=false;
+      $('#mas-section')?.setAttribute('aria-busy','false');
+      $('#mas-dispatch').disabled=!masEvidence;
+      if(masEvidence) $('#mas-dispatch').title='查看当前场景的哈希校验决策证据；不执行设备指令';
+    }
   }
 }
 
@@ -14446,7 +14472,7 @@ async function pullOverview(scenario=masScenario){
     await pullOverview(masScenario==='dense' ? 'degraded' : 'dense');
   }
   async function dispatch(){
-    if(!masEvidence){ await pullOverview(masScenario); return; }
+    if(masLoading || !masEvidence) return;
     const ev=masEvidence.evidence||{}, d=masEvidence.decision||{}, site=masEvidence.site_replacement||{};
     $('#mas-plan-meta').textContent = `证据：${ev.dataset_id} · SHA256 ${ev.dataset_sha256||'不可用'} · `
       + `${d.implementation||'模型不可用'} · ${ev.evaluation_protocol||'评测协议不可用'} · `

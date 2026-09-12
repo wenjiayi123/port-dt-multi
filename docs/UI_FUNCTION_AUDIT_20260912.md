@@ -6,7 +6,8 @@
 
 | 检查 | 最终结果 | 口径 |
 | --- | --- | --- |
-| `python -m unittest discover -s tests -v` | 424 tests，139.819 s，OK | 最终代码冻结后完整重跑，包含全部 13 个 JS VM 脚本 |
+| 本机原始模型保留环境：`python -m unittest discover -s tests -v` | 424 tests，139.819 s，OK | UI 修复后完整重跑，包含全部 13 个 JS VM 脚本；此轮不能证明缺少原始模型时的可用性，后续补验另记 |
+| 远端干净副本 + 最终修复：同一 unittest 入口 | 432 tests，129.596 s，OK | 95 个本地原始模型文件缺失，83 个公开模型 SHA 匹配；包含全部 14 个 VM 脚本 |
 | `tests/test_javascript_contracts.py` | PASS | 发现 `tests/js/*.cjs` / `*.test.js`；缺 Node 或脚本失败均使测试失败 |
 | 静态按钮定义扫描 | 289 / 289 绑定，0 未解析 | 静态定义；动态列表实例与真实交互另验 |
 | 页面内联 JavaScript 语法 | 49 / 49 PASS | 主页面 47，联动页 1，副驾页 1；仅语法 |
@@ -19,9 +20,9 @@
 
 本机使用 Python 3.12 与 Node 24；通用入口为 `python -m unittest discover -s tests -v`。Node 不在 PATH 时，应将 `NODE_BINARY` 指向本机 Node 可执行文件。CI 显式要求 Node，并通过同一 unittest 入口运行 VM 合同；隐私扫描与两种公共模型 bundle 校验也已纳入 CI。
 
-当前以下 13 个 VM 脚本自动执行：`compliance_result_scope_contract.cjs`、`external_detail_loading_contract.cjs`、`governance_detail.cjs`、`home_evidence_rules_contract.cjs`、`integration_training_contract.cjs`、`linkage_state_guards.test.js`、`main_module_state_guards.cjs`、`mlops_evidence_contract.cjs`、`module_lifecycle.cjs`、`rl_pages_contract.cjs`、`simulation_export_contract.cjs`、`standalone_navigation_vm.cjs`、`story_availability_contract.cjs`。
+当前以下 14 个 VM 脚本自动执行：`compliance_result_scope_contract.cjs`、`external_detail_loading_contract.cjs`、`governance_detail.cjs`、`home_evidence_rules_contract.cjs`、`integration_training_contract.cjs`、`linkage_state_guards.test.js`、`main_module_state_guards.cjs`、`mas_state_contract.cjs`、`mlops_evidence_contract.cjs`、`module_lifecycle.cjs`、`rl_pages_contract.cjs`、`simulation_export_contract.cjs`、`standalone_navigation_vm.cjs`、`story_availability_contract.cjs`。
 
-既有 `tests/js/standalone_navigation.cjs` 保持原样，属于需要 Playwright 与浏览器的可选测试，本轮未执行，也不计入 13 个 VM 脚本。新增导航 VM 合同验证实际控制器的 35 条菜单路由、query/hash 保留、提前请求、缓存、三次失败回退、离开取消、恢复重试及坏缓存恢复。浏览器导航结果依 CUA 的独立记录。
+既有 `tests/js/standalone_navigation.cjs` 保持原样，属于需要 Playwright 与浏览器的可选测试，本轮未执行，也不计入 14 个 VM 脚本。新增导航 VM 合同验证实际控制器的 35 条菜单路由、query/hash 保留、提前请求、缓存、三次失败回退、离开取消、恢复重试及坏缓存恢复。浏览器导航结果依 CUA 的独立记录。
 
 ## 已修复的联动与副驾合同
 
@@ -39,9 +40,9 @@
 
 ## 留存证据与边界
 
-最终冻结轮日志位于 `.codex_artifacts/ui_full_audit_20260912/linkage/final_after_all_ui_fixes/`：`unittest.log`、`compileall.log`、`release_check.log`、`public_privacy_scan.log`、`business_verify.log`、`static_button_binding.log`、`inline_script_syntax.json`。最终完整回归为 424 tests / 139.819 s / OK，包含全部 13 个 VM 脚本；没有把可选 Playwright 计入。此前第一轮 422 tests 的失败日志与中间复测均在上级目录保留。
+UI 修复后的本机冻结轮日志位于 `.codex_artifacts/ui_full_audit_20260912/linkage/final_after_all_ui_fixes/`：`unittest.log`、`compileall.log`、`release_check.log`、`public_privacy_scan.log`、`business_verify.log`、`static_button_binding.log`、`inline_script_syntax.json`。该轮完整回归为 424 tests / 139.819 s / OK，包含全部 13 个 VM 脚本；没有把可选 Playwright 计入。此前第一轮 422 tests 的失败日志与中间复测均在上级目录保留。
 
-本次最终完整回归已覆盖副驾错误证明栏、剪贴板失败反馈、两类图像导出和首页未知状态规则。此前各阶段定向日志仍保留，最终证据以 `final_after_all_ui_fixes/verification.json` 为准。测试前后 580 个冻结代码、配置和 CI 文件均按 SHA-256 比对，未发生变化。另仅更新文档，并对已封存 Matplotlib SVG 精确追加 `.gitattributes` 行尾空格规则；原 SVG 字节及 SHA 不改，不扩大到其他文件。V8 原模型验证与已封存重放没有重复执行，也没有新增 test/forward 评测。
+该轮回归已覆盖副驾错误证明栏、剪贴板失败反馈、两类图像导出和首页未知状态规则。此前各阶段定向日志仍保留，该轮证据以 `final_after_all_ui_fixes/verification.json` 为准。测试前后 580 个冻结代码、配置和 CI 文件均按 SHA-256 比对，未发生变化。随后曾仅更新文档，并对已封存 Matplotlib SVG 精确追加 `.gitattributes` 行尾空格规则；原 SVG 字节及 SHA 不改，不扩大到其他文件。后续云端失败引出的代码修复和干净副本补验另记，不能沿用该轮旧指纹证明新代码。V8 原模型验证与已封存重放没有重复执行，也没有新增 test/forward 评测。
 
 逐控件浏览器清单位于上级 `linkage/` 目录 `control_inventory_and_click_plan.json`、`priority_click_scenarios.json`、`main_module_click_plan.json`。这些清单仅描述操作步骤，实际完成状态以独立浏览器记录为准。API 只读/动作预览回执与 VM 结果也不冒充真实点击。
 
@@ -52,3 +53,17 @@
 ## 真实浏览器验收
 
 实际 CUA 点击、最终接口回执、导出文件与已知限制参见 [真实浏览器验收](UI_BROWSER_AUDIT_20260912.md)。该记录由主任务依据浏览器实测更新；本节的自动化结果不替代它，也不推导现场接入或生产准入。
+
+## 云端失败复现与公开模型补验
+
+初次发布的云端 Python 测试发现两个本机旧文件掩盖的问题：MAS 仍直接调用冻结训练器读取原始 ZIP，Story 仍直接校验已从发布树移出的 ZIP。此前仅验证规范运行时模型加载的干净克隆检查不足以覆盖这两个消费者；该轮 CI 失败记录保留，不能称为发布成功。
+
+MAS 和执行建议接口已改用现有 `predict_runtime`，Story 使用严格公开模型映射，并同时报告原训练身份 SHA 与实际加载副本 SHA。原模型或公开副本被改动、等价证明失效、Story 配置哈希变化仍拒绝；执行建议保留默认关闭与双人确认。冻结训练器及历史训练/评测源码未修改。
+
+首次补验在真正从 origin 获取的副本中同步 9 个源代码/测试补丁，确认 95 个原始模型文件与本机 `.codex_artifacts` 均不存在后，完整运行 **432 tests / 129.020 s / OK**，含全部 13 个 VM。新增回归直接加载真实公开 SAC 模型，并验证 MAS 推理、执行门禁和 Story 缺原件/损坏阻断。没有通过复制本机 raw ZIP 修复测试。
+
+同期将业务模型指针改为固定目录映射并在读取前校验仓库内路径，新增 V7 latest/champion 及 V6 fallback 的树外符号链接拒绝测试；两处 VM 的可信脚本提取改为显式字符串边界及失败断言，未禁用 CodeQL 查询。日志及精确补丁位于 `.codex_artifacts/ui_full_audit_20260912/linkage/remote_clone_consumer_fix_6a/`。本节记录推送前的补丁验证；最终 GitHub SHA 与工作流结果以对应提交的 Actions 为准。
+
+随后真实浏览器又发现 MAS 等待新场景期间仍显示旧计划。已加入明确加载提示、立即清除旧 KPI/图表/证据、按请求版本拒绝旧响应、失败清空、返回场景校验以及决策证据按钮门禁。新 `mas_state_contract.cjs` 的 4 组实际控制器测试验证加载、乱序、失败重试与不可用响应；刷新和场景切换仍可并发，仅最新请求能呈现。
+
+包含这项 UI 修复的最终 11 文件补丁在同一缺 raw 的远端副本中再次完整验证：**432 tests / 129.596 s / OK，14 个 VM**；编译、发布、深隐私检查均通过。独立日志目录为 `.codex_artifacts/ui_full_audit_20260912/linkage/remote_clone_mas_loading_fix_6a/`；此前 432 tests / 13 VM 的中间验收保留，不用于证明后改代码。源码与配置按本轮 584 文件重新绑定；本轮没有重新训练正式策略或打开 V8 test/forward 评估。

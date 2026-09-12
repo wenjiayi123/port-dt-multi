@@ -20,6 +20,7 @@ from app.services.rl_training.datasets import (
     load_port_dataset,
 )
 from app.services.rl_training.trainer import TRAINING_MANAGER
+from app.services.rl_training.runtime_policy import predict_runtime
 
 
 SCENARIOS = {
@@ -151,7 +152,7 @@ class MASEvidenceService:
         sac, job_id = self._sac_evidence()
         row_index = self._row_index(dataset, scenario)
         state = self._canonical_state(dataset, row_index)
-        inference = TRAINING_MANAGER.predict(job_id, {"state": state})
+        inference = predict_runtime(TRAINING_MANAGER, job_id, {"state": state})
         control = dict(inference.get("decoded_control") or {})
         safety = dict(inference.get("safety_envelope") or {})
 

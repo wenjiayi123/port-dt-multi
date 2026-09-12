@@ -1,7 +1,14 @@
 // Execute the actual home-rule controller with DOM fixtures; no browser claim.
 const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),assert=require('node:assert/strict');
 const html=fs.readFileSync(path.resolve(__dirname,'../../app/ui/index.html'),'utf8');
-const controller=[...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/g)].find(m=>m[1].includes('function buildHomeRules()'))[1];
+// Extract one known script in this trusted repository fixture; this is not an HTML sanitizer.
+const controllerMarker=html.indexOf('function buildHomeRules()');
+assert(controllerMarker>=0,'home-rule controller marker must exist');
+const controllerStart=html.lastIndexOf('<script>',controllerMarker);
+assert(controllerStart>=0,'home-rule inline script opening marker must exist');
+const controllerEnd=html.indexOf('</script>',controllerStart+'<script>'.length);
+assert(controllerEnd>controllerMarker,'home-rule closing marker must follow the controller');
+const controller=html.slice(controllerStart+'<script>'.length,controllerEnd);
 function fixture(status,peak,pending){
   const nodes=new Map();
   const node=id=>{if(!nodes.has(id))nodes.set(id,{textContent:''});return nodes.get(id);};

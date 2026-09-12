@@ -12,7 +12,15 @@ from .model_artifacts import resolve_model_artifact
 from .trainer import SB3_IMPORT_LOCK
 
 ROOT = Path(__file__).resolve().parents[3]
-MODULES = ("hvac", "yard_crane", "yard_lighting", "shore_bess", "bess_energy", "coordinated_business")
+MODULE_DIRECTORIES = {
+    "hvac": "evidence/v7/hvac",
+    "yard_crane": "evidence/v7/yard_crane",
+    "yard_lighting": "evidence/v7/yard_lighting",
+    "shore_bess": "evidence/v7/shore_bess",
+    "bess_energy": "evidence/v7/bess_energy",
+    "coordinated_business": "evidence/v7/coordinated_business",
+}
+MODULES = tuple(MODULE_DIRECTORIES)
 
 
 class BusinessPolicyRegistry:
@@ -30,7 +38,10 @@ class BusinessPolicyRegistry:
     def evidence(self, module, *, champion=False):
         if module not in MODULES:
             raise ValueError("unknown business module")
-        pointer_path = self.root / "evidence/v7" / module / ("offline_champion.json" if champion else "latest.json")
+        # Select a fixed directory instead of incorporating the request value
+        # into a path. Resolve containment before accessing even the pointer.
+        directory = MODULE_DIRECTORIES[module]
+        pointer_path = self._path(Path(directory) / ("offline_champion.json" if champion else "latest.json"))
         if not pointer_path.exists():
             if module == "coordinated_business" and champion:
                 return self._coordinated_incumbent()
@@ -50,7 +61,7 @@ class BusinessPolicyRegistry:
 
     def _coordinated_incumbent(self):
         """Keep the qualified V6 RL actor when refinement is rejected."""
-        path = self.root / "evidence/v6/coordinated_business/offline_champion.json"
+        path = self._path("evidence/v6/coordinated_business/offline_champion.json")
         if not path.exists():
             return {"module": "coordinated_business", "status": "NO_ADMITTED_RL", "production_authority": False}
         pointer = json.loads(path.read_text())
