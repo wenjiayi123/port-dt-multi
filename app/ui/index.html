@@ -13,6 +13,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>港口 AI 运营平台 · 数字孪生 + RL 决策</title>
+  <script src="/static/module_loading.js?v=20260912-1"></script>
   <link rel="stylesheet" href="/static/module_navigation.css?v=20260912-2">
   <script defer src="/static/module_navigation.js?v=20260912-2"></script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Cpath d='M13 44h38M18 35h28l-4 9H22zM29 13h6v22h-6zM20 20h24v6H20z' fill='%2360a5fa'/%3E%3C/svg%3E" />
@@ -3577,9 +3578,9 @@ border-left:3px solid rgba(148,163,184,.22);
     }
 
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", loadAppCenter);
+      document.addEventListener("DOMContentLoaded", ()=>window.__portDtLoadWhenActive("dev-ecosystem",loadAppCenter));
     } else {
-      loadAppCenter();
+      window.__portDtLoadWhenActive("dev-ecosystem",loadAppCenter);
     }
   })();
 </script>
@@ -3703,9 +3704,9 @@ border-left:3px solid rgba(148,163,184,.22);
     }
 
     if (document.readyState === "loading") {
-      document.addEventListener("DOMContentLoaded", loadMultiport);
+      document.addEventListener("DOMContentLoaded", ()=>window.__portDtLoadWhenActive("multiport-section",loadMultiport));
     } else {
-      loadMultiport();
+      window.__portDtLoadWhenActive("multiport-section",loadMultiport);
     }
   })();
   </script>
@@ -5305,7 +5306,7 @@ border-left:3px solid rgba(148,163,184,.22);
   byId('btn-site-integration-contract')?.addEventListener('click',async()=>{try{const payload=siteIntegrationReadiness||await loadSiteIntegrationReadiness(false);byId('site-integration-detail').textContent=JSON.stringify({schema_version:payload.schema_version,quality_gates:payload.quality_gates,adapters:(payload.adapters||[]).map(row=>({adapter_id:row.adapter_id,required_fields:row.required_fields,blockers:row.blockers})),boundary:payload.boundary},null,2);}catch(error){byId('site-integration-status').textContent='现场字段合同加载失败：'+error.message;}});
   byId('btn-site-integration-rejection')?.addEventListener('click',()=>validateUnauthorizedSnapshotRejection().catch(error=>{byId('site-integration-status').textContent='失败关闭验证异常：'+error.message;byId('site-integration-status').style.color='#f87171';}));
   byId('btn-site-dataset-readiness')?.addEventListener('click',()=>validatePublicDatasetBoundary().catch(error=>{byId('site-integration-status').textContent='数据替换边界核验失败：'+error.message;byId('site-integration-status').style.color='#f87171';}));
-  const start=()=>{if(!externalV3Evidence)loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});if(!portCallReadiness&&!portCallInteraction)loadPortCallReadiness().catch(error=>{byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;});if(!siteIntegrationReadiness&&!siteIntegrationInteraction)loadSiteIntegrationReadiness(false).catch(error=>{byId('site-integration-status').textContent='现场接入状态加载失败：'+error.message;});};setTimeout(start,1200);setTimeout(start,4000);
+  const start=()=>Promise.all([!externalV3Evidence?loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;throw error;}):Promise.resolve(externalV3Evidence),!portCallReadiness&&!portCallInteraction?loadPortCallReadiness().catch(error=>{byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;throw error;}):Promise.resolve(portCallReadiness),!siteIntegrationReadiness&&!siteIntegrationInteraction?loadSiteIntegrationReadiness(false).catch(error=>{byId('site-integration-status').textContent='现场接入状态加载失败：'+error.message;throw error;}):Promise.resolve(siteIntegrationReadiness)]);window.__portDtLoadWhenActive('ext-section',start);
 })();
 </script>
 
@@ -6177,6 +6178,7 @@ border-left:3px solid rgba(148,163,184,.22);
 
 
     function openStream(asset){
+      if(document.hidden || (window.PortModuleLoading && !window.PortModuleLoading.isActive('realtime-section'))) return;
       try{ if (sse) sse.close(); }catch(_){}
       sse = new EventSource(`/stream/telemetry/${asset}`);
       sse.onmessage = (e) => {
@@ -6236,6 +6238,17 @@ border-left:3px solid rgba(148,163,184,.22);
     }
 
     let assetRequestId=0;
+    window.addEventListener('port-module-hidden',event=>{
+      if(event.detail?.id!=='realtime-section')return;
+      assetRequestId+=1;
+      try{sse?.close();}catch(_){}
+      sse=null;
+    });
+    window.addEventListener('port-module-shown',event=>{
+      if(event.detail?.id==='realtime-section' && window.PortModuleLoading?.snapshot().some(row=>row.key==='realtime-data'&&row.state==='loaded')){
+        window.PortModuleLoading.refresh('realtime-data').catch(error=>console.warn('[realtime-return]',error));
+      }
+    });
     function switchAsset(asset){
       const requestId=++assetRequestId,requestedMode=VIEW_MODE;
       const current=()=>requestId===assetRequestId&&requestedMode===VIEW_MODE;
@@ -7070,6 +7083,7 @@ border-left:3px solid rgba(148,163,184,.22);
       return `hsl(${hue} 78% 55%)`;
     }
     function twinSceneVisible(){
+      if(window.PortModuleLoading && !window.PortModuleLoading.isActive('twin3d-section'))return false;
       const host=document.getElementById('sceneHost');
       if(document.hidden||!host?.getClientRects().length) return false;
       const rect=host.getBoundingClientRect();
@@ -8712,7 +8726,7 @@ border-left:3px solid rgba(148,163,184,.22);
     // 页面加载时：补按钮 & 尝试加载 Rollout
     window.addEventListener('load', ()=>{
       try { ensureSimSaveButton(); } catch(_) {}
-      try { tryLoadRollout(); } catch(_) {}
+      window.__portDtLoadWhenActive('strategy-exec-module',tryLoadRollout);
     });
 
     function drawSimChart(aggBase, aggSim){
@@ -9502,35 +9516,39 @@ border-left:3px solid rgba(148,163,184,.22);
     (function boot(){
       document.getElementById('twin3d-section')?.setAttribute('data-overlay','power');
       setTwinModeExperience('now','ready',1);
-      loadTwinRuntimeStatus().catch(err=>console.warn('[twin-runtime]',err));
       selAsset.onchange = ()=> switchAsset(selAsset.value);
-      fetch('/api/assets').then(r=>r.json()).then(list=>{
-        ALL_ASSETS = Array.isArray(list)? list : [];
-        selAsset.innerHTML='';
-        ALL_ASSETS.forEach(a=>{ const o=document.createElement('option'); o.value=a.id; o.textContent=a.label; selAsset.appendChild(o); });
-        if(ALL_ASSETS.length) switchAsset(selAsset.value);
-        else { const no3d=document.getElementById('no3d'); if(no3d){no3d.style.display='flex'; no3d.innerHTML='<div><strong>资产数据为空</strong>未构造本地替代设备。</div>';}}
-      }).catch(()=>{
-        ALL_ASSETS = []; selAsset.innerHTML='';
-        const no3d=document.getElementById('no3d');
-        if(no3d){no3d.style.display='flex'; no3d.innerHTML='<div><strong>资产适配器不可用</strong>未构造替代设备；请检查 /api/assets 数据契约。</div>';}
-      }).finally(()=>{
-        [
-          init3DOnce,
-          refreshTwinOverlays,
-          rebuildDashboard,
-          loadHistory,
-          loadExecList,
-          window.loadExternalV3 || loadExternal
-        ].forEach(fn => {
-          try {
-            const ret = fn?.();
-            if (ret && typeof ret.catch === 'function') ret.catch(err => console.warn('[boot]', fn.name || 'task', err));
-          } catch (err) {
-            console.warn('[boot]', fn?.name || 'task', err);
-          }
+      let sharedAssetsRequest=null;
+      function ensureSharedAssets(){
+        if(sharedAssetsRequest)return sharedAssetsRequest;
+        sharedAssetsRequest=fetch('/api/assets').then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}).then(list=>{
+          ALL_ASSETS = Array.isArray(list)?list:[];
+          const previous=selAsset.value;
+          selAsset.innerHTML='';
+          ALL_ASSETS.forEach(a=>{const o=document.createElement('option');o.value=a.id;o.textContent=a.label;selAsset.appendChild(o);});
+          if(ALL_ASSETS.some(a=>a.id===previous))selAsset.value=previous;
+          if(!ALL_ASSETS.length){const no3d=document.getElementById('no3d');if(no3d){no3d.style.display='flex';no3d.innerHTML='<div><strong>资产数据为空</strong>未构造本地替代设备。</div>';}}
+          return ALL_ASSETS;
+        }).catch(error=>{
+          sharedAssetsRequest=null;ALL_ASSETS=[];selAsset.innerHTML='';
+          const no3d=document.getElementById('no3d');
+          if(no3d){no3d.style.display='flex';no3d.innerHTML='<div><strong>资产适配器不可用</strong>未构造替代设备；请检查 /api/assets 数据契约。</div>';}
+          throw error;
         });
+        return sharedAssetsRequest;
+      }
+      window.__portDtLoadWhenActive('twin3d-section',async()=>{
+        await ensureSharedAssets();
+        await loadTwinRuntimeStatus();
+        init3DOnce();
+        await refreshTwinOverlays();
       });
+      window.__portDtLoadWhenActive('realtime-section',async()=>{
+        await ensureSharedAssets();
+        if(window.PortModuleLoading.isActive('realtime-section'))switchAsset(selAsset.value);
+      },{key:'realtime-data'});
+      window.__portDtLoadWhenActive('kpi-section',rebuildDashboard);
+      window.__portDtLoadWhenActive(['strategy-exec-module','exec-wrap'],loadHistory);
+      window.__portDtLoadWhenActive(['home-hero','realtime-section','exec-wrap'],loadExecList);
 
       // RL 选择变化时，控制相关按钮可用并同步策略ID显示
       selRL.addEventListener('change', ()=>{
@@ -10378,14 +10396,13 @@ border-left:3px solid rgba(148,163,184,.22);
     anomalyRunId+=1;psiRunId+=1;qs('btn-anom').disabled=false;qs('btn-psi').disabled=false;
     clearMonitoringRows('anomaly','参数已变化，请重新扫描。');clearMonitoringRows('psi','参数已变化，请重新计算PSI。');
   }));
-  runAnomaly();
-  loadMonitoringEvidence().catch(error=>{ qs('mon-v3-status').textContent='监控证据加载失败：'+error.message; });
+  window.__portDtLoadWhenActive('monitoring-section',()=>Promise.all([runAnomaly(),loadMonitoringEvidence().catch(error=>{ qs('mon-v3-status').textContent='监控证据加载失败：'+error.message;throw error; })]));
 })();
 </script>
 
 <script>
 // 默认页面只启动真实数据/评测链路；旧 RL 产物和工程模拟器须由后端显式开关授权。
-window.__portDtFeatureFlagsPromise = window.__portDtFeatureFlagsPromise || fetch('/api/system/provenance', {cache:'no-store'})
+window.__portDtFeatureFlagsPromise = window.__portDtFeatureFlagsPromise || fetch('/api/system/provenance?detail=summary', {cache:'no-store'})
   .then(response => response.ok ? response.json() : Promise.reject(new Error(`HTTP ${response.status}`)))
   .then(payload => payload.feature_flags || {})
   .catch(() => ({engineering_simulators_enabled:false, legacy_rl_enabled:false}));
@@ -10435,7 +10452,8 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
       button?.addEventListener('click', ()=> window.runVisibleModuleRefresh
         ? window.runVisibleModuleRefresh(button, task)
         : task());
-      const schedule = ()=> setTimeout(task, delay);
+      const section=button?.closest('section[id],.card[id],.wrap[id]');
+      const schedule = ()=>{if(section)window.__portDtLoadWhenActive(section.id,task);};
       if(document.readyState === 'complete') schedule();
       else window.addEventListener('load', schedule, {once:true});
       return;
@@ -10846,8 +10864,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-b-history')?.addEventListener('click',()=>{ if(yardLightingV3Evidence) $('#b-evidence-detail').textContent=JSON.stringify({historical_evidence:yardLightingV3Evidence.historical_evidence,historical_business_metrics:yardLightingV3Evidence.historical_business_metrics,legacy_model_probe:yardLightingV3Evidence.model_probe,legacy_history_points:yardLightingV3Evidence.legacy_history_series?.length},null,2); });
   document.getElementById('btn-b-contract')?.addEventListener('click',()=>{ if(yardLightingV3Evidence) $('#b-evidence-detail').textContent=JSON.stringify({boundary:yardLightingV3Evidence.boundary,site_contract:yardLightingV3Evidence.site_contract},null,2); });
   const handleYardLightingLoadFailure=e=>{$('#b-v3-status').textContent='证据加载失败：'+e;};
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(()=>loadYardLightingV3().catch(handleYardLightingLoadFailure),100),{once:true});
-  else setTimeout(()=>loadYardLightingV3().catch(handleYardLightingLoadFailure),100);
+  window.__portDtLoadWhenActive('yl-section',()=>loadYardLightingV3().catch(error=>{handleYardLightingLoadFailure(error);throw error;}));
 
 })();
 </script>
@@ -10937,7 +10954,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
 
   window.__portDtFeatureFlagsPromise.then(flags=>{
     if(flags?.legacy_rl_enabled !== true) return;
-    const schedule = ()=> setTimeout(refreshYLHistory, 500);
+    const schedule = ()=>window.__portDtLoadWhenActive('yl-section',refreshYLHistory);
     if(document.readyState === 'complete') schedule();
     else window.addEventListener('load', schedule, {once:true});
     document.getElementById('btn-b-refresh')?.addEventListener('click', ()=> setTimeout(refreshYLHistory, 50));
@@ -11225,7 +11242,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-c-contract')?.addEventListener('click',()=>{if(hvacV3Evidence) $('#c-evidence-detail').textContent=JSON.stringify({boundary:hvacV3Evidence.boundary,site_contract:hvacV3Evidence.site_contract},null,2);});
   // Inline module scripts are already parsed after the cards exist; schedule directly
   // so a delayed DOMContentLoaded handler cannot leave the first view empty.
-  setTimeout(()=>loadHvacV3().catch(e=>{$('#c-v3-status').textContent='证据加载失败：'+e;}),180);
+  window.__portDtLoadWhenActive('hvac-section',()=>loadHvacV3().catch(e=>{$('#c-v3-status').textContent='证据加载失败：'+e;throw e;}));
 })();
 </script>
 <!-- === [Module C · HVAC Cooling · END] =============================== -->
@@ -11633,7 +11650,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-d-contract-tech')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?shoreBessV3Evidence.v8.config:shoreBessV3Evidence.formal_training?.contract||{},null,2);});
   document.getElementById('btn-d-history')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({historical_evidence:shoreBessV3Evidence.historical_evidence,historical_business_replay:shoreBessV3Evidence.historical_business_replay,legacy_history_points:shoreBessV3Evidence.legacy_history_series?.length,data_manifest:shoreBessV3Evidence.data_manifest},null,2);});
   document.getElementById('btn-d-contract')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({boundary:shoreBessV3Evidence.boundary,site_contract:shoreBessV3Evidence.site_contract},null,2);});
-  setTimeout(()=>loadShoreBessV3().catch(e=>{$('#d-v3-status').textContent='证据加载失败：'+e;}),260);
+  window.__portDtLoadWhenActive('sbess-section',()=>loadShoreBessV3().catch(e=>{$('#d-v3-status').textContent='证据加载失败：'+e;throw e;}));
 })();
 </script>
 <!-- === [Module D · Shore BESS · END] ================================= -->
@@ -12002,7 +12019,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-be-contract-tech')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify(bessEnergyV3Evidence.formal_training?.contract||{},null,2);});
   document.getElementById('btn-be-history')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify({historical_evidence:bessEnergyV3Evidence.historical_evidence,training_diagnostics:bessEnergyV3Evidence.training_diagnostics,excluded_static_card:bessEnergyV3Evidence.excluded_static_card,data_manifest:bessEnergyV3Evidence.data_manifest},null,2);});
   document.getElementById('btn-be-contract')?.addEventListener('click',()=>{if(bessEnergyV3Evidence) $('#be-evidence-detail').textContent=JSON.stringify({boundary:bessEnergyV3Evidence.boundary,site_contract:bessEnergyV3Evidence.site_contract},null,2);});
-  setTimeout(()=>loadBessEnergyV3().catch(e=>{$('#be-v3-status').textContent='证据加载失败：'+e;}),340);
+  window.__portDtLoadWhenActive('be-section',()=>loadBessEnergyV3().catch(e=>{$('#be-v3-status').textContent='证据加载失败：'+e;throw e;}));
 })();
 </script>
 
@@ -12332,7 +12349,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     const zA=invNorm(1-alpha/2),zB=invNorm(power),delta=mdes*sigma,k=((zA+zB)**2*sigma**2*(1/alloc+1/(1-alloc)))/(delta**2),design=(1-r2)*(0.9+0.2*(.4**2+.6**2)),nA=Math.ceil(k*(1-alloc)*design),nB=Math.ceil(k*alloc*design);
     byId('ab-res').textContent=JSON.stringify({purpose:'prospective_design_only',alpha,power,mdes_sigma:mdes,r2_cuped:r2,allocation_B:alloc,n_A:nA,n_B:nB,total_n:nA+nB,measured_experiment:false,site_status:'待接入港口',required_governance:governance.ab_test_policy?.required},null,2);
   },true);
-  const start=()=>{if(!governance)load().catch(governanceError);};setTimeout(start,1800);setTimeout(start,6000);
+  const start=()=>governance?Promise.resolve(governance):load().catch(error=>{governanceError(error);throw error;});window.__portDtLoadWhenActive('g-section',start);
 })();
 </script>
 
@@ -12603,7 +12620,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   document.getElementById('btn-f-contract-tech')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify({contract:yardCraneV3Evidence.formal_training?.contract,counterfactual_model:yardCraneV3Evidence.formal_training?.counterfactual_model},null,2);});
   document.getElementById('btn-f-history')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify({historical_evidence:yardCraneV3Evidence.historical_evidence,historical_training_diagnostics:yardCraneV3Evidence.historical_training_diagnostics,run_history:yardCraneV3Evidence.formal_training?.run_history,data_manifest:yardCraneV3Evidence.data_manifest},null,2);});
   document.getElementById('btn-f-contract')?.addEventListener('click',()=>{if(yardCraneV3Evidence) $('#f-evidence-detail').textContent=JSON.stringify({boundary:yardCraneV3Evidence.boundary,site_contract:yardCraneV3Evidence.site_contract},null,2);});
-  setTimeout(()=>loadYardCraneV3().catch(e=>{$('#f-v3-status').textContent='证据加载失败：'+e;}),420);
+  window.__portDtLoadWhenActive('yc-section',()=>loadYardCraneV3().catch(e=>{$('#f-v3-status').textContent='证据加载失败：'+e;throw e;}));
 })();
 </script>
 
@@ -12865,7 +12882,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     });
     if (b) b.onclick = run;
     document.getElementById('train-algorithm')?.addEventListener('change', run);
-    setTimeout(run, 300);
+    window.__portDtLoadWhenActive('train-section',run);
   };
   let redrawTimer=null;
   window.addEventListener('resize',()=>{
@@ -13117,7 +13134,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
       $('#opsx-top3').innerHTML = '<li class="small" style="color:#8aa6d8;">未启用；无漂移证据</li>';
       return;
     }
-    const schedule = ()=>{ setTimeout(refresh, 300); setInterval(refresh, 8000); };
+    const schedule = ()=>{ window.__portDtLoadWhenActive('opsx-section',refresh); setInterval(()=>{if(window.PortModuleLoading.isActive('opsx-section')&&!document.hidden)refresh();},8000); };
     if(document.readyState === 'complete') schedule();
     else window.addEventListener('load', schedule, {once:true});
   });
@@ -13193,9 +13210,8 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     try{if(!opsxV3Evidence)await loadOpsXV3();if(selectedOpsxDetail===id)renderOpsXSelected();}
     catch(error){if(selectedOpsxDetail===id)byId('opsx-v3-detail').textContent='所选证据不可用，点击可重试：'+error.message;}
   }));
-  const start=()=>opsxV3Evidence?Promise.resolve(opsxV3Evidence):loadOpsXV3().catch(error=>{byId('opsx-v3-status').textContent='OpsX证据加载失败：'+error.message;});
-  setTimeout(start,1000);
-  window.__portDtFeatureFlagsPromise?.then(()=>setTimeout(start,100));
+  const start=()=>opsxV3Evidence?Promise.resolve(opsxV3Evidence):loadOpsXV3().catch(error=>{byId('opsx-v3-status').textContent='OpsX证据加载失败：'+error.message;throw error;});
+  window.__portDtLoadWhenActive('opsx-section',start);
 })();
 </script>
 <script>
@@ -13281,7 +13297,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   }
   ['pipeline','registry','evaluation','rollback'].forEach(view=>byId('btn-mlops-'+view)?.addEventListener('click',async()=>{selectedMlopsDetail=view;byId('mlops-detail').textContent='正在读取所选证据…';try{if(!evidence)await load();renderSelectedMlopsDetail();}catch(error){byId('mlops-status').textContent='MLOps证据加载失败：'+error.message;byId('mlops-detail').textContent='所选证据不可用，点击按钮可重试。';}}));
   [['btn-o11y-trace',renderTrace,'o11y-trace'],['btn-rca-run',renderBlockers,'mlops-status'],['btn-dq-check',renderDQ,'dq-res']].forEach(([id,renderSection,resultId])=>byId(id)?.addEventListener('click',async event=>{event.stopImmediatePropagation();try{if(!evidence)await load();renderSection(evidence);}catch(error){byId(resultId).textContent='证据加载失败：'+error.message;}},true));
-  const start=()=>{if(!evidence)load().catch(error=>{byId('mlops-status').textContent='MLOps证据加载失败：'+error.message;});};setTimeout(start,1500);setTimeout(start,5000);
+  const start=()=>evidence?Promise.resolve(evidence):load().catch(error=>{byId('mlops-status').textContent='MLOps证据加载失败：'+error.message;throw error;});window.__portDtLoadWhenActive('mlops-section',start);
 })();
 </script>
 <script>
@@ -13433,7 +13449,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   }
 
   // 首次加载
-  const schedulePlatformLoad=()=>setTimeout(loadPlatform, 450);
+  const schedulePlatformLoad=()=>window.__portDtLoadWhenActive('g-section',loadPlatform);
   if(document.readyState==='loading'){
     document.addEventListener('DOMContentLoaded', schedulePlatformLoad, {once:true});
   }else{
@@ -13597,15 +13613,10 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     if(autoLoaded) return;
     autoLoaded=true;
     // Allow the Overview bridge to settle the inferred scenario first.
-    setTimeout(()=>loadTwin(false),1400);
+    window.__portDtLoadWhenActive('twin-section',()=>loadTwin(false));
   };
   window.__autoLoadTwinReliability=autoLoad;
-  if('IntersectionObserver' in window){
-    const observer=new IntersectionObserver(entries=>{
-      if(entries.some(entry=>entry.isIntersecting)){ autoLoad(); observer.disconnect(); }
-    },{rootMargin:'500px 0px'});
-    const twinSection=document.getElementById('twin-section'); if(twinSection) observer.observe(twinSection);
-  }else if(window.__twinReliabilityVisible()) autoLoad();
+  autoLoad();
   if(location.hash==='#twin-section') autoLoad();
 })();
 </script>
@@ -13723,7 +13734,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
 
   // 首次载入尝试刷新一次
   window.addEventListener('load', ()=>{
-    setTimeout(()=>{ try{ loadAdapters(); }catch(_){ } }, 400);
+    window.__portDtLoadWhenActive('twin-section',loadAdapters);
   });
 })();
 </script>
@@ -13854,8 +13865,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
 
   const loadDeep=async()=>{const evidence=await loadKPI(); if(evidence) await loadPolicySpace(evidence);};
   const button=$('#btn-deep-refresh'); if(button) button.addEventListener('click',loadDeep);
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>setTimeout(loadDeep,450),{once:true});
-  else setTimeout(loadDeep,450);
+  window.__portDtLoadWhenActive('deep-section',loadDeep);
 })();
 </script>
 <script>
@@ -14122,7 +14132,8 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     if(canRunPortviz()) frameRequest=requestAnimationFrame(frame);
   }
   function canRunPortviz(){
-    return running&&portvizVisible&&!document.hidden&&cv.getClientRects().length>0;
+    return running&&portvizVisible&&!document.hidden&&cv.getClientRects().length>0
+      && (!window.PortModuleLoading || window.PortModuleLoading.isActive('realtime-section'));
   }
   function syncPortvizAnimation(){
     if(canRunPortviz()&&!frameRequest) frameRequest=requestAnimationFrame(frame);
@@ -14493,8 +14504,8 @@ async function pullOverview(scenario=masScenario){
   }
   window.addEventListener('resize', ()=>{ gChart?.resize?.(); gantt?.resize?.(); });
 
-  // V3 公开回放证据不依赖工程模拟器开关；所有结果均为建议态。
-  pullOverview('replay');
+  // V3 公开回放证据按当前页面读取；所有结果均为建议态。
+  window.__portDtLoadWhenActive('mas-section',()=>pullOverview(masScenario));
 })();
 </script>
 <script>
@@ -15311,8 +15322,8 @@ async function pullOverview(scenario=masScenario){
   $('#governance-contract')?.addEventListener('click',async()=>{const j=governanceReadiness||await loadGovernanceReadiness(false);$('#governance-detail').textContent=JSON.stringify({dataset_schema:j.dataset_schema,evidence_schema:j.evidence_schema,contract:j.contract,boundary:j.boundary},null,2);});
   $('#governance-preflight')?.addEventListener('click',async()=>{$('#governance-readiness-status').textContent='正在核对十二类责任、十项异人审批、培训资质、七天三班主备和四级升级链…';try{const response=await fetch('/api/v3/operating-model-governance/run',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(governanceContractSample())});const j=await response.json();if(!response.ok||!j.valid)throw new Error(`HTTP ${response.status} · ${JSON.stringify(j.errors||[])}`);const e=j.evidence||{},m=e.metrics||{},b=e.boundary||{};$('#governance-people').textContent=String(m.active_person_count??'—');$('#governance-domains').textContent=`${m.responsibility_domain_count??'—'} / 12`;$('#governance-workflows').textContent=`${m.approval_workflow_count??'—'} / 10`;$('#governance-days').textContent=`${m.roster_days??'—'} 天`;$('#governance-assignments').textContent=String(m.roster_assignment_count??'—');$('#governance-conflicts').textContent=String(m.segregation_conflict_count??'—');$('#governance-site-state').textContent=b.organization_authority_verified?'证据已验证':'合同样例≠现场正式任命';$('#governance-site-state').style.color=b.organization_authority_verified?'#86efac':'#fcd34d';$('#governance-readiness-status').textContent=`责任治理合同通过 · 实名角色 ${m.active_person_count} 人 · 十二类责任全覆盖 · 十项关键流程异人分权 · ${m.roster_days} 天三班主备 ${m.roster_assignment_count} 班岗 · 分权冲突 ${m.segregation_conflict_count} · 不任命人员、不授予账号`;$('#governance-readiness-status').style.color=e.governance_status==='pass'?'#86efac':'#f87171';$('#governance-detail').textContent=JSON.stringify({run_id:e.run_id,dataset_sha256:e.dataset_sha256,bindings:e.bindings,metrics:e.metrics,threshold_checks:e.threshold_checks,governance_status:e.governance_status,approved:e.approved,boundary:e.boundary,warnings:j.warnings},null,2);}catch(error){$('#governance-readiness-status').textContent='责任治理核验失败：'+error.message;$('#governance-readiness-status').style.color='#f87171';}});
 
-  // 首次加载“场景工厂”
-  loadScenarios();
+  // 打开场景工厂时读取；未访问的页面保持未请求状态。
+  window.__portDtLoadWhenActive('twinlab-section',loadScenarios);
 })();
 </script>
 <script>
@@ -15472,7 +15483,7 @@ async function pullOverview(scenario=masScenario){
       }
     }
 
-    document.addEventListener("DOMContentLoaded", loadExecCockpit);
+    document.addEventListener("DOMContentLoaded", ()=>window.__portDtLoadWhenActive(["home-hero","exec-cockpit"],loadExecCockpit));
   </script>
 
 <script>
@@ -15770,7 +15781,7 @@ async function pullOverview(scenario=masScenario){
 
 
 
-  document.addEventListener('DOMContentLoaded', loadPlatformMap);
+  document.addEventListener('DOMContentLoaded',()=>window.__portDtLoadWhenActive('platform-map',loadPlatformMap));
 </script>
 
 <script>
@@ -15927,7 +15938,7 @@ async function pullOverview(scenario=masScenario){
       });
 
       // 首次加载（默认滚动 12 个月）
-      esgLoadSummary("rolling");
+      window.__portDtLoadWhenActive("esg-section",()=>esgLoadSummary("rolling"));
     }
 
     window.addEventListener("load", esgInitCard);
@@ -16118,7 +16129,7 @@ async function pullOverview(scenario=masScenario){
   }
 
   // 页面就绪时拉取
-  document.addEventListener('DOMContentLoaded', loadTrustBadge);
+  document.addEventListener('DOMContentLoaded',()=>window.__portDtLoadWhenActive(['home-hero','ai-trust-scenes'],loadTrustBadge));
 </script>
 
 <script>
@@ -16198,9 +16209,10 @@ async function pullOverview(scenario=masScenario){
   document.getElementById('btn-trust-boundary')?.addEventListener('click',()=>{
     if (aiTrustV3Evidence) document.getElementById('trust-evidence-detail').textContent = trustJson({boundary:aiTrustV3Evidence.boundary, admission_ladder:aiTrustV3Evidence.admission_ladder, claim_registry:aiTrustV3Evidence.claim_registry});
   });
-  document.addEventListener('DOMContentLoaded',()=>loadAITrustV3().catch((error)=>{
+  window.__portDtLoadWhenActive('ai-trust-scenes',()=>loadAITrustV3().catch((error)=>{
     const status = document.getElementById('trust-v3-status');
     if (status) status.textContent = `AI Trust证据加载失败：${error}`;
+    throw error;
   }));
 </script>
 
@@ -16398,7 +16410,7 @@ async function pullOverview(scenario=masScenario){
     }
 
 
-    window.addEventListener('DOMContentLoaded', initStory);
+    window.addEventListener('DOMContentLoaded',()=>window.__portDtLoadWhenActive('story-section',initStory,{maxAgeMs:Infinity}));
   })();
 </script>
 
@@ -16568,12 +16580,12 @@ async function pullOverview(scenario=masScenario){
   }
 
   // 启动流程
-  (async function(){
+  btnTs.addEventListener('click', loadTimeseries);
+  window.__portDtLoadWhenActive('cmp-section',async()=>{
     ensureYear();
     await initCatalog();
-    btnTs.addEventListener('click', loadTimeseries);
-    if (portSel.value) loadTimeseries(); // 自动加载一轮
-  })();
+    if (portSel.value) await loadTimeseries();
+  },{maxAgeMs:Infinity});
 })();
 </script>
 <script>
@@ -16690,6 +16702,7 @@ async function pullOverview(scenario=masScenario){
   }
 
   window.__syncHomeHero = syncHomeHero;
+  window.addEventListener('port-module-load-state',syncHomeHero);
   if (typeof syncFromOverview === 'function') globalThis.syncFromOverview = syncFromOverview;
   if (typeof refreshForecastForContext === 'function') globalThis.refreshForecastForContext = refreshForecastForContext;
   if (typeof scrollToSectionWithHeader === 'function') globalThis.scrollToSectionWithHeader = scrollToSectionWithHeader;
@@ -16818,18 +16831,20 @@ async function pullOverview(scenario=masScenario){
 (function(){
   const $ = (id) => document.getElementById(id);
   
-const contractState = {items: [], selected: null};
+const contractState = {items: [], selected: null, requests: new Map()};
 
 async function tryLoadContractRegistry(){
   try{
     const [provenanceResponse, actuatorResponse] = await Promise.all([
-      fetch('/api/system/provenance', {cache:'no-store'}),
+      fetch('/api/system/provenance?detail=summary', {cache:'no-store'}),
       fetch('/api/actuators/capabilities', {cache:'no-store'})
     ]);
     if(!provenanceResponse.ok || !actuatorResponse.ok) throw new Error('provenance unavailable');
     const provenance = await provenanceResponse.json();
     const actuator = await actuatorResponse.json();
     const rl = provenance.rl || {};
+    const rlDeferred=rl.verification_state==='deferred';
+    const policyDeferred=provenance.runtime_policy?.verification_state==='deferred';
     const availableDatasets = Array.isArray(rl.datasets) ? rl.datasets : [];
     const portviz = provenance.portviz || {};
     const telemetry = provenance.telemetry || {};
@@ -16842,15 +16857,17 @@ async function tryLoadContractRegistry(){
     ));
     return [
       {
-        key:'rl', name:'RL / 训练与评测', file:'/api/rl/train/*', readiness:rl.runtime?.available?'runtime-ready':'runtime-unavailable',
-        ready:rl.runtime?.available===true, mode:'real-algorithm + chronological-holdout', target:'/api/rl/models', timeField:'timestamp', pk:'job_id',
-        summary:`算法=${(rl.algorithms||[]).map(item=>item.name).join('、')||'—'}；可用数据集=${availableDatasets.length}项（目录含训练及验证用途，当前训练配置以具体任务为准）；训练渲染=${rl.training_rendering||'—'}。`,
+        key:'rl', name:'RL / 训练与评测', file:'/api/rl/train/*', readiness:rlDeferred?'按需核验':(rl.runtime?.available?'runtime-ready':'runtime-unavailable'),
+        verification_state:rlDeferred?'deferred':'verified',detail_url:'/api/rl/engine/capabilities',
+        ready:rl.runtime?.available===true, mode:rlDeferred?'按需核验':'real-algorithm + chronological-holdout', target:'/api/rl/models', timeField:'timestamp', pk:'job_id',
+        summary:rlDeferred?'算法运行时与完整数据集目录尚未请求；点击本卡按需核验，不将未核验当作不可用或零数据集。':`算法=${(rl.algorithms||[]).map(item=>item.name).join('、')||'—'}；可用数据集=${availableDatasets.length}项（目录含训练及验证用途，当前训练配置以具体任务为准）；训练渲染=${rl.training_rendering||'—'}。`,
         fields:'job_id、algorithm、dataset_sha256、seed、split、metrics、model_card'
       },
       {
-        key:'runtime-policy', name:'Policy Runtime / 在线建议链', file:'/api/v3/runtime/status', readiness:runtimePolicy.available?'hash-verified':'fail-closed',
-        ready:runtimePolicy.available===true, mode:runtimePolicy.inference||'unavailable', target:'/api/v3/runtime/series', timeField:'timestamp', pk:'model_sha256+source_timestamp',
-        summary:`模型=${runtimePolicy.model?.algorithm?.toUpperCase?.()||'—'} seed=${runtimePolicy.model?.seed??'—'}；数据=${runtimePolicy.telemetry?.mode||'—'}；生产权限=${runtimePolicy.production_authority===true?'已开启':'关闭'}。`,
+        key:'runtime-policy', name:'Policy Runtime / 在线建议链', file:'/api/v3/runtime/status', readiness:policyDeferred?'按需核验':(runtimePolicy.available?'hash-verified':'fail-closed'),
+        verification_state:policyDeferred?'deferred':'verified',detail_url:'/api/v3/runtime/status',
+        ready:runtimePolicy.available===true, mode:policyDeferred?'按需核验':(runtimePolicy.inference||'unavailable'), target:'/api/v3/runtime/series', timeField:'timestamp', pk:'model_sha256+source_timestamp',
+        summary:policyDeferred?'策略模型与 SHA 门禁尚未加载；点击本卡执行完整哈希核验。当前不授予设备执行权。':`模型=${runtimePolicy.model?.algorithm?.toUpperCase?.()||'—'} seed=${runtimePolicy.model?.seed??'—'}；数据=${runtimePolicy.telemetry?.mode||'—'}；生产权限=${runtimePolicy.production_authority===true?'已开启':'关闭'}。`,
         fields:'canonical_state、raw_action、decoded_control、safety、model_sha256、dataset_sha256'
       },
       {
@@ -16915,6 +16932,7 @@ function renderContractRegistry(){
     el.addEventListener('click', ()=>{
       contractState.selected = item.key;
       renderContractRegistry();
+      if(item.detail_url) loadContractDetail(item.key);
     });
     wrap.appendChild(el);
   });
@@ -16926,10 +16944,49 @@ function renderContractRegistry(){
       <div class="contract-detail-body">${esc(selected.summary)}<br>字段摘要：${esc(selected.fields)}<br>当前证据接口：${esc(selected.target)}<br>主键 / 时间字段：${esc(selected.pk)} / ${esc(selected.timeField)}</div>
     `;
   }
+  if(selected?.details){const pre=document.createElement('pre');pre.className='small mono';pre.style.cssText='max-height:360px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere';pre.textContent=JSON.stringify(selected.details,null,2);detail.appendChild(pre);}
   if($('home-loop-audit')){
     const readyCount = contractState.items.filter(it=>it.ready===true).length;
-    $('home-loop-audit').textContent = `运行时来源登记：${readyCount}/${contractState.items.length} 个研究或现场证据链就绪；adapter-pending 与 fail-closed 仍是上线门禁。`;
+    const deferredCount=contractState.items.filter(it=>['deferred','loading'].includes(it.verification_state)).length;
+    $('home-loop-audit').textContent = `运行时来源登记：${readyCount}/${contractState.items.length} 个研究或现场证据链就绪；${deferredCount} 项按需核验；adapter-pending 与 fail-closed 仍是上线门禁。`;
   }
+}
+
+async function loadContractDetail(key){
+  const item=contractState.items.find(row=>row.key===key);
+  if(!item?.detail_url)return null;
+  if(contractState.requests.has(key))return contractState.requests.get(key);
+  item.verification_state='loading';item.readiness='核验中';item.mode='核验中';item.ready=false;item.details=null;
+  item.summary='正在请求完整运行时证据并核对哈希；尚未形成就绪结论。';
+  if(contractState.selected===key)renderContractRegistry();
+  const pending=(async()=>{
+    try{
+      const response=await fetch(item.detail_url,{cache:'no-store'});
+      if(!response.ok)throw new Error(`HTTP ${response.status}`);
+      const data=await response.json();item.details=data;item.verification_state='verified';
+      if(key==='rl'){
+        item.ready=data.runtime?.available===true;
+        item.mode=data.engine||'运行时能力核验';
+        item.readiness=item.ready?'runtime-ready':'runtime-unavailable';
+        item.summary=`运行时=${item.ready?'依赖已核验':'不可用'}；算法=${(data.algorithms||[]).map(row=>row.name||row.id).join('、')||'未声明'}；数据集=${Array.isArray(data.datasets)?data.datasets.length+'项':'不可用'}。完整字段与数据集哈希见下方原始响应。`;
+      }else{
+        item.ready=data.available===true;item.readiness=item.ready?'hash-verified':'fail-closed';item.mode=data.inference||'未声明';
+        item.summary=`策略哈希核验=${item.ready?'通过':'拦截'}；模型=${data.model?.algorithm||'不可用'}；生产权限=${data.production_authority===true?'开启':'关闭'}。完整模型 SHA、来源与门禁见下方原始响应。`;
+      }
+      return data;
+    }catch(error){
+      item.ready=false;item.verification_state='failed';item.readiness='核验失败';item.mode='核验失败';item.details=null;
+      item.summary=`完整证据读取失败：${error.message}。点击本卡可重试；不沿用旧就绪结论。`;
+      return null;
+    }finally{
+      contractState.requests.delete(key);
+      // Refresh every card's state, while the detail renderer continues to use
+      // the current selection rather than the request that just completed.
+      renderContractRegistry();
+    }
+  })();
+  contractState.requests.set(key,pending);
+  return pending;
 }
 
 window.addEventListener('load', async ()=>{
@@ -17110,8 +17167,8 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
   window.addEventListener('load', () => {
     syncFromOverview();
     setTimeout(syncFromOverview, 900);
-    setTimeout(refreshForecastForContext, 1200);
-    setTimeout(renderStrategyDecisionChain, 700);
+    window.__portDtLoadWhenActive('twin-section',refreshForecastForContext);
+    window.__portDtLoadWhenActive('strategy-exec-module',renderStrategyDecisionChain);
 
     document.querySelector('a[data-panel="cockpit"]')?.addEventListener('click', (ev) => { ev.preventDefault(); syncFromOverview(); scrollToSectionWithHeader('exec-cockpit', { title: '首页为何跳到这里', sub: '管理驾驶舱负责提供首页规则来源：状态等级、峰值需量风险、可信度与年度收益摘要。' }); });
     document.querySelector('a[data-panel="twin"]')?.addEventListener('click', jumpToTwinWithContext);
@@ -17699,7 +17756,7 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     const el = document.getElementById('system-provenance-badge');
     if(!el) return;
     try{
-      const response = await fetch('/api/system/provenance', {cache:'no-store'});
+      const response = await fetch('/api/system/provenance?detail=summary', {cache:'no-store'});
       if(!response.ok) throw new Error(`HTTP ${response.status}`);
       const data = await response.json();
       const telemetry=data.telemetry||{};

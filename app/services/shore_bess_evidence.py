@@ -5,9 +5,8 @@ import hashlib
 import json
 from app.services.rl_training.model_artifacts import resolve_model_artifact
 import math
-from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 from app.services.rl_model.shore_bess.api import PolicyRunner
 from app.services.rl_model.shore_bess.v3_environment import (
@@ -16,13 +15,14 @@ from app.services.rl_model.shore_bess.v3_environment import (
     load_config as load_v3_config,
     load_public_dataset,
 )
+from app.services.evidence_snapshot_cache import (
+    FileBoundEvidenceCache, csv_record_count, energy_evidence_dependencies, verify_report_dataset,
+)
 from app.services.training_process_evidence import (
-    checkpoint_reward_replay_path,
     load_checkpoint_reward_replay,
     load_seed_process_evidence,
-    seed_metric_paths,
 )
-from app.services.value_improvement import evidence_path, load_module_value_improvement
+from app.services.value_improvement import load_module_value_improvement
 from app.services.shore_bess_v8_evidence import ShoreBESSV8EvidenceService
 
 
@@ -35,6 +35,7 @@ class ShoreBESSEvidenceService:
         self.artifacts = self.root / "artifacts"
         self.repo_root = self.root.parents[3]
         self.v3_evidence = self.repo_root / "evidence" / "v3" / "shore_bess"
+        self._snapshot_cache = FileBoundEvidenceCache(self.repo_root)
         self.v8_evidence = ShoreBESSV8EvidenceService(self.repo_root)
 
     @staticmethod
@@ -95,41 +96,12 @@ class ShoreBESSEvidenceService:
         ]
 
     def build(self) -> Dict[str, Any]:
-        latest_path = self.v3_evidence / "latest.json"
-        formal_paths: List[Path] = [latest_path]
-        if latest_path.exists():
-            try:
-                latest = json.loads(latest_path.read_text(encoding="utf-8"))
-                report_path = self.repo_root / str(latest.get("report_path") or "")
-                formal_paths.append(report_path)
-                if report_path.exists():
-                    report = json.loads(report_path.read_text(encoding="utf-8"))
-                    for item in (report.get("artifacts") or {}).get("models") or []:
-                        formal_paths.append(resolve_model_artifact(self.repo_root, str(item.get("path") or ""), item.get("sha256")))
-                    formal_paths.extend(seed_metric_paths(self.repo_root, latest))
-                    formal_paths.append(checkpoint_reward_replay_path(self.repo_root, latest))
-            except (OSError, ValueError, json.JSONDecodeError):
-                pass
-        tracked = [
-            self.artifacts / "shore_bess_outputs.jsonl",
-            self.root / "policy.bin",
-            self.root / "policy_meta.json",
-            self.data / "berths_master.csv",
-            self.data / "ship_calls.csv",
-            self.data / "shore_power_telemetry.csv",
-            self.data / "bess_telemetry.csv",
-            self.data / "grid_meter.csv",
-            *formal_paths,
-            evidence_path(self.repo_root),
-        ]
-        key = tuple(
-            (str(path), path.stat().st_mtime_ns, path.stat().st_size)
-            for path in tracked
-            if path.exists()
+        return self._snapshot_cache.get(
+            lambda: energy_evidence_dependencies(self), self._build_evidence
         )
-        # V8 pointers, models and source hashes are checked outside the frozen
-        # V3 cache, so a newly completed run cannot leave the old card current.
-        payload = dict(self._build_cached(key))
+
+    def _build_evidence(self) -> Dict[str, Any]:
+        payload = self._build_uncached()
         payload["v8"] = self.v8_evidence.build()
         return payload
 
@@ -139,7 +111,7 @@ class ShoreBESSEvidenceService:
             return {}, {}
         latest = json.loads(latest_path.read_text(encoding="utf-8"))
         report_path = self.repo_root / str(latest.get("report_path") or "")
-        if not report_path.exists() or self._sha(report_path) != latest.get("report_sha256"):
+        if not report_path.is_file() or self._sha(report_path) != latest.get("report_sha256"):
             raise RuntimeError("Shore+BESS formal evidence pointer or report hash is invalid")
         report = json.loads(report_path.read_text(encoding="utf-8"))
         return latest, report
@@ -148,15 +120,16 @@ class ShoreBESSEvidenceService:
         models = (report.get("artifacts") or {}).get("models") or []
         fallback = (report.get("blind_test") or {}).get("sample_real_model_inference") or {}
         if not models:
-            return {"policy_loaded": False, "error": "formal model artifact is missing", **fallback}
+            return {"policy_loaded": False, "error": "formal model artifact is missing", "saved_blind_inference": fallback}
         selected = models[0]
         try:
             model_path = resolve_model_artifact(self.repo_root, str(selected.get("path") or ""), selected.get("sha256"))
         except (ValueError, OSError):
-            return {"policy_loaded": False, "error": "formal model hash gate failed", **fallback}
+            return {"policy_loaded": False, "error": "formal model hash gate failed", "saved_blind_inference": fallback}
         try:
             from stable_baselines3 import PPO
 
+            verify_report_dataset(self.repo_root, report)
             config = load_v3_config()
             dataset = load_public_dataset(config)
             train_slice, _validation_slice, blind_slice = chronological_slices(dataset)
@@ -214,8 +187,7 @@ class ShoreBESSEvidenceService:
                 "saved_blind_inference": fallback,
             }
 
-    @lru_cache(maxsize=4)
-    def _build_cached(self, _key: Tuple[Tuple[str, int, int], ...]) -> Dict[str, Any]:
+    def _build_uncached(self) -> Dict[str, Any]:
         latest, formal = self._load_formal()
         history_path = self.artifacts / "shore_bess_outputs.jsonl"
         rows = self._jsonl(history_path)
@@ -284,9 +256,9 @@ class ShoreBESSEvidenceService:
             "bess_master.json", "demand_window_config.json",
         ):
             path = self.data / name
-            csv_rows = self._csv_rows(path) if path.suffix == ".csv" else []
+            row_count = csv_record_count(path) if path.suffix == ".csv" else None
             manifests.append(
-                {"file": name, "rows": len(csv_rows) if path.suffix == ".csv" else None, "sha256": self._sha(path)}
+                {"file": name, "rows": row_count, "sha256": self._sha(path)}
             )
 
         formal_quality = formal.get("quality_gates") or {}
@@ -330,7 +302,7 @@ class ShoreBESSEvidenceService:
             "quality_gates": {
                 **formal_quality,
                 "policy_artifact_loads": bool(v3_inference.get("policy_loaded")),
-                "admitted": bool(formal_quality.get("public_offline_admitted")),
+                "admitted": bool(formal_quality.get("public_offline_admitted")) and bool(v3_inference.get("policy_loaded")),
                 "production_admitted": False,
                 "reasons": production_reasons,
                 "legacy_audit": {

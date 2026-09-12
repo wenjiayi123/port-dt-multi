@@ -20,6 +20,7 @@
   let provenanceSnapshot = null;
   let globalHideTimer = null;
   const moduleLoads = new Map();
+  const moduleRequests = new Map();
   const deferredRenders = new Map();
   let renderObserver = null;
   const installedAt = Date.now();
@@ -40,8 +41,8 @@
       <span class="port-dt-runtime-recovery-dot" aria-hidden="true"></span>
       <div class="port-dt-runtime-recovery-copy">
         <strong>本地数据加载中</strong>
-        <small>正在读取后端证据·0/5</small>
-        <div class="port-dt-global-load-track" role="progressbar" aria-label="本地证据加载进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="已完成 0/5"><span></span></div>
+        <small>当前页面证据尚未请求</small>
+        <div class="port-dt-global-load-track" role="progressbar" aria-label="本地证据加载进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="尚未请求"><span></span></div>
       </div>
       <button type="button" hidden>立即重试</button>`;
     const style = document.createElement("style");
@@ -98,16 +99,17 @@
   }
 
   function evidenceLoadSummary(){
-    const keys = Object.keys(MODULES);
+    const current = window.PortModuleLoading?.current() || window.PortModuleNavigation?.current || document.body?.dataset.moduleView || "home-hero";
+    const keys = Object.keys(MODULES).filter(key=>MODULES[key].section===current);
     const complete = keys.filter(key=>moduleLoads.get(key)?.status === "complete");
     const loading = keys.filter(key=>moduleLoads.get(key)?.status === "loading");
     const failed = keys.filter(key=>moduleLoads.get(key)?.status === "failed");
-    return {total:keys.length, complete, loading, failed};
+    const idle = keys.filter(key=>!moduleLoads.has(key));
+    return {total:keys.length, complete, loading, failed, idle};
   }
 
   function evidenceLoadsPending(){
-    const summary = evidenceLoadSummary();
-    return summary.complete.length + summary.failed.length < summary.total;
+    return Array.from(moduleLoads.values()).some(state=>state.status === "loading");
   }
 
   function setGlobalTrack(banner, percent, text, indeterminate=false){
@@ -128,21 +130,27 @@
 
   function updateGlobalProgress(){
     const summary = evidenceLoadSummary();
-    if(summary.failed.length) return;
     const banner = ensureBanner();
     if(globalHideTimer){
       window.clearTimeout(globalHideTimer);
       globalHideTimer = null;
     }
+    // Unopened energy pages have no requests and are not homepage work. Do not
+    // count them as complete, or make the homepage wait for a fictitious 0/5.
+    if(!summary.total){
+      if(!confirmedOffline) banner.hidden=true;
+      return;
+    }
+    if(summary.failed.length || confirmedOffline) return;
     const percent = Math.round((summary.complete.length / summary.total) * 100);
     banner.hidden = false;
     banner.querySelector("button").hidden = true;
     if(summary.complete.length === summary.total){
       banner.classList.remove("loading");
       banner.classList.add("recovered");
-      banner.querySelector("strong").textContent = "本地数据已就绪";
-      banner.querySelector("small").textContent = `5/5 个证据模块读取完成`;
-      setGlobalTrack(banner, 100, "已完成 5/5");
+      banner.querySelector("strong").textContent = "当前页面证据已就绪";
+      banner.querySelector("small").textContent = `${summary.complete.length}/${summary.total} 个当前页面证据模块读取完成`;
+      setGlobalTrack(banner, 100, `已完成 ${summary.complete.length}/${summary.total}`);
       globalHideTimer = window.setTimeout(()=>{
         if(!confirmedOffline) banner.hidden = true;
       }, 1200);
@@ -151,9 +159,9 @@
     }
     banner.classList.remove("recovered");
     banner.classList.add("loading");
-    banner.querySelector("strong").textContent = "本地数据加载中";
+    banner.querySelector("strong").textContent = "当前页面证据加载中";
     const active = summary.loading.map(key=>MODULES[key].label);
-    const detail = active.length ? `·正在读取 ${active.join("、")}` : "·正在准备证据请求";
+    const detail = active.length ? `·正在读取 ${active.join("、")}` : "·尚未请求，等待当前页面加载任务启动";
     banner.querySelector("small").textContent = `已完成 ${summary.complete.length}/${summary.total} ${detail}`;
     setGlobalTrack(banner, percent, `已完成 ${summary.complete.length}/${summary.total}`);
   }
@@ -289,16 +297,18 @@
 
   window.__portDtEvidenceLoadStarted = markModuleLoading;
   window.__portDtEvidenceLoadCompleted = markModuleComplete;
-  window.__portDtTrackEvidenceLoad = async function(key, task){
+  window.__portDtTrackEvidenceLoad = function(key, task){
+    if(moduleRequests.has(key)) return moduleRequests.get(key);
     markModuleLoading(key);
-    try{
-      const result = await task();
+    const pending=Promise.resolve().then(task).then(result=>{
       markModuleComplete(key);
       return result;
-    }catch(error){
+    },error=>{
       window.__portDtEvidenceLoadFailed(key, error);
       throw error;
-    }
+    }).finally(()=>{if(moduleRequests.get(key)===pending)moduleRequests.delete(key);});
+    moduleRequests.set(key,pending);
+    return pending;
   };
 
   function markModuleOffline(key){
@@ -364,8 +374,8 @@
 
   async function probeHealth(immediate){
     if(probeInFlight || reloadScheduled) return;
-    // The five real evidence requests are business traffic. Do not add a
-    // competing health request while they are still filling the page.
+    // Only started evidence requests are business traffic. Unopened pages must
+    // neither start work nor block recovery probes indefinitely.
     if(!immediate && evidenceLoadsPending()) return;
     probeInFlight = true;
     const controller = new AbortController();
@@ -406,6 +416,7 @@
     probeHealth(true);
   };
   window.__portDtRuntimeRecovery = {probe:()=>probeHealth(true)};
+  window.addEventListener("port-module-shown", updateGlobalProgress);
 
   function start(){
     ensureBanner();

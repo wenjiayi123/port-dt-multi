@@ -6,7 +6,7 @@ const nodes=new Map(),events={},timers=new Set();let nextTimer=0;
 const node=id=>{if(!nodes.has(id))nodes.set(id,{value:'',textContent:'',innerHTML:'',disabled:false,dataset:{},handlers:{},addEventListener(type,fn){this.handlers[type]=fn;},getClientRects(){return[{}];},appendChild(){}});return nodes.get(id);};
 node('story-port').value='shanghai';node('story-scenario').value='sac_vs_fcfs';
 let response={available:true,hour:0,events:[],baseline:{},policy:{}};
-const context={JSON,Number,String,Math,Promise,console,document:{hidden:false,getElementById:node,createElement:()=>node('created'),addEventListener(){}},window:{addEventListener(type,fn){events[type]=fn;}},fetch:async()=>({ok:true,json:async()=>response}),setInterval(){const id=++nextTimer;timers.add(id);return id;},clearInterval(id){timers.delete(id);}};
+const context={JSON,Number,String,Math,Promise,console,document:{hidden:false,getElementById:node,createElement:()=>node('created'),addEventListener(){}},window:{addEventListener(type,fn){events[type]=fn;},__portDtLoadWhenActive(section,task){assert.equal(section,'story-section');return task();}},fetch:async()=>({ok:true,json:async()=>response}),setInterval(){const id=++nextTimer;timers.add(id);return id;},clearInterval(id){timers.delete(id);}};
 vm.createContext(context);vm.runInContext(script,context);
 const settle=()=>new Promise(resolve=>setImmediate(resolve));
 (async()=>{

@@ -4,19 +4,19 @@ import csv
 import hashlib
 import json
 import math
-from functools import lru_cache
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 from app.services.rl_model.yard_crane.v3_environment import (
     NumpyMLPPolicy, YardCraneV3Env, chronological_slices,
     load_config as load_v3_config, load_dataset as load_v3_dataset,
 )
+from app.services.evidence_snapshot_cache import (
+    FileBoundEvidenceCache, csv_record_count, energy_evidence_dependencies, verify_report_dataset,
+)
 from app.services.training_process_evidence import (
-    checkpoint_reward_replay_path,
     load_checkpoint_reward_replay,
     load_seed_process_evidence,
-    seed_metric_paths,
 )
 
 
@@ -28,6 +28,7 @@ class YardCraneEvidenceService:
         self.data, self.artifacts = self.root / "data", self.root / "artifacts"
         self.repo_root = self.root.parents[3]
         self.v3_evidence = self.repo_root / "evidence" / "v3" / "yard_crane"
+        self._snapshot_cache = FileBoundEvidenceCache(self.repo_root)
 
     @staticmethod
     def _sha(path: Path) -> str | None:
@@ -89,7 +90,7 @@ class YardCraneEvidenceService:
             return {}, {}
         latest = json.loads(pointer.read_text(encoding="utf-8"))
         report_path = self.repo_root / str(latest.get("report_path") or "")
-        if not report_path.exists() or self._sha(report_path) != latest.get("report_sha256"):
+        if not report_path.is_file() or self._sha(report_path) != latest.get("report_sha256"):
             raise RuntimeError("yard-crane formal report hash gate failed")
         return latest, json.loads(report_path.read_text(encoding="utf-8"))
 
@@ -103,6 +104,7 @@ class YardCraneEvidenceService:
         if not model_path.exists() or self._sha(model_path) != selected.get("sha256"):
             return {"policy_loaded": False, "error": "formal yard-crane model hash gate failed", "saved_blind_inference": fallback}
         try:
+            verify_report_dataset(self.repo_root, report)
             config = load_v3_config()
             dataset = load_v3_dataset(config)
             train_slice, _validation_slice, blind_slice = chronological_slices(dataset)
@@ -132,27 +134,14 @@ class YardCraneEvidenceService:
             return {"policy_loaded": False, "error": str(exc), "saved_blind_inference": fallback}
 
     def build(self) -> Dict[str, Any]:
-        formal_paths = [self.v3_evidence / "latest.json", self.v3_evidence / "history_index.jsonl"]
-        try:
-            latest, formal = self._load_formal()
-            if formal:
-                formal_paths.append(self.repo_root / str(latest.get("report_path") or ""))
-                formal_paths.extend(self.repo_root / str(row.get("path") or "") for row in (formal.get("artifacts") or {}).get("models") or [])
-                formal_paths.extend(seed_metric_paths(self.repo_root, latest))
-                formal_paths.append(checkpoint_reward_replay_path(self.repo_root, latest))
-        except (OSError, ValueError, json.JSONDecodeError, RuntimeError):
-            pass
-        tracked = [
-            self.root / "policy.bin", self.root / "policy_evaluate_history.jsonl",
-            self.artifacts / "offline_dataset_crane.jsonl", self.artifacts / "offline_dataset_crane_aug.jsonl",
-            self.data / "crane_telemetry.csv", self.data / "job_events.csv", self.data / "queue_forecast.csv",
-            *formal_paths,
-        ]
-        key = tuple((str(path), path.stat().st_mtime_ns, path.stat().st_size) for path in tracked if path.exists())
-        return self._build_cached(key)
+        return self._snapshot_cache.get(
+            lambda: energy_evidence_dependencies(self), self._build_evidence
+        )
 
-    @lru_cache(maxsize=4)
-    def _build_cached(self, _key: Tuple[Tuple[str, int, int], ...]) -> Dict[str, Any]:
+    def _build_evidence(self) -> Dict[str, Any]:
+        return self._build_uncached()
+
+    def _build_uncached(self) -> Dict[str, Any]:
         latest, formal = self._load_formal()
         history_path = self.root / "policy_evaluate_history.jsonl"
         base_path = self.artifacts / "offline_dataset_crane.jsonl"
@@ -176,8 +165,8 @@ class YardCraneEvidenceService:
         manifests = []
         for name in ("cranes_master.csv", "yard_blocks.csv", "crane_telemetry.csv", "job_events.csv", "queue_forecast.csv", "grid_meter.csv", "market_price.csv", "grid_ef.csv", "dr_events.json"):
             path = self.data / name
-            rows = self._csv(path) if path.suffix == ".csv" else []
-            manifests.append({"file": name, "rows": len(rows) if rows else None, "sha256": self._sha(path)})
+            row_count = csv_record_count(path) if path.suffix == ".csv" else 0
+            manifests.append({"file": name, "rows": row_count or None, "sha256": self._sha(path)})
         return {
             "version": "V3.1",
             "module": {"id": "yard_crane", "name": "场桥/轨道吊节能调度", "state": "formal_engineering_offline_site_pending"},
@@ -202,7 +191,7 @@ class YardCraneEvidenceService:
             "business_metrics": business,
             "quality_gates": {
                 **quality, "policy_artifact_loads": bool(inference.get("policy_loaded")),
-                "admitted": bool(quality.get("public_offline_admitted")), "production_admitted": False,
+                "admitted": bool(quality.get("public_offline_admitted")) and bool(inference.get("policy_loaded")), "production_admitted": False,
                 "legacy_audit": {
                     "policy_artifact_bytes": legacy_policy.stat().st_size if legacy_policy.exists() else 0,
                     "base_offline_rows": len(base), "base_nonzero_action_rows": base_nonzero,

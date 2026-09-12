@@ -28,7 +28,7 @@ import subprocess
 import sys
 import time
 from pathlib import Path
-from typing import Any, AsyncGenerator, Dict, List, Optional
+from typing import Any, AsyncGenerator, Dict, List, Literal, Optional
 from datetime import datetime, timezone, timedelta  # <- 加上 timedelta
 
 from fastapi import Body, FastAPI, HTTPException, Query, APIRouter, Request
@@ -997,7 +997,13 @@ async def v3_governance_evidence() -> JSONResponse:
 
 
 @app.get("/api/system/provenance", tags=["system"])
-async def system_provenance() -> JSONResponse:
+async def system_provenance(detail: Literal["full", "summary"] = "full") -> JSONResponse:
+    # Even summary reads validate configured site evidence from disk. Keep that
+    # work off the HTTP loop, and never cache live admission/approval decisions.
+    return await asyncio.to_thread(_build_system_provenance, detail)
+
+
+def _build_system_provenance(detail: str = "full") -> JSONResponse:
     """Single source-of-truth for data/algorithm provenance shown to operators."""
     from app.services.portviz.source import SourceConfig
 
@@ -1022,8 +1028,25 @@ async def system_provenance() -> JSONResponse:
         "production": False,
     }
     telemetry_live = telemetry_status.get("mode") in {"live", "live_rest", "opcua", "mqtt", "tsdb"}
-    runtime_status = await asyncio.to_thread(di.strategy_runtime.status)
-    rl_capabilities = await asyncio.to_thread(TRAINING_MANAGER.capabilities)
+    if detail == "summary":
+        # The homepage needs source and safety states, not a cold import of the
+        # learner, validation of every training dataset, or loading policy ZIPs.
+        # Null availability explicitly means unchecked, never passed or failed.
+        runtime_status = {
+            "available": None,
+            "verification_state": "deferred",
+            "detail_url": "/api/v3/runtime/status",
+            "production_authority": False,
+        }
+        rl_capabilities = {
+            "runtime": {"available": None, "verification_state": "deferred"},
+            "datasets": None,
+            "verification_state": "deferred",
+            "detail_url": "/api/rl/engine/capabilities",
+        }
+    else:
+        runtime_status = di.strategy_runtime.status()
+        rl_capabilities = TRAINING_MANAGER.capabilities()
     engineering_simulators_enabled = os.getenv("PORT_DT_ENABLE_ENGINEERING_SIMULATORS", "").strip().lower() in {"1", "true", "yes", "on"}
     legacy_rl_enabled = os.getenv("PORT_DT_ENABLE_LEGACY_RL", "").strip().lower() in {"1", "true", "yes", "on"}
     twin_calibration_readiness = _site_twin_calibration.readiness()
@@ -1171,7 +1194,7 @@ def _inject_runtime_recovery(html: str) -> str:
     marker = "/ui/adapters/runtime_recovery.js"
     if marker in html:
         return html
-    tag = '  <script src="/ui/adapters/runtime_recovery.js?v=20260831-progress-v5"></script>\n'
+    tag = '  <script src="/ui/adapters/runtime_recovery.js?v=20260912-page-loading-v6"></script>\n'
     if "</body>" in html:
         return html.replace("</body>", f"{tag}</body>")
     return html + tag

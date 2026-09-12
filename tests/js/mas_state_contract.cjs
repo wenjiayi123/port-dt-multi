@@ -13,7 +13,7 @@ function element(){return {textContent:'',innerHTML:'',disabled:false,title:'',a
 function setup(){
  const nodes=new Map(),charts=new Map(),requests=[];
  const byId=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)};
- const context=vm.createContext({document:{querySelector:s=>byId(s.slice(1)),getElementById:byId},window:{addEventListener(){}},
+ const context=vm.createContext({document:{querySelector:s=>byId(s.slice(1)),getElementById:byId},window:{addEventListener(){},__portDtLoadWhenActive(section,task){assert.equal(section,'mas-section');return task();}},
  console:{warn(){}},requestAnimationFrame(){throw Error('visible chart should not defer')},
  echarts:{init(el){const chart={option:null,clears:0,setOption(value){this.option=value},clear(){this.option=null;this.clears++},resize(){}};charts.set(el,chart);return chart}},
  fetch:url=>new Promise((resolve,reject)=>requests.push({url,resolve,reject}))});

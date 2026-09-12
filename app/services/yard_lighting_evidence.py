@@ -4,7 +4,6 @@ import csv
 import hashlib
 import json
 import math
-from functools import lru_cache
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 
@@ -12,13 +11,14 @@ from app.services.rl_model.yard_lighting.v3_environment import (
     NumpyMLPPolicy, YardLightingV3Env, chronological_slices,
     load_config as load_v3_config, load_dataset as load_v3_dataset,
 )
+from app.services.evidence_snapshot_cache import (
+    FileBoundEvidenceCache, energy_evidence_dependencies, verify_report_dataset,
+)
 from app.services.training_process_evidence import (
-    checkpoint_reward_replay_path,
     load_checkpoint_reward_replay,
     load_seed_process_evidence,
-    seed_metric_paths,
 )
-from app.services.value_improvement import evidence_path, load_module_value_improvement
+from app.services.value_improvement import load_module_value_improvement
 
 
 class YardLightingEvidenceService:
@@ -27,6 +27,7 @@ class YardLightingEvidenceService:
         self.artifacts, self.data = self.root / "artifacts", self.root / "data"
         self.repo_root = self.root.parents[3]
         self.v3_evidence = self.repo_root / "evidence" / "v3" / "yard_lighting"
+        self._snapshot_cache = FileBoundEvidenceCache(self.repo_root)
 
     @staticmethod
     def _sha(path: Path) -> str | None:
@@ -133,7 +134,7 @@ class YardLightingEvidenceService:
             return {}, {}
         latest = json.loads(pointer.read_text(encoding="utf-8"))
         report_path = self.repo_root / str(latest.get("report_path") or "")
-        if not report_path.exists() or self._sha(report_path) != latest.get("report_sha256"):
+        if not report_path.is_file() or self._sha(report_path) != latest.get("report_sha256"):
             raise RuntimeError("yard-lighting formal report hash gate failed")
         return latest, json.loads(report_path.read_text(encoding="utf-8"))
 
@@ -147,6 +148,7 @@ class YardLightingEvidenceService:
         if not path.exists() or self._sha(path) != selected.get("sha256"):
             return {"policy_loaded": False, "error": "formal lighting model hash gate failed", "saved_blind_inference": fallback}
         try:
+            verify_report_dataset(self.repo_root, report)
             config = load_v3_config(); dataset = load_v3_dataset(config)
             train_slice, _validation_slice, blind_slice = chronological_slices(dataset)
             env = YardLightingV3Env(dataset, blind_slice, config=config, normalization_slice=train_slice,
@@ -171,27 +173,14 @@ class YardLightingEvidenceService:
             return {"policy_loaded": False, "error": str(exc), "saved_blind_inference": fallback}
 
     def build(self) -> Dict[str, Any]:
-        formal_paths = [self.v3_evidence / "latest.json", self.v3_evidence / "history_index.jsonl"]
-        try:
-            latest, report = self._formal()
-            if report:
-                formal_paths.append(self.repo_root / str(latest.get("report_path") or ""))
-                formal_paths.extend(self.repo_root / str(row.get("path") or "") for row in (report.get("artifacts") or {}).get("models") or [])
-                formal_paths.extend(seed_metric_paths(self.repo_root, latest))
-                formal_paths.append(checkpoint_reward_replay_path(self.repo_root, latest))
-        except Exception:
-            pass
-        tracked = [
-            self.artifacts / "offline_train.jsonl", self.root / "policy.bin", self.root / "policy_meta.json",
-            self.data / "zones_master.csv", self.data / "lighting_telemetry.csv", self.data / "activity_forecast.csv",
-            self.repo_root / "data/rl/datasets/public_cn_sha_hourly_v3.csv", *formal_paths,
-            evidence_path(self.repo_root),
-        ]
-        key = tuple((str(path), path.stat().st_mtime_ns, path.stat().st_size) for path in tracked if path.exists())
-        return self._build_cached(key)
+        return self._snapshot_cache.get(
+            lambda: energy_evidence_dependencies(self), self._build_evidence
+        )
 
-    @lru_cache(maxsize=4)
-    def _build_cached(self, _key: Tuple[Tuple[str, int, int], ...]) -> Dict[str, Any]:
+    def _build_evidence(self) -> Dict[str, Any]:
+        return self._build_uncached()
+
+    def _build_uncached(self) -> Dict[str, Any]:
         latest, report = self._formal()
         history_path = self.artifacts / "offline_train.jsonl"
         history = self._jsonl(history_path); last = history[-1] if history else {}
@@ -237,7 +226,7 @@ class YardLightingEvidenceService:
             "business_metrics": business,
             "quality_gates": {
                 **quality, "policy_artifact_loads": bool(inference.get("policy_loaded")),
-                "admitted": bool(quality.get("public_offline_admitted")), "production_admitted": False,
+                "admitted": bool(quality.get("public_offline_admitted")) and bool(inference.get("policy_loaded")), "production_admitted": False,
                 "legacy_policy_ood_blocked": not bool(legacy_probe.get("policy_admitted")),
                 "reasons": ["authorized_lux_power_fixture_fault_and_gateway_feedback_not_connected", "site_photometric_calibration_shadow_ab_complaint_acceptance_and_rollback_pending"],
             },

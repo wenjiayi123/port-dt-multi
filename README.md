@@ -348,7 +348,9 @@ V3 保留全部历史基准并新增一条更严格的证据链：洛杉矶六�
 
 V3 keeps every historical benchmark and adds a stricter evidence track: Los Angeles six-minute public observations provide high-frequency reference training, Singapore official aggregates retain long-horizon coverage, and a Shanghai package combines 22 Ministry of Transport throughput anchors with 17,544 hourly public reanalysis observations near Yangshan for independent target-domain training. We do not claim transfer learning because weights are not inherited across ports. Missing TOS, crane, yard, AGV and gate fields remain explicit engineering derivatives or unavailable factors until site replacement.
 
-Open the new evidence-driven decision center after startup: <http://127.0.0.1:8000/v3>
+Start from the homepage: <http://127.0.0.1:8000/#home-hero>. Open the V3 decision center from its menu entry or directly at <http://127.0.0.1:8000/v3>.
+
+首页按页加载与复测结果见 [启动加载优化说明](docs/STARTUP_LOADING_OPTIMIZATION_20260912.md)。
 
 | V3 fact | Current contract |
 |---|---|

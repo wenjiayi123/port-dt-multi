@@ -8,7 +8,7 @@ function element(){const handlers={};return {textContent:'',innerHTML:'',value:'
  getBoundingClientRect(){return {top:1e6,bottom:1e6+200}},getContext(){return new Proxy({},{get:()=>()=>{}})}};}
 function setup(extra={}){const nodes=new Map();const byId=id=>{if(!nodes.has(id))nodes.set(id,element());return nodes.get(id)};
  const document={getElementById:byId,querySelector:s=>byId(s.replace(/^#/,'')),querySelectorAll:()=>[],addEventListener(){},createElement:element,readyState:'complete'};
- const c=vm.createContext({console,document,window:{addEventListener(){}},setTimeout(){},requestAnimationFrame(){},location:{hash:''},innerHeight:800,Date,URL,Number,JSON,...extra});return {c,byId,nodes};}
+ const c=vm.createContext({console,document,window:{addEventListener(){},__portDtLoadWhenActive(){}},setTimeout(){},requestAnimationFrame(){},location:{hash:''},innerHeight:800,Date,URL,Number,JSON,...extra});return {c,byId,nodes};}
 const response=data=>({ok:true,json:async()=>data});
 const flush=async()=>{for(let i=0;i<15;i++)await Promise.resolve()};
 test('OpenAPI copy shows success only after clipboard confirms the exact address',async()=>{
