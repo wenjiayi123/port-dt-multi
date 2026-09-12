@@ -1,0 +1,747 @@
+{
+  "schema": "port-shore-bess-v8-critic-ranking.v2",
+  "run": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2",
+  "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_50000.zip",
+  "model_sha256": "f513f4c79233b0741dc9e37e794003f17079805a2a3202712aa566fb0c1b7dd8",
+  "step": 50000,
+  "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+  "source_sha256": {
+    "scripts/audit_shore_bess_v8_critic.py": "88f7c28861102b8e822f98a44c06896d793d39b7b23ac16e3ca198e395b1d4ab"
+  },
+  "training_only": true,
+  "test_accessed": false,
+  "forward_accessed": false,
+  "interpretation": "Only nine training states and a finite BESS grid with flex fixed; includes the actor action. Different latent values can map to identical physical actions. Regret uses a 1e-6 return tie tolerance. Not a global critic quality or optimality claim. SAC critic includes entropy whereas this deterministic continuation does not; this is not an unbiased soft-Q calibration or a policy admission test.",
+  "frozen_training_source_sha256": {
+    "scripts/train_shore_bess_v8.py": "970a60a3361894945b7dd8099917ad04eac53a78496373a612a5fd5e335572a4",
+    "app/services/rl_model/shore_bess/v8_environment.py": "beff0b283fc30d6005a6b932b737d029d5377f66cb3c904e8c7635b98c7d7fda",
+    "app/services/rl_model/shore_bess/v3_environment.py": "20f029c3f8904463b257980ffe8370c1945fa36aa5d265591b52094ead2ed05d",
+    "config/shore_bess_v32_balanced.json": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+    "app/services/rl_training/statistics.py": "429e3c00ebeb0517b7670c03e7cee2253b67a762ff45dc8bca026ab79047f8f2",
+    "app/services/rl_training/datasets.py": "9ccb5c7c3d28b0db8267e080f9f67b453790330c5cac458c6250f6b4e5a33e73"
+  },
+  "grid_choices_with_positive_return_regret": 5,
+  "grid_top1_disagreements": 9,
+  "rows": [
+    {
+      "train_start": 1680,
+      "step": 0,
+      "timestamp": "2024-03-11T00:00:00Z",
+      "neural_action": [
+        -0.9981480836868286,
+        1.0
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.9981480836868286,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -2395.061492919922,
+          "critic_min_q": -36.481510162353516,
+          "observed_immediate_reward": -3.7283466370473377,
+          "deterministic_remaining_return": -30.562494317199025
+        },
+        {
+          "latent_bess": -0.8,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -1866.6666746139526,
+          "critic_min_q": -36.26650619506836,
+          "observed_immediate_reward": -2.905804481162022,
+          "deterministic_remaining_return": -29.844447216403424
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -800.000011920929,
+          "critic_min_q": -36.38551712036133,
+          "observed_immediate_reward": -1.2453447908959845,
+          "deterministic_remaining_return": -31.445746829401326
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -133.33335518836975,
+          "critic_min_q": -36.789154052734375,
+          "observed_immediate_reward": -0.2075574960778379,
+          "deterministic_remaining_return": -29.63348153552392
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 0.0,
+          "critic_min_q": -37.13364791870117,
+          "observed_immediate_reward": 0.0,
+          "deterministic_remaining_return": -29.812591285046963
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 133.33335518836975,
+          "critic_min_q": -37.62323760986328,
+          "observed_immediate_reward": -0.30692083205908105,
+          "deterministic_remaining_return": -30.05954921605293
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 800.000011920929,
+          "critic_min_q": -38.490081787109375,
+          "observed_immediate_reward": -1.8415247179464131,
+          "deterministic_remaining_return": -35.94348736576566
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 1866.6666746139526,
+          "critic_min_q": -40.565216064453125,
+          "observed_immediate_reward": -4.296890962806714,
+          "deterministic_remaining_return": -36.277122844660674
+        }
+      ],
+      "critic_best_latent_bess": -0.8,
+      "rollout_best_latent_bess": -0.15,
+      "critic_grid_choice_return_regret": 0.21096568087950374,
+      "actor_return_gap_to_tested_grid": 0.9290127816751053,
+      "critic_grid_choice_suboptimal_above_tolerance": true
+    },
+    {
+      "train_start": 1680,
+      "step": 48,
+      "timestamp": "2024-03-13T00:00:00Z",
+      "neural_action": [
+        -0.40684711933135986,
+        -0.1609889268875122
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.8,
+          "latent_flex": -0.1609889268875122,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -24.46856117248535,
+          "observed_immediate_reward": -0.12257489338456029,
+          "deterministic_remaining_return": -17.61708144480562
+        },
+        {
+          "latent_bess": -0.40684711933135986,
+          "latent_flex": -0.1609889268875122,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -24.32134246826172,
+          "observed_immediate_reward": -0.12257489338456029,
+          "deterministic_remaining_return": -17.61708144480562
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": -0.1609889268875122,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -24.31467628479004,
+          "observed_immediate_reward": -0.12257489338456029,
+          "deterministic_remaining_return": -17.61708144480562
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": -0.1609889268875122,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -24.247535705566406,
+          "observed_immediate_reward": -0.12257489338456029,
+          "deterministic_remaining_return": -17.61708144480562
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": -0.1609889268875122,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -24.94135093688965,
+          "observed_immediate_reward": -0.12257489338456029,
+          "deterministic_remaining_return": -17.61708144480562
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": -0.1609889268875122,
+          "executed_bess_kw": 185.06987392902374,
+          "critic_min_q": -25.948644638061523,
+          "observed_immediate_reward": -0.4294956788435691,
+          "deterministic_remaining_return": -17.71905450847646
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": -0.1609889268875122,
+          "executed_bess_kw": 851.7365455627441,
+          "critic_min_q": -27.60576629638672,
+          "observed_immediate_reward": -1.9640995990318793,
+          "deterministic_remaining_return": -19.947879247257905
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": -0.1609889268875122,
+          "executed_bess_kw": 1918.4032678604126,
+          "critic_min_q": -30.233877182006836,
+          "observed_immediate_reward": -4.419465981096593,
+          "deterministic_remaining_return": -23.28838734236443
+        }
+      ],
+      "critic_best_latent_bess": -0.15,
+      "rollout_best_latent_bess": -0.8,
+      "critic_grid_choice_return_regret": 0.0,
+      "actor_return_gap_to_tested_grid": 0.0,
+      "critic_grid_choice_suboptimal_above_tolerance": false
+    },
+    {
+      "train_start": 1680,
+      "step": 96,
+      "timestamp": "2024-03-15T00:00:00Z",
+      "neural_action": [
+        -0.09260702133178711,
+        0.45537304878234863
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.8,
+          "latent_flex": 0.45537304878234863,
+          "executed_bess_kw": 0.0,
+          "critic_min_q": -23.362390518188477,
+          "observed_immediate_reward": 0.0,
+          "deterministic_remaining_return": -12.823577659964474
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": 0.45537304878234863,
+          "executed_bess_kw": 0.0,
+          "critic_min_q": -22.520103454589844,
+          "observed_immediate_reward": 0.0,
+          "deterministic_remaining_return": -12.823577659964474
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": 0.45537304878234863,
+          "executed_bess_kw": 0.0,
+          "critic_min_q": -22.2902889251709,
+          "observed_immediate_reward": 0.0,
+          "deterministic_remaining_return": -12.823577659964474
+        },
+        {
+          "latent_bess": -0.09260702133178711,
+          "latent_flex": 0.45537304878234863,
+          "executed_bess_kw": 0.0,
+          "critic_min_q": -22.470239639282227,
+          "observed_immediate_reward": 0.0,
+          "deterministic_remaining_return": -12.823577659964474
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": 0.45537304878234863,
+          "executed_bess_kw": 0.0,
+          "critic_min_q": -22.773168563842773,
+          "observed_immediate_reward": 0.0,
+          "deterministic_remaining_return": -12.823577659964474
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": 0.45537304878234863,
+          "executed_bess_kw": 133.33335518836975,
+          "critic_min_q": -23.215124130249023,
+          "observed_immediate_reward": -0.3069208320590686,
+          "deterministic_remaining_return": -12.868471099649462
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": 0.45537304878234863,
+          "executed_bess_kw": 800.000011920929,
+          "critic_min_q": -23.4208927154541,
+          "observed_immediate_reward": -1.8415247179464203,
+          "deterministic_remaining_return": -12.991247884600277
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": 0.45537304878234863,
+          "executed_bess_kw": 1866.6666746139526,
+          "critic_min_q": -24.095800399780273,
+          "observed_immediate_reward": -4.296890962806728,
+          "deterministic_remaining_return": -15.63965458229227
+        }
+      ],
+      "critic_best_latent_bess": -0.15,
+      "rollout_best_latent_bess": -0.8,
+      "critic_grid_choice_return_regret": 0.0,
+      "actor_return_gap_to_tested_grid": 0.0,
+      "critic_grid_choice_suboptimal_above_tolerance": false
+    },
+    {
+      "train_start": 5040,
+      "step": 0,
+      "timestamp": "2024-07-29T00:00:00Z",
+      "neural_action": [
+        -0.9764147996902466,
+        1.0
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.9764147996902466,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -2337.106227874756,
+          "critic_min_q": -47.896156311035156,
+          "observed_immediate_reward": -3.6381287791056707,
+          "deterministic_remaining_return": -47.20398427395895
+        },
+        {
+          "latent_bess": -0.8,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -1866.6666746139526,
+          "critic_min_q": -48.66954803466797,
+          "observed_immediate_reward": -2.905804481162022,
+          "deterministic_remaining_return": -43.14202281481296
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -800.000011920929,
+          "critic_min_q": -49.516334533691406,
+          "observed_immediate_reward": -1.2453447908959845,
+          "deterministic_remaining_return": -38.08488792326778
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -133.33335518836975,
+          "critic_min_q": -49.261566162109375,
+          "observed_immediate_reward": -0.2075574960778379,
+          "deterministic_remaining_return": -34.840459685617176
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 0.0,
+          "critic_min_q": -48.933414459228516,
+          "observed_immediate_reward": 0.0,
+          "deterministic_remaining_return": -34.15971716108399
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 133.33335518836975,
+          "critic_min_q": -48.566062927246094,
+          "observed_immediate_reward": -0.30692083205908105,
+          "deterministic_remaining_return": -33.87989119067966
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 800.000011920929,
+          "critic_min_q": -48.386444091796875,
+          "observed_immediate_reward": -1.8415247179464131,
+          "deterministic_remaining_return": -35.93527979629485
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 1866.6666746139526,
+          "critic_min_q": -47.825225830078125,
+          "observed_immediate_reward": -4.296890962806714,
+          "deterministic_remaining_return": -36.400052509481164
+        }
+      ],
+      "critic_best_latent_bess": 0.8,
+      "rollout_best_latent_bess": 0.15,
+      "critic_grid_choice_return_regret": 2.520161318801506,
+      "actor_return_gap_to_tested_grid": 13.324093083279294,
+      "critic_grid_choice_suboptimal_above_tolerance": true
+    },
+    {
+      "train_start": 5040,
+      "step": 48,
+      "timestamp": "2024-07-31T00:00:00Z",
+      "neural_action": [
+        0.7944772243499756,
+        0.17798566818237305
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.8,
+          "latent_flex": 0.17798566818237305,
+          "executed_bess_kw": -1922.8044748306274,
+          "critic_min_q": -45.849388122558594,
+          "observed_immediate_reward": -2.993193126200083,
+          "deterministic_remaining_return": -28.760558342855195
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": 0.17798566818237305,
+          "executed_bess_kw": -856.137752532959,
+          "critic_min_q": -37.43260192871094,
+          "observed_immediate_reward": -1.3327333431486466,
+          "deterministic_remaining_return": -25.766089194066073
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": 0.17798566818237305,
+          "executed_bess_kw": -189.4710659980774,
+          "critic_min_q": -35.80171203613281,
+          "observed_immediate_reward": -0.29494600193771614,
+          "deterministic_remaining_return": -23.977026468634374
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": 0.17798566818237305,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -35.13536834716797,
+          "observed_immediate_reward": -0.08738847272923422,
+          "deterministic_remaining_return": -23.970298077335293
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": 0.17798566818237305,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -35.058502197265625,
+          "observed_immediate_reward": -0.08738847272923422,
+          "deterministic_remaining_return": -23.970298077335293
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": 0.17798566818237305,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -35.02025604248047,
+          "observed_immediate_reward": -0.08738847272923422,
+          "deterministic_remaining_return": -23.970298077335293
+        },
+        {
+          "latent_bess": 0.7944772243499756,
+          "latent_flex": 0.17798566818237305,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -35.13622283935547,
+          "observed_immediate_reward": -0.08738847272923422,
+          "deterministic_remaining_return": -23.970298077335293
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": 0.17798566818237305,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -35.13568115234375,
+          "observed_immediate_reward": -0.08738847272923422,
+          "deterministic_remaining_return": -23.970298077335293
+        }
+      ],
+      "critic_best_latent_bess": 0.4,
+      "rollout_best_latent_bess": 0.0,
+      "critic_grid_choice_return_regret": 0.0,
+      "actor_return_gap_to_tested_grid": 0.0,
+      "critic_grid_choice_suboptimal_above_tolerance": false
+    },
+    {
+      "train_start": 5040,
+      "step": 96,
+      "timestamp": "2024-08-02T00:00:00Z",
+      "neural_action": [
+        0.0884629487991333,
+        0.7499309778213501
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.8,
+          "latent_flex": 0.7499309778213501,
+          "executed_bess_kw": -1922.8044748306274,
+          "critic_min_q": -26.878446578979492,
+          "observed_immediate_reward": -2.9931931262000546,
+          "deterministic_remaining_return": -12.653368422105427
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": 0.7499309778213501,
+          "executed_bess_kw": -856.137752532959,
+          "critic_min_q": -19.47791862487793,
+          "observed_immediate_reward": -1.3327333431485044,
+          "deterministic_remaining_return": -9.305560285870458
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": 0.7499309778213501,
+          "executed_bess_kw": -189.4710659980774,
+          "critic_min_q": -18.488014221191406,
+          "observed_immediate_reward": -0.29494600193771614,
+          "deterministic_remaining_return": -7.6415113461219955
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": 0.7499309778213501,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -18.332164764404297,
+          "observed_immediate_reward": -0.0873884727292058,
+          "deterministic_remaining_return": -7.671891902941045
+        },
+        {
+          "latent_bess": 0.0884629487991333,
+          "latent_flex": 0.7499309778213501,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -18.253353118896484,
+          "observed_immediate_reward": -0.0873884727292058,
+          "deterministic_remaining_return": -7.671891902941045
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": 0.7499309778213501,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -18.199949264526367,
+          "observed_immediate_reward": -0.0873884727292058,
+          "deterministic_remaining_return": -7.671891902941045
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": 0.7499309778213501,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -18.041614532470703,
+          "observed_immediate_reward": -0.0873884727292058,
+          "deterministic_remaining_return": -7.671891902941045
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": 0.7499309778213501,
+          "executed_bess_kw": -56.13772198557854,
+          "critic_min_q": -17.996206283569336,
+          "observed_immediate_reward": -0.0873884727292058,
+          "deterministic_remaining_return": -7.671891902941045
+        }
+      ],
+      "critic_best_latent_bess": 0.8,
+      "rollout_best_latent_bess": -0.15,
+      "critic_grid_choice_return_regret": 0.03038055681904961,
+      "actor_return_gap_to_tested_grid": 0.03038055681904961,
+      "critic_grid_choice_suboptimal_above_tolerance": true
+    },
+    {
+      "train_start": 8400,
+      "step": 0,
+      "timestamp": "2024-12-16T00:00:00Z",
+      "neural_action": [
+        -0.9985633492469788,
+        1.0
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.9985633492469788,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -2396.1689472198486,
+          "critic_min_q": -35.96781921386719,
+          "observed_immediate_reward": -3.7300705900761386,
+          "deterministic_remaining_return": -27.186947904571877
+        },
+        {
+          "latent_bess": -0.8,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -1866.6666746139526,
+          "critic_min_q": -35.544952392578125,
+          "observed_immediate_reward": -2.905804481162022,
+          "deterministic_remaining_return": -28.258252798532492
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -800.000011920929,
+          "critic_min_q": -35.68811798095703,
+          "observed_immediate_reward": -1.2453447908959845,
+          "deterministic_remaining_return": -28.17461704592933
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": 1.0,
+          "executed_bess_kw": -133.33335518836975,
+          "critic_min_q": -36.104827880859375,
+          "observed_immediate_reward": -0.2075574960778379,
+          "deterministic_remaining_return": -29.131340437343248
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 0.0,
+          "critic_min_q": -36.53587341308594,
+          "observed_immediate_reward": 0.0,
+          "deterministic_remaining_return": -28.59079371606894
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 133.33335518836975,
+          "critic_min_q": -37.040679931640625,
+          "observed_immediate_reward": -0.30692083205908105,
+          "deterministic_remaining_return": -28.629617479089468
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 800.000011920929,
+          "critic_min_q": -38.02982711791992,
+          "observed_immediate_reward": -1.8415247179464131,
+          "deterministic_remaining_return": -34.20837158870628
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": 1.0,
+          "executed_bess_kw": 1866.6666746139526,
+          "critic_min_q": -40.229373931884766,
+          "observed_immediate_reward": -4.296890962806714,
+          "deterministic_remaining_return": -34.952720853657446
+        }
+      ],
+      "critic_best_latent_bess": -0.8,
+      "rollout_best_latent_bess": -0.9985633492469788,
+      "critic_grid_choice_return_regret": 1.0713048939606153,
+      "actor_return_gap_to_tested_grid": 0.0,
+      "critic_grid_choice_suboptimal_above_tolerance": true
+    },
+    {
+      "train_start": 8400,
+      "step": 48,
+      "timestamp": "2024-12-18T00:00:00Z",
+      "neural_action": [
+        -0.46097052097320557,
+        -0.0898246169090271
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.8,
+          "latent_flex": -0.0898246169090271,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -23.5299072265625,
+          "observed_immediate_reward": -0.11909264242717654,
+          "deterministic_remaining_return": -14.26896048843341
+        },
+        {
+          "latent_bess": -0.46097052097320557,
+          "latent_flex": -0.0898246169090271,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -23.229650497436523,
+          "observed_immediate_reward": -0.11909264242717654,
+          "deterministic_remaining_return": -14.26896048843341
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": -0.0898246169090271,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -23.167036056518555,
+          "observed_immediate_reward": -0.11909264242717654,
+          "deterministic_remaining_return": -14.26896048843341
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": -0.0898246169090271,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -23.42220115661621,
+          "observed_immediate_reward": -0.11909264242717654,
+          "deterministic_remaining_return": -14.26896048843341
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": -0.0898246169090271,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -24.285480499267578,
+          "observed_immediate_reward": -0.11909264242717654,
+          "deterministic_remaining_return": -14.26896048843341
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": -0.0898246169090271,
+          "executed_bess_kw": 185.06987392902374,
+          "critic_min_q": -25.273576736450195,
+          "observed_immediate_reward": -0.426013427886323,
+          "deterministic_remaining_return": -14.358565766253436
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": -0.0898246169090271,
+          "executed_bess_kw": 851.7365455627441,
+          "critic_min_q": -26.510318756103516,
+          "observed_immediate_reward": -1.9606173480746278,
+          "deterministic_remaining_return": -16.325752428365497
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": -0.0898246169090271,
+          "executed_bess_kw": 1918.4032678604126,
+          "critic_min_q": -29.39441680908203,
+          "observed_immediate_reward": -4.415983730139246,
+          "deterministic_remaining_return": -19.910097963692984
+        }
+      ],
+      "critic_best_latent_bess": -0.4,
+      "rollout_best_latent_bess": -0.8,
+      "critic_grid_choice_return_regret": 0.0,
+      "actor_return_gap_to_tested_grid": 0.0,
+      "critic_grid_choice_suboptimal_above_tolerance": false
+    },
+    {
+      "train_start": 8400,
+      "step": 96,
+      "timestamp": "2024-12-20T00:00:00Z",
+      "neural_action": [
+        -0.11430644989013672,
+        0.43966174125671387
+      ],
+      "alternatives": [
+        {
+          "latent_bess": -0.8,
+          "latent_flex": 0.43966174125671387,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -22.924837112426758,
+          "observed_immediate_reward": -0.11831686912741257,
+          "deterministic_remaining_return": -9.541911811667513
+        },
+        {
+          "latent_bess": -0.4,
+          "latent_flex": 0.43966174125671387,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -21.959135055541992,
+          "observed_immediate_reward": -0.11831686912741257,
+          "deterministic_remaining_return": -9.541911811667513
+        },
+        {
+          "latent_bess": -0.15,
+          "latent_flex": 0.43966174125671387,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -21.867694854736328,
+          "observed_immediate_reward": -0.11831686912741257,
+          "deterministic_remaining_return": -9.541911811667513
+        },
+        {
+          "latent_bess": -0.11430644989013672,
+          "latent_flex": 0.43966174125671387,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -21.97715187072754,
+          "observed_immediate_reward": -0.11831686912741257,
+          "deterministic_remaining_return": -9.541911811667513
+        },
+        {
+          "latent_bess": 0.0,
+          "latent_flex": 0.43966174125671387,
+          "executed_bess_kw": 51.73652619123459,
+          "critic_min_q": -22.35106086730957,
+          "observed_immediate_reward": -0.11831686912741257,
+          "deterministic_remaining_return": -9.541911811667513
+        },
+        {
+          "latent_bess": 0.15,
+          "latent_flex": 0.43966174125671387,
+          "executed_bess_kw": 182.883158326149,
+          "critic_min_q": -22.808073043823242,
+          "observed_immediate_reward": -0.42020404111913656,
+          "deterministic_remaining_return": -9.576344208286985
+        },
+        {
+          "latent_bess": 0.4,
+          "latent_flex": 0.43966174125671387,
+          "executed_bess_kw": 838.6162519454956,
+          "critic_min_q": -23.188459396362305,
+          "observed_immediate_reward": -1.9296398939711707,
+          "deterministic_remaining_return": -9.2972293016945
+        },
+        {
+          "latent_bess": 0.8,
+          "latent_flex": 0.43966174125671387,
+          "executed_bess_kw": 1887.7891302108765,
+          "critic_min_q": -23.981279373168945,
+          "observed_immediate_reward": -4.344737093889194,
+          "deterministic_remaining_return": -15.920315119372507
+        }
+      ],
+      "critic_best_latent_bess": -0.15,
+      "rollout_best_latent_bess": 0.4,
+      "critic_grid_choice_return_regret": 0.24468250997301233,
+      "actor_return_gap_to_tested_grid": 0.24468250997301233,
+      "critic_grid_choice_suboptimal_above_tolerance": true
+    }
+  ]
+}

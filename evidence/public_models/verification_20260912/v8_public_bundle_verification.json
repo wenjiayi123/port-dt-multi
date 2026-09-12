@@ -1,0 +1,26 @@
+{
+  "status": "PASS",
+  "public_model_count": 66,
+  "original_archive_path_count": 77,
+  "audit_source_mapping_count": 55,
+  "verified_distinct_audit_anchors": 56,
+  "historical_audit_source_gaps": [
+    {
+      "original_path": "scripts/audit_shore_bess_v8.py",
+      "original_sha256": "ef013e46ce2ec66547b50a9f2385ceae932103ffa4c3c370e1f06db04f6783e0",
+      "affected_audit": "evidence/v8/shore_bess/audits/train-feasibility-20260912-v8.json",
+      "complete_successor_audit": "evidence/v8/shore_bess/audits/train-feasibility-20260912-v8-r1.json",
+      "reason": "Historical source version was not sealed and no matching bytes were found; current source is not substituted."
+    },
+    {
+      "original_path": "scripts/audit_shore_bess_v8_critic.py",
+      "original_sha256": "08d9bbb6f5c5f4ede4e0785d39914def564da6ff8323be6e135bd71e2910b120",
+      "affected_audit": "evidence/v8/shore_bess/audits/td3-demandphi-r2-critic-ranking-20260912.json",
+      "complete_successor_audit": "evidence/v8/shore_bess/audits/td3-demandphi-r2-critic-ranking-20260912-v2.json",
+      "reason": "Historical source version was not sealed and no matching bytes were found; current source is not substituted."
+    }
+  ],
+  "all_historical_audits_reproducible": false,
+  "raw_archives_required_to_verify_public_bundle": false,
+  "production_authority": false
+}

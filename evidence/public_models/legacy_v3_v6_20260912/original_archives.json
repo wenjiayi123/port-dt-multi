@@ -1,0 +1,95 @@
+{
+  "scope": "current public tree only; original archives preserved locally; Git history not rewritten",
+  "archives": [
+    {
+      "path": "data/rl/runs/rl-20260812T065606173Z/model.zip",
+      "sha256": "8b2e1a4b15fb5c8bd5b22b084701eb8e629ec2a0c0c276ffe85729f6b1d1a6b8",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "data/rl/runs/rl-20260812T070320120Z/model.zip",
+      "sha256": "582bf5e835b3874fdd5c7bf2eb56e08392d03a2cfc71ba7d48b34090555f8979",
+      "algorithm": "stable_baselines3.DQN"
+    },
+    {
+      "path": "data/rl/runs/rl-20260812T070452272Z/model.zip",
+      "sha256": "cc2d9e403a97dc4ba564093139a8f8e87ac502fedd5cb3479ef6fe223f2fd52c",
+      "algorithm": "stable_baselines3.A2C"
+    },
+    {
+      "path": "data/rl/runs/rl-20260813T063524662Z/model.zip",
+      "sha256": "7160a1959e42e95523e83348f448d01b5e363b047eeed8bcdbcc4e17915f88da",
+      "algorithm": "stable_baselines3.SAC"
+    },
+    {
+      "path": "data/rl/runs/rl-20260813T064228701Z/model.zip",
+      "sha256": "c4a9773610a7473896141eeef3d67324a9a68aecb6db62eaf0b958af32959808",
+      "algorithm": "stable_baselines3.SAC"
+    },
+    {
+      "path": "data/rl/runs/rl-20260821T065745532Z/model.zip",
+      "sha256": "43656033422d9a42262f8ce81d249dc2af8d15fced71d5d71427f95667259287",
+      "algorithm": "stable_baselines3.SAC"
+    },
+    {
+      "path": "data/rl/runs/rl-20260826T094232857Z/model.zip",
+      "sha256": "314a74183daddbc68f8a4a682e00b438a421d4320aebb2488e3d706514bc1955",
+      "algorithm": "stable_baselines3.SAC"
+    },
+    {
+      "path": "data/rl/runs/rl-20260830T070107706Z/model.zip",
+      "sha256": "9cfebff3d4198a8520fd99ab530fae7d0d08aec180da12943bed4780eb141942",
+      "algorithm": "stable_baselines3.SAC"
+    },
+    {
+      "path": "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_147/selected_model.zip",
+      "sha256": "6dd27085583b2aabcf72e5d5dbede4541293c845544a7bb342fe6a705bb40e79",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_247/selected_model.zip",
+      "sha256": "95f5400c8e626197dcff259a0fa1b3d5fbcf4cd58d57c4490cbd88ba93b3af57",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_47/selected_model.zip",
+      "sha256": "f9459d54d5e62128c9ae72d789a2af4cba7368da957f48a284493ba7042ed557",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_171/selected_model.zip",
+      "sha256": "9f1c866ca9163313beefb7c979ea63e79aa2f0326d70798ffd7ae987d72b0d38",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_271/selected_model.zip",
+      "sha256": "ee9e441c11533e3bee949ae0efebf3e72292f41a961955a7a3ef50db1947f6fd",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_71/selected_model.zip",
+      "sha256": "ba413c9dcf544da77811b47a455ef75271f236f0ac4f916e7f30e54a302b11a8",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "evidence/v3/runtime/selected_sac_v3.zip",
+      "sha256": "7160a1959e42e95523e83348f448d01b5e363b047eeed8bcdbcc4e17915f88da",
+      "algorithm": "stable_baselines3.SAC"
+    },
+    {
+      "path": "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_143/selected_model.zip",
+      "sha256": "1616620e820a4e19bf27c0fde1c350f2c434371704f3cde7987c3dc6cff71af5",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_243/selected_model.zip",
+      "sha256": "d0763afbebe2a3d6a7920fe1368cd0dfb96e66a2d7f77f991d3ef102be9dcc26",
+      "algorithm": "stable_baselines3.PPO"
+    },
+    {
+      "path": "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_43/selected_model.zip",
+      "sha256": "8c66ce314f36a9da7ed9252223fa959915c32385744ac393e19d76cd6922e213",
+      "algorithm": "stable_baselines3.PPO"
+    }
+  ]
+}

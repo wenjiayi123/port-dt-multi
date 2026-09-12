@@ -1,0 +1,11 @@
+{
+  "selected_seed": 912,
+  "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12-r2/seed_912/selected_model.zip",
+  "model_sha256": "8df9507f4e7b570d03f86788f0c63b23ba1470283328467074a19ba90edf7703",
+  "selection_access_to_test": false,
+  "selection_access_to_forward": false,
+  "frozen_at": "2026-09-12T01:54:28.549713Z",
+  "per_seed_model_sha256": {
+    "912": "8df9507f4e7b570d03f86788f0c63b23ba1470283328467074a19ba90edf7703"
+  }
+}

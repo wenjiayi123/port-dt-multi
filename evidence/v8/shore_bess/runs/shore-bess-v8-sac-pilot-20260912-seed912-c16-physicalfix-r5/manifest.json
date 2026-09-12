@@ -1,0 +1,964 @@
+{
+  "schema": "port-shore-bess-v8-manifest.v1",
+  "run_id": "shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5",
+  "started_at": "2026-09-12T03:21:24.949426Z",
+  "dataset_id": "public_cn_sha_hourly_v3",
+  "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+  "dataset_quality": {
+    "status": "pass",
+    "training_eligible": true,
+    "dataset_id": "public_cn_sha_hourly_v3",
+    "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+    "rows": 17544,
+    "time": {
+      "start_at": "2024-01-01T00:00:00Z",
+      "end_at": "2025-12-31T23:00:00Z",
+      "median_cadence_seconds": 3600.0,
+      "irregular_gap_count": 0,
+      "strictly_increasing": true
+    },
+    "missing_value_count": 0,
+    "non_finite_value_count": 0,
+    "physical_violation_count": 0,
+    "missing_governance_metadata": [],
+    "columns": {
+      "base_load_kw": {
+        "unit": "kW",
+        "min": 19058.8515625,
+        "p25": 21382.646484375,
+        "median": 22656.0712890625,
+        "p75": 23931.8095703125,
+        "max": 27677.998046875,
+        "mean": 22700.423911731752,
+        "std": 1620.2706689046174,
+        "outlier_count_iqr": 0,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "coverage_ratio": 1.0
+      },
+      "throughput_teu": {
+        "unit": "TEU/sampling_interval",
+        "min": 4131.48193359375,
+        "p25": 5351.5335693359375,
+        "median": 6050.06884765625,
+        "p75": 6762.690673828125,
+        "max": 8507.19921875,
+        "mean": 6074.44140302151,
+        "std": 862.355676331925,
+        "outlier_count_iqr": 0,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "coverage_ratio": 1.0
+      },
+      "vessel_arrivals": {
+        "unit": "vessel_calls/sampling_interval",
+        "min": 0.7945157885551453,
+        "p25": 1.0291410386562347,
+        "median": 1.1634747385978699,
+        "p75": 1.3005174100399017,
+        "max": 1.6359999179840088,
+        "mean": 1.1681618086528245,
+        "std": 0.16583762999285168,
+        "outlier_count_iqr": 0,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "coverage_ratio": 1.0
+      },
+      "tide_m": {
+        "unit": "m",
+        "min": -1.809999942779541,
+        "p25": -0.4099999964237213,
+        "median": 0.23000000417232513,
+        "p75": 0.9300000071525574,
+        "max": 2.759999990463257,
+        "mean": 0.2753077974106405,
+        "std": 0.8662895385392361,
+        "outlier_count_iqr": 0,
+        "physical_bounds": {
+          "min": -20.0,
+          "max": 20.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "coverage_ratio": 1.0
+      },
+      "price_per_kwh": {
+        "unit": "currency/kWh",
+        "min": 0.4300000071525574,
+        "p25": 0.4300000071525574,
+        "median": 0.7200000286102295,
+        "p75": 0.7200000286102295,
+        "max": 1.0800000429153442,
+        "mean": 0.7104166919986407,
+        "std": 0.22679799845180715,
+        "outlier_count_iqr": 0,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "coverage_ratio": 1.0
+      },
+      "carbon_kg_per_kwh": {
+        "unit": "kgCO2e/kWh",
+        "min": 0.5400000214576721,
+        "p25": 0.5473219752311707,
+        "median": 0.5649999976158142,
+        "p75": 0.5826780200004578,
+        "max": 0.5899999737739563,
+        "mean": 0.565000002582868,
+        "std": 0.017677734983992006,
+        "outlier_count_iqr": 0,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 5.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "coverage_ratio": 1.0
+      },
+      "ambient_c": {
+        "unit": "degreeCelsius",
+        "min": -1.399999976158142,
+        "p25": 10.5,
+        "median": 18.600000381469727,
+        "p75": 26.5,
+        "max": 32.20000076293945,
+        "mean": 18.11199270227327,
+        "std": 8.112262988230132,
+        "outlier_count_iqr": 0,
+        "physical_bounds": {
+          "min": -60.0,
+          "max": 70.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "coverage_ratio": 1.0
+      },
+      "wind_speed_mps": {
+        "unit": "m/s",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.10000000149011612,
+        "max": 18.25,
+        "mean": 6.439315440292044,
+        "std": 2.6378582248109415,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 100.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "visibility_km": {
+        "unit": "km",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1000.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "wave_height_m": {
+        "unit": "m",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.019999999552965164,
+        "max": 2.759999990463257,
+        "mean": 0.5258538532300142,
+        "std": 0.33430444529192976,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 40.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "current_speed_mps": {
+        "unit": "m/s",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.0,
+        "max": 2.1666669845581055,
+        "mean": 0.7113115847751166,
+        "std": 0.3945485789087322,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 15.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "berth_occupancy_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.6322270035743713,
+        "max": 0.9200000166893005,
+        "mean": 0.7696512263664034,
+        "std": 0.06098455227016419,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "yard_occupancy_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.6123800277709961,
+        "max": 0.9200000166893005,
+        "mean": 0.7592823416796439,
+        "std": 0.0651903864813142,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "crane_availability_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.8100000023841858,
+        "max": 0.98540198802948,
+        "mean": 0.9174556571988552,
+        "std": 0.03273373916214191,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "equipment_availability_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.8849999904632568,
+        "max": 0.9824450016021729,
+        "mean": 0.9446975859676221,
+        "std": 0.01818541173067248,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "channel_congestion_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.5735380053520203,
+        "max": 0.8805819749832153,
+        "mean": 0.7159709532817803,
+        "std": 0.07036745816946409,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "reefer_load_kw": {
+        "unit": "kW",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 547.2315063476562,
+        "max": 1141.702392578125,
+        "mean": 744.4219901158393,
+        "std": 140.4671724569511,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "pilot_tug_availability_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.7400000095367432,
+        "max": 0.9738690257072449,
+        "mean": 0.8832742089394614,
+        "std": 0.04364498721915798,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true
+      },
+      "closure_flag": {
+        "unit": "binary",
+        "coverage_ratio": 1.0,
+        "available_rows": 17544,
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0,
+        "std": 0.0,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": true,
+        "optional": true
+      },
+      "maritime_inspection_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "scenario_only": true
+      },
+      "customs_inspection_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "scenario_only": true
+      },
+      "maritime_detention_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "scenario_only": true
+      },
+      "customs_secondary_check_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "scenario_only": true
+      },
+      "inspection_resource_availability_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "scenario_only": true
+      },
+      "regulatory_release_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "scenario_only": true
+      },
+      "truck_arrivals_per_hour": {
+        "unit": "truck/hour",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "gate_queue_trucks": {
+        "unit": "truck",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "gate_capacity_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "rail_transfer_demand_teu": {
+        "unit": "TEU/sampling_interval",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "barge_transfer_demand_teu": {
+        "unit": "TEU/sampling_interval",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "intermodal_capacity_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "reefer_occupancy_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "reefer_temperature_risk_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "shore_power_demand_kw": {
+        "unit": "kW",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "shore_power_connection_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "equipment_failure_risk_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "maintenance_backlog_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "labor_availability_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "pilotage_demand_vessels": {
+        "unit": "vessel/sampling_interval",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "tug_demand_vessels": {
+        "unit": "vessel/sampling_interval",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "channel_capacity_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "dangerous_goods_workload_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "yard_dwell_time_hours": {
+        "unit": "hour",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": null
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "planning_vessel_draft_m": {
+        "unit": "m",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 40.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "channel_chart_depth_m": {
+        "unit": "m",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 100.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "squat_allowance_m": {
+        "unit": "m",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 5.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      },
+      "forecast_uncertainty_ratio": {
+        "unit": "ratio",
+        "coverage_ratio": 0.0,
+        "available_rows": 0,
+        "min": null,
+        "max": null,
+        "mean": null,
+        "std": null,
+        "physical_bounds": {
+          "min": 0.0,
+          "max": 1.0
+        },
+        "physical_violation_count": 0,
+        "constant": false,
+        "optional": true,
+        "site_replaceable": true
+      }
+    },
+    "factor_coverage": {
+      "wind_speed_mps": 1.0,
+      "visibility_km": 0.0,
+      "wave_height_m": 1.0,
+      "current_speed_mps": 1.0,
+      "berth_occupancy_ratio": 1.0,
+      "yard_occupancy_ratio": 1.0,
+      "crane_availability_ratio": 1.0,
+      "equipment_availability_ratio": 1.0,
+      "channel_congestion_ratio": 1.0,
+      "reefer_load_kw": 1.0,
+      "pilot_tug_availability_ratio": 1.0,
+      "closure_flag": 1.0
+    },
+    "available_factor_count": 11,
+    "factor_count": 12,
+    "regulatory_factor_coverage": {
+      "maritime_inspection_ratio": 0.0,
+      "customs_inspection_ratio": 0.0,
+      "maritime_detention_ratio": 0.0,
+      "customs_secondary_check_ratio": 0.0,
+      "inspection_resource_availability_ratio": 0.0,
+      "regulatory_release_ratio": 0.0
+    },
+    "available_regulatory_factor_count": 0,
+    "regulatory_factor_count": 6,
+    "port_wide_factor_coverage": {
+      "truck_arrivals_per_hour": 0.0,
+      "gate_queue_trucks": 0.0,
+      "gate_capacity_ratio": 0.0,
+      "rail_transfer_demand_teu": 0.0,
+      "barge_transfer_demand_teu": 0.0,
+      "intermodal_capacity_ratio": 0.0,
+      "reefer_occupancy_ratio": 0.0,
+      "reefer_temperature_risk_ratio": 0.0,
+      "shore_power_demand_kw": 0.0,
+      "shore_power_connection_ratio": 0.0,
+      "equipment_failure_risk_ratio": 0.0,
+      "maintenance_backlog_ratio": 0.0,
+      "labor_availability_ratio": 0.0,
+      "pilotage_demand_vessels": 0.0,
+      "tug_demand_vessels": 0.0,
+      "channel_capacity_ratio": 0.0,
+      "dangerous_goods_workload_ratio": 0.0,
+      "yard_dwell_time_hours": 0.0,
+      "planning_vessel_draft_m": 0.0,
+      "channel_chart_depth_m": 0.0,
+      "squat_allowance_m": 0.0,
+      "forecast_uncertainty_ratio": 0.0
+    },
+    "available_port_wide_factor_count": 0,
+    "port_wide_factor_count": 22,
+    "evidence": {
+      "tier": "public_official_aggregate_reanalysis_enriched",
+      "measured_columns": [],
+      "derived_columns": [
+        "hourly_throughput_teu_distribution",
+        "vessel_arrivals",
+        "base_load_kw",
+        "price_per_kwh",
+        "carbon_kg_per_kwh",
+        "berth_occupancy_ratio",
+        "yard_occupancy_ratio",
+        "crane_availability_ratio",
+        "equipment_availability_ratio",
+        "channel_congestion_ratio",
+        "reefer_load_kw",
+        "pilot_tug_availability_ratio",
+        "closure_flag"
+      ],
+      "independent_source_observations": 17566,
+      "row_count_is_not_independent_information_count": true
+    },
+    "errors": [],
+    "warnings": [],
+    "generated_at": "2026-09-12T03:21:24.898816Z",
+    "essential_factor_coverage": {
+      "equipment_availability_ratio": 1.0,
+      "berth_occupancy_ratio": 1.0
+    }
+  },
+  "input_files_sha256": {
+    "config/shore_bess_v32_balanced.json": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+    "data/rl/datasets/public_cn_sha_hourly_v3.csv": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+    "data/rl/datasets/public_cn_sha_hourly_v3.meta.json": "97a9d81b8420273453b1f06ff373a71aa29cb57ca9b0e064e0bd59570e2d2fc7"
+  },
+  "train": {
+    "start_row": 0,
+    "stop_row_exclusive": 11664,
+    "rows": 11664,
+    "first_timestamp": "2024-01-01T00:00:00Z",
+    "last_timestamp": "2025-04-30T23:00:00Z"
+  },
+  "validation": {
+    "start_row": 11664,
+    "stop_row_exclusive": 13872,
+    "rows": 2208,
+    "first_timestamp": "2025-05-01T00:00:00Z",
+    "last_timestamp": "2025-07-31T23:00:00Z"
+  },
+  "validation_starts": [
+    0,
+    336,
+    672,
+    1176,
+    1512,
+    2016
+  ],
+  "normalization_fit_split": "train_only",
+  "selection_protocol": "validation_only_then_frozen_checkpoint_and_seed",
+  "test_status": "not_opened",
+  "forward_status": "not_loaded",
+  "access_protocol_details": {
+    "historical_csv_bytes": "Complete 2024-2025 CSV physically loaded; full-table quality checks performed.",
+    "historical_test_partition": "August-December 2025 rows excluded from gradients, normalization and model selection; evaluated only after formal selection.",
+    "pilot_test_evaluation_performed": false,
+    "forward_csv_bytes": "Separate 2026 CSV is not loaded in pilots; formal evaluation loads it after selection freeze.",
+    "test_status_not_opened_meaning": "No test-partition policy evaluation; does not claim historical CSV bytes were never read."
+  },
+  "teacher_actions_used": false,
+  "warm_start_used": false,
+  "training_episode_ledger_contract": "after_environment_step_before_replay_storage_and_optimizer",
+  "source_sha256": {
+    "scripts/train_shore_bess_v8.py": "c0c5628135de69bd33813f6f19f447059ad554afe59747214c2a9536150b02df",
+    "app/services/rl_model/shore_bess/v8_environment.py": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+    "app/services/rl_model/shore_bess/v3_environment.py": "20f029c3f8904463b257980ffe8370c1945fa36aa5d265591b52094ead2ed05d",
+    "config/shore_bess_v32_balanced.json": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+    "app/services/rl_training/statistics.py": "429e3c00ebeb0517b7670c03e7cee2253b67a762ff45dc8bca026ab79047f8f2",
+    "app/services/rl_training/datasets.py": "9ccb5c7c3d28b0db8267e080f9f67b453790330c5cac458c6250f6b4e5a33e73"
+  },
+  "historical_pointer_sha256": {
+    "evidence/v3/shore_bess/latest.json": "90cabf808958f301ef91eb0b2dbcc37e25fda4121e04ce54cf6986a49a2cdd8b",
+    "evidence/v7/shore_bess/latest.json": "bf93f71d3417e84f78d72c4d3e91a5bbaec4b2250c7d25072d558a13733e08f3"
+  },
+  "versions": {
+    "python": "3.12.14",
+    "torch": "2.2.2",
+    "stable_baselines3": "2.3.2",
+    "sb3_contrib": "2.3.0"
+  },
+  "simulation_mode": true,
+  "production_authority": false,
+  "dispatch_allowed": false,
+  "live_data_verified": false
+}

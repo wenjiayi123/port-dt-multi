@@ -1,0 +1,152 @@
+{
+  "reads": [
+    {
+      "path": "/api/rl/datasets",
+      "status": 200,
+      "seconds": 0.078433,
+      "body": {
+        "keys": [
+          "datasets",
+          "count"
+        ]
+      }
+    },
+    {
+      "path": "/external/vessels_schedule?start=2026-09-12T00%3A00%3A00Z&end=2026-09-13T00%3A00%3A00Z",
+      "status": 503,
+      "seconds": 0.054815,
+      "body": {
+        "detail": "vessel schedule adapter is not configured"
+      }
+    },
+    {
+      "path": "/api/compliance/breakdown?port=CNSHA&month=9&year=2026",
+      "status": 200,
+      "seconds": 0.052218,
+      "body": {
+        "port_code": "CNSHA",
+        "year": 2026,
+        "month": 9,
+        "available": false,
+        "reason": "未找到 CNSHA 2026-09 可审计的月度数据",
+        "scope1_ton": null,
+        "scope2_grid_ton": null,
+        "scope2_shore_ton": null,
+        "scope2_ton": null,
+        "intensity_kg_per_teu": null,
+        "electric_mwh": {
+          "grid": null,
+          "shore_power": null,
+          "onsite_renewables": null,
+          "total": null
+        },
+        "_source": "compliance.unavailable"
+      }
+    }
+  ],
+  "concurrent_liveness": [
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.053478,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.052199,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.004977,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.00515,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.005276,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.005197,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.007064,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.00722,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.007757,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    },
+    {
+      "path": "/health/live",
+      "status": 200,
+      "seconds": 0.007286,
+      "body": {
+        "keys": [
+          "status"
+        ]
+      }
+    }
+  ],
+  "liveness_max_seconds": 0.053478,
+  "status": "PASS",
+  "scope": "final 8099 service; no evidence rebuild, training, registry sync or production command requested"
+}

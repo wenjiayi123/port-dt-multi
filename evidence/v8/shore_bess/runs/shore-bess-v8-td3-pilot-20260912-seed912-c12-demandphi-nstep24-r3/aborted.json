@@ -1,0 +1,35 @@
+{
+  "schema": "port-shore-bess-v8-aborted-training.v1",
+  "run_id": "shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3",
+  "status": "ABORTED_NUMERIC_EXECUTION_DEFECT",
+  "stopped_at": "2026-09-12T02:57:51.921403+00:00",
+  "signal": "SIGINT",
+  "exit_code": 130,
+  "reason": "float32 dispatch rounding plus shrinking-SOC braking interval false emptiness introduced sub-watt ramp violations and large artificial safety reward penalties. Investigating fixed-precision and bidirectional braking; do not interpret this as a completed algorithm comparison.",
+  "last_sealed_checkpoint_step": 30000,
+  "last_sealed_optimizer_updates": 42000,
+  "completed_monitor_episode_steps": 38136,
+  "total_actual_steps_at_interrupt": "not_recovered_no_guess",
+  "test_evaluated": false,
+  "forward_loaded": false,
+  "promoted": false,
+  "production_authority": false,
+  "dataset_or_asset_parameters_changed": false,
+  "preserved_checkpoints": [
+    {
+      "path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/seed_912/step_10000.zip",
+      "sha256": "62fecf2e0adb205f7948ddfdf798ea354ee3029782b59b08892e742847035645",
+      "step": 10000
+    },
+    {
+      "path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/seed_912/step_20000.zip",
+      "sha256": "1d6655e62bdd26f8a2f878f806fda3eae250ff16a053bd79a3a2c7658d71ffad",
+      "step": 20000
+    },
+    {
+      "path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/seed_912/step_30000.zip",
+      "sha256": "3114f34bbf00d79a208598c1f342042db6be453aa0d2eeb20056f5bbebe6b661",
+      "step": 30000
+    }
+  ]
+}

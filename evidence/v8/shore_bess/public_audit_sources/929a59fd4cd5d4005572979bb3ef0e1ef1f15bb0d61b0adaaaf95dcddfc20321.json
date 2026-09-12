@@ -1,0 +1,2117 @@
+{
+  "schema": "port-shore-bess-v8-report.v1",
+  "run_id": "shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4",
+  "generated_at": "2026-09-12T03:21:21.907033Z",
+  "status": "PILOT_VALIDATION_ONLY",
+  "config": {
+    "algorithm": "stable_baselines3.TD3",
+    "seeds": [
+      912
+    ],
+    "n_step": 24,
+    "replay_buffer_config": {
+      "class": "app.services.rl_model.shore_bess.v8_replay.NStepReplayBuffer",
+      "kwargs": {
+        "n_step": 24,
+        "gamma": 1.0
+      },
+      "approximation": {
+        "off_policy_importance_correction": false,
+        "behavior_policy_intermediate_rewards": true,
+        "variable_tail_bootstrap_discount": "gamma=1, including shorter terminal and budget-end tails",
+        "sac_intermediate_entropy_terms_included": false,
+        "vanilla_algorithm_equivalence_claimed": false,
+        "boundary": "Experimental off-policy multi-step TD3; no importance correction. Not unchanged vanilla TD3."
+      }
+    },
+    "algorithm_variant": "td3_n_step_24_off_policy_uncorrected",
+    "requested_steps_per_seed": 60000,
+    "checkpoint_interval": 10000,
+    "episode_hours": 168,
+    "gamma": 1.0,
+    "network": [
+      128,
+      128
+    ],
+    "carbon_price_cny_per_kg_constraint_multiplier": 12.0,
+    "algorithm_parameters": {
+      "learning_rate": 0.0003,
+      "buffer_size": 200000,
+      "batch_size": 256,
+      "learning_starts": 2000,
+      "train_freq": 1,
+      "gradient_steps": 1,
+      "tau": 0.005,
+      "policy_delay": 2,
+      "target_policy_noise": 0.1,
+      "target_noise_clip": 0.3
+    },
+    "discrete": false,
+    "action_lattice": null,
+    "state_names": [
+      "hour_sin",
+      "hour_cos",
+      "load_centered",
+      "auxiliary_load_ratio",
+      "price_centered",
+      "scheduled_tariff_6h_centered",
+      "carbon_centered",
+      "soc_inventory",
+      "soh",
+      "temperature",
+      "last_bess_power",
+      "flex_backlog",
+      "equipment_availability",
+      "reserve_requirement",
+      "episode_progress",
+      "running_policy_peak",
+      "running_baseline_peak",
+      "cumulative_carbon_delta",
+      "cumulative_financial_delta",
+      "flex_due_in_0_hours",
+      "flex_due_in_1_hours",
+      "flex_due_in_2_hours",
+      "flex_due_in_3_hours",
+      "flex_due_in_4_hours",
+      "flex_due_in_5_hours",
+      "flex_due_in_6_hours",
+      "flex_due_in_7_hours",
+      "flex_due_in_8_hours",
+      "flex_due_in_9_hours",
+      "flex_due_in_10_hours",
+      "flex_due_in_11_hours"
+    ],
+    "observation_dimensions": 31,
+    "action_count": null,
+    "action_shape": [
+      2
+    ],
+    "action_mapping": {
+      "kind": "state_dependent_physical_parameterization",
+      "class": "ShoreBESSV8SACEnv",
+      "source_sha256": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+      "exact_idle_available": true,
+      "version": "physical_feasible_interval_float64_bidirectional_braking_v2",
+      "deadband": 0.1,
+      "inputs": "current equipment, SOC, temperature, ramp, PCC, reserve, terminal reachability and FIFO deadlines only",
+      "economic_teacher_used": false
+    },
+    "action_noise": {
+      "class": "NormalActionNoise",
+      "mean": [
+        0.0,
+        0.0
+      ],
+      "sigma": [
+        0.1,
+        0.1
+      ]
+    },
+    "physical_config": {
+      "schema": "port-dt-shore-bess-v3.2-balanced",
+      "version": "3.2.0",
+      "dataset_id": "public_cn_sha_hourly_v3",
+      "port_profile_id": "cn_sha_public_benchmark_v3",
+      "control_authority": "recommendation_only",
+      "split": {
+        "train_ratio": 0.7,
+        "validation_ratio": 0.1,
+        "blind_test_ratio": 0.2,
+        "shuffle": false
+      },
+      "asset": {
+        "rated_energy_kwh": 50000.0,
+        "rated_power_kw": 4000.0,
+        "charge_efficiency": 0.96,
+        "discharge_efficiency": 0.96,
+        "soc_min": 0.15,
+        "soc_max": 0.9,
+        "soc_initial": 0.58,
+        "soh_initial": 0.98,
+        "ramp_kw_per_hour": 2400.0,
+        "cycle_cost_cny_per_kwh": 0.08,
+        "temperature_derate_c": 40.0,
+        "temperature_trip_c": 47.0
+      },
+      "shore_service": {
+        "mandatory_load_fraction_min": 0.18,
+        "mandatory_load_fraction_occupancy_gain": 0.22,
+        "flexible_aux_fraction": 0.055,
+        "flexible_aux_limit": 0.45,
+        "reserve_min_kw": 600.0,
+        "reserve_critical_kw": 1200.0,
+        "critical_hours_local": [
+          9,
+          10,
+          11,
+          18,
+          19,
+          20,
+          21
+        ],
+        "sla_min": 1.0
+      },
+      "grid": {
+        "hard_pcc_limit_kw": 36000.0,
+        "soft_cap_train_quantile": 0.86,
+        "demand_charge_cny_per_kw_month": 38.0,
+        "export_allowed": false,
+        "carbon_shadow_price_cny_per_kg": 0.08
+      },
+      "reward_weights": {
+        "energy_cost": 0.25,
+        "carbon": 0.3,
+        "demand_peak": 0.2,
+        "degradation": 0.08,
+        "reserve": 0.05,
+        "shore_sla": 0.05,
+        "safety_projection": 0.04,
+        "terminal_state": 0.03
+      },
+      "training": {
+        "algorithm": "Constrained BC warm-start + PPO balanced safe policy improvement",
+        "episode_hours": 168,
+        "behavior_trajectories_per_seed": 100,
+        "behavior_epochs": 80,
+        "behavior_validation_every_epochs": 10,
+        "behavior_batch_size": 256,
+        "behavior_learning_rate": 0.0003,
+        "formal_steps_per_seed": 30000,
+        "checkpoint_steps": 5000,
+        "seeds": [
+          43,
+          143,
+          243
+        ],
+        "learning_rate": 0.00015,
+        "batch_size": 256,
+        "buffer_size": 100000,
+        "learning_starts": 1000,
+        "entropy_coefficient": 0.001,
+        "gamma": 0.995,
+        "tau": 0.005,
+        "network": [
+          128,
+          128
+        ]
+      },
+      "convergence_gate": {
+        "fixed_validation_windows": 8,
+        "tail_checkpoints": 3,
+        "tail_relative_range_max": 0.08,
+        "tail_regression_slope_max": 0.025,
+        "minimum_seed_pass_rate": 0.6666667
+      },
+      "promotion_gate": {
+        "validation_cost_reduction_vs_no_bess_percent_min": 0.0,
+        "validation_peak_reduction_vs_no_bess_percent_min": 0.0,
+        "validation_carbon_reduction_vs_no_bess_percent_min": 0.0,
+        "forward_cost_reduction_vs_no_bess_percent_min": 0.0,
+        "forward_peak_reduction_vs_no_bess_percent_min": 0.0,
+        "forward_carbon_reduction_vs_no_bess_percent_min": 0.0,
+        "guardrail_violation_rate_max": 0.0,
+        "terminal_soc_error_max": 1e-06,
+        "terminal_flex_backlog_kwh_max": 1e-06
+      },
+      "claim_boundary": "V3.2候选先在2024-2025训练/验证段调优，再一次性打开2026年1-5月公开前向窗口。公开数据不含岸电表计、BMS、PCC结算或控制回执；任何候选均不得据此宣称上海港现场节省。"
+    },
+    "normalization": {
+      "base_scale": 25542.319316406254,
+      "price_scale": 1.0800000429153442,
+      "carbon_scale": 0.5899999737739563,
+      "soft_cap_kw": 24196.384765625,
+      "price_center": 0.7104166919986407,
+      "carbon_center": 0.565000002582868,
+      "carbon_span": 0.02499997615814209,
+      "load_center": 22398.906508373788,
+      "load_std": 1530.3173636457113,
+      "reward_scale": 200.0
+    },
+    "admission_gate": {
+      "cost_reduction_percent_min": 0.03,
+      "carbon_reduction_percent_min": 0.001,
+      "peak_reduction_percent_min": 0.0,
+      "all_three_95ci_lower_bounds_strictly_positive": true,
+      "formal_source_period_cluster_95ci_lower_bounds_strictly_positive": true,
+      "formal_source_period_cluster_count_min": 3,
+      "every_window_carbon_non_regression": true,
+      "terminal_absolute_tolerance": 1e-06,
+      "safety_tolerance": 1e-12,
+      "tail_checkpoints": 3,
+      "tail_relative_range_max": 0.25,
+      "tail_range_floors_pp": {
+        "total_cost_cny": 0.02,
+        "carbon_kg": 0.001,
+        "peak_kw": 0.05
+      }
+    },
+    "reward_credit_assignment": "inventory_and_train_threshold_demand_potential_v2",
+    "physical_config_legacy_fields": {
+      "training_algorithm_and_optimizer_settings_used": false,
+      "legacy_reward_weights_used_for_v8_objective": false,
+      "episode_hours_overridden_by_runner": 168,
+      "actual_optimizer_configuration": "top-level algorithm_parameters and recorded per-checkpoint parameters"
+    },
+    "pilot": true,
+    "physical_action_masking": false,
+    "optimizer_update_count_basis": "actual PyTorch optimizer step post-hook calls"
+  },
+  "manifest": {
+    "schema": "port-shore-bess-v8-manifest.v1",
+    "run_id": "shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4",
+    "started_at": "2026-09-12T03:10:22.520056Z",
+    "dataset_id": "public_cn_sha_hourly_v3",
+    "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+    "dataset_quality": {
+      "status": "pass",
+      "training_eligible": true,
+      "dataset_id": "public_cn_sha_hourly_v3",
+      "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+      "rows": 17544,
+      "time": {
+        "start_at": "2024-01-01T00:00:00Z",
+        "end_at": "2025-12-31T23:00:00Z",
+        "median_cadence_seconds": 3600.0,
+        "irregular_gap_count": 0,
+        "strictly_increasing": true
+      },
+      "missing_value_count": 0,
+      "non_finite_value_count": 0,
+      "physical_violation_count": 0,
+      "missing_governance_metadata": [],
+      "columns": {
+        "base_load_kw": {
+          "unit": "kW",
+          "min": 19058.8515625,
+          "p25": 21382.646484375,
+          "median": 22656.0712890625,
+          "p75": 23931.8095703125,
+          "max": 27677.998046875,
+          "mean": 22700.423911731752,
+          "std": 1620.2706689046174,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "throughput_teu": {
+          "unit": "TEU/sampling_interval",
+          "min": 4131.48193359375,
+          "p25": 5351.5335693359375,
+          "median": 6050.06884765625,
+          "p75": 6762.690673828125,
+          "max": 8507.19921875,
+          "mean": 6074.44140302151,
+          "std": 862.355676331925,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "vessel_arrivals": {
+          "unit": "vessel_calls/sampling_interval",
+          "min": 0.7945157885551453,
+          "p25": 1.0291410386562347,
+          "median": 1.1634747385978699,
+          "p75": 1.3005174100399017,
+          "max": 1.6359999179840088,
+          "mean": 1.1681618086528245,
+          "std": 0.16583762999285168,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "tide_m": {
+          "unit": "m",
+          "min": -1.809999942779541,
+          "p25": -0.4099999964237213,
+          "median": 0.23000000417232513,
+          "p75": 0.9300000071525574,
+          "max": 2.759999990463257,
+          "mean": 0.2753077974106405,
+          "std": 0.8662895385392361,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": -20.0,
+            "max": 20.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "price_per_kwh": {
+          "unit": "currency/kWh",
+          "min": 0.4300000071525574,
+          "p25": 0.4300000071525574,
+          "median": 0.7200000286102295,
+          "p75": 0.7200000286102295,
+          "max": 1.0800000429153442,
+          "mean": 0.7104166919986407,
+          "std": 0.22679799845180715,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "carbon_kg_per_kwh": {
+          "unit": "kgCO2e/kWh",
+          "min": 0.5400000214576721,
+          "p25": 0.5473219752311707,
+          "median": 0.5649999976158142,
+          "p75": 0.5826780200004578,
+          "max": 0.5899999737739563,
+          "mean": 0.565000002582868,
+          "std": 0.017677734983992006,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 5.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "ambient_c": {
+          "unit": "degreeCelsius",
+          "min": -1.399999976158142,
+          "p25": 10.5,
+          "median": 18.600000381469727,
+          "p75": 26.5,
+          "max": 32.20000076293945,
+          "mean": 18.11199270227327,
+          "std": 8.112262988230132,
+          "outlier_count_iqr": 0,
+          "physical_bounds": {
+            "min": -60.0,
+            "max": 70.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "coverage_ratio": 1.0
+        },
+        "wind_speed_mps": {
+          "unit": "m/s",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.10000000149011612,
+          "max": 18.25,
+          "mean": 6.439315440292044,
+          "std": 2.6378582248109415,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 100.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "visibility_km": {
+          "unit": "km",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1000.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "wave_height_m": {
+          "unit": "m",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.019999999552965164,
+          "max": 2.759999990463257,
+          "mean": 0.5258538532300142,
+          "std": 0.33430444529192976,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 40.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "current_speed_mps": {
+          "unit": "m/s",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.0,
+          "max": 2.1666669845581055,
+          "mean": 0.7113115847751166,
+          "std": 0.3945485789087322,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 15.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "berth_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.6322270035743713,
+          "max": 0.9200000166893005,
+          "mean": 0.7696512263664034,
+          "std": 0.06098455227016419,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "yard_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.6123800277709961,
+          "max": 0.9200000166893005,
+          "mean": 0.7592823416796439,
+          "std": 0.0651903864813142,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "crane_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.8100000023841858,
+          "max": 0.98540198802948,
+          "mean": 0.9174556571988552,
+          "std": 0.03273373916214191,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "equipment_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.8849999904632568,
+          "max": 0.9824450016021729,
+          "mean": 0.9446975859676221,
+          "std": 0.01818541173067248,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "channel_congestion_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.5735380053520203,
+          "max": 0.8805819749832153,
+          "mean": 0.7159709532817803,
+          "std": 0.07036745816946409,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "reefer_load_kw": {
+          "unit": "kW",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 547.2315063476562,
+          "max": 1141.702392578125,
+          "mean": 744.4219901158393,
+          "std": 140.4671724569511,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "pilot_tug_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.7400000095367432,
+          "max": 0.9738690257072449,
+          "mean": 0.8832742089394614,
+          "std": 0.04364498721915798,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true
+        },
+        "closure_flag": {
+          "unit": "binary",
+          "coverage_ratio": 1.0,
+          "available_rows": 17544,
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0,
+          "std": 0.0,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": true,
+          "optional": true
+        },
+        "maritime_inspection_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "scenario_only": true
+        },
+        "customs_inspection_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "scenario_only": true
+        },
+        "maritime_detention_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "scenario_only": true
+        },
+        "customs_secondary_check_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "scenario_only": true
+        },
+        "inspection_resource_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "scenario_only": true
+        },
+        "regulatory_release_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "scenario_only": true
+        },
+        "truck_arrivals_per_hour": {
+          "unit": "truck/hour",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "gate_queue_trucks": {
+          "unit": "truck",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "gate_capacity_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "rail_transfer_demand_teu": {
+          "unit": "TEU/sampling_interval",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "barge_transfer_demand_teu": {
+          "unit": "TEU/sampling_interval",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "intermodal_capacity_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "reefer_occupancy_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "reefer_temperature_risk_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "shore_power_demand_kw": {
+          "unit": "kW",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "shore_power_connection_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "equipment_failure_risk_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "maintenance_backlog_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "labor_availability_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "pilotage_demand_vessels": {
+          "unit": "vessel/sampling_interval",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "tug_demand_vessels": {
+          "unit": "vessel/sampling_interval",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "channel_capacity_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "dangerous_goods_workload_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "yard_dwell_time_hours": {
+          "unit": "hour",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": null
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "planning_vessel_draft_m": {
+          "unit": "m",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 40.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "channel_chart_depth_m": {
+          "unit": "m",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 100.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "squat_allowance_m": {
+          "unit": "m",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 5.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        },
+        "forecast_uncertainty_ratio": {
+          "unit": "ratio",
+          "coverage_ratio": 0.0,
+          "available_rows": 0,
+          "min": null,
+          "max": null,
+          "mean": null,
+          "std": null,
+          "physical_bounds": {
+            "min": 0.0,
+            "max": 1.0
+          },
+          "physical_violation_count": 0,
+          "constant": false,
+          "optional": true,
+          "site_replaceable": true
+        }
+      },
+      "factor_coverage": {
+        "wind_speed_mps": 1.0,
+        "visibility_km": 0.0,
+        "wave_height_m": 1.0,
+        "current_speed_mps": 1.0,
+        "berth_occupancy_ratio": 1.0,
+        "yard_occupancy_ratio": 1.0,
+        "crane_availability_ratio": 1.0,
+        "equipment_availability_ratio": 1.0,
+        "channel_congestion_ratio": 1.0,
+        "reefer_load_kw": 1.0,
+        "pilot_tug_availability_ratio": 1.0,
+        "closure_flag": 1.0
+      },
+      "available_factor_count": 11,
+      "factor_count": 12,
+      "regulatory_factor_coverage": {
+        "maritime_inspection_ratio": 0.0,
+        "customs_inspection_ratio": 0.0,
+        "maritime_detention_ratio": 0.0,
+        "customs_secondary_check_ratio": 0.0,
+        "inspection_resource_availability_ratio": 0.0,
+        "regulatory_release_ratio": 0.0
+      },
+      "available_regulatory_factor_count": 0,
+      "regulatory_factor_count": 6,
+      "port_wide_factor_coverage": {
+        "truck_arrivals_per_hour": 0.0,
+        "gate_queue_trucks": 0.0,
+        "gate_capacity_ratio": 0.0,
+        "rail_transfer_demand_teu": 0.0,
+        "barge_transfer_demand_teu": 0.0,
+        "intermodal_capacity_ratio": 0.0,
+        "reefer_occupancy_ratio": 0.0,
+        "reefer_temperature_risk_ratio": 0.0,
+        "shore_power_demand_kw": 0.0,
+        "shore_power_connection_ratio": 0.0,
+        "equipment_failure_risk_ratio": 0.0,
+        "maintenance_backlog_ratio": 0.0,
+        "labor_availability_ratio": 0.0,
+        "pilotage_demand_vessels": 0.0,
+        "tug_demand_vessels": 0.0,
+        "channel_capacity_ratio": 0.0,
+        "dangerous_goods_workload_ratio": 0.0,
+        "yard_dwell_time_hours": 0.0,
+        "planning_vessel_draft_m": 0.0,
+        "channel_chart_depth_m": 0.0,
+        "squat_allowance_m": 0.0,
+        "forecast_uncertainty_ratio": 0.0
+      },
+      "available_port_wide_factor_count": 0,
+      "port_wide_factor_count": 22,
+      "evidence": {
+        "tier": "public_official_aggregate_reanalysis_enriched",
+        "measured_columns": [],
+        "derived_columns": [
+          "hourly_throughput_teu_distribution",
+          "vessel_arrivals",
+          "base_load_kw",
+          "price_per_kwh",
+          "carbon_kg_per_kwh",
+          "berth_occupancy_ratio",
+          "yard_occupancy_ratio",
+          "crane_availability_ratio",
+          "equipment_availability_ratio",
+          "channel_congestion_ratio",
+          "reefer_load_kw",
+          "pilot_tug_availability_ratio",
+          "closure_flag"
+        ],
+        "independent_source_observations": 17566,
+        "row_count_is_not_independent_information_count": true
+      },
+      "errors": [],
+      "warnings": [],
+      "generated_at": "2026-09-12T03:10:22.468893Z",
+      "essential_factor_coverage": {
+        "equipment_availability_ratio": 1.0,
+        "berth_occupancy_ratio": 1.0
+      }
+    },
+    "input_files_sha256": {
+      "config/shore_bess_v32_balanced.json": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+      "data/rl/datasets/public_cn_sha_hourly_v3.csv": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+      "data/rl/datasets/public_cn_sha_hourly_v3.meta.json": "97a9d81b8420273453b1f06ff373a71aa29cb57ca9b0e064e0bd59570e2d2fc7"
+    },
+    "train": {
+      "start_row": 0,
+      "stop_row_exclusive": 11664,
+      "rows": 11664,
+      "first_timestamp": "2024-01-01T00:00:00Z",
+      "last_timestamp": "2025-04-30T23:00:00Z"
+    },
+    "validation": {
+      "start_row": 11664,
+      "stop_row_exclusive": 13872,
+      "rows": 2208,
+      "first_timestamp": "2025-05-01T00:00:00Z",
+      "last_timestamp": "2025-07-31T23:00:00Z"
+    },
+    "validation_starts": [
+      0,
+      336,
+      672,
+      1176,
+      1512,
+      2016
+    ],
+    "normalization_fit_split": "train_only",
+    "selection_protocol": "validation_only_then_frozen_checkpoint_and_seed",
+    "test_status": "not_opened",
+    "forward_status": "not_loaded",
+    "access_protocol_details": {
+      "historical_csv_bytes": "Complete 2024-2025 CSV physically loaded; full-table quality checks performed.",
+      "historical_test_partition": "August-December 2025 rows excluded from gradients, normalization and model selection; evaluated only after formal selection.",
+      "pilot_test_evaluation_performed": false,
+      "forward_csv_bytes": "Separate 2026 CSV is not loaded in pilots; formal evaluation loads it after selection freeze.",
+      "test_status_not_opened_meaning": "No test-partition policy evaluation; does not claim historical CSV bytes were never read."
+    },
+    "teacher_actions_used": false,
+    "warm_start_used": false,
+    "training_episode_ledger_contract": "after_environment_step_before_replay_storage_and_optimizer",
+    "source_sha256": {
+      "scripts/train_shore_bess_v8.py": "c0c5628135de69bd33813f6f19f447059ad554afe59747214c2a9536150b02df",
+      "app/services/rl_model/shore_bess/v8_environment.py": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+      "app/services/rl_model/shore_bess/v3_environment.py": "20f029c3f8904463b257980ffe8370c1945fa36aa5d265591b52094ead2ed05d",
+      "config/shore_bess_v32_balanced.json": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+      "app/services/rl_training/statistics.py": "429e3c00ebeb0517b7670c03e7cee2253b67a762ff45dc8bca026ab79047f8f2",
+      "app/services/rl_training/datasets.py": "9ccb5c7c3d28b0db8267e080f9f67b453790330c5cac458c6250f6b4e5a33e73",
+      "app/services/rl_model/shore_bess/v8_replay.py": "79cae8a4bd8bee2c641442a7ac1362fd07c391e2fa68a1e4e38d1268b0734e1b"
+    },
+    "historical_pointer_sha256": {
+      "evidence/v3/shore_bess/latest.json": "90cabf808958f301ef91eb0b2dbcc37e25fda4121e04ce54cf6986a49a2cdd8b",
+      "evidence/v7/shore_bess/latest.json": "bf93f71d3417e84f78d72c4d3e91a5bbaec4b2250c7d25072d558a13733e08f3"
+    },
+    "versions": {
+      "python": "3.12.14",
+      "torch": "2.2.2",
+      "stable_baselines3": "2.3.2",
+      "sb3_contrib": "2.3.0"
+    },
+    "simulation_mode": true,
+    "production_authority": false,
+    "dispatch_allowed": false,
+    "live_data_verified": false
+  },
+  "checks": {
+    "formal_run": false,
+    "three_independent_seeds": false,
+    "all_seeds_validation_passed": false,
+    "all_seeds_last_three_stable": false,
+    "real_optimizer_updates": true,
+    "weights_changed": true,
+    "source_unchanged_during_training": true,
+    "config_and_dataset_files_unchanged": true,
+    "historical_pointers_preserved": true,
+    "no_training_rendering": true,
+    "test_all_seed_gates": false,
+    "forward_all_seed_gates": false
+  },
+  "results": [
+    {
+      "seed": 912,
+      "steps": 60000,
+      "optimizer_updates": 87000,
+      "sb3_update_counter": 58000,
+      "initial_weights_sha256": "3691c13228eda08826aa8bc51e6d42140715c391d004654579c0c310d99cefaa",
+      "final_weights_sha256": "541ccf6c13db9a6dc2b958eb354e4a30cdd6e0f1df2d5f2c5860652f8585f0cc",
+      "parameters": {
+        "num_timesteps": 60000,
+        "_n_updates": 58000,
+        "gamma": 1.0,
+        "learning_starts": 2000,
+        "buffer_size": 200000,
+        "batch_size": 256,
+        "gradient_steps": 1,
+        "tau": 0.005,
+        "policy_delay": 2,
+        "target_policy_noise": 0.1,
+        "target_noise_clip": 0.3,
+        "learning_rate": 0.0003,
+        "optimizer_learning_rates": {
+          "actor": [
+            0.0003
+          ],
+          "critic": [
+            0.0003
+          ]
+        },
+        "train_freq": {
+          "frequency": 1,
+          "unit": "step"
+        },
+        "policy_kwargs": {
+          "net_arch": [
+            128,
+            128
+          ]
+        },
+        "policy_class": "TD3Policy",
+        "network_structure": "TD3Policy(\n  (actor): Actor(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (mu): Sequential(\n      (0): Linear(in_features=31, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=2, bias=True)\n      (5): Tanh()\n    )\n  )\n  (actor_target): Actor(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (mu): Sequential(\n      (0): Linear(in_features=31, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=2, bias=True)\n      (5): Tanh()\n    )\n  )\n  (critic): ContinuousCritic(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (qf0): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n    (qf1): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n  )\n  (critic_target): ContinuousCritic(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (qf0): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n    (qf1): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n  )\n)",
+        "parameter_count": 125704,
+        "trainable_parameter_count": 125704,
+        "gradient_optimizer_step_calls": 87000,
+        "optimizer_step_calls_by_component": {
+          "actor": 29000,
+          "critic": 58000
+        },
+        "sb3_update_counter_semantics": "SB3 gradient iterations; actor/critic/entropy optimizer calls are counted separately",
+        "replay_buffer_class": "app.services.rl_model.shore_bess.v8_replay.NStepReplayBuffer",
+        "replay_buffer_kwargs": {
+          "n_step": 24,
+          "gamma": 1.0
+        },
+        "replay_buffer_snapshot": {
+          "class": "NStepReplayBuffer",
+          "n_step": 24,
+          "gamma": 1.0,
+          "statistics_scope": "since_last_replay_buffer_reset",
+          "reset_count": 0,
+          "n_envs": 1,
+          "handle_timeout_termination": true,
+          "optimize_memory_usage": false,
+          "observed_transitions": 60000,
+          "emitted_transitions": 60000,
+          "pending_transitions": 0,
+          "discarded_pending_transitions": 0,
+          "transition_accounting_balanced": true,
+          "emitted_horizon_counts": {
+            "1": 358,
+            "2": 358,
+            "3": 358,
+            "4": 358,
+            "5": 358,
+            "6": 358,
+            "7": 358,
+            "8": 358,
+            "9": 358,
+            "10": 358,
+            "11": 358,
+            "12": 358,
+            "13": 358,
+            "14": 358,
+            "15": 358,
+            "16": 358,
+            "17": 358,
+            "18": 358,
+            "19": 358,
+            "20": 358,
+            "21": 358,
+            "22": 358,
+            "23": 358,
+            "24": 51766
+          },
+          "emitted_horizon_accounting_balanced": true,
+          "resident_transitions": 60000,
+          "resident_horizon_counts": {
+            "1": 358,
+            "2": 358,
+            "3": 358,
+            "4": 358,
+            "5": 358,
+            "6": 358,
+            "7": 358,
+            "8": 358,
+            "9": 358,
+            "10": 358,
+            "11": 358,
+            "12": 358,
+            "13": 358,
+            "14": 358,
+            "15": 358,
+            "16": 358,
+            "17": 358,
+            "18": 358,
+            "19": 358,
+            "20": 358,
+            "21": 358,
+            "22": 358,
+            "23": 358,
+            "24": 51766
+          },
+          "resident_position": 60000,
+          "resident_full": false,
+          "observed_terminal_events": 357,
+          "observed_timeout_events": 0,
+          "emitted_terminal_endpoints": 8568,
+          "emitted_timeout_endpoints": 0,
+          "resident_terminal_endpoints": 8568,
+          "resident_timeout_endpoints": 0,
+          "sampled_batches": 58000,
+          "sampled_transition_draws": 14848000,
+          "sampled_horizon_counts": {
+            "1": 87630,
+            "2": 88305,
+            "3": 88082,
+            "4": 87643,
+            "5": 88633,
+            "6": 87916,
+            "7": 88037,
+            "8": 87951,
+            "9": 88187,
+            "10": 88200,
+            "11": 88024,
+            "12": 87953,
+            "13": 88325,
+            "14": 87945,
+            "15": 87836,
+            "16": 88508,
+            "17": 87855,
+            "18": 88638,
+            "19": 88355,
+            "20": 88251,
+            "21": 87789,
+            "22": 87881,
+            "23": 88388,
+            "24": 12821668
+          },
+          "sampled_terminal_endpoints": 2114196,
+          "sampled_timeout_endpoints": 0,
+          "sampling_count_basis": "replay draws with replacement, not unique transitions or optimizer updates",
+          "flush_counts": {
+            "episode_end": 357,
+            "training_budget_end": 1
+          },
+          "last_flush": {
+            "reason": "training_budget_end",
+            "observed_transitions": 60000,
+            "newly_stored_transitions": 23,
+            "endpoint_done": false,
+            "endpoint_timeout": false,
+            "storage_only_no_optimizer_update_performed": true
+          },
+          "flush_claim_boundary": "Storage only. Final emitted tails are not asserted to have been sampled or learned.",
+          "approximation": {
+            "return": "sum of observed behavior rewards with undiscounted endpoint bootstrap",
+            "off_policy_importance_correction": false,
+            "sac_intermediate_entropy_terms_included": false,
+            "vanilla_algorithm_equivalence_claimed": false
+          },
+          "checkpoint_phase": "training_end_after_storage_only_flush",
+          "optimizer_steps_before_flush": {
+            "optimizer_step_calls": 87000,
+            "sb3_update_counter": 58000,
+            "optimizer_step_calls_by_component": {
+              "actor": 29000,
+              "critic": 58000
+            }
+          },
+          "optimizer_steps_after_flush": {
+            "optimizer_step_calls": 87000,
+            "sb3_update_counter": 58000,
+            "optimizer_step_calls_by_component": {
+              "actor": 29000,
+              "critic": 58000
+            }
+          },
+          "storage_only_flush_emitted": 23
+        }
+      },
+      "selected": {
+        "step": 10000,
+        "optimizer_updates": 12000,
+        "checkpoint_phase": "post_rollout_and_optimizer",
+        "sb3_update_counter": 8000,
+        "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_10000.zip",
+        "model_sha256": "d6b4fb5e83019c36b96aef41d16af92774b99d974c53e24e4b6a72b348df4859",
+        "weights_sha256": "420a89852543dcd12dae2f4de04c4eee2b2e869ac28679ce8d5773ffbd373b1a",
+        "parameters": {
+          "num_timesteps": 10000,
+          "_n_updates": 8000,
+          "gamma": 1.0,
+          "learning_starts": 2000,
+          "buffer_size": 200000,
+          "batch_size": 256,
+          "gradient_steps": 1,
+          "tau": 0.005,
+          "policy_delay": 2,
+          "target_policy_noise": 0.1,
+          "target_noise_clip": 0.3,
+          "learning_rate": 0.0003,
+          "optimizer_learning_rates": {
+            "actor": [
+              0.0003
+            ],
+            "critic": [
+              0.0003
+            ]
+          },
+          "train_freq": {
+            "frequency": 1,
+            "unit": "step"
+          },
+          "policy_kwargs": {
+            "net_arch": [
+              128,
+              128
+            ]
+          },
+          "policy_class": "TD3Policy",
+          "network_structure": "TD3Policy(\n  (actor): Actor(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (mu): Sequential(\n      (0): Linear(in_features=31, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=2, bias=True)\n      (5): Tanh()\n    )\n  )\n  (actor_target): Actor(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (mu): Sequential(\n      (0): Linear(in_features=31, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=2, bias=True)\n      (5): Tanh()\n    )\n  )\n  (critic): ContinuousCritic(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (qf0): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n    (qf1): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n  )\n  (critic_target): ContinuousCritic(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (qf0): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n    (qf1): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n  )\n)",
+          "parameter_count": 125704,
+          "trainable_parameter_count": 125704,
+          "gradient_optimizer_step_calls": 12000,
+          "optimizer_step_calls_by_component": {
+            "actor": 4000,
+            "critic": 8000
+          },
+          "sb3_update_counter_semantics": "SB3 gradient iterations; actor/critic/entropy optimizer calls are counted separately",
+          "replay_buffer_class": "app.services.rl_model.shore_bess.v8_replay.NStepReplayBuffer",
+          "replay_buffer_kwargs": {
+            "n_step": 24,
+            "gamma": 1.0
+          },
+          "replay_buffer_snapshot": {
+            "class": "NStepReplayBuffer",
+            "n_step": 24,
+            "gamma": 1.0,
+            "statistics_scope": "since_last_replay_buffer_reset",
+            "reset_count": 0,
+            "n_envs": 1,
+            "handle_timeout_termination": true,
+            "optimize_memory_usage": false,
+            "observed_transitions": 10000,
+            "emitted_transitions": 9977,
+            "pending_transitions": 23,
+            "discarded_pending_transitions": 0,
+            "transition_accounting_balanced": true,
+            "emitted_horizon_counts": {
+              "1": 59,
+              "2": 59,
+              "3": 59,
+              "4": 59,
+              "5": 59,
+              "6": 59,
+              "7": 59,
+              "8": 59,
+              "9": 59,
+              "10": 59,
+              "11": 59,
+              "12": 59,
+              "13": 59,
+              "14": 59,
+              "15": 59,
+              "16": 59,
+              "17": 59,
+              "18": 59,
+              "19": 59,
+              "20": 59,
+              "21": 59,
+              "22": 59,
+              "23": 59,
+              "24": 8620
+            },
+            "emitted_horizon_accounting_balanced": true,
+            "resident_transitions": 9977,
+            "resident_horizon_counts": {
+              "1": 59,
+              "2": 59,
+              "3": 59,
+              "4": 59,
+              "5": 59,
+              "6": 59,
+              "7": 59,
+              "8": 59,
+              "9": 59,
+              "10": 59,
+              "11": 59,
+              "12": 59,
+              "13": 59,
+              "14": 59,
+              "15": 59,
+              "16": 59,
+              "17": 59,
+              "18": 59,
+              "19": 59,
+              "20": 59,
+              "21": 59,
+              "22": 59,
+              "23": 59,
+              "24": 8620
+            },
+            "resident_position": 9977,
+            "resident_full": false,
+            "observed_terminal_events": 59,
+            "observed_timeout_events": 0,
+            "emitted_terminal_endpoints": 1416,
+            "emitted_timeout_endpoints": 0,
+            "resident_terminal_endpoints": 1416,
+            "resident_timeout_endpoints": 0,
+            "sampled_batches": 8000,
+            "sampled_transition_draws": 2048000,
+            "sampled_horizon_counts": {
+              "1": 11849,
+              "2": 12111,
+              "3": 11909,
+              "4": 12232,
+              "5": 12197,
+              "6": 12048,
+              "7": 12192,
+              "8": 12109,
+              "9": 11909,
+              "10": 12102,
+              "11": 12006,
+              "12": 11872,
+              "13": 12143,
+              "14": 12191,
+              "15": 12122,
+              "16": 12092,
+              "17": 11866,
+              "18": 12191,
+              "19": 11900,
+              "20": 11987,
+              "21": 11985,
+              "22": 12022,
+              "23": 12179,
+              "24": 1770786
+            },
+            "sampled_terminal_endpoints": 289021,
+            "sampled_timeout_endpoints": 0,
+            "sampling_count_basis": "replay draws with replacement, not unique transitions or optimizer updates",
+            "flush_counts": {
+              "episode_end": 59
+            },
+            "last_flush": {
+              "reason": "episode_end",
+              "observed_transitions": 9912,
+              "newly_stored_transitions": 24,
+              "endpoint_done": true,
+              "endpoint_timeout": false,
+              "storage_only_no_optimizer_update_performed": true
+            },
+            "flush_claim_boundary": "Storage only. Final emitted tails are not asserted to have been sampled or learned.",
+            "approximation": {
+              "return": "sum of observed behavior rewards with undiscounted endpoint bootstrap",
+              "off_policy_importance_correction": false,
+              "sac_intermediate_entropy_terms_included": false,
+              "vanilla_algorithm_equivalence_claimed": false
+            },
+            "checkpoint_phase": "post_rollout_and_optimizer"
+          }
+        },
+        "evaluation": {
+          "mean": {
+            "aux_shift_kwh": 25286.82631586221,
+            "bess_throughput_kwh": 17691.37724550896,
+            "carbon_delta_kg": 290.0108312981926,
+            "carbon_kg": 2192815.198787734,
+            "degradation_cost_cny": 1415.3101796407293,
+            "demand_charge_cny": 224902.01021061433,
+            "energy_cost_cny": 2773018.214520805,
+            "financial_delta_cny": 4183.383628388735,
+            "flex_deadline_violation_kwh": 0.0,
+            "guardrail_violation_rate": 0.0,
+            "guardrail_violations": 0.0,
+            "learning_reward": -38.31756801983541,
+            "max_flex_age_hours": 12.0,
+            "nonzero_bess_action_rate": 1.0,
+            "nonzero_bess_actions": 168.0,
+            "nonzero_flex_action_rate": 1.0,
+            "nonzero_flex_actions": 168.0,
+            "peak_kw": 25734.79299167509,
+            "physical_power_violations": 0.0,
+            "projection_count": 0.3333333333333333,
+            "projection_rate": 0.001984126984126984,
+            "reserve_shortfall_kwh": 0.0,
+            "reward": -0.48087500996977783,
+            "shore_sla_violation_kwh": 0.0,
+            "soc_max_observed": 0.7567664670658684,
+            "soc_min_observed": 0.58,
+            "temperature_max_c": 30.488455472384704,
+            "terminal_flex_backlog_kwh": 0.0,
+            "terminal_soc_error": 0.0,
+            "total_cost_cny": 2999335.5349110602,
+            "training_reward": -38.31756801983541
+          },
+          "rows": [
+            {
+              "reward": -0.5150276645452048,
+              "energy_cost_cny": 2730536.0435753334,
+              "carbon_kg": 2158988.721941635,
+              "degradation_cost_cny": 1415.3101796407295,
+              "bess_throughput_kwh": 17691.37724550896,
+              "aux_shift_kwh": 25286.826315862207,
+              "reserve_shortfall_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "guardrail_violations": 0.0,
+              "projection_count": 0.0,
+              "nonzero_bess_actions": 168.0,
+              "nonzero_flex_actions": 168.0,
+              "peak_kw": 25264.809593237595,
+              "soc_min_observed": 0.58,
+              "soc_max_observed": 0.7567664670658683,
+              "temperature_max_c": 27.17109452733091,
+              "flex_deadline_violation_kwh": 0.0,
+              "physical_power_violations": 0.0,
+              "training_reward": -38.334078426242826,
+              "max_flex_age_hours": 12.0,
+              "demand_charge_cny": 220794.72203042955,
+              "total_cost_cny": 2952746.0757854036,
+              "guardrail_violation_rate": 0.0,
+              "projection_rate": 0.0,
+              "nonzero_bess_action_rate": 1.0,
+              "nonzero_flex_action_rate": 1.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "financial_delta_cny": 4186.993677156708,
+              "carbon_delta_kg": 289.98516734098484,
+              "learning_reward": -38.334078426242826
+            },
+            {
+              "reward": -0.4644351714298203,
+              "energy_cost_cny": 2756923.491840497,
+              "carbon_kg": 2179089.020982299,
+              "degradation_cost_cny": 1415.310179640729,
+              "bess_throughput_kwh": 17691.377245508957,
+              "aux_shift_kwh": 25286.82631586221,
+              "reserve_shortfall_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "guardrail_violations": 0.0,
+              "projection_count": 1.0,
+              "nonzero_bess_actions": 168.0,
+              "nonzero_flex_actions": 168.0,
+              "peak_kw": 25654.442405737595,
+              "soc_min_observed": 0.58,
+              "soc_max_observed": 0.7567664670658683,
+              "temperature_max_c": 28.99415552736712,
+              "flex_deadline_violation_kwh": 0.0,
+              "physical_power_violations": 0.0,
+              "training_reward": -38.333141411227764,
+              "max_flex_age_hours": 12.0,
+              "demand_charge_cny": 224199.80878607635,
+              "total_cost_cny": 2982538.610806214,
+              "guardrail_violation_rate": 0.0,
+              "projection_rate": 0.005952380952380952,
+              "nonzero_bess_action_rate": 1.0,
+              "nonzero_flex_action_rate": 1.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "financial_delta_cny": 4186.993677156703,
+              "carbon_delta_kg": 289.9695504240681,
+              "learning_reward": -38.333141411227764
+            },
+            {
+              "reward": -0.4648079339489547,
+              "energy_cost_cny": 2779973.3457113304,
+              "carbon_kg": 2197705.199349064,
+              "degradation_cost_cny": 1415.310179640729,
+              "bess_throughput_kwh": 17691.377245508957,
+              "aux_shift_kwh": 25286.82631586221,
+              "reserve_shortfall_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "guardrail_violations": 0.0,
+              "projection_count": 1.0,
+              "nonzero_bess_actions": 168.0,
+              "nonzero_flex_actions": 168.0,
+              "peak_kw": 26190.979515112595,
+              "soc_min_observed": 0.58,
+              "soc_max_observed": 0.7567664670658683,
+              "temperature_max_c": 28.343266904383153,
+              "flex_deadline_violation_kwh": 0.0,
+              "physical_power_violations": 0.0,
+              "training_reward": -38.21613374408828,
+              "max_flex_age_hours": 12.0,
+              "demand_charge_cny": 228888.7244688279,
+              "total_cost_cny": 3010277.3803597987,
+              "guardrail_violation_rate": 0.0,
+              "projection_rate": 0.005952380952380952,
+              "nonzero_bess_action_rate": 1.0,
+              "nonzero_flex_action_rate": 1.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "financial_delta_cny": 4165.333384548901,
+              "carbon_delta_kg": 289.82444702239263,
+              "learning_reward": -38.21613374408828
+            },
+            {
+              "reward": -0.44355551797439097,
+              "energy_cost_cny": 2816520.950457023,
+              "carbon_kg": 2226288.585881429,
+              "degradation_cost_cny": 1415.310179640729,
+              "bess_throughput_kwh": 17691.37724550896,
+              "aux_shift_kwh": 25286.826315862207,
+              "reserve_shortfall_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "guardrail_violations": 0.0,
+              "projection_count": 0.0,
+              "nonzero_bess_actions": 168.0,
+              "nonzero_flex_actions": 168.0,
+              "peak_kw": 26013.760765112595,
+              "soc_min_observed": 0.58,
+              "soc_max_observed": 0.7567664670658683,
+              "temperature_max_c": 32.526505242815794,
+              "flex_deadline_violation_kwh": 0.0,
+              "physical_power_violations": 0.0,
+              "training_reward": -38.34374709191114,
+              "max_flex_age_hours": 12.0,
+              "demand_charge_cny": 227339.97087539875,
+              "total_cost_cny": 3045276.2315120623,
+              "guardrail_violation_rate": 0.0,
+              "projection_rate": 0.0,
+              "nonzero_bess_action_rate": 1.0,
+              "nonzero_flex_action_rate": 1.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "financial_delta_cny": 4186.9936771567,
+              "carbon_delta_kg": 290.14631176879084,
+              "learning_reward": -38.34374709191114
+            },
+            {
+              "reward": -0.4782662411881866,
+              "energy_cost_cny": 2790702.9664397286,
+              "carbon_kg": 2207880.6755595356,
+              "degradation_cost_cny": 1415.310179640729,
+              "bess_throughput_kwh": 17691.37724550896,
+              "aux_shift_kwh": 25286.826315862207,
+              "reserve_shortfall_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "guardrail_violations": 0.0,
+              "projection_count": 0.0,
+              "nonzero_bess_actions": 168.0,
+              "nonzero_flex_actions": 168.0,
+              "peak_kw": 25611.418968237595,
+              "soc_min_observed": 0.58,
+              "soc_max_observed": 0.7567664670658683,
+              "temperature_max_c": 32.88093707860635,
+              "flex_deadline_violation_kwh": 0.0,
+              "physical_power_violations": 0.0,
+              "training_reward": -38.338516083787106,
+              "max_flex_age_hours": 12.0,
+              "demand_charge_cny": 223823.81751297574,
+              "total_cost_cny": 3015942.0941323447,
+              "guardrail_violation_rate": 0.0,
+              "projection_rate": 0.0,
+              "nonzero_bess_action_rate": 1.0,
+              "nonzero_flex_action_rate": 1.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "financial_delta_cny": 4186.993677156694,
+              "carbon_delta_kg": 290.05912830005764,
+              "learning_reward": -38.338516083787106
+            },
+            {
+              "reward": -0.5191575307321101,
+              "energy_cost_cny": 2763452.4891009172,
+              "carbon_kg": 2186938.9890124407,
+              "degradation_cost_cny": 1415.3101796407295,
+              "bess_throughput_kwh": 17691.377245508964,
+              "aux_shift_kwh": 25286.826315862207,
+              "reserve_shortfall_kwh": 0.0,
+              "shore_sla_violation_kwh": 0.0,
+              "guardrail_violations": 0.0,
+              "projection_count": 0.0,
+              "nonzero_bess_actions": 168.0,
+              "nonzero_flex_actions": 168.0,
+              "peak_kw": 25673.346702612595,
+              "soc_min_observed": 0.58,
+              "soc_max_observed": 0.7567664670658683,
+              "temperature_max_c": 33.014773553804915,
+              "flex_deadline_violation_kwh": 0.0,
+              "physical_power_violations": 0.0,
+              "training_reward": -38.33979136175535,
+              "max_flex_age_hours": 12.0,
+              "demand_charge_cny": 224365.0175899778,
+              "total_cost_cny": 2989232.8168705357,
+              "guardrail_violation_rate": 0.0,
+              "projection_rate": 0.0,
+              "nonzero_bess_action_rate": 1.0,
+              "nonzero_flex_action_rate": 1.0,
+              "terminal_soc_error": 0.0,
+              "terminal_flex_backlog_kwh": 0.0,
+              "financial_delta_cny": 4186.993677156702,
+              "carbon_delta_kg": 290.08038293286154,
+              "learning_reward": -38.33979136175535
+            }
+          ],
+          "starts": [
+            0,
+            336,
+            672,
+            1176,
+            1512,
+            2016
+          ],
+          "episode_hours": 168,
+          "windows": [
+            {
+              "start_index": 0,
+              "first_timestamp": "2025-05-01T00:00:00Z",
+              "last_timestamp": "2025-05-07T23:00:00Z",
+              "source_month": "2025-05",
+              "source_period": "2025-05"
+            },
+            {
+              "start_index": 336,
+              "first_timestamp": "2025-05-15T00:00:00Z",
+              "last_timestamp": "2025-05-21T23:00:00Z",
+              "source_month": "2025-05",
+              "source_period": "2025-05"
+            },
+            {
+              "start_index": 672,
+              "first_timestamp": "2025-05-29T00:00:00Z",
+              "last_timestamp": "2025-06-04T23:00:00Z",
+              "source_month": "2025-05",
+              "source_period": "2025-05"
+            },
+            {
+              "start_index": 1176,
+              "first_timestamp": "2025-06-19T00:00:00Z",
+              "last_timestamp": "2025-06-25T23:00:00Z",
+              "source_month": "2025-06",
+              "source_period": "2025-06"
+            },
+            {
+              "start_index": 1512,
+              "first_timestamp": "2025-07-03T00:00:00Z",
+              "last_timestamp": "2025-07-09T23:00:00Z",
+              "source_month": "2025-07",
+              "source_period": "2025-07"
+            },
+            {
+              "start_index": 2016,
+              "first_timestamp": "2025-07-24T00:00:00Z",
+              "last_timestamp": "2025-07-30T23:00:00Z",
+              "source_month": "2025-07",
+              "source_period": "2025-07"
+            }
+          ],
+          "window_overlap": false,
+          "action_counts": {
+            "continuous_action": 1008
+          }
+        },
+        "comparison": {
+          "total_cost_cny": {
+            "n": 6,
+            "mean": -0.13968541414619504,
+            "std": 0.001563529948262051,
+            "median": -0.13964367972958253,
+            "ci_low": -0.1408967548145932,
+            "ci_high": -0.13855854149731608,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 5000,
+            "per_window_percent": [
+              -0.14200134915261184,
+              -0.14058090566184314,
+              -0.13856214670163988,
+              -0.13768072390191013,
+              -0.13902171781900094,
+              -0.14026564164016414
+            ],
+            "minimum_percent": -0.14200134915261184,
+            "clustered_ci_low": -0.14038146717203162,
+            "clustered_ci_high": -0.13768072390191013,
+            "cluster_count": 3,
+            "cluster_confidence": 0.95,
+            "cluster_method": "percentile_bootstrap_of_official_source_period_groups",
+            "cluster_group_field": "source_period",
+            "cluster_resamples": 5000,
+            "cluster_window_counts": {
+              "2025-05": 3,
+              "2025-06": 1,
+              "2025-07": 2
+            },
+            "cluster_boundary": "Official MOT period of window start; January/February share YYYY-01/02. Cross-period windows belong to their starting period, an approximation. Few-cluster engineering uncertainty, not field confidence."
+          },
+          "carbon_kg": {
+            "n": 6,
+            "mean": -0.013228489739027753,
+            "std": 0.00013925920933270734,
+            "median": -0.013227656312552561,
+            "ci_low": -0.013331225086925027,
+            "ci_high": -0.01312907229104218,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 5000,
+            "per_window_percent": [
+              -0.013433331960803697,
+              -0.013308687197889538,
+              -0.013189333720624771,
+              -0.013034434643462097,
+              -0.013139172006906081,
+              -0.01326597890448035
+            ],
+            "minimum_percent": -0.013433331960803697,
+            "clustered_ci_low": -0.013310450959772667,
+            "clustered_ci_high": -0.013034434643462095,
+            "cluster_count": 3,
+            "cluster_confidence": 0.95,
+            "cluster_method": "percentile_bootstrap_of_official_source_period_groups",
+            "cluster_group_field": "source_period",
+            "cluster_resamples": 5000,
+            "cluster_window_counts": {
+              "2025-05": 3,
+              "2025-06": 1,
+              "2025-07": 2
+            },
+            "cluster_boundary": "Official MOT period of window start; January/February share YYYY-01/02. Cross-period windows belong to their starting period, an approximation. Few-cluster engineering uncertainty, not field confidence."
+          },
+          "peak_kw": {
+            "n": 6,
+            "mean": -0.3837814538054802,
+            "std": 0.008066598921003254,
+            "median": -0.3863871245386101,
+            "ci_low": -0.3887376200634542,
+            "ci_high": -0.3771296237689459,
+            "confidence": 0.95,
+            "method": "percentile_bootstrap_of_mean",
+            "resamples": 5000,
+            "per_window_percent": [
+              -0.39251442965959116,
+              -0.3865299828266134,
+              -0.3690475955207311,
+              -0.3811706378930532,
+              -0.38718181068228513,
+              -0.3862442662506069
+            ],
+            "minimum_percent": -0.39251442965959116,
+            "clustered_ci_low": -0.38671303846644606,
+            "clustered_ci_high": -0.3811706378930532,
+            "cluster_count": 3,
+            "cluster_confidence": 0.95,
+            "cluster_method": "percentile_bootstrap_of_official_source_period_groups",
+            "cluster_group_field": "source_period",
+            "cluster_resamples": 5000,
+            "cluster_window_counts": {
+              "2025-05": 3,
+              "2025-06": 1,
+              "2025-07": 2
+            },
+            "cluster_boundary": "Official MOT period of window start; January/February share YYYY-01/02. Cross-period windows belong to their starting period, an approximation. Few-cluster engineering uncertainty, not field confidence."
+          }
+        },
+        "gates": {
+          "total_cost_cny_minimum_mean_gain": false,
+          "total_cost_cny_positive_95ci": false,
+          "carbon_kg_minimum_mean_gain": false,
+          "carbon_kg_positive_95ci": false,
+          "peak_kw_minimum_mean_gain": false,
+          "peak_kw_positive_95ci": false,
+          "every_window_carbon_non_regression": false,
+          "guardrail_violation_rate": true,
+          "terminal_soc_error": true,
+          "terminal_flex_backlog_kwh": true,
+          "shore_sla_violation_kwh": true,
+          "reserve_shortfall_kwh": true,
+          "flex_deadline_violation_kwh": true,
+          "physical_power_violations": true,
+          "maximum_flex_age_within_12_hours": true
+        },
+        "optimizer": {
+          "train/learning_rate": 0.0003,
+          "train/n_updates": 8000.0,
+          "train/actor_loss": 20.49535369873047,
+          "train/critic_loss": 432.136474609375
+        }
+      },
+      "training_episode_ledger": {
+        "path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/training_episodes.csv",
+        "sha256": "8020e9b94704107fe2dbce5720d7c1170afa4bac5d78a41459918634283ce04b",
+        "completed_episodes": 357,
+        "record_phase": "after_environment_step_before_replay_storage_and_optimizer",
+        "metrics_source": "unaltered numeric environment info.episode_metrics from physical training rollouts",
+        "partial_final_episode_included": false,
+        "claim_boundary": "Physical training episode ledger, not validation or a post-optimizer checkpoint."
+      },
+      "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/selected_model.zip",
+      "model_sha256": "d6b4fb5e83019c36b96aef41d16af92774b99d974c53e24e4b6a72b348df4859",
+      "convergence": {
+        "passed": false,
+        "tail_checkpoints": 3,
+        "all_tail_business_gates_passed": false,
+        "stability": {
+          "total_cost_cny": {
+            "range_pp": 0.0,
+            "tolerance_pp": 0.03492135353654876,
+            "passed": true
+          },
+          "carbon_kg": {
+            "range_pp": 0.0,
+            "tolerance_pp": 0.0033071224347569384,
+            "passed": true
+          },
+          "peak_kw": {
+            "range_pp": 0.0,
+            "tolerance_pp": 0.09594536345137004,
+            "passed": true
+          }
+        }
+      },
+      "render_calls": 0
+    }
+  ],
+  "selected_seed": 912,
+  "selection": {
+    "selected_seed": 912,
+    "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/selected_model.zip",
+    "model_sha256": "d6b4fb5e83019c36b96aef41d16af92774b99d974c53e24e4b6a72b348df4859",
+    "selection_access_to_test": false,
+    "selection_access_to_forward": false,
+    "frozen_at": "2026-09-12T03:21:21.889734Z",
+    "per_seed_model_sha256": {
+      "912": "d6b4fb5e83019c36b96aef41d16af92774b99d974c53e24e4b6a72b348df4859"
+    }
+  },
+  "evaluations": {},
+  "total_environment_steps": 60000,
+  "input_files_sha256": {
+    "config/shore_bess_v32_balanced.json": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+    "data/rl/datasets/public_cn_sha_hourly_v3.csv": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+    "data/rl/datasets/public_cn_sha_hourly_v3.meta.json": "97a9d81b8420273453b1f06ff373a71aa29cb57ca9b0e064e0bd59570e2d2fc7"
+  },
+  "total_optimizer_updates": 87000,
+  "promoted": false,
+  "simulation_mode": true,
+  "production_authority": false,
+  "live_data_verified": false,
+  "dispatch_allowed": false,
+  "claim_boundary": "Public/engineering offline scenario. Repeated historical and forward benchmarks; no fresh blind test and no measured port savings.",
+  "evidence_files_sha256": {
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/config.json": "0dab8ea2130f1004c1eceb0c6bc62c30f493176c399a1d81e017d548bb9e392d",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/manifest.json": "6c249bfd4923d26025473785b2896b384f473a442b200ebfc00677be562e92dc",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/curve.json": "c8a12d435dc1361e6a979076dfc4f09047e70e595d635c0111d3c974a2b311be",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/initial_validation.json": "b499adebcd031170eee4711f7e2e1974a740f5f53319d220e0db4520fc23373a",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/monitor.csv": "9539a276ea9880e3086239a4a7186020558c0caaf5fb513cf82ffd6314cdc14f",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/result.json": "7b719aa760311ecb4f683b536868cf03dcb733214fb1e167ae8b220ae1becdfc",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/selected_model.zip": "d6b4fb5e83019c36b96aef41d16af92774b99d974c53e24e4b6a72b348df4859",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_10000.zip": "d6b4fb5e83019c36b96aef41d16af92774b99d974c53e24e4b6a72b348df4859",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_20000.zip": "7d434dd41642785c4f419bed0e322cd1e8d1fedcdcd8e87d1eaa2d37d5fb11a1",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_30000.zip": "4a3a6bbbf5e782a5c54d59b7e40e5dbc45f6b24a47ea54f18ad7a6ca7783b85f",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_40000.zip": "89b143c932ccff9c55ff05ceba575ab6cbce982ccdc3af571000415df699dae6",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_50000.zip": "c04700e351e0ab8dbef4cd6a9cee50489c39ac7856eac6d7ba038283ffd6f35f",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_60000.zip": "e21b95ef67e13baa5c10850555134c0382083b6a78c6485b0b7393d1de5d4101",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/training_episodes.csv": "8020e9b94704107fe2dbce5720d7c1170afa4bac5d78a41459918634283ce04b",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/selection.json": "03e0457f40d200a90bd7b271a570f0b975a8ac5772db9027af20897bc0784d46",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/validation_reference.json": "45dc02844b6a5733a0fef9ee857f59a7841ce884fc02307d745298e5ea7201d4"
+  }
+}

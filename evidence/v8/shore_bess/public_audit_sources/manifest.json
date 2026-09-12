@@ -1,0 +1,354 @@
+{
+  "schema": "shore-bess-v8-public-audit-sources.v1",
+  "original_files_modified": false,
+  "historical_reports_modified": false,
+  "entries": [
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/report.json",
+      "original_sha256": "929a59fd4cd5d4005572979bb3ef0e1ef1f15bb0d61b0adaaaf95dcddfc20321",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/929a59fd4cd5d4005572979bb3ef0e1ef1f15bb0d61b0adaaaf95dcddfc20321.json",
+      "public_sha256": "929a59fd4cd5d4005572979bb3ef0e1ef1f15bb0d61b0adaaaf95dcddfc20321"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/training_episodes.csv",
+      "original_sha256": "8020e9b94704107fe2dbce5720d7c1170afa4bac5d78a41459918634283ce04b",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/8020e9b94704107fe2dbce5720d7c1170afa4bac5d78a41459918634283ce04b.csv",
+      "public_sha256": "8020e9b94704107fe2dbce5720d7c1170afa4bac5d78a41459918634283ce04b"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/monitor.csv",
+      "original_sha256": "9539a276ea9880e3086239a4a7186020558c0caaf5fb513cf82ffd6314cdc14f",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/9539a276ea9880e3086239a4a7186020558c0caaf5fb513cf82ffd6314cdc14f.csv",
+      "public_sha256": "9539a276ea9880e3086239a4a7186020558c0caaf5fb513cf82ffd6314cdc14f"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/curve.json",
+      "original_sha256": "c8a12d435dc1361e6a979076dfc4f09047e70e595d635c0111d3c974a2b311be",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/c8a12d435dc1361e6a979076dfc4f09047e70e595d635c0111d3c974a2b311be.json",
+      "public_sha256": "c8a12d435dc1361e6a979076dfc4f09047e70e595d635c0111d3c974a2b311be"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/config.json",
+      "original_sha256": "0dab8ea2130f1004c1eceb0c6bc62c30f493176c399a1d81e017d548bb9e392d",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/0dab8ea2130f1004c1eceb0c6bc62c30f493176c399a1d81e017d548bb9e392d.json",
+      "public_sha256": "0dab8ea2130f1004c1eceb0c6bc62c30f493176c399a1d81e017d548bb9e392d"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/manifest.json",
+      "original_sha256": "6c249bfd4923d26025473785b2896b384f473a442b200ebfc00677be562e92dc",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/6c249bfd4923d26025473785b2896b384f473a442b200ebfc00677be562e92dc.json",
+      "public_sha256": "6c249bfd4923d26025473785b2896b384f473a442b200ebfc00677be562e92dc"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/selection.json",
+      "original_sha256": "03e0457f40d200a90bd7b271a570f0b975a8ac5772db9027af20897bc0784d46",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/03e0457f40d200a90bd7b271a570f0b975a8ac5772db9027af20897bc0784d46.json",
+      "public_sha256": "03e0457f40d200a90bd7b271a570f0b975a8ac5772db9027af20897bc0784d46"
+    },
+    {
+      "original_path": "scripts/verify_shore_bess_v8.py",
+      "original_sha256": "e5c9fd393e8e0ef9521d31203f2ce8c314a2b6718d355e03ded74885d5479007",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/e5c9fd393e8e0ef9521d31203f2ce8c314a2b6718d355e03ded74885d5479007.py",
+      "public_sha256": "e5c9fd393e8e0ef9521d31203f2ce8c314a2b6718d355e03ded74885d5479007"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/assemble_td3_completion_audits_20260912.py",
+      "original_sha256": "a4a0c3170f2245b86c946b01a1100b700d8601d442a6bbbff49c97746836e8ce",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/a4a0c3170f2245b86c946b01a1100b700d8601d442a6bbbff49c97746836e8ce.py",
+      "public_sha256": "a4a0c3170f2245b86c946b01a1100b700d8601d442a6bbbff49c97746836e8ce"
+    },
+    {
+      "original_path": "scripts/train_shore_bess_v8.py",
+      "original_sha256": "c0c5628135de69bd33813f6f19f447059ad554afe59747214c2a9536150b02df",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/c0c5628135de69bd33813f6f19f447059ad554afe59747214c2a9536150b02df.py",
+      "public_sha256": "c0c5628135de69bd33813f6f19f447059ad554afe59747214c2a9536150b02df"
+    },
+    {
+      "original_path": "app/services/rl_model/shore_bess/v8_environment.py",
+      "original_sha256": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017.py",
+      "public_sha256": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017"
+    },
+    {
+      "original_path": "app/services/rl_model/shore_bess/v3_environment.py",
+      "original_sha256": "20f029c3f8904463b257980ffe8370c1945fa36aa5d265591b52094ead2ed05d",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/20f029c3f8904463b257980ffe8370c1945fa36aa5d265591b52094ead2ed05d.py",
+      "public_sha256": "20f029c3f8904463b257980ffe8370c1945fa36aa5d265591b52094ead2ed05d"
+    },
+    {
+      "original_path": "config/shore_bess_v32_balanced.json",
+      "original_sha256": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b.json",
+      "public_sha256": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b"
+    },
+    {
+      "original_path": "app/services/rl_training/statistics.py",
+      "original_sha256": "429e3c00ebeb0517b7670c03e7cee2253b67a762ff45dc8bca026ab79047f8f2",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/429e3c00ebeb0517b7670c03e7cee2253b67a762ff45dc8bca026ab79047f8f2.py",
+      "public_sha256": "429e3c00ebeb0517b7670c03e7cee2253b67a762ff45dc8bca026ab79047f8f2"
+    },
+    {
+      "original_path": "app/services/rl_training/datasets.py",
+      "original_sha256": "9ccb5c7c3d28b0db8267e080f9f67b453790330c5cac458c6250f6b4e5a33e73",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/9ccb5c7c3d28b0db8267e080f9f67b453790330c5cac458c6250f6b4e5a33e73.py",
+      "public_sha256": "9ccb5c7c3d28b0db8267e080f9f67b453790330c5cac458c6250f6b4e5a33e73"
+    },
+    {
+      "original_path": "app/services/rl_model/shore_bess/v8_replay.py",
+      "original_sha256": "79cae8a4bd8bee2c641442a7ac1362fd07c391e2fa68a1e4e38d1268b0734e1b",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/79cae8a4bd8bee2c641442a7ac1362fd07c391e2fa68a1e4e38d1268b0734e1b.py",
+      "public_sha256": "79cae8a4bd8bee2c641442a7ac1362fd07c391e2fa68a1e4e38d1268b0734e1b"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/report.json",
+      "original_sha256": "45f77ef9aed52646a70944df9f89a5869f4587bff5464af689d3239bc7b1bb0c",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/45f77ef9aed52646a70944df9f89a5869f4587bff5464af689d3239bc7b1bb0c.json",
+      "public_sha256": "45f77ef9aed52646a70944df9f89a5869f4587bff5464af689d3239bc7b1bb0c"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/training_episodes.csv",
+      "original_sha256": "b4cc878883332bf896bd384fd1735a5241198a81b2b0d30b04b47f154d0911b9",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/b4cc878883332bf896bd384fd1735a5241198a81b2b0d30b04b47f154d0911b9.csv",
+      "public_sha256": "b4cc878883332bf896bd384fd1735a5241198a81b2b0d30b04b47f154d0911b9"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/monitor.csv",
+      "original_sha256": "5ba8e0fe9c8cb149720206569c664ca0170fe7751aa17539a5b8cb257d42002a",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/5ba8e0fe9c8cb149720206569c664ca0170fe7751aa17539a5b8cb257d42002a.csv",
+      "public_sha256": "5ba8e0fe9c8cb149720206569c664ca0170fe7751aa17539a5b8cb257d42002a"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/curve.json",
+      "original_sha256": "b4cf94c465bcd7d91361b5519ff81b9bb5ecdc6adcb92e3d7dba4c1adb5ead44",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/b4cf94c465bcd7d91361b5519ff81b9bb5ecdc6adcb92e3d7dba4c1adb5ead44.json",
+      "public_sha256": "b4cf94c465bcd7d91361b5519ff81b9bb5ecdc6adcb92e3d7dba4c1adb5ead44"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/config.json",
+      "original_sha256": "3262f9302b0caa231ec7aca834c4c94d2ec00d2533025f1fdfff17c76d0159cc",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/3262f9302b0caa231ec7aca834c4c94d2ec00d2533025f1fdfff17c76d0159cc.json",
+      "public_sha256": "3262f9302b0caa231ec7aca834c4c94d2ec00d2533025f1fdfff17c76d0159cc"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/manifest.json",
+      "original_sha256": "93ed577df1a4c1c27c8fff6066469174dcfb4ae77dc663550936427ac4d1f0f3",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/93ed577df1a4c1c27c8fff6066469174dcfb4ae77dc663550936427ac4d1f0f3.json",
+      "public_sha256": "93ed577df1a4c1c27c8fff6066469174dcfb4ae77dc663550936427ac4d1f0f3"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/selection.json",
+      "original_sha256": "0407855e65c5f35958ba4922f9aaadb82bfe76fe1ba76e5aeb446e44b3c563dd",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/0407855e65c5f35958ba4922f9aaadb82bfe76fe1ba76e5aeb446e44b3c563dd.json",
+      "public_sha256": "0407855e65c5f35958ba4922f9aaadb82bfe76fe1ba76e5aeb446e44b3c563dd"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/assemble_sac_completion_audit_20260912.py",
+      "original_sha256": "92ead769f56f881fb07ce1ceb14b7f693735b0c68f5ac9697a866aa8d9d63a7b",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/92ead769f56f881fb07ce1ceb14b7f693735b0c68f5ac9697a866aa8d9d63a7b.py",
+      "public_sha256": "92ead769f56f881fb07ce1ceb14b7f693735b0c68f5ac9697a866aa8d9d63a7b"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/report.json",
+      "original_sha256": "5159e920733cf4f4b2f3784c28ffdb075bf8ac3926e0b0986753e6e4b65e1e32",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/5159e920733cf4f4b2f3784c28ffdb075bf8ac3926e0b0986753e6e4b65e1e32.json",
+      "public_sha256": "5159e920733cf4f4b2f3784c28ffdb075bf8ac3926e0b0986753e6e4b65e1e32"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/training_episodes.csv",
+      "original_sha256": "67b3b630f42cf6a2d1f219f83b5e6b1840694981ac952dac16a80647e298a66d",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/67b3b630f42cf6a2d1f219f83b5e6b1840694981ac952dac16a80647e298a66d.csv",
+      "public_sha256": "67b3b630f42cf6a2d1f219f83b5e6b1840694981ac952dac16a80647e298a66d"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/monitor.csv",
+      "original_sha256": "140e361019f5e24355e0f3535d0937b7e9be3fa92c587c364db8eb4643dc522e",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/140e361019f5e24355e0f3535d0937b7e9be3fa92c587c364db8eb4643dc522e.csv",
+      "public_sha256": "140e361019f5e24355e0f3535d0937b7e9be3fa92c587c364db8eb4643dc522e"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/curve.json",
+      "original_sha256": "c6636a463b2887e19dca5d87e5ac7c8bf1ad2e346a6538d9edd25426025a4da9",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/c6636a463b2887e19dca5d87e5ac7c8bf1ad2e346a6538d9edd25426025a4da9.json",
+      "public_sha256": "c6636a463b2887e19dca5d87e5ac7c8bf1ad2e346a6538d9edd25426025a4da9"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/config.json",
+      "original_sha256": "126b4761f7fb32bdf6bcd62d83dcfdd4f5f57e66deef51c5979e8e23dc7d95cc",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/126b4761f7fb32bdf6bcd62d83dcfdd4f5f57e66deef51c5979e8e23dc7d95cc.json",
+      "public_sha256": "126b4761f7fb32bdf6bcd62d83dcfdd4f5f57e66deef51c5979e8e23dc7d95cc"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/manifest.json",
+      "original_sha256": "990550e13585a3eee6d7cfbf527eb1828163b2176b2b49102a1de3c7c2f1c9e0",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/990550e13585a3eee6d7cfbf527eb1828163b2176b2b49102a1de3c7c2f1c9e0.json",
+      "public_sha256": "990550e13585a3eee6d7cfbf527eb1828163b2176b2b49102a1de3c7c2f1c9e0"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/selection.json",
+      "original_sha256": "3530698b504594337263e9456e8abe6385d48ec6668c6c2ac02562ba721a3e70",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/3530698b504594337263e9456e8abe6385d48ec6668c6c2ac02562ba721a3e70.json",
+      "public_sha256": "3530698b504594337263e9456e8abe6385d48ec6668c6c2ac02562ba721a3e70"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/manifest.json",
+      "original_sha256": "e2fa988fe076447f4c8ba1570ade2cb58059176c3060cd395f34323d15b0dc2a",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/e2fa988fe076447f4c8ba1570ade2cb58059176c3060cd395f34323d15b0dc2a.json",
+      "public_sha256": "e2fa988fe076447f4c8ba1570ade2cb58059176c3060cd395f34323d15b0dc2a"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/config.json",
+      "original_sha256": "b59cfa99548dd7f244f92d76a76a62a94419372edaf1424f72a787e9c6e01710",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/b59cfa99548dd7f244f92d76a76a62a94419372edaf1424f72a787e9c6e01710.json",
+      "public_sha256": "b59cfa99548dd7f244f92d76a76a62a94419372edaf1424f72a787e9c6e01710"
+    },
+    {
+      "original_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/source/app/services/rl_model/shore_bess/v8_environment.py",
+      "original_sha256": "beff0b283fc30d6005a6b932b737d029d5377f66cb3c904e8c7635b98c7d7fda",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/beff0b283fc30d6005a6b932b737d029d5377f66cb3c904e8c7635b98c7d7fda.py",
+      "public_sha256": "beff0b283fc30d6005a6b932b737d029d5377f66cb3c904e8c7635b98c7d7fda"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/v8_environment_float64_bidirectional_braking_ulp_normalized_candidate.py",
+      "original_sha256": "0367a2c691466ec246ecf9f3ff830128e74f18614997f607cacc421aac81bc37",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/0367a2c691466ec246ecf9f3ff830128e74f18614997f607cacc421aac81bc37.py",
+      "public_sha256": "0367a2c691466ec246ecf9f3ff830128e74f18614997f607cacc421aac81bc37"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/physical_execution_audit_20260912.py",
+      "original_sha256": "dc42ca311ed298f8596d3cffef3441b09af0e118b89ea8aba63e083e9d42f557",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/dc42ca311ed298f8596d3cffef3441b09af0e118b89ea8aba63e083e9d42f557.py",
+      "public_sha256": "dc42ca311ed298f8596d3cffef3441b09af0e118b89ea8aba63e083e9d42f557"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/physical_execution_audit_semantic_20260912.py",
+      "original_sha256": "5fe63f0546305346d9560ad38264347c2803c6c3dc293ff0c36ccc02c8c6d007",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/5fe63f0546305346d9560ad38264347c2803c6c3dc293ff0c36ccc02c8c6d007.py",
+      "public_sha256": "5fe63f0546305346d9560ad38264347c2803c6c3dc293ff0c36ccc02c8c6d007"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/assemble_physical_audit_20260912.py",
+      "original_sha256": "f1b50482ceace1c1e9460914ca2e1cd2808d7274737a589850415e91a9627d07",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/f1b50482ceace1c1e9460914ca2e1cd2808d7274737a589850415e91a9627d07.py",
+      "public_sha256": "f1b50482ceace1c1e9460914ca2e1cd2808d7274737a589850415e91a9627d07"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/r3_step20000_physical_diagnostic.json",
+      "original_sha256": "9cbeb9c70641860c44b9de3d1d78ca9dc442cea61572a17bfbed7ab032fb724d",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/9cbeb9c70641860c44b9de3d1d78ca9dc442cea61572a17bfbed7ab032fb724d.json",
+      "public_sha256": "9cbeb9c70641860c44b9de3d1d78ca9dc442cea61572a17bfbed7ab032fb724d"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/r3_step20000_normalized_braking_counterfactual.json",
+      "original_sha256": "a7805aa6f8ed854ef79a9710e0f11269943f6df6e2100c66cc33c8bef86d84ee",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/a7805aa6f8ed854ef79a9710e0f11269943f6df6e2100c66cc33c8bef86d84ee.json",
+      "public_sha256": "a7805aa6f8ed854ef79a9710e0f11269943f6df6e2100c66cc33c8bef86d84ee"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/physical_execution_20260912_equivalence_original_v2.json",
+      "original_sha256": "643a78b1d9d75c6e07e77ba82a99341ab792939664f545e5cf7c3bc3e2c7a045",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/643a78b1d9d75c6e07e77ba82a99341ab792939664f545e5cf7c3bc3e2c7a045.json",
+      "public_sha256": "643a78b1d9d75c6e07e77ba82a99341ab792939664f545e5cf7c3bc3e2c7a045"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/physical_execution_20260912_train_stress.json",
+      "original_sha256": "7fe95402cb9797fdea67f8597ff706c92170fd7a178d186f88e0e91fb6888eea",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/7fe95402cb9797fdea67f8597ff706c92170fd7a178d186f88e0e91fb6888eea.json",
+      "public_sha256": "7fe95402cb9797fdea67f8597ff706c92170fd7a178d186f88e0e91fb6888eea"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/physical_execution_20260912_equivalence_operand_scale_final.json",
+      "original_sha256": "b61e403dcd3dcd7c49256f2035c4dc771b6f959c8bb043320fd5a421dfae251f",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/b61e403dcd3dcd7c49256f2035c4dc771b6f959c8bb043320fd5a421dfae251f.json",
+      "public_sha256": "b61e403dcd3dcd7c49256f2035c4dc771b6f959c8bb043320fd5a421dfae251f"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/physical_execution_20260912_equivalence_semantic_operand_scale_final.json",
+      "original_sha256": "c137c8b45be738d31cd972ff772d7e23ca382602d66b074be4e3b26d67ef1c18",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/c137c8b45be738d31cd972ff772d7e23ca382602d66b074be4e3b26d67ef1c18.json",
+      "public_sha256": "c137c8b45be738d31cd972ff772d7e23ca382602d66b074be4e3b26d67ef1c18"
+    },
+    {
+      "original_path": ".codex_artifacts/shore_bess_v8_audit/physical_execution_20260912_train_stress_operand_scale_final.json",
+      "original_sha256": "f571bdfe0c20a39229c3d0c1611fce6b98425c052dfe09a16b974c68766f9904",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/f571bdfe0c20a39229c3d0c1611fce6b98425c052dfe09a16b974c68766f9904.json",
+      "public_sha256": "f571bdfe0c20a39229c3d0c1611fce6b98425c052dfe09a16b974c68766f9904"
+    },
+    {
+      "original_path": "scripts/audit_shore_bess_v8.py",
+      "original_sha256": "77dfefae7f95a4008b0320caadac062504e5e7cf4bad32955cbfcbce58b17936",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/77dfefae7f95a4008b0320caadac062504e5e7cf4bad32955cbfcbce58b17936.py",
+      "public_sha256": "77dfefae7f95a4008b0320caadac062504e5e7cf4bad32955cbfcbce58b17936"
+    },
+    {
+      "original_path": "config/shore_bess_v3.json",
+      "original_sha256": "252bb77d4be2afcc172d06195b33d266178c77dfb7b2927490c4e78945daf098",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/252bb77d4be2afcc172d06195b33d266178c77dfb7b2927490c4e78945daf098.json",
+      "public_sha256": "252bb77d4be2afcc172d06195b33d266178c77dfb7b2927490c4e78945daf098"
+    },
+    {
+      "original_path": "data/rl/datasets/public_cn_sha_hourly_v3.csv",
+      "original_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01.csv",
+      "public_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01"
+    },
+    {
+      "original_path": "scripts/train_shore_bess_v8_flex_specialist.py",
+      "original_sha256": "f1df6c105466c576d41cf5ede2d3e27a091d29c2526750766f9139a467ec2ff0",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/f1df6c105466c576d41cf5ede2d3e27a091d29c2526750766f9139a467ec2ff0.py",
+      "public_sha256": "f1df6c105466c576d41cf5ede2d3e27a091d29c2526750766f9139a467ec2ff0"
+    },
+    {
+      "original_path": "evidence/v3/shore_bess/latest.json",
+      "original_sha256": "90cabf808958f301ef91eb0b2dbcc37e25fda4121e04ce54cf6986a49a2cdd8b",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/90cabf808958f301ef91eb0b2dbcc37e25fda4121e04ce54cf6986a49a2cdd8b.json",
+      "public_sha256": "90cabf808958f301ef91eb0b2dbcc37e25fda4121e04ce54cf6986a49a2cdd8b"
+    },
+    {
+      "original_path": "evidence/v7/shore_bess/latest.json",
+      "original_sha256": "bf93f71d3417e84f78d72c4d3e91a5bbaec4b2250c7d25072d558a13733e08f3",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/bf93f71d3417e84f78d72c4d3e91a5bbaec4b2250c7d25072d558a13733e08f3.json",
+      "public_sha256": "bf93f71d3417e84f78d72c4d3e91a5bbaec4b2250c7d25072d558a13733e08f3"
+    },
+    {
+      "original_path": "scripts/audit_shore_bess_v8_critic.py",
+      "original_sha256": "88f7c28861102b8e822f98a44c06896d793d39b7b23ac16e3ca198e395b1d4ab",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/88f7c28861102b8e822f98a44c06896d793d39b7b23ac16e3ca198e395b1d4ab.py",
+      "public_sha256": "88f7c28861102b8e822f98a44c06896d793d39b7b23ac16e3ca198e395b1d4ab"
+    },
+    {
+      "original_path": "scripts/train_shore_bess_v8.py",
+      "original_sha256": "970a60a3361894945b7dd8099917ad04eac53a78496373a612a5fd5e335572a4",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/970a60a3361894945b7dd8099917ad04eac53a78496373a612a5fd5e335572a4.py",
+      "public_sha256": "970a60a3361894945b7dd8099917ad04eac53a78496373a612a5fd5e335572a4"
+    },
+    {
+      "original_path": "app/services/rl_model/shore_bess/v8_environment.py",
+      "original_sha256": "beff0b283fc30d6005a6b932b737d029d5377f66cb3c904e8c7635b98c7d7fda",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/beff0b283fc30d6005a6b932b737d029d5377f66cb3c904e8c7635b98c7d7fda.py",
+      "public_sha256": "beff0b283fc30d6005a6b932b737d029d5377f66cb3c904e8c7635b98c7d7fda"
+    },
+    {
+      "original_path": "scripts/audit_shore_bess_v8_objective.py",
+      "original_sha256": "17b453e8be62e8b29c7a50ee521df4bd6b976cbeb15095f02c2286f9b2d7b030",
+      "public_path": "evidence/v8/shore_bess/public_audit_sources/17b453e8be62e8b29c7a50ee521df4bd6b976cbeb15095f02c2286f9b2d7b030.py",
+      "public_sha256": "17b453e8be62e8b29c7a50ee521df4bd6b976cbeb15095f02c2286f9b2d7b030"
+    }
+  ],
+  "claim_boundary": "Copies preserve existing evidence bytes. Mapping is not a claim that historical scratch scripts run unchanged from this content-addressed directory. Current independent verifier resolves model/source identities. Two explicitly listed early audit source versions remain unavailable; final r5 evidence is complete.",
+  "unavailable_historical_source_snapshots": [
+    {
+      "original_path": "scripts/audit_shore_bess_v8.py",
+      "original_sha256": "ef013e46ce2ec66547b50a9f2385ceae932103ffa4c3c370e1f06db04f6783e0",
+      "affected_audit": "evidence/v8/shore_bess/audits/train-feasibility-20260912-v8.json",
+      "complete_successor_audit": "evidence/v8/shore_bess/audits/train-feasibility-20260912-v8-r1.json",
+      "reason": "Historical source version was not sealed and no matching bytes were found; current source is not substituted."
+    },
+    {
+      "original_path": "scripts/audit_shore_bess_v8_critic.py",
+      "original_sha256": "08d9bbb6f5c5f4ede4e0785d39914def564da6ff8323be6e135bd71e2910b120",
+      "affected_audit": "evidence/v8/shore_bess/audits/td3-demandphi-r2-critic-ranking-20260912.json",
+      "complete_successor_audit": "evidence/v8/shore_bess/audits/td3-demandphi-r2-critic-ranking-20260912-v2.json",
+      "reason": "Historical source version was not sealed and no matching bytes were found; current source is not substituted."
+    }
+  ]
+}

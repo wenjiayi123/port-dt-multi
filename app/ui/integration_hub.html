@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>项目联动中枢</title>
+  <link rel="stylesheet" href="/static/standalone_navigation.css?v=20260912-2">
+  <script src="/static/standalone_navigation.js?v=20260912-2"></script>
   <style>
     :root{
       --bg:#08111f;--panel:#0d1a2c;--panel2:#10213a;--line:#22385d;--text:#edf6ff;--muted:#9bb2d1;
@@ -139,7 +141,7 @@
         <div class="subtitle">小懿AI · RL 训练/策略测试 · Godot 航行模拟器</div>
       </div>
       <div class="top-actions">
-        <button class="secondary" id="btnBackHome">回首页</button>
+        <button class="secondary" id="btnBackHome">返回主界面</button>
         <button class="secondary" id="btnOpenRl">打开 RL 面板</button>
         <button id="btnRefreshAll">刷新联动状态</button>
       </div>
@@ -245,8 +247,8 @@
               <div class="config-chip"><span>Total Steps</span><b id="summarySteps">260,000</b></div>
               <div class="config-chip"><span>Learning Rate</span><b id="summaryLearningRate">0.00026</b></div>
               <div class="config-chip"><span>Batch / Horizon</span><b id="summaryBatchHorizon">256 · 12 h</b></div>
-              <div class="config-chip"><span>Network</span><b id="summaryNetwork">256 × 256 · SiLU</b></div>
-              <div class="config-chip"><span>Guardrail</span><b id="summaryGuardrail">STRICT</b></div>
+              <div class="config-chip"><span>Trainer network</span><b id="summaryNetwork">64 × 64 · 固定</b></div>
+              <div class="config-chip"><span>执行边界</span><b id="summaryGuardrail">离线训练 · 人工确认</b></div>
             </div>
             <div class="config-weight-bars" aria-label="奖励权重摘要">
               <div class="config-weight"><span>能耗 0.18</span><div><i id="summaryCostBar" style="--weight:30%"></i></div></div>
@@ -256,7 +258,7 @@
             </div>
             <div class="parameter-open-row">
               <button type="button" id="btnOpenAdvancedParams">打开高级训练参数窗口 / Advanced Settings</button>
-              <div class="parameter-count"><b id="parameterCount">30+</b><span>可调参数 / controls</span></div>
+              <div class="parameter-count"><b id="parameterCount">30+</b><span>可传入字段 / controls</span></div>
             </div>
             <div class="recommend-row">
               <button type="button" class="xiaoyi-recommend" id="btnXiaoyiRecommend">✦ 小懿一键推荐参数</button>
@@ -268,7 +270,7 @@
             <div class="metric"><span>训练状态</span><b id="rlStatus">—</b></div>
             <div class="metric"><span>进度</span><b id="rlProgress">—</b></div>
             <div class="metric"><span>step / reward</span><b id="rlStepReward">—</b></div>
-            <div class="metric"><span>policy</span><b id="rlPolicy">—</b></div>
+            <div class="metric"><span>全局最新任务策略</span><b id="rlPolicy">—</b></div>
           </div>
           <div class="button-row">
             <button id="btnRlStatus">查看训练状态</button>
@@ -332,8 +334,8 @@
         <div class="advanced-intro">
           <div class="advanced-intro-card"><span>当前训练目标</span><b id="paramTargetName">岸电储能 / Shore Power &amp; BESS</b></div>
           <div class="advanced-intro-card"><span>Policy Artifact</span><b class="mono" id="paramModelId">shore_bess</b></div>
-          <div class="advanced-intro-card"><span>配置状态</span><b id="paramConfigState">已应用</b></div>
-          <div class="advanced-intro-card"><span>可调参数</span><b id="paramControlCount">—</b></div>
+          <div class="advanced-intro-card"><span>配置状态</span><b id="paramConfigState">档案未执行</b></div>
+          <div class="advanced-intro-card"><span>训练器支持字段</span><b id="paramControlCount">—</b></div>
         </div>
 
         <section class="advanced-section">
@@ -344,7 +346,7 @@
             <div class="advanced-field"><label for="trainSteps">训练步数 / Total Steps</label><input id="trainSteps" type="number" min="20000" max="5000000" step="10000" value="260000"></div>
             <div class="advanced-field"><label for="trainBatch">批次 / Batch Size</label><select id="trainBatch"><option value="64">64</option><option value="128">128</option><option value="256" selected>256</option><option value="512">512</option><option value="1024">1024</option></select></div>
             <div class="advanced-field"><label for="trainLearningRate">学习率 / Learning Rate</label><input id="trainLearningRate" type="number" min="0.000001" max="0.01" step="0.000001" value="0.00026"></div>
-            <div class="advanced-field"><label for="trainHorizon">预测窗口 / Horizon</label><select id="trainHorizon"><option value="240">4 h</option><option value="360">6 h</option><option value="480">8 h</option><option value="720" selected>12 h</option><option value="1440">24 h</option><option value="2880">48 h</option></select></div>
+            <div class="advanced-field"><label for="trainHorizon">训练回合时长 / Episode Hours</label><select id="trainHorizon"><option value="240">4 h</option><option value="360">6 h</option><option value="480">8 h</option><option value="720" selected>12 h</option><option value="1440">24 h</option><option value="2880">48 h</option></select></div>
             <div class="advanced-field"><label for="trainStepMin">环境步长 / Environment Step</label><select id="trainStepMin"><option value="1">1 min</option><option value="5" selected>5 min</option><option value="10">10 min</option><option value="15">15 min</option><option value="30">30 min</option></select></div>
             <div class="advanced-field"><label for="trainGuardrail">安全护栏 / Guardrail</label><select id="trainGuardrail"><option value="strict" selected>严格 / Strict</option><option value="balanced">均衡 / Balanced</option><option value="audit_only">仅审计 / Audit Only</option></select></div>
           </div>
@@ -436,7 +438,7 @@
           </div>
           <div class="advanced-grid">
             <div class="advanced-field"><label for="trainDemandCap">需量上限 / Demand Cap kW</label><input id="trainDemandCap" type="number" min="100" max="200000" step="10" value="520"></div>
-            <div class="advanced-field"><label for="trainMaxRamp">最大爬坡 / Max Ramp kW</label><input id="trainMaxRamp" type="number" min="1" max="50000" step="10" value="800"></div>
+            <div class="advanced-field"><label for="trainMaxRamp">最大爬坡 / Max Ramp kW</label><input id="trainMaxRamp" type="number" min="0" max="50000" step="10" value="800"></div>
             <div class="advanced-field"><label for="trainMaxActionDelta">动作变化上限 / Action Delta</label><input id="trainMaxActionDelta" type="number" min="0.01" max="1" step="0.01" value="0.15"></div>
             <div class="advanced-field"><label for="trainSafetyPenalty">安全惩罚 / Safety Penalty</label><input id="trainSafetyPenalty" type="number" min="0" max="1000" step="1" value="120"></div>
             <div class="advanced-field"><label for="trainConstraintTolerance">约束容差 / Tolerance</label><input id="trainConstraintTolerance" type="number" min="0" max="1" step="0.001" value="0.02"></div>
@@ -445,7 +447,7 @@
         </section>
       </div>
       <div class="modal-foot">
-        <div class="modal-foot-note">取消会恢复打开窗口前的配置；确认后参数会进入小懿动作包和 RL 训练链路。</div>
+        <div class="modal-foot-note">取消会恢复原档案；仅可编辑字段进入训练器配置复核，灰色字段只保留历史档案、未传入当前训练器。数据集与随机种子在 RL 面板最终确认。</div>
         <div class="modal-foot-actions">
           <button type="button" class="secondary" id="btnResetAdvancedParams">恢复模块基线</button>
           <button type="button" class="secondary" id="btnCancelAdvancedParams">取消</button>
@@ -817,6 +819,24 @@
       const algorithm = $("#trainAlgorithm")?.value || "sac";
       document.querySelectorAll("[data-algo-panel]").forEach(panel=>panel.classList.toggle("active", panel.dataset.algoPanel === algorithm));
       setText("#activeAlgoBadge", algorithm.toUpperCase());
+      syncTrainingParameterSupport();
+    }
+    function syncTrainingParameterSupport(){
+      const algorithm=$("#trainAlgorithm").value;
+      const supported=new Set(["trainAlgorithm","trainSteps","trainLearningRate","trainHorizon","trainGamma","trainDemandCap","weightCost","weightCarbon","weightPeak","weightSafety"]);
+      if(algorithm!=="a2c")supported.add("trainBatch");
+      if(["sac","td3","tqc","dqn"].includes(algorithm)){supported.add("trainTau");supported.add("trainReplayBuffer");}
+      if(["ppo","a2c"].includes(algorithm))supported.add("trainEntropyCoef");
+      document.querySelectorAll("#trainingParamBackdrop input,#trainingParamBackdrop select").forEach(control=>{
+        control.disabled=!supported.has(control.id);
+        control.title=control.disabled?"档案保留：未传入当前训练器，不代表训练已使用。":"传入 RL 面板复核；以最终 config.json 和实际训练器为准。";
+        const field=control.closest(".advanced-field");
+        if(field){
+          let note=field.querySelector(".trainer-support-note");
+          if(!note){note=document.createElement("small");note.className="trainer-support-note";field.appendChild(note);}
+          note.textContent=control.disabled?"档案只读 · 未传入当前训练器":"传入训练配置复核";
+        }
+      });
     }
     function syncConfigSummary(){
       const cfg = trainingConfigFromUi();
@@ -824,8 +844,8 @@
       setText("#summarySteps", cfg.total_steps.toLocaleString("zh-CN"));
       setText("#summaryLearningRate", String(cfg.learning_rate));
       setText("#summaryBatchHorizon", `${cfg.batch_size} · ${(cfg.horizon_min / 60).toFixed(cfg.horizon_min % 60 ? 1 : 0)} h`);
-      setText("#summaryNetwork", `${cfg.network.hidden_layers.replace(/,/g," × ")} · ${cfg.network.activation.toUpperCase()}`);
-      setText("#summaryGuardrail", cfg.guardrail_mode.toUpperCase());
+      setText("#summaryNetwork", "64 × 64 · 训练器固定");
+      setText("#summaryGuardrail", "离线训练 · 人工确认");
       const weights = cfg.reward_weights;
       [["Cost",weights.cost,"能耗"],["Carbon",weights.carbon,"降碳"],["Peak",weights.peak,"削峰"],["Safety",weights.safety,"安全"]].forEach(([key,value,label])=>{
         const bar = $(`#summary${key}Bar`);
@@ -834,9 +854,10 @@
         const labelEl = bar.closest(".config-weight")?.querySelector("span");
         if(labelEl) labelEl.textContent = `${label} ${Number(value).toFixed(2)}`;
       });
-      const count = document.querySelectorAll("#trainingParamBackdrop input,#trainingParamBackdrop select").length;
+      const controls=Array.from(document.querySelectorAll("#trainingParamBackdrop input,#trainingParamBackdrop select"));
+      const count=controls.filter(control=>!control.disabled).length;
       setText("#parameterCount", String(count));
-      setText("#paramControlCount", `${count} controls`);
+      setText("#paramControlCount", `${count} 可传入 · ${controls.length-count} 档案只读`);
       setText("#paramTargetName", `${currentTrainingTarget().label} / ${currentTrainingTarget().en}`);
       setText("#paramModelId", selectedTrainingTarget);
     }
@@ -861,13 +882,19 @@
       lastModalFocus?.focus?.();
     }
     function applyAdvancedParamsAndReturn(){
+      const controls=document.querySelectorAll("#trainingParamBackdrop input,#trainingParamBackdrop select");
+      for(const control of controls){
+        if(control.disabled)continue;
+        if(control.type==="number")control.setCustomValidity(control.value.trim()?"":"请输入参数值。");
+        if(!control.reportValidity()){setText("#paramConfigState","参数无效 · 未应用");return;}
+      }
       const cfg = trainingConfigFromUi();
       syncConfigSummary();
       setText("#parameterProfile", `MANUAL · ${selectedTrainingTarget.toUpperCase()}`);
-      setText("#paramConfigState", "已应用");
-      setText("#impactTargetState", "高级参数已应用 · 待小懿复核");
-      setText("#trainingRecommendation", `${currentTrainingTarget().label}高级训练配置已应用：${cfg.algorithm.toUpperCase()} · ${cfg.total_steps.toLocaleString("zh-CN")} steps · ${cfg.network.hidden_layers} network · ${cfg.guardrail_mode} guardrail。`);
-      addLog("RL/CONFIG", `高级训练参数已应用：${currentTrainingTarget().label}`, `${cfg.algorithm.toUpperCase()} · ${cfg.total_steps} steps · ${cfg.optimizer_config.name}`);
+      setText("#paramConfigState", "已保存 · 待训练面板复核");
+      setText("#impactTargetState", "训练档案已保存 · 尚未启动训练");
+      setText("#trainingRecommendation", `${currentTrainingTarget().label}训练档案已保存：${cfg.algorithm.toUpperCase()} · ${cfg.total_steps.toLocaleString("zh-CN")} steps。仅支持字段进入 RL 面板复核；固定网络 64 × 64，其余灰色字段未传入当前训练器。尚未启动训练。`);
+      addLog("RL/CONFIG", `训练档案已保存：${currentTrainingTarget().label}`, `${cfg.algorithm.toUpperCase()} · ${cfg.total_steps} steps · 待最终配置复核`);
       closeAdvancedParams(false);
     }
     function resetAdvancedParams(){
@@ -932,7 +959,7 @@
       if(kind === "prepare_training"){
         return requestXiaoyiConfirmation({
           title:"确认提交训练计划给小懿", operation:"训练计划意图识别", confirmLabel:"确认提交给小懿",
-          details:[{label:"实验配置",value:`${target.label} / ${target.en}`},{label:"算法与网络",value:`${cfg.algorithm.toUpperCase()} · ${cfg.network.hidden_layers}`},{label:"训练规模",value:`${cfg.total_steps.toLocaleString("zh-CN")} steps · batch ${cfg.batch_size}`},{label:"安全模式",value:cfg.guardrail_mode},{label:"接口",value:"POST /api/assistant/actions/execute"}],
+          details:[{label:"实验配置",value:`${target.label} / ${target.en}`},{label:"算法与网络",value:`${cfg.algorithm.toUpperCase()} · 固定 64 × 64`},{label:"训练规模",value:`${cfg.total_steps.toLocaleString("zh-CN")} steps · batch ${cfg.batch_size}`},{label:"执行边界",value:"离线训练 · 尚未执行"},{label:"接口",value:"POST /api/assistant/actions/execute"}],
           boundary:"这里只把完整高级配置送入小懿动作网关；真正启动训练还需要下一次人工确认，并在 RL 训练界面再次核对。"
         });
       }
@@ -961,8 +988,9 @@
       applyTrainingConfig({...ADVANCED_DEFAULTS, ...target.config, algorithm_profiles:ADVANCED_DEFAULTS.algorithm_profiles});
       syncConfigSummary();
       setText("#impactTargetName", target.label);
-      setText("#impactTargetModel", `${targetId} · ${target.artifact}`);
-      setText("#impactTargetState", "等待后端训练与评测产物");
+      setText("#impactTargetModel", `训练档案 ${targetId} · ${target.artifact}`);
+      setText("#impactTargetState", "尚无与所选档案绑定的训练任务证据");
+      setImpactStage("#stageArtifact", "blocked");
       setText("#parameterProfile", `${targetId.toUpperCase()} · PORT-SAFE`);
       setText("#trainingRecommendation", `${target.reason} 当前参数为该模块的安全演示基线，可继续手动调节或交给小懿推荐。`);
       setText("#flowIntent", `已选择 ${target.label}，等待参数确认或小懿推荐。`);
@@ -1095,7 +1123,7 @@
         syncConfigSummary();
         setText("#parameterProfile", `XIAOYI · ${selectedTrainingTarget.toUpperCase()}`);
         setText("#trainingRecommendation", `${recommendation.title || "小懿参数建议"}：${recommendation.reason || target.reason} ${recommendation.operator_note || "训练仍需人工确认。"}`);
-        setText("#impactTargetState", "小懿推荐已应用 · 待人工确认");
+        setText("#impactTargetState", "小懿推荐档案已保存 · 仅支持字段待训练面板复核");
         addLog("XIAOYI/REC", `${recommendation.title || "参数推荐已生成"}`, `${target.label} · ${$("#trainAlgorithm").value.toUpperCase()} · steps=${Number($("#trainSteps").value).toLocaleString("zh-CN")}`);
       }catch(err){
         setText("#trainingRecommendation", `小懿推荐暂不可用，已保留 ${target.label} 的本地安全基线：${String(err)}`);
@@ -1190,7 +1218,7 @@
       };
     }
     function renderRlStatus(data){
-      const st = data.status || data;
+      const st = data.status && typeof data.status==="object" ? data.status : data;
       const m = st.metrics || {};
       const manifest = st.manifest || {};
       const state = String(st.status || "IDLE").toUpperCase();
@@ -1201,9 +1229,16 @@
       setText("#rlStepReward", `${st.step ?? m.step ?? "—"} / ${Number.isFinite(reward) ? reward.toFixed(2) : "—"}`);
       const policy = st.policy_version || m.policy_version || (manifest.model_sha256 ? `${String(st.algorithm || "policy").toUpperCase()} ${manifest.model_sha256.slice(0, 12)}` : "");
       setText("#rlPolicy", policy || "—");
-      if(policy) setText("#impactTargetModel", `${selectedTrainingTarget} · ${policy}`);
-      if(["COMPLETED", "EVALUATED"].includes(state) && progress >= 99.9){
+      const persistedTarget=st.config?.module_target || st.config?.target;
+      const bound=Boolean(st.job_id && persistedTarget===selectedTrainingTarget);
+      setText("#rlPolicy", `${policy || "—"} · 全局任务 ${st.job_id || "无"} · 数据集 ${st.dataset_id || "未提供"}`);
+      if(!bound){
+        setImpactStage("#stageArtifact", "blocked");
+        setText("#impactTargetModel", `训练档案 ${selectedTrainingTarget} · ${currentTrainingTarget().artifact}`);
+        setText("#impactTargetState", "尚无与所选档案绑定的训练任务证据；下方为全局最新任务，不能归属于本档案。");
+      }else if(["COMPLETED", "EVALUATED"].includes(state) && progress >= 99.9){
         setImpactStage("#stageArtifact", "done");
+        setText("#impactTargetModel", `档案 ${selectedTrainingTarget} · 任务 ${st.job_id} · 数据集 ${st.dataset_id || "未提供"} · ${policy || "—"}`);
         setText("#impactTargetState", `${state === "EVALUATED" ? "训练与留出集评测已完成" : "训练已完成"} · ${policy || "policy ready"} · 待策略测试/护栏`);
       }else{
         setImpactStage("#stageArtifact", state === "RUNNING" || state === "PAUSED" ? "active" : "blocked");
@@ -1218,6 +1253,11 @@
         addLog("RL", "训练状态已读取", data.status?.summary || data.summary || "");
         return data;
       }catch(err){
+        setText("#rlStatus", "UNAVAILABLE");
+        setText("#rlProgress", "—");setText("#rlStepReward", "—");setText("#rlPolicy", "全局最新任务未能读取");
+        setImpactStage("#stageArtifact", "blocked");
+        setText("#impactTargetModel", `训练档案 ${selectedTrainingTarget} · ${currentTrainingTarget().artifact}`);
+        setText("#impactTargetState", "训练任务读取失败；当前档案完成状态未核验，请刷新重试。");
         setText("#rlPacket", String(err));
         addLog("ERROR", "训练状态读取失败", String(err));
         return null;
@@ -1383,6 +1423,12 @@
         const status = data.execution_result?.status || "完成";
         await typeAnswer(`执行结果：${status}。\n动作：${data.action?.label || actionId}`);
         addLog("EXEC", `${actionId} · ${status}`, "");
+        if(data.execution_result?.result?.type==="open_route" && data.execution_result?.executed===true){
+          const url=new URL(data.execution_result.result.url || data.will_execute?.open_url,window.location.origin);
+          if(url.origin!==window.location.origin)throw new Error("动作路由不属于当前平台，已停止跳转。");
+          window.location.assign(url.pathname+url.search+url.hash);
+          return;
+        }
         await refreshHealth();
       }catch(err){
         setText("#assistantPacket", String(err));
@@ -1397,6 +1443,12 @@
       if(!clickable.has(actionId) || !selector) return false;
       const target = document.querySelector(selector);
       if(!target) return false;
+      if(target.disabled){
+        const reason=target.title || "对应联动桥未启用";
+        await typeAnswer(`该动作当前不可执行：${reason}。没有启动进程或控制设备。`);
+        addLog("BOUNDARY",`${actionId} 未执行`,reason);
+        return true;
+      }
       target.scrollIntoView({block:"center", inline:"nearest", behavior:"smooth"});
       target.classList.add("autoclick-target");
       const label = packet.will_execute?.button?.label || packet.action?.button_label || target.textContent.trim() || actionId;
@@ -1576,7 +1628,7 @@
         const eventName = control.type === "range" ? "input" : "change";
         control.addEventListener(eventName, ()=>{
           syncWeightLabels();
-          if(control.id === "trainAlgorithm") syncAlgorithmPanel();
+          if(control.id === "trainAlgorithm"){syncAlgorithmPanel();syncConfigSummary();}
           setText("#paramConfigState", "编辑中 · 未应用");
         });
       });

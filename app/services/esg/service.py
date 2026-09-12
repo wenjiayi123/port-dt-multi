@@ -352,12 +352,20 @@ def get_compliance_breakdown(port_code: str, year: int, month: int) -> Dict[str,
     rows = ts["items"]
     row = next((r for r in rows if int(r["month"]) == int(month)), None)
     if not row:
-        raise ValueError(f"未找到 {port_code} {year}-{month:02d} 的数据")
+        return {
+            "port_code": port_code, "year": year, "month": month,
+            "available": False, "reason": f"未找到 {port_code} {year}-{month:02d} 可审计的月度数据",
+            "scope1_ton": None, "scope2_grid_ton": None, "scope2_shore_ton": None,
+            "scope2_ton": None, "intensity_kg_per_teu": None,
+            "electric_mwh": {"grid": None, "shore_power": None, "onsite_renewables": None, "total": None},
+            "_source": "compliance.unavailable",
+        }
 
     return {
         "port_code": port_code,
         "year": year,
         "month": month,
+        "available": True,
         "scope1_ton": row["scope1_ton"],
         "scope2_grid_ton": row["scope2_grid_ton"],
         "scope2_shore_ton": row["scope2_shore_ton"],

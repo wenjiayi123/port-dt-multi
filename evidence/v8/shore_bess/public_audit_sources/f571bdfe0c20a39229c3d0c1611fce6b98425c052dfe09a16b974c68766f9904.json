@@ -1,0 +1,2450 @@
+{
+  "status": "PASS",
+  "partition": "TRAIN only, 2024-01-01 through 2025-04-30",
+  "window_selection": "20 evenly spaced indices from 69 complete nonoverlapping train weeks, chosen before running any stress action",
+  "starts": [
+    0,
+    504,
+    1176,
+    1680,
+    2352,
+    2856,
+    3528,
+    4200,
+    4704,
+    5376,
+    5880,
+    6552,
+    7056,
+    7728,
+    8400,
+    8904,
+    9576,
+    10080,
+    10752,
+    11424
+  ],
+  "patterns": [
+    "saturated_charge_defer",
+    "saturated_charge_repay",
+    "saturated_discharge_defer",
+    "saturated_discharge_repay",
+    "alternating_corners",
+    "random_uniform"
+  ],
+  "random_seed_rule": "numpy default_rng(20260912 + start_index)",
+  "episodes": 120,
+  "environment_steps": 20160,
+  "maximum_ramp_excess_kw": 0.0,
+  "maximum_available_power_excess_kw": 0.0,
+  "inverted_bess_intervals": 0,
+  "inverted_flex_intervals": 0,
+  "violation_tolerance_kw": 1e-06,
+  "failure_count": 0,
+  "failures": [],
+  "per_episode": [
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 0,
+      "first_timestamp": "2024-01-01T00:00:00Z",
+      "last_timestamp": "2024-01-07T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.568487608081696,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 504,
+      "first_timestamp": "2024-01-22T00:00:00Z",
+      "last_timestamp": "2024-01-28T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.550792567362993,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 1176,
+      "first_timestamp": "2024-02-19T00:00:00Z",
+      "last_timestamp": "2024-02-25T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.57332552499864,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 1680,
+      "first_timestamp": "2024-03-11T00:00:00Z",
+      "last_timestamp": "2024-03-17T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.569456496629815,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 2352,
+      "first_timestamp": "2024-04-08T00:00:00Z",
+      "last_timestamp": "2024-04-14T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.565093566449256,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 2856,
+      "first_timestamp": "2024-04-29T00:00:00Z",
+      "last_timestamp": "2024-05-05T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 26.298232189841386,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 3528,
+      "first_timestamp": "2024-05-27T00:00:00Z",
+      "last_timestamp": "2024-06-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 29.68045314847604,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 4200,
+      "first_timestamp": "2024-06-24T00:00:00Z",
+      "last_timestamp": "2024-06-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 31.536725184136273,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 4704,
+      "first_timestamp": "2024-07-15T00:00:00Z",
+      "last_timestamp": "2024-07-21T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 32.87979647115379,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 5376,
+      "first_timestamp": "2024-08-12T00:00:00Z",
+      "last_timestamp": "2024-08-18T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 33.44299122756094,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 5880,
+      "first_timestamp": "2024-09-02T00:00:00Z",
+      "last_timestamp": "2024-09-08T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 33.31344352648073,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 6552,
+      "first_timestamp": "2024-09-30T00:00:00Z",
+      "last_timestamp": "2024-10-06T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 32.53209440229048,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 7056,
+      "first_timestamp": "2024-10-21T00:00:00Z",
+      "last_timestamp": "2024-10-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 30.613152059578155,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 7728,
+      "first_timestamp": "2024-11-18T00:00:00Z",
+      "last_timestamp": "2024-11-24T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.54806820771719,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 8400,
+      "first_timestamp": "2024-12-16T00:00:00Z",
+      "last_timestamp": "2024-12-22T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.567046995709013,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 8904,
+      "first_timestamp": "2025-01-06T00:00:00Z",
+      "last_timestamp": "2025-01-12T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.560547447075958,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 9576,
+      "first_timestamp": "2025-02-03T00:00:00Z",
+      "last_timestamp": "2025-02-09T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.55595979304305,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 10080,
+      "first_timestamp": "2025-02-24T00:00:00Z",
+      "last_timestamp": "2025-03-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.568345193020242,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 10752,
+      "first_timestamp": "2025-03-24T00:00:00Z",
+      "last_timestamp": "2025-03-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.574010417551698,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_defer",
+      "start_index": 11424,
+      "first_timestamp": "2025-04-21T00:00:00Z",
+      "last_timestamp": "2025-04-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.56392627814197,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 0,
+      "first_timestamp": "2024-01-01T00:00:00Z",
+      "last_timestamp": "2024-01-07T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.568487608081696,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 504,
+      "first_timestamp": "2024-01-22T00:00:00Z",
+      "last_timestamp": "2024-01-28T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.550792567362993,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 1176,
+      "first_timestamp": "2024-02-19T00:00:00Z",
+      "last_timestamp": "2024-02-25T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.57332552499864,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 1680,
+      "first_timestamp": "2024-03-11T00:00:00Z",
+      "last_timestamp": "2024-03-17T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.569456496629815,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 2352,
+      "first_timestamp": "2024-04-08T00:00:00Z",
+      "last_timestamp": "2024-04-14T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.565093566449256,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 2856,
+      "first_timestamp": "2024-04-29T00:00:00Z",
+      "last_timestamp": "2024-05-05T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 26.298232189841386,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 3528,
+      "first_timestamp": "2024-05-27T00:00:00Z",
+      "last_timestamp": "2024-06-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 29.68045314847604,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 4200,
+      "first_timestamp": "2024-06-24T00:00:00Z",
+      "last_timestamp": "2024-06-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 31.536725184136273,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 4704,
+      "first_timestamp": "2024-07-15T00:00:00Z",
+      "last_timestamp": "2024-07-21T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 32.87979647115379,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 5376,
+      "first_timestamp": "2024-08-12T00:00:00Z",
+      "last_timestamp": "2024-08-18T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 33.44299122756094,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 5880,
+      "first_timestamp": "2024-09-02T00:00:00Z",
+      "last_timestamp": "2024-09-08T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 33.31344352648073,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 6552,
+      "first_timestamp": "2024-09-30T00:00:00Z",
+      "last_timestamp": "2024-10-06T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 32.53209440229048,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 7056,
+      "first_timestamp": "2024-10-21T00:00:00Z",
+      "last_timestamp": "2024-10-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 30.613152059578155,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 7728,
+      "first_timestamp": "2024-11-18T00:00:00Z",
+      "last_timestamp": "2024-11-24T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.54806820771719,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 8400,
+      "first_timestamp": "2024-12-16T00:00:00Z",
+      "last_timestamp": "2024-12-22T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.567046995709013,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 8904,
+      "first_timestamp": "2025-01-06T00:00:00Z",
+      "last_timestamp": "2025-01-12T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.560547447075958,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 9576,
+      "first_timestamp": "2025-02-03T00:00:00Z",
+      "last_timestamp": "2025-02-09T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.55595979304305,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 10080,
+      "first_timestamp": "2025-02-24T00:00:00Z",
+      "last_timestamp": "2025-03-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.568345193020242,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 10752,
+      "first_timestamp": "2025-03-24T00:00:00Z",
+      "last_timestamp": "2025-03-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.574010417551698,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_charge_repay",
+      "start_index": 11424,
+      "first_timestamp": "2025-04-21T00:00:00Z",
+      "last_timestamp": "2025-04-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.58,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 25.56392627814197,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 0,
+      "first_timestamp": "2024-01-01T00:00:00Z",
+      "last_timestamp": "2024-01-07T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.184557485020225,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 504,
+      "first_timestamp": "2024-01-22T00:00:00Z",
+      "last_timestamp": "2024-01-28T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.196109281363487,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 1176,
+      "first_timestamp": "2024-02-19T00:00:00Z",
+      "last_timestamp": "2024-02-25T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.197023205327334,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 1680,
+      "first_timestamp": "2024-03-11T00:00:00Z",
+      "last_timestamp": "2024-03-17T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.184537673204407,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 2352,
+      "first_timestamp": "2024-04-08T00:00:00Z",
+      "last_timestamp": "2024-04-14T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.18689963927723,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 2856,
+      "first_timestamp": "2024-04-29T00:00:00Z",
+      "last_timestamp": "2024-05-05T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.90649627428839,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 3528,
+      "first_timestamp": "2024-05-27T00:00:00Z",
+      "last_timestamp": "2024-06-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 29.600000381469727,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 4200,
+      "first_timestamp": "2024-06-24T00:00:00Z",
+      "last_timestamp": "2024-06-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 31.5,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 4704,
+      "first_timestamp": "2024-07-15T00:00:00Z",
+      "last_timestamp": "2024-07-21T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 32.464257975618814,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 5376,
+      "first_timestamp": "2024-08-12T00:00:00Z",
+      "last_timestamp": "2024-08-18T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 33.067227219944414,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 5880,
+      "first_timestamp": "2024-09-02T00:00:00Z",
+      "last_timestamp": "2024-09-08T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 32.9301302476899,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 6552,
+      "first_timestamp": "2024-09-30T00:00:00Z",
+      "last_timestamp": "2024-10-06T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 32.114257608642106,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 7056,
+      "first_timestamp": "2024-10-21T00:00:00Z",
+      "last_timestamp": "2024-10-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 30.600000381469727,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 7728,
+      "first_timestamp": "2024-11-18T00:00:00Z",
+      "last_timestamp": "2024-11-24T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.198368780374068,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 8400,
+      "first_timestamp": "2024-12-16T00:00:00Z",
+      "last_timestamp": "2024-12-22T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.18458038231736,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 8904,
+      "first_timestamp": "2025-01-06T00:00:00Z",
+      "last_timestamp": "2025-01-12T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.19088414772441,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 9576,
+      "first_timestamp": "2025-02-03T00:00:00Z",
+      "last_timestamp": "2025-02-09T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.194077346152014,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 10080,
+      "first_timestamp": "2025-02-24T00:00:00Z",
+      "last_timestamp": "2025-03-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.18572850072087,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 10752,
+      "first_timestamp": "2025-03-24T00:00:00Z",
+      "last_timestamp": "2025-03-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.196146306912915,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_defer",
+      "start_index": 11424,
+      "first_timestamp": "2025-04-21T00:00:00Z",
+      "last_timestamp": "2025-04-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.189229339075755,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 0,
+      "first_timestamp": "2024-01-01T00:00:00Z",
+      "last_timestamp": "2024-01-07T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.184557485020225,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 504,
+      "first_timestamp": "2024-01-22T00:00:00Z",
+      "last_timestamp": "2024-01-28T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.196109281363487,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 1176,
+      "first_timestamp": "2024-02-19T00:00:00Z",
+      "last_timestamp": "2024-02-25T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.197023205327334,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 1680,
+      "first_timestamp": "2024-03-11T00:00:00Z",
+      "last_timestamp": "2024-03-17T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.184537673204407,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 2352,
+      "first_timestamp": "2024-04-08T00:00:00Z",
+      "last_timestamp": "2024-04-14T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.18689963927723,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 2856,
+      "first_timestamp": "2024-04-29T00:00:00Z",
+      "last_timestamp": "2024-05-05T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.90649627428839,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 3528,
+      "first_timestamp": "2024-05-27T00:00:00Z",
+      "last_timestamp": "2024-06-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 29.600000381469727,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 4200,
+      "first_timestamp": "2024-06-24T00:00:00Z",
+      "last_timestamp": "2024-06-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 31.5,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 4704,
+      "first_timestamp": "2024-07-15T00:00:00Z",
+      "last_timestamp": "2024-07-21T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 32.464257975618814,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 5376,
+      "first_timestamp": "2024-08-12T00:00:00Z",
+      "last_timestamp": "2024-08-18T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 33.067227219944414,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 5880,
+      "first_timestamp": "2024-09-02T00:00:00Z",
+      "last_timestamp": "2024-09-08T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 32.9301302476899,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 6552,
+      "first_timestamp": "2024-09-30T00:00:00Z",
+      "last_timestamp": "2024-10-06T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 32.114257608642106,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 7056,
+      "first_timestamp": "2024-10-21T00:00:00Z",
+      "last_timestamp": "2024-10-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 30.600000381469727,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 7728,
+      "first_timestamp": "2024-11-18T00:00:00Z",
+      "last_timestamp": "2024-11-24T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.198368780374068,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 8400,
+      "first_timestamp": "2024-12-16T00:00:00Z",
+      "last_timestamp": "2024-12-22T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.18458038231736,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 8904,
+      "first_timestamp": "2025-01-06T00:00:00Z",
+      "last_timestamp": "2025-01-12T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.19088414772441,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 9576,
+      "first_timestamp": "2025-02-03T00:00:00Z",
+      "last_timestamp": "2025-02-09T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.194077346152014,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 10080,
+      "first_timestamp": "2025-02-24T00:00:00Z",
+      "last_timestamp": "2025-03-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.18572850072087,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 10752,
+      "first_timestamp": "2025-03-24T00:00:00Z",
+      "last_timestamp": "2025-03-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.196146306912915,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "saturated_discharge_repay",
+      "start_index": 11424,
+      "first_timestamp": "2025-04-21T00:00:00Z",
+      "last_timestamp": "2025-04-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.40323353293413167,
+        "soc_max_observed": 0.58,
+        "temperature_max_c": 25.189229339075755,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 0,
+      "first_timestamp": "2024-01-01T00:00:00Z",
+      "last_timestamp": "2024-01-07T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 504,
+      "first_timestamp": "2024-01-22T00:00:00Z",
+      "last_timestamp": "2024-01-28T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 1176,
+      "first_timestamp": "2024-02-19T00:00:00Z",
+      "last_timestamp": "2024-02-25T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 1680,
+      "first_timestamp": "2024-03-11T00:00:00Z",
+      "last_timestamp": "2024-03-17T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 2352,
+      "first_timestamp": "2024-04-08T00:00:00Z",
+      "last_timestamp": "2024-04-14T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 2856,
+      "first_timestamp": "2024-04-29T00:00:00Z",
+      "last_timestamp": "2024-05-05T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.33,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 3528,
+      "first_timestamp": "2024-05-27T00:00:00Z",
+      "last_timestamp": "2024-06-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 29.600000381469727,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 4200,
+      "first_timestamp": "2024-06-24T00:00:00Z",
+      "last_timestamp": "2024-06-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 31.5,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 4704,
+      "first_timestamp": "2024-07-15T00:00:00Z",
+      "last_timestamp": "2024-07-21T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 32.356405880045465,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 5376,
+      "first_timestamp": "2024-08-12T00:00:00Z",
+      "last_timestamp": "2024-08-18T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 32.60894593926239,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 5880,
+      "first_timestamp": "2024-09-02T00:00:00Z",
+      "last_timestamp": "2024-09-08T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 32.40175192995835,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 6552,
+      "first_timestamp": "2024-09-30T00:00:00Z",
+      "last_timestamp": "2024-10-06T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 32.05000007629395,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 7056,
+      "first_timestamp": "2024-10-21T00:00:00Z",
+      "last_timestamp": "2024-10-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 30.600000381469727,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 7728,
+      "first_timestamp": "2024-11-18T00:00:00Z",
+      "last_timestamp": "2024-11-24T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 8400,
+      "first_timestamp": "2024-12-16T00:00:00Z",
+      "last_timestamp": "2024-12-22T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 8904,
+      "first_timestamp": "2025-01-06T00:00:00Z",
+      "last_timestamp": "2025-01-12T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 9576,
+      "first_timestamp": "2025-02-03T00:00:00Z",
+      "last_timestamp": "2025-02-09T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 10080,
+      "first_timestamp": "2025-02-24T00:00:00Z",
+      "last_timestamp": "2025-03-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 10752,
+      "first_timestamp": "2025-03-24T00:00:00Z",
+      "last_timestamp": "2025-03-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "alternating_corners",
+      "start_index": 11424,
+      "first_timestamp": "2025-04-21T00:00:00Z",
+      "last_timestamp": "2025-04-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4312574850299401,
+        "soc_max_observed": 0.7535329341317365,
+        "temperature_max_c": 25.18697752477427,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 1,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 0,
+      "first_timestamp": "2024-01-01T00:00:00Z",
+      "last_timestamp": "2024-01-07T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.514016849372155,
+        "soc_max_observed": 0.7476209366082947,
+        "temperature_max_c": 24.97126773131458,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 504,
+      "first_timestamp": "2024-01-22T00:00:00Z",
+      "last_timestamp": "2024-01-28T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.48205732446511823,
+        "soc_max_observed": 0.7179981888727628,
+        "temperature_max_c": 25.21899423482991,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 1176,
+      "first_timestamp": "2024-02-19T00:00:00Z",
+      "last_timestamp": "2024-02-25T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4789855798301843,
+        "soc_max_observed": 0.7470236786553521,
+        "temperature_max_c": 25.11988458216588,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 1680,
+      "first_timestamp": "2024-03-11T00:00:00Z",
+      "last_timestamp": "2024-03-17T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4818224618777001,
+        "soc_max_observed": 0.7105676246907702,
+        "temperature_max_c": 24.773160106806763,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 2352,
+      "first_timestamp": "2024-04-08T00:00:00Z",
+      "last_timestamp": "2024-04-14T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4247155265338669,
+        "soc_max_observed": 0.6879098196171387,
+        "temperature_max_c": 24.75810442675347,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 2856,
+      "first_timestamp": "2024-04-29T00:00:00Z",
+      "last_timestamp": "2024-05-05T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4399962477653991,
+        "soc_max_observed": 0.6854896452843637,
+        "temperature_max_c": 25.50618220772833,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 3528,
+      "first_timestamp": "2024-05-27T00:00:00Z",
+      "last_timestamp": "2024-06-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.49560002862235747,
+        "soc_max_observed": 0.7053080554426617,
+        "temperature_max_c": 29.600000381469727,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 4200,
+      "first_timestamp": "2024-06-24T00:00:00Z",
+      "last_timestamp": "2024-06-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.5112990132367179,
+        "soc_max_observed": 0.7347226169304338,
+        "temperature_max_c": 31.5,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 4704,
+      "first_timestamp": "2024-07-15T00:00:00Z",
+      "last_timestamp": "2024-07-21T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4710962261596858,
+        "soc_max_observed": 0.7242610915606501,
+        "temperature_max_c": 32.0,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 5376,
+      "first_timestamp": "2024-08-12T00:00:00Z",
+      "last_timestamp": "2024-08-18T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4110836821798153,
+        "soc_max_observed": 0.689908688121217,
+        "temperature_max_c": 32.45544489804309,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 5880,
+      "first_timestamp": "2024-09-02T00:00:00Z",
+      "last_timestamp": "2024-09-08T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4374269666027302,
+        "soc_max_observed": 0.7080164003962229,
+        "temperature_max_c": 32.49195636042707,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 6552,
+      "first_timestamp": "2024-09-30T00:00:00Z",
+      "last_timestamp": "2024-10-06T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4878328450137141,
+        "soc_max_observed": 0.7255178204142855,
+        "temperature_max_c": 32.0,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 7056,
+      "first_timestamp": "2024-10-21T00:00:00Z",
+      "last_timestamp": "2024-10-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4901633922655454,
+        "soc_max_observed": 0.7415931736199761,
+        "temperature_max_c": 30.600000381469727,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 7728,
+      "first_timestamp": "2024-11-18T00:00:00Z",
+      "last_timestamp": "2024-11-24T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.45499891560660927,
+        "soc_max_observed": 0.728307983819751,
+        "temperature_max_c": 25.236889778941695,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 8400,
+      "first_timestamp": "2024-12-16T00:00:00Z",
+      "last_timestamp": "2024-12-22T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4232524090301351,
+        "soc_max_observed": 0.6758207596695679,
+        "temperature_max_c": 25.446930847423573,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 8904,
+      "first_timestamp": "2025-01-06T00:00:00Z",
+      "last_timestamp": "2025-01-12T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.48369499438721786,
+        "soc_max_observed": 0.7141407328486963,
+        "temperature_max_c": 24.948632524910717,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 9576,
+      "first_timestamp": "2025-02-03T00:00:00Z",
+      "last_timestamp": "2025-02-09T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.422650123034006,
+        "soc_max_observed": 0.7046934062899131,
+        "temperature_max_c": 24.944056738078366,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 10080,
+      "first_timestamp": "2025-02-24T00:00:00Z",
+      "last_timestamp": "2025-03-02T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4489755959889604,
+        "soc_max_observed": 0.7540312142009911,
+        "temperature_max_c": 25.41325777886038,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 10752,
+      "first_timestamp": "2025-03-24T00:00:00Z",
+      "last_timestamp": "2025-03-30T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4330466089866686,
+        "soc_max_observed": 0.6878366427112095,
+        "temperature_max_c": 24.98118440266121,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    },
+    {
+      "pattern": "random_uniform",
+      "start_index": 11424,
+      "first_timestamp": "2025-04-21T00:00:00Z",
+      "last_timestamp": "2025-04-27T23:00:00Z",
+      "metrics": {
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "soc_min_observed": 0.4206580092271418,
+        "soc_max_observed": 0.6548034764339705,
+        "temperature_max_c": 25.038150141611283,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "max_flex_age_hours": 12,
+        "guardrail_violation_rate": 0.0,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0
+      }
+    }
+  ],
+  "main_environment_sha256_at_start": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+  "main_environment_sha256_at_end": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+  "source_unchanged": true
+}

@@ -19,6 +19,7 @@ function escapeHtml(value) {
 }
 
 function finiteNumber(value, fallback = 0) {
+  if(value === null || value === undefined || value === '') return fallback;
   const number = Number(value);
   return Number.isFinite(number) ? number : fallback;
 }
@@ -155,6 +156,38 @@ function closeSimulation() {
   overlay.setAttribute('aria-hidden', 'true');
   document.body.classList.remove('simulation-active');
   document.getElementById('btnIgnite').focus();
+}
+
+function resetMainSurface(message, failed=false) {
+  strategies = [];
+  renderStrategies();
+  renderBars();
+  ['stabilityValue','trustValue'].forEach(id=>{ document.getElementById(id).textContent = '--'; });
+  document.getElementById('riskValue').textContent = failed ? 'BLOCKED' : 'WAIT';
+  document.getElementById('counterGrid').textContent = message;
+  document.getElementById('guardList').textContent = '等待本次推演的护栏回执';
+  document.getElementById('guardStatus').textContent = failed ? 'BLOCKED' : 'WAIT';
+  document.getElementById('guardStatus').style.background = failed ? '#ff6c7f' : 'var(--amber)';
+  document.getElementById('aiSummary').textContent = message;
+  writeLogs([`[Boundary] ${message}`, '[Safety] 本页不调用生产设备接口']);
+}
+
+function validateRunPayload(data) {
+  const numeric = value=>value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value));
+  if(!data || typeof data.run_id !== 'string' || !data.run_id || !data.snapshot ||
+      !Array.isArray(data.candidates) || !data.candidates.length || !Array.isArray(data.guardrails) ||
+      !data.guardrails.length || typeof data.decision?.ready_for_human_dry_run !== 'boolean' ||
+      typeof data.audit?.evidence_digest !== 'string' || !data.audit.evidence_digest){
+    throw new Error('推演回执不完整，未生成有效结论');
+  }
+  if(!['bess_soc_pct','shore_power_kw','reward_drift','candidate_pool_size','horizon_min'].every(key=>numeric(data.snapshot[key])) ||
+      !data.candidates.every(row=>typeof row.id === 'string' && typeof row.dispatch_ready === 'boolean' &&
+        ['baseline_energy_kwh','energy_saving_kwh','peak_reduction_kw','confidence'].every(key=>numeric(row[key])) &&
+        Number(row.baseline_energy_kwh) > 0 && Number(row.confidence) >= 0 && Number(row.confidence) <= 1) ||
+      !data.guardrails.every(row=>typeof row.passed === 'boolean')){
+    throw new Error('推演回执包含缺失或无效指标，已保持阻断');
+  }
+  return data;
 }
 
 function renderSnapshot(snapshot) {
@@ -294,6 +327,7 @@ async function ignite() {
   const button = document.getElementById('btnIgnite');
   button.disabled = true;
   button.textContent = '请求后端…';
+  resetMainSurface('正在请求本次推演，收益与准入状态等待后端回执。');
   openSimulation();
   setStage('situation', 'active');
   appendTerminal('[Boundary] 建立离线反事实推演通道；生产下发接口保持隔离', 'audit');
@@ -310,8 +344,9 @@ async function ignite() {
     });
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.detail || `推演接口返回 ${response.status}`);
+      throw new Error(typeof data.detail === 'string' ? data.detail : `推演接口返回 ${response.status}`);
     }
+    validateRunPayload(data);
     document.getElementById('runIdValue').textContent = data.run_id;
     renderSnapshot(data.snapshot);
     renderRunCandidates(data);
@@ -329,6 +364,7 @@ async function ignite() {
     document.getElementById('finishSimulation').disabled = false;
     button.textContent = '再次推演';
   } catch (error) {
+    resetMainSurface(`本次推演失败：${error.message}。未收到有效回执，生产控制保持关闭。`, true);
     const activeStage = document.querySelector('.run-stage.active');
     if (activeStage) setStage(activeStage.dataset.stage, 'blocked');
     appendTerminal(`[Fail Closed] ${error.message}`, 'block');

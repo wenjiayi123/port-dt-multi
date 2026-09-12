@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+from app.services.rl_training.model_artifacts import resolve_model_artifact
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
@@ -66,12 +67,23 @@ class MLOpsEvidenceService:
         for name in ("selected_sac_v3.zip", "selected_sac_v3.config.json", "runtime_model.json"):
             path = self.runtime_dir / name
             actual = self._sha(path)
+            verified = bool(actual and expected.get(name) == actual)
+            loaded_path = path
+            if name.endswith(".zip") and expected.get(name):
+                try:
+                    loaded_path = resolve_model_artifact(self.root, str(path.relative_to(self.root)), expected[name])
+                    actual = self._sha(loaded_path)
+                    verified = True
+                except (ValueError, OSError):
+                    verified = False
             rows.append({
                 "path": path.relative_to(self.root).as_posix(),
-                "bytes": path.stat().st_size if path.is_file() else 0,
+                "bytes": loaded_path.stat().st_size if loaded_path.is_file() else 0,
                 "sha256": actual,
                 "expected_sha256": expected.get(name),
-                "verified": bool(actual and expected.get(name) == actual),
+                "verified": verified,
+                "loaded_path": str(loaded_path.relative_to(self.root)),
+                "loaded_sha256": actual,
                 "portable": True,
             })
         rows.append({

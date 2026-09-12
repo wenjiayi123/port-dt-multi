@@ -8,6 +8,7 @@ from typing import Any, Dict, Optional
 
 from .datasets import file_sha256
 from .identifiers import resolve_child_dir, validate_identifier
+from .runtime_policy import resolve_runtime_artifact
 
 
 ALIASES = {"candidate", "champion", "archive"}
@@ -62,10 +63,18 @@ class ModelRegistry:
         if not status or not config:
             raise KeyError(job_id)
         model_path = run_dir / "model.zip"
-        actual_model_sha = file_sha256(model_path) if model_path.exists() else None
         expected_model_sha = manifest.get("model_sha256")
+        resolved_model_path = model_path
+        export_verified = False
+        if expected_model_sha:
+            try:
+                resolved_model_path = resolve_runtime_artifact(run_dir, expected_model_sha)
+                export_verified = True
+            except (ValueError, FileNotFoundError):
+                pass
+        actual_model_sha = file_sha256(resolved_model_path) if resolved_model_path.exists() else None
         artifact_verified = (
-            actual_model_sha == expected_model_sha
+            export_verified
             if expected_model_sha
             else config.get("algorithm") == "mpc" and manifest.get("controller_only") is True
         )
@@ -80,9 +89,11 @@ class ModelRegistry:
             "updated_at": _now(),
             "implementation": manifest.get("implementation"),
             "artifact": {
-                "artifact_id": "model.zip" if model_path.exists() else ("controller-manifest" if config.get("algorithm") == "mpc" else None),
+                "artifact_id": "model.zip" if resolved_model_path.exists() else ("controller-manifest" if config.get("algorithm") == "mpc" else None),
                 "expected_sha256": expected_model_sha,
                 "actual_sha256": actual_model_sha,
+                "training_sha256": expected_model_sha,
+                "metadata_only_public_export": export_verified and resolved_model_path.resolve() != model_path.resolve(),
                 "verified": artifact_verified,
                 "controller_only": bool(manifest.get("controller_only")),
             },

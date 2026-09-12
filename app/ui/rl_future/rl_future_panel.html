@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>未来决策舱 · RL Cyber Command</title>
   <link rel="stylesheet" href="rl_future.css?v=future_run_closed_loop_v1" />
+  <link rel="stylesheet" href="/static/standalone_navigation.css?v=20260912-2">
+  <script src="/static/standalone_navigation.js?v=20260912-2"></script>
 </head>
 <body>
   <div class="cyber-bg" aria-hidden="true"></div>
@@ -15,7 +17,8 @@
       <p>离线证据推演界面：从 FastAPI 读取数字孪生场景快照，对照正式盲测候选证据并完成硬约束校验与审计回执。页面不连接港口生产控制系统，也不把情景数据展示为实时运营数据。</p>
     </div>
     <div class="header-actions">
-      <a class="ghost-link" href="/#strategy-exec-module">返回主平台</a>
+      <a class="ghost-link" href="/">返回主界面</a>
+      <a class="ghost-link" href="/#strategy-exec-module">返回策略编排</a>
       <button class="primary-action" id="btnIgnite">启动推演</button>
     </div>
   </header>
@@ -193,7 +196,7 @@
     </section>
   </div>
 
-  <script src="rl_future.js?v=evidence_driven_v4"></script>
+  <script src="rl_future.js?v=evidence_driven_v5-ui-audit"></script>
   <script src="/ui/adapters/bilingual_ui.js?v=20260715-zh-headings-v5"></script>
 </body>
 </html>

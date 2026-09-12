@@ -13,6 +13,7 @@ from typing import Any, Dict, List
 import numpy as np
 
 from app.services.rl_training.datasets import load_port_dataset
+from app.services.rl_training.model_artifacts import resolve_model_artifact
 from app.services.rl_training.safety import assess_recommendation
 from app.services.rl_training.trainer import SB3_IMPORT_LOCK, TRAINING_MANAGER
 
@@ -59,8 +60,9 @@ class V3RuntimeService:
                 config = self._json(config_path)
                 if metadata.get("schema") != "port-dt-v3-runtime-policy.v1":
                     raise ValueError("runtime policy schema mismatch")
-                if self._sha(model_path) != metadata.get("model_sha256"):
-                    raise ValueError("runtime policy model hash mismatch")
+                model_path = resolve_model_artifact(ROOT, str(model_path.relative_to(ROOT)), metadata.get("model_sha256"))
+                metadata = {**metadata, "loaded_model_path": str(model_path.relative_to(ROOT)),
+                            "loaded_model_sha256": self._sha(model_path)}
                 if self._sha(config_path) != metadata.get("config_sha256"):
                     raise ValueError("runtime policy config hash mismatch")
                 dataset = load_port_dataset(str(config["dataset_id"]), ROOT / "data/rl/datasets")

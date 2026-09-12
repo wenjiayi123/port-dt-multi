@@ -1,0 +1,540 @@
+{
+  "seed": 912,
+  "steps": 60000,
+  "optimizer_updates": 116000,
+  "sb3_update_counter": 58000,
+  "initial_weights_sha256": "6ca501058e7048f8e638851f060195fe781c4edc944d03aa1d92e036e2384bd8",
+  "final_weights_sha256": "b7eb5ea6ffde8c8e283faf16d3565907270fd223d01ef8ee7fa36a4ead23a78d",
+  "parameters": {
+    "num_timesteps": 60000,
+    "_n_updates": 58000,
+    "gamma": 1.0,
+    "learning_starts": 2000,
+    "buffer_size": 200000,
+    "batch_size": 256,
+    "gradient_steps": 1,
+    "target_update_interval": 1,
+    "ent_coef": 0.001,
+    "tau": 0.005,
+    "learning_rate": 0.0003,
+    "optimizer_learning_rates": {
+      "actor": [
+        0.0003
+      ],
+      "critic": [
+        0.0003
+      ]
+    },
+    "train_freq": {
+      "frequency": 1,
+      "unit": "step"
+    },
+    "policy_kwargs": {
+      "net_arch": [
+        128,
+        128
+      ]
+    },
+    "policy_class": "SACPolicy",
+    "network_structure": "SACPolicy(\n  (actor): Actor(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (latent_pi): Sequential(\n      (0): Linear(in_features=31, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n    )\n    (mu): Linear(in_features=128, out_features=2, bias=True)\n    (log_std): Linear(in_features=128, out_features=2, bias=True)\n  )\n  (critic): ContinuousCritic(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (qf0): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n    (qf1): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n  )\n  (critic_target): ContinuousCritic(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (qf0): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n    (qf1): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n  )\n)",
+    "parameter_count": 105096,
+    "trainable_parameter_count": 105096,
+    "gradient_optimizer_step_calls": 116000,
+    "optimizer_step_calls_by_component": {
+      "actor": 58000,
+      "critic": 58000
+    },
+    "sb3_update_counter_semantics": "SB3 gradient iterations; actor/critic/entropy optimizer calls are counted separately"
+  },
+  "selected": {
+    "step": 30000,
+    "optimizer_updates": 56000,
+    "sb3_update_counter": 28000,
+    "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_30000.zip",
+    "model_sha256": "d7fe600d39854f92867089b250af5d63d89fb76b9156bb16369a3a518733de7c",
+    "weights_sha256": "0f1079d90b8b97661570326fa69f26b91874f2527e66b208d1cf4b972aef9fc9",
+    "parameters": {
+      "num_timesteps": 30000,
+      "_n_updates": 28000,
+      "gamma": 1.0,
+      "learning_starts": 2000,
+      "buffer_size": 200000,
+      "batch_size": 256,
+      "gradient_steps": 1,
+      "target_update_interval": 1,
+      "ent_coef": 0.001,
+      "tau": 0.005,
+      "learning_rate": 0.0003,
+      "optimizer_learning_rates": {
+        "actor": [
+          0.0003
+        ],
+        "critic": [
+          0.0003
+        ]
+      },
+      "train_freq": {
+        "frequency": 1,
+        "unit": "step"
+      },
+      "policy_kwargs": {
+        "net_arch": [
+          128,
+          128
+        ]
+      },
+      "policy_class": "SACPolicy",
+      "network_structure": "SACPolicy(\n  (actor): Actor(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (latent_pi): Sequential(\n      (0): Linear(in_features=31, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n    )\n    (mu): Linear(in_features=128, out_features=2, bias=True)\n    (log_std): Linear(in_features=128, out_features=2, bias=True)\n  )\n  (critic): ContinuousCritic(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (qf0): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n    (qf1): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n  )\n  (critic_target): ContinuousCritic(\n    (features_extractor): FlattenExtractor(\n      (flatten): Flatten(start_dim=1, end_dim=-1)\n    )\n    (qf0): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n    (qf1): Sequential(\n      (0): Linear(in_features=33, out_features=128, bias=True)\n      (1): ReLU()\n      (2): Linear(in_features=128, out_features=128, bias=True)\n      (3): ReLU()\n      (4): Linear(in_features=128, out_features=1, bias=True)\n    )\n  )\n)",
+      "parameter_count": 105096,
+      "trainable_parameter_count": 105096,
+      "gradient_optimizer_step_calls": 56000,
+      "optimizer_step_calls_by_component": {
+        "actor": 28000,
+        "critic": 28000
+      },
+      "sb3_update_counter_semantics": "SB3 gradient iterations; actor/critic/entropy optimizer calls are counted separately"
+    },
+    "evaluation": {
+      "mean": {
+        "aux_shift_kwh": 6751.737070098822,
+        "bess_throughput_kwh": 19609.252244995634,
+        "carbon_delta_kg": 577.6646707198548,
+        "carbon_kg": 2193102.852627153,
+        "degradation_cost_cny": 1568.740179599651,
+        "demand_charge_cny": 223774.4839620048,
+        "energy_cost_cny": 2768889.49361377,
+        "financial_delta_cny": -919.4335272986937,
+        "flex_deadline_violation_kwh": 0.0,
+        "guardrail_violation_rate": 0.0,
+        "guardrail_violations": 0.0,
+        "learning_reward": -30.06271260669784,
+        "max_flex_age_hours": 12.0,
+        "nonzero_bess_action_rate": 0.935515873015873,
+        "nonzero_bess_actions": 157.16666666666666,
+        "nonzero_flex_action_rate": 0.45039682539682535,
+        "nonzero_flex_actions": 75.66666666666667,
+        "peak_kw": 25605.773893208727,
+        "physical_power_violations": 0.0,
+        "projection_count": 4.666666666666667,
+        "projection_rate": 0.02777777777777778,
+        "reserve_shortfall_kwh": 0.0,
+        "reward": -0.29534956229400894,
+        "shore_sla_violation_kwh": 0.0,
+        "soc_max_observed": 0.7350502922672822,
+        "soc_min_observed": 0.545206410611042,
+        "temperature_max_c": 29.85791064451138,
+        "terminal_flex_backlog_kwh": 0.0,
+        "terminal_soc_error": 0.0,
+        "total_cost_cny": 2994232.717755375,
+        "training_reward": -30.06271260669784
+      },
+      "rows": [
+        {
+          "reward": -0.3549435553058697,
+          "energy_cost_cny": 2727155.3858436416,
+          "carbon_kg": 2159206.151500567,
+          "degradation_cost_cny": 1512.785567541141,
+          "bess_throughput_kwh": 18909.819594264263,
+          "aux_shift_kwh": 8231.774880456871,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 5.0,
+          "nonzero_bess_actions": 156.0,
+          "nonzero_flex_actions": 95.0,
+          "peak_kw": 25166.029296875,
+          "soc_min_observed": 0.5460431708160326,
+          "soc_max_observed": 0.734417932365923,
+          "temperature_max_c": 26.311473590135574,
+          "flex_deadline_violation_kwh": 0.0,
+          "physical_power_violations": 0.0,
+          "training_reward": -30.64762667739084,
+          "max_flex_age_hours": 12.0,
+          "demand_charge_cny": 219931.45931724846,
+          "total_cost_cny": 2948599.630728431,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.02976190476190476,
+          "nonzero_bess_action_rate": 0.9285714285714286,
+          "nonzero_flex_action_rate": 0.5654761904761905,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0,
+          "financial_delta_cny": 40.54862018309359,
+          "carbon_delta_kg": 507.41472627459007,
+          "learning_reward": -30.64762667739084
+        },
+        {
+          "reward": -0.3673675967139661,
+          "energy_cost_cny": 2752632.869741896,
+          "carbon_kg": 2179286.8055959805,
+          "degradation_cost_cny": 1441.0176537558436,
+          "bess_throughput_kwh": 18012.720671948045,
+          "aux_shift_kwh": 9780.049424805942,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 6.0,
+          "nonzero_bess_actions": 153.0,
+          "nonzero_flex_actions": 106.0,
+          "peak_kw": 25588.363000110003,
+          "soc_min_observed": 0.5592516298436964,
+          "soc_max_observed": 0.7348976019379991,
+          "temperature_max_c": 28.700000762939453,
+          "flex_deadline_violation_kwh": 0.0,
+          "physical_power_violations": 0.0,
+          "training_reward": -25.988232888648618,
+          "max_flex_age_hours": 12.0,
+          "demand_charge_cny": 223622.32634182376,
+          "total_cost_cny": 2977696.2137374757,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.03571428571428571,
+          "nonzero_bess_action_rate": 0.9107142857142857,
+          "nonzero_flex_action_rate": 0.6309523809523809,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0,
+          "financial_delta_cny": -655.4033915844875,
+          "carbon_delta_kg": 487.75416410951766,
+          "learning_reward": -25.988232888648618
+        },
+        {
+          "reward": -0.2417049457464677,
+          "energy_cost_cny": 2775942.3420058773,
+          "carbon_kg": 2198018.0672529778,
+          "degradation_cost_cny": 1576.8670370429754,
+          "bess_throughput_kwh": 19710.837963037193,
+          "aux_shift_kwh": 10223.631183691186,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 13.0,
+          "nonzero_bess_actions": 157.0,
+          "nonzero_flex_actions": 101.0,
+          "peak_kw": 25801.16311457092,
+          "soc_min_observed": 0.5452414435134856,
+          "soc_max_observed": 0.7348473359984037,
+          "temperature_max_c": 27.799999237060547,
+          "flex_deadline_violation_kwh": 0.0,
+          "physical_power_violations": 0.0,
+          "training_reward": -20.60751787928999,
+          "max_flex_age_hours": 12.0,
+          "demand_charge_cny": 225482.03329694833,
+          "total_cost_cny": 3003001.2423398686,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.07738095238095238,
+          "nonzero_bess_action_rate": 0.9345238095238095,
+          "nonzero_flex_action_rate": 0.6011904761904762,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0,
+          "financial_delta_cny": -3110.804635383877,
+          "carbon_delta_kg": 602.6923509368225,
+          "learning_reward": -20.60751787928999
+        },
+        {
+          "reward": -0.1369711849339301,
+          "energy_cost_cny": 2812339.22180103,
+          "carbon_kg": 2226654.5616560574,
+          "degradation_cost_cny": 1537.1784957498312,
+          "bess_throughput_kwh": 19214.73119687289,
+          "aux_shift_kwh": 5023.507447968625,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 1.0,
+          "nonzero_bess_actions": 160.0,
+          "nonzero_flex_actions": 63.0,
+          "peak_kw": 25935.74514386058,
+          "soc_min_observed": 0.5496929152048158,
+          "soc_max_observed": 0.7352527001731097,
+          "temperature_max_c": 32.003515106439586,
+          "flex_deadline_violation_kwh": 0.0,
+          "physical_power_violations": 0.0,
+          "training_reward": -36.594013594699305,
+          "max_flex_age_hours": 12.0,
+          "demand_charge_cny": 226658.17522026823,
+          "total_cost_cny": 3040534.575517048,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.005952380952380952,
+          "nonzero_bess_action_rate": 0.9523809523809523,
+          "nonzero_flex_action_rate": 0.375,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0,
+          "financial_delta_cny": -554.6623178598284,
+          "carbon_delta_kg": 656.1220863999733,
+          "learning_reward": -36.594013594699305
+        },
+        {
+          "reward": -0.3556590326821607,
+          "energy_cost_cny": 2786474.3706271457,
+          "carbon_kg": 2208188.5179045824,
+          "degradation_cost_cny": 1684.054675474763,
+          "bess_throughput_kwh": 21050.683443434536,
+          "aux_shift_kwh": 2297.0505300998743,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 1.0,
+          "nonzero_bess_actions": 157.0,
+          "nonzero_flex_actions": 28.0,
+          "peak_kw": 25568.77639758587,
+          "soc_min_observed": 0.5351507367951516,
+          "soc_max_observed": 0.7354520715693632,
+          "temperature_max_c": 32.13533262014389,
+          "flex_deadline_violation_kwh": 0.0,
+          "physical_power_violations": 0.0,
+          "training_reward": -35.14648623277053,
+          "max_flex_age_hours": 12.0,
+          "demand_charge_cny": 223451.15471894344,
+          "total_cost_cny": 3011609.580021564,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.005952380952380952,
+          "nonzero_bess_action_rate": 0.9345238095238095,
+          "nonzero_flex_action_rate": 0.16666666666666666,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0,
+          "financial_delta_cny": -145.52043362591644,
+          "carbon_delta_kg": 597.9014733483345,
+          "learning_reward": -35.14648623277053
+        },
+        {
+          "reward": -0.3154510583816592,
+          "energy_cost_cny": 2758792.7716630306,
+          "carbon_kg": 2187263.0118527566,
+          "degradation_cost_cny": 1660.5376480333507,
+          "bess_throughput_kwh": 20756.720600416884,
+          "aux_shift_kwh": 4954.408953570434,
+          "reserve_shortfall_kwh": 0.0,
+          "shore_sla_violation_kwh": 0.0,
+          "guardrail_violations": 0.0,
+          "projection_count": 2.0,
+          "nonzero_bess_actions": 160.0,
+          "nonzero_flex_actions": 61.0,
+          "peak_kw": 25574.56640625,
+          "soc_min_observed": 0.5358585674930705,
+          "soc_max_observed": 0.7354341115588943,
+          "temperature_max_c": 32.197142550349234,
+          "flex_deadline_violation_kwh": 0.0,
+          "physical_power_violations": 0.0,
+          "training_reward": -31.392398367387752,
+          "max_flex_age_hours": 12.0,
+          "demand_charge_cny": 223501.7548767967,
+          "total_cost_cny": 2983955.0641878606,
+          "guardrail_violation_rate": 0.0,
+          "projection_rate": 0.011904761904761904,
+          "nonzero_bess_action_rate": 0.9523809523809523,
+          "nonzero_flex_action_rate": 0.3630952380952381,
+          "terminal_soc_error": 0.0,
+          "terminal_flex_backlog_kwh": 0.0,
+          "financial_delta_cny": -1090.7590055211458,
+          "carbon_delta_kg": 614.103223249891,
+          "learning_reward": -31.392398367387752
+        }
+      ],
+      "starts": [
+        0,
+        336,
+        672,
+        1176,
+        1512,
+        2016
+      ],
+      "episode_hours": 168,
+      "windows": [
+        {
+          "start_index": 0,
+          "first_timestamp": "2025-05-01T00:00:00Z",
+          "last_timestamp": "2025-05-07T23:00:00Z",
+          "source_month": "2025-05",
+          "source_period": "2025-05"
+        },
+        {
+          "start_index": 336,
+          "first_timestamp": "2025-05-15T00:00:00Z",
+          "last_timestamp": "2025-05-21T23:00:00Z",
+          "source_month": "2025-05",
+          "source_period": "2025-05"
+        },
+        {
+          "start_index": 672,
+          "first_timestamp": "2025-05-29T00:00:00Z",
+          "last_timestamp": "2025-06-04T23:00:00Z",
+          "source_month": "2025-05",
+          "source_period": "2025-05"
+        },
+        {
+          "start_index": 1176,
+          "first_timestamp": "2025-06-19T00:00:00Z",
+          "last_timestamp": "2025-06-25T23:00:00Z",
+          "source_month": "2025-06",
+          "source_period": "2025-06"
+        },
+        {
+          "start_index": 1512,
+          "first_timestamp": "2025-07-03T00:00:00Z",
+          "last_timestamp": "2025-07-09T23:00:00Z",
+          "source_month": "2025-07",
+          "source_period": "2025-07"
+        },
+        {
+          "start_index": 2016,
+          "first_timestamp": "2025-07-24T00:00:00Z",
+          "last_timestamp": "2025-07-30T23:00:00Z",
+          "source_month": "2025-07",
+          "source_period": "2025-07"
+        }
+      ],
+      "window_overlap": false,
+      "action_counts": {
+        "continuous_action": 1008
+      }
+    },
+    "comparison": {
+      "total_cost_cny": {
+        "n": 6,
+        "mean": 0.030620749145438584,
+        "std": 0.03810576957068531,
+        "median": 0.020122255345911978,
+        "ci_low": 0.008487374034241504,
+        "ci_high": 0.06148856988377412,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 5000,
+        "per_window_percent": [
+          -0.0013752012102816057,
+          0.022005574755342528,
+          0.10348265755811312,
+          0.01823893593648143,
+          0.004831748557663592,
+          0.03654077927531246
+        ],
+        "minimum_percent": -0.0013752012102816057,
+        "clustered_ci_low": 0.01823893593648143,
+        "clustered_ci_high": 0.04137101036772468,
+        "cluster_count": 3,
+        "cluster_confidence": 0.95,
+        "cluster_method": "percentile_bootstrap_of_official_source_period_groups",
+        "cluster_group_field": "source_period",
+        "cluster_resamples": 5000,
+        "cluster_window_counts": {
+          "2025-05": 3,
+          "2025-06": 1,
+          "2025-07": 2
+        },
+        "cluster_boundary": "Official MOT period of window start; January/February share YYYY-01/02. Cross-period windows belong to their starting period, an approximation. Few-cluster engineering uncertainty, not field confidence."
+      },
+      "carbon_kg": {
+        "n": 6,
+        "mean": -0.02632713419906176,
+        "std": 0.0027666871871875553,
+        "median": -0.02725561098897397,
+        "ci_low": -0.028214505338391333,
+        "ci_high": -0.02428484610489081,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 5000,
+        "per_window_percent": [
+          -0.02350558313823068,
+          -0.022386376742113932,
+          -0.027427329298851964,
+          -0.02947540639451724,
+          -0.027083892679095983,
+          -0.02808421694156078
+        ],
+        "minimum_percent": -0.02947540639451724,
+        "clustered_ci_low": -0.029475406394517244,
+        "clustered_ci_high": -0.024439763059732195,
+        "cluster_count": 3,
+        "cluster_confidence": 0.95,
+        "cluster_method": "percentile_bootstrap_of_official_source_period_groups",
+        "cluster_group_field": "source_period",
+        "cluster_resamples": 5000,
+        "cluster_window_counts": {
+          "2025-05": 3,
+          "2025-06": 1,
+          "2025-07": 2
+        },
+        "cluster_boundary": "Official MOT period of window start; January/February share YYYY-01/02. Cross-period windows belong to their starting period, an approximation. Few-cluster engineering uncertainty, not field confidence."
+      },
+      "peak_kw": {
+        "n": 6,
+        "mean": 0.11611365849091115,
+        "std": 0.5011000319900035,
+        "median": -0.040063073046915774,
+        "ci_low": -0.13672815794926713,
+        "ci_high": 0.5356945125883184,
+        "confidence": 0.95,
+        "method": "percentile_bootstrap_of_mean",
+        "resamples": 5000,
+        "per_window_percent": [
+          0.0,
+          -0.12795947369724597,
+          1.1248064559058577,
+          -0.08012614609383155,
+          -0.22003888516931325,
+          0.0
+        ],
+        "minimum_percent": -0.22003888516931325,
+        "clustered_ci_low": -0.11001944258465662,
+        "clustered_ci_high": 0.33228232740287056,
+        "cluster_count": 3,
+        "cluster_confidence": 0.95,
+        "cluster_method": "percentile_bootstrap_of_official_source_period_groups",
+        "cluster_group_field": "source_period",
+        "cluster_resamples": 5000,
+        "cluster_window_counts": {
+          "2025-05": 3,
+          "2025-06": 1,
+          "2025-07": 2
+        },
+        "cluster_boundary": "Official MOT period of window start; January/February share YYYY-01/02. Cross-period windows belong to their starting period, an approximation. Few-cluster engineering uncertainty, not field confidence."
+      }
+    },
+    "gates": {
+      "total_cost_cny_minimum_mean_gain": true,
+      "total_cost_cny_positive_95ci": true,
+      "carbon_kg_minimum_mean_gain": false,
+      "carbon_kg_positive_95ci": false,
+      "peak_kw_minimum_mean_gain": true,
+      "peak_kw_positive_95ci": false,
+      "every_window_carbon_non_regression": false,
+      "guardrail_violation_rate": true,
+      "terminal_soc_error": true,
+      "terminal_flex_backlog_kwh": true,
+      "shore_sla_violation_kwh": true,
+      "reserve_shortfall_kwh": true,
+      "flex_deadline_violation_kwh": true,
+      "physical_power_violations": true,
+      "maximum_flex_age_within_12_hours": true
+    },
+    "optimizer": {
+      "train/learning_rate": 0.0003,
+      "train/n_updates": 28000.0,
+      "train/ent_coef": 0.0010000000474974513,
+      "train/actor_loss": 9.081873893737793,
+      "train/critic_loss": 0.7264919877052307
+    }
+  },
+  "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/selected_model.zip",
+  "model_sha256": "d7fe600d39854f92867089b250af5d63d89fb76b9156bb16369a3a518733de7c",
+  "convergence": {
+    "passed": false,
+    "tail_checkpoints": 3,
+    "all_tail_business_gates_passed": false,
+    "stability": {
+      "total_cost_cny": {
+        "range_pp": 0.06869809440708033,
+        "tolerance_pp": 0.02,
+        "passed": false
+      },
+      "carbon_kg": {
+        "range_pp": 0.0068070148061899725,
+        "tolerance_pp": 0.005406780187086864,
+        "passed": false
+      },
+      "peak_kw": {
+        "range_pp": 0.27894359421530784,
+        "tolerance_pp": 0.05,
+        "passed": false
+      }
+    }
+  },
+  "render_calls": 0
+}

@@ -1,0 +1,90 @@
+{
+  "schema": "port-ui-existing-model-evaluation-qa.v1",
+  "generated_at": "2026-09-12T05:05:25.611902+00:00",
+  "status": "PASS",
+  "source_job_id": "rl-20260830T071312066Z",
+  "scope": "Append-only user evaluation and chart-data wiring verification of an existing model. The immutable earlier lifecycle QA summary remains unchanged. This verifies preservation during these evaluations only, not the complete historical state of local run files.",
+  "evaluations": [
+    {
+      "evaluation_id": "ui-eval-07f53f2ac11343a5b50bd6cf3501349d",
+      "evaluated_at": "2026-09-12T05:05:00.751937Z",
+      "episodes": 10,
+      "dataset_id": "public_cn_sha_integrated_scenario_v5",
+      "stored_split_label": "chronological_blind_test_only",
+      "claim_boundary": "Repeated test-split replay for UI functionality; not a new blind experiment or model promotion.",
+      "evaluation_sha256": "50c2ac46152f6424b389c1005099cf68c602803aa09a591a8d29776040853e64",
+      "provenance_sha256": "7c75fed78f7833256a4e644358879122caa45f6607479678757c4233a7363998",
+      "source_artifacts_sha256": {
+        "data/rl/runs/rl-20260830T071312066Z/config.json": "dbe89fd6fa7e5422aa33742382482086a11c9493d264c4a13123c68eda15907c",
+        "data/rl/runs/rl-20260830T071312066Z/manifest.json": "f120025d84e50eceafd3cfbb5a60113a0f13d34aa90944ea910c7a365fc37697",
+        "data/rl/runs/rl-20260830T071312066Z/model.zip": "d3af45e4935db355a90778d299393cf798587fb34bab633c5780003bfd07fac3",
+        "data/rl/runs/rl-20260830T071312066Z/evaluation.json": "b44c70aad25c5972ff2c62558591a409398540b67dd0c5e0b07ca1bad8cf848f",
+        "data/rl/runs/rl-20260830T071312066Z/evaluation_trajectory.json": "14b62db929d01d496cb64adafbd4c504ae214454ec700a01aa6c7070cf0becdb",
+        "data/rl/runs/rl-20260830T071312066Z/status.json": "3bb28c87dd645201734740df46f77a3f9fef0190901d9f3818987f115e4535ff",
+        "data/rl/runs/rl-20260830T071312066Z/model_card.json": "fc9daa979b4e86efa8bd9e7e6a4d2a8109fd1d9864c8c02d04c7931f64ba785a",
+        "data/rl/runs/rl-20260830T071312066Z/MODEL_CARD.md": "1afd00595cd439ef9ceca6491566e46cbe6235c61646888fd9bec58934eb5d46",
+        "evidence/v7/public_models/d3af45e4935db355a90778d299393cf798587fb34bab633c5780003bfd07fac3.zip": "d99d9489e2621e50724b41dae0c3f0f7c3ffacf86443e33a1ae6c4c2646d0591"
+      },
+      "source_artifacts_sha256_rechecked": true,
+      "source_state_before_after_this_evaluation_equal": true,
+      "model_artifact": {
+        "training_sha256": "d3af45e4935db355a90778d299393cf798587fb34bab633c5780003bfd07fac3",
+        "runtime_sha256": "d99d9489e2621e50724b41dae0c3f0f7c3ffacf86443e33a1ae6c4c2646d0591",
+        "metadata_only_public_export": true
+      },
+      "render_frame_count": 48,
+      "gradient_updates": 0,
+      "formal_or_champion_registration": false,
+      "raw_evaluation_files_published": false
+    },
+    {
+      "evaluation_id": "ui-eval-94de0b65b5d94240bb0e919b52708528",
+      "evaluated_at": "2026-09-12T04:59:14.316017Z",
+      "episodes": 10,
+      "dataset_id": "public_cn_sha_integrated_scenario_v5",
+      "stored_split_label": "chronological_blind_test_only",
+      "claim_boundary": "Repeated test-split replay for UI functionality; not a new blind experiment or model promotion.",
+      "evaluation_sha256": "16b1a622fbe1d1950af3bc0e57d802ace627cc2db826de01deaa940a48113369",
+      "provenance_sha256": "38e147335743ba614db155ec7d5619d1e4e1cb687a788f30c01d3cb81893f744",
+      "source_artifacts_sha256": {
+        "data/rl/runs/rl-20260830T071312066Z/config.json": "dbe89fd6fa7e5422aa33742382482086a11c9493d264c4a13123c68eda15907c",
+        "data/rl/runs/rl-20260830T071312066Z/manifest.json": "f120025d84e50eceafd3cfbb5a60113a0f13d34aa90944ea910c7a365fc37697",
+        "data/rl/runs/rl-20260830T071312066Z/model.zip": "d3af45e4935db355a90778d299393cf798587fb34bab633c5780003bfd07fac3",
+        "data/rl/runs/rl-20260830T071312066Z/evaluation.json": "b44c70aad25c5972ff2c62558591a409398540b67dd0c5e0b07ca1bad8cf848f",
+        "data/rl/runs/rl-20260830T071312066Z/evaluation_trajectory.json": "14b62db929d01d496cb64adafbd4c504ae214454ec700a01aa6c7070cf0becdb",
+        "data/rl/runs/rl-20260830T071312066Z/status.json": "3bb28c87dd645201734740df46f77a3f9fef0190901d9f3818987f115e4535ff",
+        "data/rl/runs/rl-20260830T071312066Z/model_card.json": "fc9daa979b4e86efa8bd9e7e6a4d2a8109fd1d9864c8c02d04c7931f64ba785a",
+        "data/rl/runs/rl-20260830T071312066Z/MODEL_CARD.md": "1afd00595cd439ef9ceca6491566e46cbe6235c61646888fd9bec58934eb5d46",
+        "evidence/v7/public_models/d3af45e4935db355a90778d299393cf798587fb34bab633c5780003bfd07fac3.zip": "d99d9489e2621e50724b41dae0c3f0f7c3ffacf86443e33a1ae6c4c2646d0591"
+      },
+      "source_artifacts_sha256_rechecked": true,
+      "source_state_before_after_this_evaluation_equal": true,
+      "model_artifact": {
+        "training_sha256": "d3af45e4935db355a90778d299393cf798587fb34bab633c5780003bfd07fac3",
+        "runtime_sha256": "d99d9489e2621e50724b41dae0c3f0f7c3ffacf86443e33a1ae6c4c2646d0591",
+        "metadata_only_public_export": true
+      },
+      "render_frame_count": 48,
+      "gradient_updates": 0,
+      "formal_or_champion_registration": false,
+      "raw_evaluation_files_published": false
+    }
+  ],
+  "evaluations_in_snapshot": 2,
+  "source_models_trained_again": false,
+  "source_artifact_files_modified": false,
+  "registry_sha256": "366dc3c382fc0f1f071fe7c59c5dd133ac509bbd89b34a3ef3e1391e706c5475",
+  "benchmarks_sha256": "301689b1781a1cc65a62e1eec9db667723f41777cae0a539b16b0808e537de91",
+  "registry_and_benchmarks_equal_protected_before": true,
+  "protected_artifacts_checked": 24,
+  "protected_artifacts_all_unchanged": true,
+  "original_evaluations_kept_locally": true,
+  "local_archive_byte_identical": true,
+  "future_evaluations_in_same_job_also_locally_excluded": true,
+  "initial_qa_summary": {
+    "path": "evidence/ui_audit/training-lifecycle-qa-20260912.json",
+    "sha256": "2368b6e4eec74dbb6428eecf9750ca7a66d10e617ba1c096a28cfe8dfaf16f0e"
+  },
+  "production_authority": false,
+  "dispatch_allowed": false
+}

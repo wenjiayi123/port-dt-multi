@@ -1,0 +1,151 @@
+{
+  "schema": "port-shore-bess-v8-r5-registered-protocol.v1",
+  "registered_at": "2026-09-12T03:24:24.131268Z",
+  "registration_timing": "after_launch_with_already_observed_checkpoints_disclosed",
+  "strict_preregistration_before_training": false,
+  "already_running_when_registered": true,
+  "timing_boundary": "This record was written after both runs started. Actual registration time and any observed trained checkpoints are disclosed; it is not backdated or claimed as strict pre-training registration.",
+  "selection_evidence": {
+    "path": "evidence/v8/shore_bess/audits/train-scalar-objective-audit-20260912.json",
+    "sha256": "4ce4750f1268463ca51e35aa1a910f2b4db8cdc6423823bc1e890c20036e9b74",
+    "selection_split": "TRAIN only",
+    "scanned_lambdas_cny_per_kg": [
+      8.0,
+      12.0,
+      16.0,
+      20.0,
+      30.0,
+      40.0
+    ],
+    "fixed_training_windows": [
+      0,
+      2299,
+      4598,
+      6897,
+      9196,
+      11495
+    ],
+    "rule": "First scanned lambda for which all six full BESS+flex LP windows have strictly positive cost and carbon reductions.",
+    "selected_lambda_cny_per_kg": 16,
+    "first_eligible_scanned_lambda": 16.0,
+    "scope": "Optimistic noncausal LP without FIFO age / thermal-SOH nonlinearities; not a learned-policy result or proof of actual neural feasibility."
+  },
+  "current_training_source_sha256": {
+    "scripts/train_shore_bess_v8.py": "c0c5628135de69bd33813f6f19f447059ad554afe59747214c2a9536150b02df",
+    "app/services/rl_model/shore_bess/v8_environment.py": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+    "app/services/rl_model/shore_bess/v3_environment.py": "20f029c3f8904463b257980ffe8370c1945fa36aa5d265591b52094ead2ed05d",
+    "config/shore_bess_v32_balanced.json": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+    "app/services/rl_training/statistics.py": "429e3c00ebeb0517b7670c03e7cee2253b67a762ff45dc8bca026ab79047f8f2",
+    "app/services/rl_training/datasets.py": "9ccb5c7c3d28b0db8267e080f9f67b453790330c5cac458c6250f6b4e5a33e73"
+  },
+  "runs": [
+    {
+      "run_id": "shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5",
+      "algorithm": "stable_baselines3.SAC",
+      "training_started_at": "2026-09-12T03:21:24.949426Z",
+      "config_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/config.json",
+      "config_sha256": "3262f9302b0caa231ec7aca834c4c94d2ec00d2533025f1fdfff17c76d0159cc",
+      "manifest_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/manifest.json",
+      "manifest_sha256": "93ed577df1a4c1c27c8fff6066469174dcfb4ae77dc663550936427ac4d1f0f3",
+      "observed_at": "2026-09-12T03:24:24.125793Z",
+      "checkpoints_already_observed": [
+        {
+          "step": 10000,
+          "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_10000.zip",
+          "model_sha256": "e321678c5d3c59be8914bee1b1dada16d679ade1fe7d91bd3e8866cabdafc453"
+        }
+      ],
+      "curve_sha256_at_observation": "77d6ace9157502151ddc80114632520a58b3df0a9f9139d9925410f4cae01606",
+      "initial_untrained_validation_already_recorded": true,
+      "test_evaluation_file_present": false,
+      "forward_evaluation_file_present": false
+    },
+    {
+      "run_id": "shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5",
+      "algorithm": "stable_baselines3.TD3",
+      "training_started_at": "2026-09-12T03:20:49.266535Z",
+      "config_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/config.json",
+      "config_sha256": "126b4761f7fb32bdf6bcd62d83dcfdd4f5f57e66deef51c5979e8e23dc7d95cc",
+      "manifest_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/manifest.json",
+      "manifest_sha256": "990550e13585a3eee6d7cfbf527eb1828163b2176b2b49102a1de3c7c2f1c9e0",
+      "observed_at": "2026-09-12T03:24:24.130766Z",
+      "checkpoints_already_observed": [
+        {
+          "step": 10000,
+          "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_10000.zip",
+          "model_sha256": "5ec716f7d8bb5f6b4d8641a3f6ee34ba2b0cc14444399df38779953cd9b0a16c"
+        },
+        {
+          "step": 20000,
+          "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_20000.zip",
+          "model_sha256": "ec62d061632e5ab808472d7a315f61854a2713662cfc56e97ba5d85e258d8bc2"
+        }
+      ],
+      "curve_sha256_at_observation": "fb93efb2b60989464a8b0cab46733361b2a1bc2d45d2b10cce8015feb0f5031f",
+      "initial_untrained_validation_already_recorded": true,
+      "test_evaluation_file_present": false,
+      "forward_evaluation_file_present": false
+    }
+  ],
+  "fixed_experiment": {
+    "algorithms": [
+      "stable_baselines3.SAC",
+      "stable_baselines3.TD3"
+    ],
+    "seed": 912,
+    "steps_per_algorithm": 60000,
+    "checkpoint_interval": 10000,
+    "network": [
+      128,
+      128
+    ],
+    "observation_dimensions": 31,
+    "gamma": 1.0,
+    "n_step": 1,
+    "teacher_actions_used": false,
+    "warm_start_used": false,
+    "same_physical_config_and_action_mapping": true,
+    "same_train_normalizer": true,
+    "same_business_and_safety_gates": true,
+    "algorithm_specific_hyperparameters_remain_as_separately_frozen_configs": true
+  },
+  "algorithm_comparison": {
+    "checkpoint_step": 60000,
+    "rule": "Compare the final fixed-budget 60,000-step checkpoint of each algorithm; retain every intermediate checkpoint and metric.",
+    "not_selected_by_best_validation_checkpoint": true
+  },
+  "admission_selection": {
+    "rule": "Existing frozen validation-only checkpoint and seed ranking remains unchanged; it is separate from final-checkpoint algorithm comparison.",
+    "admission_gate": {
+      "cost_reduction_percent_min": 0.03,
+      "carbon_reduction_percent_min": 0.001,
+      "peak_reduction_percent_min": 0.0,
+      "all_three_95ci_lower_bounds_strictly_positive": true,
+      "formal_source_period_cluster_95ci_lower_bounds_strictly_positive": true,
+      "formal_source_period_cluster_count_min": 3,
+      "every_window_carbon_non_regression": true,
+      "terminal_absolute_tolerance": 1e-06,
+      "safety_tolerance": 1e-12,
+      "tail_checkpoints": 3,
+      "tail_relative_range_max": 0.25,
+      "tail_range_floors_pp": {
+        "total_cost_cny": 0.02,
+        "carbon_kg": 0.001,
+        "peak_kw": 0.05
+      }
+    },
+    "gate_relaxation_allowed": false,
+    "single_seed_pilot_is_not_formal_three_seed_admission": true
+  },
+  "access_rules": {
+    "test_policy_evaluation_allowed": false,
+    "forward_dataset_load_or_policy_evaluation_allowed": false,
+    "validation_or_test_used_to_choose_lambda": false,
+    "historical_csv_access_boundary": "Runner loads the complete historical CSV and performs quality checks; repeated-test rows are excluded from gradients, normalization and selection, and no test policy evaluation is authorized."
+  },
+  "stop_rule": "If both fixed r5 runs fail the unchanged validation/business requirements, retain their rejection evidence and conclude this exploration rather than adding validation-driven lambda trials.",
+  "simulation_mode": true,
+  "live_data_verified": false,
+  "dispatch_allowed": false,
+  "production_authority": false
+}

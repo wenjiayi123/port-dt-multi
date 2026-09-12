@@ -13,6 +13,8 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>港口 AI 运营平台 · 数字孪生 + RL 决策</title>
+  <link rel="stylesheet" href="/static/module_navigation.css?v=20260912-2">
+  <script defer src="/static/module_navigation.js?v=20260912-2"></script>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1220'/%3E%3Cpath d='M13 44h38M18 35h28l-4 9H22zM29 13h6v22h-6zM20 20h24v6H20z' fill='%2360a5fa'/%3E%3C/svg%3E" />
   <style>
     /* ====== 基础风格（保持） ====== */
@@ -2711,7 +2713,11 @@ border-left:3px solid rgba(148,163,184,.22);
         <div class="hero-sub">以数字孪生与强化学习统一能耗·碳·调度·安全，驱动全局最优运营 <span class="en">Digital Twin + RL for Energy · Carbon · Dispatch · Safety</span></div>
       </div>
 
-      <nav class="nav-shell" id="panel-nav-primary">
+      <div class="module-page-bar">
+        <h1 class="module-page-title" id="module-page-title">首页总览</h1>
+        <a class="module-home-link" href="#home-hero"><span aria-hidden="true">←</span> 返回主界面</a>
+      </div>
+      <nav class="nav-shell" id="panel-nav-primary" aria-label="主菜单">
         <div class="nav-group">
           <button class="nav-trigger is-direct" type="button" data-direct-target="#home-hero"><span class="nav-label"><span class="nav-cn">首页总览</span><span class="nav-en">Overview</span></span></button>
         </div>
@@ -2720,9 +2726,9 @@ border-left:3px solid rgba(148,163,184,.22);
           <button class="nav-trigger" type="button"><span class="nav-label"><span class="nav-cn">管理驾驶舱</span><span class="nav-en">Cockpit</span></span></button>
           <div class="nav-dropdown">
             <div class="nav-dropdown-grid">
-              <a href="#exec-cockpit"><span>董事会 / CEO 驾驶舱</span><span>总控</span></a>
-              <a href="#platform-map"><span>平台总览地图</span><span>全景</span></a>
-              <a href="#dev-ecosystem"><span>开发生态 / App Center</span><span>生态</span></a>
+              <a href="#exec-cockpit" data-module-page><span>董事会 / CEO 驾驶舱</span><span>总控</span></a>
+              <a href="#platform-map" data-module-page><span>平台总览地图</span><span>全景</span></a>
+              <a href="#dev-ecosystem" data-module-page><span>开发生态 / App Center</span><span>生态</span></a>
             </div>
           </div>
         </div>
@@ -2731,7 +2737,7 @@ border-left:3px solid rgba(148,163,184,.22);
           <button class="nav-trigger" type="button"><span class="nav-label"><span class="nav-cn">多港区</span><span class="nav-en">Multi-Port</span></span></button>
           <div class="nav-dropdown">
             <div class="nav-dropdown-grid">
-              <a href="#multiport-section"><span>多港区复用总览</span><span>多港</span></a>
+              <a href="#multiport-section" data-module-page><span>多港区复用总览</span><span>多港</span></a>
             </div>
           </div>
         </div>
@@ -2740,8 +2746,8 @@ border-left:3px solid rgba(148,163,184,.22);
           <button class="nav-trigger" type="button"><span class="nav-label"><span class="nav-cn">ESG / 合规</span><span class="nav-en">Compliance</span></span></button>
           <div class="nav-dropdown">
             <div class="nav-dropdown-grid">
-              <a href="#esg-section"><span>ESG 总览</span><span>碳与能耗</span></a>
-              <a href="#cmp-section"><span>合规报表 / 审计口径</span><span>合规</span></a>
+              <a href="#esg-section" data-module-page><span>ESG 总览</span><span>碳与能耗</span></a>
+              <a href="#cmp-section" data-module-page><span>合规报表 / 审计口径</span><span>合规</span></a>
             </div>
           </div>
         </div>
@@ -2750,11 +2756,11 @@ border-left:3px solid rgba(148,163,184,.22);
           <button class="nav-trigger" type="button"><span class="nav-label"><span class="nav-cn">数字孪生</span><span class="nav-en">Digital Twin</span></span></button>
           <div class="nav-dropdown">
             <div class="nav-dropdown-grid">
-              <a href="#twin3d-section"><span>Twin 3D</span><span>三维</span></a>
-              <a href="#story-section"><span>Story</span><span>叙事</span></a>
-              <a href="#kpi-section"><span>KPI</span><span>指标</span></a>
-              <a href="#realtime-section"><span>实时视图</span><span>实时</span></a>
-              <a href="#twin-section"><span>核心孪生</span><span>核心孪生</span></a>
+              <a href="#twin3d-section" data-module-page><span>Twin 3D</span><span>三维</span></a>
+              <a href="#story-section" data-module-page><span>Story</span><span>叙事</span></a>
+              <a href="#kpi-section" data-module-page><span>KPI</span><span>指标</span></a>
+              <a href="#realtime-section" data-module-page><span>实时视图</span><span>实时</span></a>
+              <a href="#twin-section" data-module-page><span>核心孪生</span><span>核心孪生</span></a>
             </div>
           </div>
         </div>
@@ -2763,18 +2769,18 @@ border-left:3px solid rgba(148,163,184,.22);
           <button class="nav-trigger" type="button"><span class="nav-label"><span class="nav-cn">策略 → 执行</span><span class="nav-en">Strategy Ops</span></span></button>
           <div class="nav-dropdown">
             <div class="nav-dropdown-grid">
-              <a href="#strategy-exec-module" data-target-id="strategy-exec-module"><span>策略编排总览</span><span>总览</span></a>
-              <a href="#rlops-section" data-target-id="rlops-section"><span>强化学习运营</span><span>策略</span></a>
-              <a href="#exec-wrap" data-target-id="exec-wrap"><span>执行</span><span>执行</span></a>
-              <a href="#mas-section" data-target-id="mas-section"><span>多智能体协同</span><span>协同</span></a>
-              <a href="#twinlab-section" data-target-id="twinlab-section"><span>TwinLab 场景工厂</span><span>实验室</span></a>
-              <a href="#train-section" data-target-id="train-section"><span>训练中心</span><span>训练</span></a>
-              <a href="#deep-section" data-target-id="deep-section"><span>港口业务深耕</span><span>价值</span></a>
-              <a href="#yl-section" data-target-id="yl-section"><span>堆场照明</span><span>子策略</span></a>
-              <a href="#hvac-section" data-target-id="hvac-section"><span>暖通空调</span><span>子策略</span></a>
-              <a href="#sbess-section" data-target-id="sbess-section"><span>岸电储能</span><span>子策略</span></a>
-              <a href="#be-section" data-target-id="be-section"><span>储能能量调度</span><span>子策略</span></a>
-              <a href="#yc-section" data-target-id="yc-section"><span>场桥作业</span><span>子策略</span></a>
+              <a href="#strategy-exec-module" data-target-id="strategy-exec-module" data-module-page><span>策略编排总览</span><span>总览</span></a>
+              <a href="#rlops-section" data-target-id="rlops-section" data-module-page><span>强化学习运营</span><span>策略</span></a>
+              <a href="#exec-wrap" data-target-id="exec-wrap" data-module-page><span>执行</span><span>执行</span></a>
+              <a href="#mas-section" data-target-id="mas-section" data-module-page><span>多智能体协同</span><span>协同</span></a>
+              <a href="#twinlab-section" data-target-id="twinlab-section" data-module-page><span>TwinLab 场景工厂</span><span>实验室</span></a>
+              <a href="#train-section" data-target-id="train-section" data-module-page><span>训练中心</span><span>训练</span></a>
+              <a href="#deep-section" data-target-id="deep-section" data-module-page><span>港口业务深耕</span><span>价值</span></a>
+              <a href="#yl-section" data-target-id="yl-section" data-module-page><span>堆场照明</span><span>子策略</span></a>
+              <a href="#hvac-section" data-target-id="hvac-section" data-module-page><span>暖通空调</span><span>子策略</span></a>
+              <a href="#sbess-section" data-target-id="sbess-section" data-module-page><span>岸电储能</span><span>子策略</span></a>
+              <a href="#be-section" data-target-id="be-section" data-module-page><span>储能能量调度</span><span>子策略</span></a>
+              <a href="#yc-section" data-target-id="yc-section" data-module-page><span>场桥作业</span><span>子策略</span></a>
             </div>
           </div>
         </div>
@@ -2783,12 +2789,12 @@ border-left:3px solid rgba(148,163,184,.22);
           <button class="nav-trigger" type="button"><span class="nav-label"><span class="nav-cn">审计 / OpsX</span><span class="nav-en">Audit Ops</span></span></button>
           <div class="nav-dropdown">
             <div class="nav-dropdown-grid">
-              <a href="#ai-trust-scenes"><span>AI 可信度总览</span><span>可信度</span></a>
-              <a href="#monitoring-section" data-target-id="monitoring-section"><span>异常检测 / 漂移</span><span>监测</span></a>
-              <a href="#opsx-section"><span>OpsX 运行治理</span><span>运行治理</span></a>
-              <a href="#ext-section"><span>外部信号</span><span>外部信号</span></a>
-              <a href="#mlops-section"><span>MLOps 模型治理</span><span>模型治理</span></a>
-              <a href="#g-section"><span>治理审计</span><span>审计治理</span></a>
+              <a href="#ai-trust-scenes" data-module-page><span>AI 可信度总览</span><span>可信度</span></a>
+              <a href="#monitoring-section" data-target-id="monitoring-section" data-module-page><span>异常检测 / 漂移</span><span>监测</span></a>
+              <a href="#opsx-section" data-module-page><span>OpsX 运行治理</span><span>运行治理</span></a>
+              <a href="#ext-section" data-module-page><span>外部信号</span><span>外部信号</span></a>
+              <a href="#mlops-section" data-module-page><span>MLOps 模型治理</span><span>模型治理</span></a>
+              <a href="#g-section" data-module-page><span>治理审计</span><span>审计治理</span></a>
             </div>
           </div>
         </div>
@@ -2822,7 +2828,7 @@ border-left:3px solid rgba(148,163,184,.22);
         <div>
           <div class="home-eyebrow"><span class="home-eyebrow-dot"></span><span>首页总入口 · 先结论后细节</span></div>
           <div class="home-lead" id="home-lead">当前为公开数据离线验证态；现场运行状态与风险等待真实来源确认。</div>
-          <div class="home-desc" id="home-desc">这一屏先只回答四件事：当前运行是否稳、风险是否正在抬升、最值得优先处理的动作是什么、下一步该进入哪条主链路。更细的孪生、策略、执行与审计继续留在下方模块，首屏只负责做平台级判断与引导。</div>
+          <div class="home-desc" id="home-desc">这一屏先只回答四件事：当前运行是否稳、风险是否正在抬升、最值得优先处理的动作是什么、下一步该进入哪条主链路。通过上方菜单进入孪生、策略、执行与审计的独立模块，随时返回主页查看整体态势。</div>
 
 
           <div class="home-action-row">
@@ -3075,8 +3081,9 @@ border-left:3px solid rgba(148,163,184,.22);
             数据源：/api/app_center/overview · 仅展示运行时已注册路由
           </div>
           <div class="row" style="margin-top:8px; gap:8px;">
-            <a class="btn" href="/docs" target="_blank">查看 API 文档</a>
+            <a class="btn" href="/docs">查看 API 文档</a>
             <button type="button" class="chip" id="btn-app-center-docs">复制 OpenAPI 地址</button>
+            <span class="small" id="app-center-copy-status" role="status" aria-live="polite"></span>
           </div>
 
 
@@ -3377,7 +3384,7 @@ border-left:3px solid rgba(148,163,184,.22);
         if (!targetSel) return;
         const target = document.querySelector(targetSel);
         if (!target) return;
-        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        if (!window.PortModuleNavigation?.open(target.id)) target.scrollIntoView({ behavior: "smooth", block: "start" });
       };
       container.addEventListener("click", (evt) => {
         activate(evt.target.closest(".app-card[data-app-id]"));
@@ -3546,15 +3553,26 @@ border-left:3px solid rgba(148,163,184,.22);
 
     const btnDocs = document.getElementById("btn-app-center-docs");
     if (btnDocs) {
-      btnDocs.addEventListener("click", () => {
+      let copyRunId = 0;
+      btnDocs.addEventListener("click", async () => {
+        const runId = ++copyRunId;
         const address = `${window.location.origin}/openapi.json`;
-        const original = btnDocs.textContent;
-        const done = () => {
+        const feedback = document.getElementById("app-center-copy-status");
+        btnDocs.disabled = true;
+        btnDocs.textContent = "正在复制…";
+        if (feedback) feedback.textContent = "等待剪贴板写入结果…";
+        try {
+          if (typeof navigator.clipboard?.writeText !== "function") throw new Error("当前浏览器不支持自动复制");
+          await navigator.clipboard.writeText(address);
           btnDocs.textContent = "已复制 OpenAPI 地址";
-          setTimeout(() => { btnDocs.textContent = original; }, 1500);
-        };
-        if (navigator.clipboard) navigator.clipboard.writeText(address).then(done).catch(done);
-        else done();
+          if (feedback) feedback.textContent = `已写入剪贴板：${address}`;
+          setTimeout(() => { if (runId === copyRunId) btnDocs.textContent = "复制 OpenAPI 地址"; }, 1500);
+        } catch (error) {
+          btnDocs.textContent = "复制失败 · 可重试";
+          if (feedback) feedback.textContent = `未写入剪贴板，请手动复制：${address}（${error.message || String(error)}）`;
+        } finally {
+          btnDocs.disabled = false;
+        }
       });
     }
 
@@ -3744,13 +3762,13 @@ border-left:3px solid rgba(148,163,184,.22);
             </li>
             <li>
               <span class="esg-dot"></span>
-              <span>与下方 <code>报表与合规 / Compliance</code> 模块联动，可一键生成月/季监管报表。</span>
+              <span>与 <code>报表与合规 / Compliance</code> 模块联动，可一键生成月/季监管报表。</span>
             </li>
           </ul>
 
           <div class="row" style="margin-top:8px;">
             <a class="btn" href="#cmp-section">打开详细合规报表</a>
-            <span class="small" style="color:#8aa6d8;">向下滚动至「报表与合规 / Compliance」区块</span>
+            <span class="small" style="color:#8aa6d8;">打开独立的「报表与合规」模块</span>
           </div>
         </div>
       </div>
@@ -4228,7 +4246,7 @@ border-left:3px solid rgba(148,163,184,.22);
       </div>
       <div class="strategy-origin" id="strategy-origin-box">
         <div class="strategy-origin-title">策略出现原因 → 仿真支撑 → 下发判断</div>
-        <div class="strategy-origin-sub" id="strategy-origin-sub">当前策略来源：source=overview.primary_action · scene=基线场景 · status=稳定 · risk=中低 · focus=执行闭环。</div>
+        <div class="strategy-origin-sub" id="strategy-origin-sub">当前策略来源：source=overview.primary_action · scene=基线场景 · status=证据待补 · risk=风险未评定 · focus=核验现场来源。</div>
         <div class="chain-context-tags" style="margin-top:10px;">
           <span class="chain-chip">场景 <b id="strategy-scene-chip">基线场景</b></span>
           <span class="chain-chip">状态 <b id="strategy-status-chip">稳定</b></span>
@@ -4320,7 +4338,7 @@ border-left:3px solid rgba(148,163,184,.22);
         <div class="small hint" style="margin-top:0;">同一策略可在多港区、多业务域复用与评估</div>
         <h4 class="title" style="margin-top:8px;">RL 策略面板 · 集成</h4>
         <div class="strategy-rl-head">
-          <button class="btn" id="btn-rlpanel-open" title="在新页面打开 /rl-panel">策略面板（新）</button>
+          <button class="btn" id="btn-rlpanel-open" title="打开强化学习面板">强化学习面板</button>
           <button class="btn" id="btn-rl-future-open" title="打开未来科幻决策舱">未来决策舱</button>
           <button class="btn" id="btn-rlpanel-list" title="拉取后端建议策略列表">拉取策略列表</button>
           <select id="rlpanel-strategy" title="选择一条策略后可模拟" style="min-width:220px;">
@@ -4339,7 +4357,7 @@ border-left:3px solid rgba(148,163,184,.22);
       <!-- 策略仿真对比小图 -->
       <div class="small" style="margin-top:4px;color:#8aa6d8;">策略仿真对比（聚合功率）：<span class="mono" id="simMeta">—</span></div>
       <canvas id="simCanvas" aria-label="强化学习策略与基线聚合功率对比图"></canvas>
-      <button class="btn" id="btn-sim-save">保存仿真图(PNG)</button>
+      <button class="btn" id="btn-sim-save" disabled title="请先为当前策略完成评测并获得有效对比曲线">保存仿真图(PNG)</button>
 
       <!-- 可解释特征（保持） -->
       <div class="exp-wrap">
@@ -4402,14 +4420,14 @@ border-left:3px solid rgba(148,163,184,.22);
             <div class="chain-context-tags" id="twin-chain-tags">
               <span class="chain-chip">来源 <b>总览</b></span>
               <span class="chain-chip">场景 <b id="ctx-scenario-chip">基线场景</b></span>
-              <span class="chain-chip">风险 <b id="ctx-risk-chip">中低</b></span>
+              <span class="chain-chip">风险 <b id="ctx-risk-chip">风险未评定</b></span>
               <span class="chain-chip">重点 <b id="ctx-focus-chip">执行闭环</b></span>
             </div>
           </div>
           <div class="twin-core-grid">
             <div class="twin-core-card">
               <div class="twin-core-k">当前态势</div>
-              <div class="twin-core-v" id="ctx-status-card">稳定</div>
+              <div class="twin-core-v" id="ctx-status-card">证据待补</div>
               <div class="twin-core-s" id="ctx-status-card-sub">先承接首页判断，再在 Twin 里看当前健康度是否由峰值需量、拥堵或天气扰动驱动。</div>
             </div>
             <div class="twin-core-card">
@@ -5125,9 +5143,28 @@ border-left:3px solid rgba(148,163,184,.22);
   let externalV3Evidence=null;
   let portCallReadiness=null;
   let siteIntegrationReadiness=null;
+  let externalLoadPending=null;
+  let externalDetailView='summary';
+  let portCallLoadPending=null;
+  let siteIntegrationLoadPending=null;
+  let portCallInteraction=0;
+  let siteIntegrationInteraction=0;
+  function renderExternalDetail(){
+    if(!externalV3Evidence)return;
+    const j=externalV3Evidence;
+    const details={
+      provenance:{dataset:j.dataset,public_sources:j.public_sources,adapter_status:j.adapter_status},
+      registry:{signal_registry:j.signal_registry,timeline_sample:(j.timeline||[]).slice(0,3)},
+      contract:{boundary:j.boundary,replacement_contract:j.replacement_contract}
+    };
+    byId('ext-v3-detail').textContent=externalDetailView==='summary'
+      ? 'V3外部信号结论：需量/电价/碳因子/潮位/海况/吞吐来自哈希固定的公开回放并参与模型；TOS船期、AIS航迹和实时市场未获授权，均显示待接入港口且不生成替代实体。'
+      : JSON.stringify(details[externalDetailView],null,2);
+  }
   function lineChart(id,rows,color,decimals){
     const canvas=byId(id); if(!canvas)return;
     const rect=canvas.getBoundingClientRect(),dpr=window.devicePixelRatio||1;
+    if(!canvas.getClientRects().length || rect.width <= 0 || rect.height <= 0) return;
     canvas.width=Math.max(240,Math.round(rect.width*dpr)); canvas.height=Math.max(90,Math.round(rect.height*dpr));
     const ctx=canvas.getContext('2d'); ctx.setTransform(dpr,0,0,dpr,0,0);
     const w=canvas.width/dpr,h=canvas.height/dpr,pad=30,values=rows.map(r=>Number(r.value)).filter(Number.isFinite);
@@ -5139,6 +5176,14 @@ border-left:3px solid rgba(148,163,184,.22);
     values.forEach((v,i)=>{const x=pad+i*(w-2*pad)/(values.length-1),y=h-pad-(v-lo)*(h-2*pad)/(hi-lo);if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();
     ctx.fillStyle='#8aa6d8';ctx.font='11px system-ui';ctx.fillText(hi.toFixed(decimals),3,pad);ctx.fillText(lo.toFixed(decimals),3,h-pad);
   }
+  function redrawExternalCharts(){
+    if(!externalV3Evidence || !byId('ext-section')?.getClientRects().length) return;
+    const tables=externalV3Evidence.tables||{};
+    lineChart('demand-big',tables.demand||[],'#38bdf8',0);lineChart('spot-big',tables.price||[],'#a78bfa',3);lineChart('spark-spot',tables.price||[],'#74c0fc',3);lineChart('tide-big',tables.tide||[],'#2dd4bf',2);
+  }
+  // Module navigation broadcasts resize after restoring the visible layout.
+  // Redraw cached evidence only; keep the selected detail and request state.
+  window.addEventListener('resize',redrawExternalCharts);
   function pendingRow(cols,text){return `<tr><td colspan="${cols}" class="small" style="color:#eab308;">${text}</td></tr>`;}
   function renderExternalV3(j){
     externalV3Evidence=j; const dataset=j.dataset||{},tables=j.tables||{},signals=j.signal_registry||[];
@@ -5156,10 +5201,20 @@ border-left:3px solid rgba(148,163,184,.22);
     byId('tbl-ais').querySelector('tbody').innerHTML=pendingRow(4,`${tables.ais_arrivals?.state}：${tables.ais_arrivals?.reason}`);
     const fill=(tableId,rows,decimals,unit)=>{byId(tableId).querySelector('tbody').innerHTML=(rows||[]).slice(0,24).map(row=>`<tr><td>${new Date(row.timestamp).toLocaleString()}</td><td class="mono">${Number(row.value).toFixed(decimals)} ${unit||''}<div class="small">源:${String(row.source_timestamp||'').slice(0,16)}</div></td></tr>`).join('')||pendingRow(2,'待接入港口');};
     fill('tbl-demand',tables.demand,1,'');fill('tbl-spot',tables.price,4,'');fill('tbl-tide',tables.tide,3,'');
-    lineChart('demand-big',tables.demand||[],'#38bdf8',0);lineChart('spot-big',tables.price||[],'#a78bfa',3);lineChart('spark-spot',tables.price||[],'#74c0fc',3);lineChart('tide-big',tables.tide||[],'#2dd4bf',2);
-    byId('ext-v3-detail').textContent='V3外部信号结论：需量/电价/碳因子/潮位/海况/吞吐来自哈希固定的公开回放并参与模型；TOS船期、AIS航迹和实时市场未获授权，均显示待接入港口且不生成替代实体。';
+    redrawExternalCharts();
+    renderExternalDetail();
   }
-  async function loadExternalV3(){const response=await fetch('/api/v3/external-signals/evidence',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);renderExternalV3(await response.json());}
+  function loadExternalV3(){
+    if(externalLoadPending)return externalLoadPending;
+    externalLoadPending=(async()=>{const response=await fetch('/api/v3/external-signals/evidence',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);const payload=await response.json();renderExternalV3(payload);return payload;})().finally(()=>{externalLoadPending=null;});
+    return externalLoadPending;
+  }
+  async function selectExternalDetail(view){
+    externalDetailView=view;
+    byId('ext-v3-detail').textContent='正在读取所选证据…';
+    try{if(!externalV3Evidence)await loadExternalV3();renderExternalDetail();}
+    catch(error){byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;byId('ext-v3-detail').textContent='所选证据读取失败；可点击刷新重试。'+error.message;}
+  }
   function portCallContractSample(){
     const now=new Date(),updated=new Date(now.getTime()-60*1000);
     const items=[
@@ -5187,9 +5242,12 @@ border-left:3px solid rgba(148,163,184,.22);
     byId('ext-port-call').textContent=status.live_data_verified?'已验证':'待配置';
     byId('ext-port-call').style.color=status.live_data_verified?'#86efac':'#fcd34d';
   }
-  async function loadPortCallReadiness(){
-    const response=await fetch('/api/v3/port-call/readiness',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);
-    const payload=await response.json();renderPortCallReadiness(payload);return payload;
+  function loadPortCallReadiness(){
+    if(portCallLoadPending)return portCallLoadPending;
+    const interaction=portCallInteraction;
+    portCallLoadPending=(async()=>{const response=await fetch('/api/v3/port-call/readiness',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    const payload=await response.json();portCallReadiness=payload;if(interaction===portCallInteraction)renderPortCallReadiness(payload);return payload;})().finally(()=>{portCallLoadPending=null;});
+    return portCallLoadPending;
   }
   async function validatePortCallContract(){
     const response=await fetch('/api/v3/port-call/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(portCallContractSample())});
@@ -5199,8 +5257,12 @@ border-left:3px solid rgba(148,163,184,.22);
     byId('port-call-gateway-status').style.color=payload.valid?'#86efac':'#f87171';
   }
   async function loadSiteIntegrationReadiness(showDetail=false){
+    const interaction=siteIntegrationInteraction;
+    if(!siteIntegrationLoadPending)siteIntegrationLoadPending=(async()=>{
     const response=await fetch('/api/v3/site-integration/readiness',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);
-    const payload=await response.json();siteIntegrationReadiness=payload;
+    const payload=await response.json();siteIntegrationReadiness=payload;return payload;})().finally(()=>{siteIntegrationLoadPending=null;});
+    const payload=await siteIntegrationLoadPending;
+    if(interaction!==siteIntegrationInteraction)return payload;
     const live=Number(payload.live_verified_adapter_count||0),total=Number(payload.adapter_count||0),boundary=payload.boundary||{};
     byId('site-integration-status').textContent=live===total&&total>0
       ? `八类实时源已验证 ${live}/${total} · 历史窗口和现场准入仍未完成 · 无生产控制权`
@@ -5231,9 +5293,11 @@ border-left:3px solid rgba(148,163,184,.22);
   }
   window.loadExternalV3=loadExternalV3;
   byId('btn-ext-refresh')?.addEventListener('click',(event)=>{event.preventDefault();event.stopImmediatePropagation();loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});},true);
-  byId('btn-ext-provenance')?.addEventListener('click',async()=>{if(!externalV3Evidence)await loadExternalV3();byId('ext-v3-detail').textContent=JSON.stringify({dataset:externalV3Evidence.dataset,public_sources:externalV3Evidence.public_sources,adapter_status:externalV3Evidence.adapter_status},null,2);});
-  byId('btn-ext-registry')?.addEventListener('click',async()=>{if(!externalV3Evidence)await loadExternalV3();byId('ext-v3-detail').textContent=JSON.stringify({signal_registry:externalV3Evidence.signal_registry,timeline_sample:externalV3Evidence.timeline.slice(0,3)},null,2);});
-  byId('btn-ext-contract')?.addEventListener('click',async()=>{if(!externalV3Evidence)await loadExternalV3();byId('ext-v3-detail').textContent=JSON.stringify({boundary:externalV3Evidence.boundary,replacement_contract:externalV3Evidence.replacement_contract},null,2);});
+  byId('btn-ext-provenance')?.addEventListener('click',()=>selectExternalDetail('provenance'));
+  byId('btn-ext-registry')?.addEventListener('click',()=>selectExternalDetail('registry'));
+  byId('btn-ext-contract')?.addEventListener('click',()=>selectExternalDetail('contract'));
+  ['btn-port-call-readiness','btn-port-call-contract','btn-port-call-preflight'].forEach(id=>byId(id)?.addEventListener('click',()=>{portCallInteraction++;},true));
+  ['btn-site-integration-readiness','btn-site-integration-contract','btn-site-integration-rejection','btn-site-dataset-readiness'].forEach(id=>byId(id)?.addEventListener('click',()=>{siteIntegrationInteraction++;},true));
   byId('btn-port-call-readiness')?.addEventListener('click',async()=>{try{const payload=await loadPortCallReadiness();byId('port-call-gateway-detail').textContent=JSON.stringify({adapter_status:payload.adapter_status,boundary:payload.boundary,quality_gates:payload.quality_gates},null,2);}catch(error){byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;}});
   byId('btn-port-call-contract')?.addEventListener('click',async()=>{try{const payload=portCallReadiness||await loadPortCallReadiness();byId('port-call-gateway-detail').textContent=JSON.stringify({schema_version:payload.schema_version,event_contract:payload.event_contract,quality_gates:payload.quality_gates,boundary:payload.boundary},null,2);}catch(error){byId('port-call-gateway-status').textContent='靠泊事件合同加载失败：'+error.message;}});
   byId('btn-port-call-preflight')?.addEventListener('click',()=>validatePortCallContract().catch(error=>{byId('port-call-gateway-status').textContent='接入前校验失败：'+error.message;byId('port-call-gateway-status').style.color='#f87171';}));
@@ -5241,7 +5305,7 @@ border-left:3px solid rgba(148,163,184,.22);
   byId('btn-site-integration-contract')?.addEventListener('click',async()=>{try{const payload=siteIntegrationReadiness||await loadSiteIntegrationReadiness(false);byId('site-integration-detail').textContent=JSON.stringify({schema_version:payload.schema_version,quality_gates:payload.quality_gates,adapters:(payload.adapters||[]).map(row=>({adapter_id:row.adapter_id,required_fields:row.required_fields,blockers:row.blockers})),boundary:payload.boundary},null,2);}catch(error){byId('site-integration-status').textContent='现场字段合同加载失败：'+error.message;}});
   byId('btn-site-integration-rejection')?.addEventListener('click',()=>validateUnauthorizedSnapshotRejection().catch(error=>{byId('site-integration-status').textContent='失败关闭验证异常：'+error.message;byId('site-integration-status').style.color='#f87171';}));
   byId('btn-site-dataset-readiness')?.addEventListener('click',()=>validatePublicDatasetBoundary().catch(error=>{byId('site-integration-status').textContent='数据替换边界核验失败：'+error.message;byId('site-integration-status').style.color='#f87171';}));
-  const start=()=>{loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});loadPortCallReadiness().catch(error=>{byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;});loadSiteIntegrationReadiness(false).catch(error=>{byId('site-integration-status').textContent='现场接入状态加载失败：'+error.message;});};setTimeout(start,1200);setTimeout(start,4000);
+  const start=()=>{if(!externalV3Evidence)loadExternalV3().catch(error=>{byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;});if(!portCallReadiness&&!portCallInteraction)loadPortCallReadiness().catch(error=>{byId('port-call-gateway-status').textContent='靠泊网关状态加载失败：'+error.message;});if(!siteIntegrationReadiness&&!siteIntegrationInteraction)loadSiteIntegrationReadiness(false).catch(error=>{byId('site-integration-status').textContent='现场接入状态加载失败：'+error.message;});};setTimeout(start,1200);setTimeout(start,4000);
 })();
 </script>
 
@@ -5299,17 +5363,17 @@ border-left:3px solid rgba(148,163,184,.22);
         <div>
           <div class="small" style="color:#8aa6d8;margin-bottom:6px;">9. O11y & 根因</div>
           <div class="row" style="gap:8px;flex-wrap:wrap;">
-            <input id="o11y-job" class="mono" value="rl-20260812T064926339Z" aria-label="入选模型JobId" style="width:200px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
-            <input id="o11y-asset" class="mono" value="global_port_sac" aria-label="模型资产" style="width:140px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
-            <button class="btn" id="btn-o11y-trace" title="GET /api/o11y/trace">拉取决策 Trace</button>
-            <button class="btn" id="btn-rca-run"   title="GET /api/rca/topology">根因定位</button>
+            <input id="o11y-job" class="mono" value="读取入选模型记录…" readonly aria-label="当前证据入选模型JobId（只读）" style="width:200px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
+            <input id="o11y-asset" class="mono" value="当前证据算法" readonly aria-label="当前证据算法（只读）" style="width:140px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
+            <button class="btn" id="btn-o11y-trace" title="GET /api/v3/mlops/evidence · persisted_model_lineage">查看已保存模型血缘</button>
+            <button class="btn" id="btn-rca-run" title="GET /api/v3/mlops/evidence · pipeline blockers">查看准入拦截项</button>
           </div>
-          <div class="small" style="color:#8aa6d8;margin-top:6px;">决策路径（OpenTelemetry 视角）：</div>
+          <div class="small" style="color:#8aa6d8;margin-top:6px;">当前证据的模型、数据与选模血缘（只读，不是实时链路追踪）：</div>
           <pre id="o11y-trace" class="mono" style="height:140px;"></pre>
-          <div class="small" style="color:#8aa6d8;margin-top:6px;">异常→指标→分桶拓扑（CUPED/分层）：</div>
+          <div class="small" style="color:#8aa6d8;margin-top:6px;">训练及现场准入门的拦截原因（不推断因果根因）：</div>
           <table class="exp" id="rca-table">
             <thead><tr><th>层级</th><th>节点</th><th>贡献/提升</th><th>证据</th></tr></thead>
-            <tbody><tr><td colspan="4" class="small" style="color:#8aa6d8;">点击“根因定位”加载</td></tr></tbody>
+            <tbody><tr><td colspan="4" class="small" style="color:#8aa6d8;">点击“查看准入拦截项”加载</td></tr></tbody>
           </table>
         </div>
 
@@ -5317,11 +5381,11 @@ border-left:3px solid rgba(148,163,184,.22);
         <div>
           <div class="small" style="color:#8aa6d8;margin-bottom:6px;">10. 数据治理与质量契约</div>
           <div class="row" style="gap:8px;flex-wrap:wrap;">
-            <input id="dq-dataset" class="mono" value="public_cn_sha_hourly_v3" style="width:280px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
-            <input id="dq-step" type="number" step="1" value="60" title="采样步长秒" class="mono" style="width:120px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
-            <input id="dq-unit" value="kW" title="单位" class="mono" style="width:90px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
-            <input id="dq-th" type="number" step="0.01" value="0.96" title="完整性阈值" class="mono" style="width:120px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
-            <button class="btn" id="btn-dq-check" title="POST /api/dq/contract/check">检查契约</button>
+            <input id="dq-dataset" class="mono" value="读取当前证据数据集…" readonly aria-label="当前证据数据集（只读）" style="width:280px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
+            <input id="dq-step" value="原数据集采样" readonly title="采样按已保存数据契约核验，不支持在此覆盖" class="mono" style="width:120px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
+            <input id="dq-unit" value="逐字段单位" readonly title="单位按各字段契约核验" class="mono" style="width:90px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
+            <input id="dq-th" value="固定质量门" readonly title="读取已保存的质量门和时间隔离结果，不覆盖阈值" class="mono" style="width:120px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
+            <button class="btn" id="btn-dq-check" title="GET /api/v3/mlops/evidence · quality/split gates">查看已核验数据契约</button>
           </div>
           <div class="small" id="dq-res" style="color:#8aa6d8;margin-top:6px;">—</div>
           <table class="exp" id="dq-table" style="margin-top:6px;">
@@ -5350,8 +5414,8 @@ border-left:3px solid rgba(148,163,184,.22);
         <div>
           <div class="small" style="color:#8aa6d8;margin-bottom:6px;">12. 权限/合规</div>
           <div class="row" style="gap:8px;flex-wrap:wrap;">
-            <input id="rbac-user" class="mono" value="auditor" style="width:140px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
-            <button class="btn" id="btn-rbac-who" title="GET /api/rbac/whoami">查看权限</button>
+            <input id="rbac-user" class="mono" value="角色权限契约" readonly aria-label="静态角色权限契约，非当前身份查询" style="width:140px;background:#0b132b;color:#eaf2ff;border:1px solid #1e2a44;border-radius:8px;padding:6px 8px;">
+            <button class="btn" id="btn-rbac-who" title="GET /api/v3/governance/evidence · defined role matrix">查看角色权限契约</button>
           </div>
           <div class="small mono" id="rbac-info" style="color:#8aa6d8;margin-top:6px;">—</div>
           <div class="row" style="gap:8px;flex-wrap:wrap;margin-top:6px;">
@@ -5387,7 +5451,7 @@ border-left:3px solid rgba(148,163,184,.22);
     <!-- ===== 四、港口业务深耕（价值拉满） · BEGIN ===== -->
     <div class="card" id="deep-section" style="grid-column:1 / -1; margin-top:8px;">
       <div class="title">四、港口业务深度与落地契约</div>
-      <div class="desc">公开数据盲测指标、十二控制器策略空间与十二类港口业务能力同屏；现场经营 KPI、设备身份和实际指派缺失时明确“待接入港口”。</div>
+      <div class="desc">公开数据盲测指标、十二控制器策略空间与已登记港口业务能力同屏；现场经营 KPI、设备身份和实际指派缺失时明确“待接入港口”。</div>
 
       <div class="exp-grid" style="margin-top:8px;">
         <!-- === 14. 端到端 KPI 盘 === -->
@@ -5432,7 +5496,7 @@ border-left:3px solid rgba(148,163,184,.22);
           <div class="small" style="color:#8aa6d8;margin-top:6px;">控制器可达集（能耗/TEU × 延误指数；颜色=安全越限率）</div>
           <div id="feasible-heat" style="width:100%;height:220px;margin-top:4px;"></div>
 
-          <div class="small" style="color:#8aa6d8;margin-top:6px;">十二类业务能力与现场替换契约（点击能力查看技术深度）</div>
+          <div class="small" style="color:#8aa6d8;margin-top:6px;">业务能力与现场替换契约（点击能力查看技术深度）</div>
           <table class="exp" id="assign-table" style="margin-top:4px;">
             <thead><tr><th>业务能力</th><th>模型 / 动作契约</th><th>现场替换</th></tr></thead>
             <tbody><tr><td colspan="3" class="small" style="color:#8aa6d8;">正在读取业务能力矩阵…</td></tr></tbody>
@@ -5503,13 +5567,14 @@ border-left:3px solid rgba(148,163,184,.22);
       <div class="kpi-grid" style="margin-top:10px;">
         <div class="kpi"><h4>用电</h4><div class="v" id="cmp-elec">加载 V3 证据</div><div class="s">公开工程基线 / 现场待审计</div></div>
         <div class="kpi"><h4>Scope 1</h4><div class="v" id="cmp-s1">待接入港口</div><div class="s">柴油/燃气/自发电台账</div></div>
-        <div class="kpi"><h4>Scope 2</h4><div class="v" id="cmp-s2">待接入港口</div><div class="s">结算购电/岸电分项</div></div>
+        <div class="kpi"><h4>Scope 2 工程估算</h4><div class="v" id="cmp-s2">待接入港口</div><div class="s">工程电量×排放因子；结算分项待接入</div></div>
         <div class="kpi"><h4>工程基线碳排</h4><div class="v" id="cmp-total">加载 V3 证据</div><div class="s">非审计 Scope 1+2</div></div>
         <div class="kpi"><h4>kWh/TEU</h4><div class="v" id="cmp-kwh-teu">加载 V3 证据</div><div class="s">公开工程强度</div></div>
         <div class="kpi"><h4>kgCO₂e/TEU</h4><div class="v" id="cmp-kg-teu">加载 V3 证据</div><div class="s">公开工程强度</div></div>
       </div>
 
       <!-- 分摊（左：按设备；右：按工艺） -->
+      <pre id="cmp-result-scope" class="small mono" style="white-space:pre-wrap;color:#fcd34d;">默认公开长期工程参考；尚未按当前月度/季度参数测算。</pre>
       <div class="exp-grid" style="margin-top:12px;">
         <div>
           <div class="small" style="margin-bottom:6px;color:#8aa6d8;">按设备分摊（kWh / kgCO₂e / 占比）</div>
@@ -5595,8 +5660,8 @@ border-left:3px solid rgba(148,163,184,.22);
       if (!globalThis.__strategyChainState) {
         globalThis.__strategyChainState = {
           source: 'overview',
-          status: '稳定',
-          risk: '中低',
+          status: '证据待补',
+          risk: '风险未评定',
           focus: '执行闭环',
           scenario: '基线场景',
           forecast: '等待刷新',
@@ -5836,6 +5901,7 @@ border-left:3px solid rgba(148,163,184,.22);
       const lEl = document.getElementById('ap-last');    if (lEl) lEl.textContent = apSummary.last_job ? String(apSummary.last_job).slice(0,8)+'…' : '待接入港口';
       const qcPending=document.getElementById('qc-pending-count'); if(qcPending) qcPending.textContent=apSummary.pending==null?'待接入港口':String(apSummary.pending);
       const qcLast=document.getElementById('qc-last-job'); if(qcLast) qcLast.textContent=apSummary.last_job?String(apSummary.last_job).slice(0,8)+'…':'待接入港口';
+      window.__syncHomeHero?.();
 
       // ⑩ SHAP 微瀑布
       drawWaterfallMini(document.getElementById('dl-shap-mini'), shapTopK||[]);
@@ -5888,13 +5954,19 @@ border-left:3px solid rgba(148,163,184,.22);
       const ctx = out.getContext('2d');
       ctx.fillStyle='#0b132b'; ctx.fillRect(0,0,W,H);
 
-      const asset = window.selAsset?.value || '—';
+      const assetControl=document.getElementById('asset');
+      const assetId=assetControl?.value?.trim()||'未选择资产';
+      const assetLabel=assetControl?.selectedOptions?.[0]?.textContent?.trim();
+      const asset=assetLabel&&assetLabel!==assetId?`${assetLabel} [${assetId}]`:assetId;
+      const viewLabel=document.getElementById('title-asset')?.textContent?.trim()||'当前功率视图';
+      const calibrationAvailable=calibStats.available===true;
       const ts = new Date().toISOString().replace('T',' ').replace('Z',' UTC');
       ctx.fillStyle='#e2e8f0'; ctx.font='20px system-ui'; ctx.fillText(`数字孪生RL平台 · 左侧概览 · 资产 ${asset}`, pad, 36);
-      ctx.fillStyle='#94a3b8'; ctx.font='12px system-ui'; ctx.fillText(ts, pad, 56);
+      ctx.fillStyle='#94a3b8'; ctx.font='12px system-ui'; ctx.fillText(`${ts} · ${viewLabel}${calibrationAvailable?'':' · 预测实绩对齐数据待接入港口'}`, pad, 56);
 
       const cLine=$('#line'), cHeat=$('#dash-heatmap'), c15=$('#dash-g15'), c30=$('#dash-g30'), c60=$('#dash-g60'), cShap=$('#dl-shap-mini');
-      const mape=$('#dl-mape')?.textContent||'—', cover=$('#dl-cover')?.textContent||'—', bias=$('#dl-bias')?.textContent||'—', sigma=$('#dl-sigma')?.textContent||'—';
+      const calibrationMetric=id=>calibrationAvailable?($(id)?.textContent?.trim()||'待接入港口'):'待接入港口';
+      const mape=calibrationMetric('#dl-mape'),cover=calibrationMetric('#dl-cover'),bias=calibrationMetric('#dl-bias'),sigma=calibrationMetric('#dl-sigma');
       const econ=$('#dash-savings')?.textContent||'—', co2=$('#dash-co2')?.textContent||'—';
 
       // 主折线
@@ -5907,7 +5979,7 @@ border-left:3px solid rgba(148,163,184,.22);
       const B2={x:B1.x+B1.w+pad,y:B1.y,w:Math.floor((W-pad*3)/2),h:180};
       ctx.fillStyle='#0c1531'; ctx.fillRect(B1.x,B1.y,B1.w,B1.h); ctx.strokeStyle='#1e2a44'; ctx.strokeRect(B1.x,B1.y,B1.w,B1.h);
       if (cHeat) ctx.drawImage(cHeat, B1.x+2,B1.y+2,B1.w-4,B1.h-4);
-      ctx.fillStyle='#cbd5e1'; ctx.font='14px system-ui'; ctx.fillText('残差热力图（周×小时）', B1.x+8, B1.y+20);
+      ctx.fillStyle='#cbd5e1'; ctx.font='14px system-ui'; ctx.fillText(calibrationAvailable?'残差热力图（周×小时）':'残差热力图 · 预测实绩对齐数据待接入港口', B1.x+8, B1.y+20);
 
       const gw=Math.floor((B2.w-pad*2)/3), gh=B2.h-30, gxs=[B2.x, B2.x+gw+pad, B2.x+2*(gw+pad)], gcs=[c15,c30,c60];
       ['15min','30min','60min'].forEach((lab,i)=>{
@@ -5991,7 +6063,19 @@ border-left:3px solid rgba(148,163,184,.22);
       ctx.font='18px system-ui'; ctx.fillText(hasValue ? (Number(p)*100).toFixed(0)+'%' : '待接入', cx, 44);
     }
 
+    let dashletsRequestId=0;
+    function resetRealtimeInsights(message){
+      dashletsRequestId+=1;
+      dashletsAvailable=false;realtimeEvidence=null;eventBands=[];actionMarkers=[];
+      calibStats={available:false,mape:null,cover:null,bias:null,sigma:null};residualGrid=[];
+      peakRisk={m15:null,m30:null,m60:null};savings={cny:null,co2:null};
+      dqStats={missing:null,stale:null,outlier:null};nextEvents=[];
+      apSummary={pending:null,last_job:null};rolloutMini={phase:'待接入港口',traffic_pct:null,mape:null,guard_block_rate:null,sla_violation_rate:null,thresholds:{}};shapTopK=[];
+      const basis=document.getElementById('realtimeBasis');if(basis)basis.textContent=message;
+      renderDashlets();renderDashletsX();
+    }
     function loadDashlets(asset, _startISO, _endISO){
+      const requestId=++dashletsRequestId,requestedMode=VIEW_MODE;
       const cap = Number(document.getElementById('inpDemand')?.value || 36000);
       const basis = document.getElementById('realtimeBasis');
       const url = `/api/v3/realtime/insights?asset_id=${encodeURIComponent(asset)}&mode=${encodeURIComponent(VIEW_MODE)}&cap_kw=${encodeURIComponent(cap)}&horizon_min=60&step_min=5`;
@@ -6000,6 +6084,7 @@ border-left:3px solid rgba(148,163,184,.22);
         if (!response.ok || payload?.available === false) throw new Error(payload?.reason || `realtime insights HTTP ${response.status}`);
         return payload;
       }).then(data=>{
+        if(requestId!==dashletsRequestId||requestedMode!==VIEW_MODE||asset!==selAsset.value)return;
         dashletsAvailable = true;
         realtimeEvidence = data;
         eventBands = [];
@@ -6043,6 +6128,7 @@ border-left:3px solid rgba(148,163,184,.22);
         }
         drawLine(); renderDashlets(); renderDashletsX();
       }).catch(error=>{
+        if(requestId!==dashletsRequestId||requestedMode!==VIEW_MODE||asset!==selAsset.value)return;
         console.warn('[realtime-insights]', error);
         dashletsAvailable=false; realtimeEvidence=null; eventBands=[]; actionMarkers=[];
         calibStats={available:false,mape:null,cover:null,bias:null,sigma:null}; residualGrid=[];
@@ -6149,7 +6235,13 @@ border-left:3px solid rgba(148,163,184,.22);
       return out;
     }
 
+    let assetRequestId=0;
     function switchAsset(asset){
+      const requestId=++assetRequestId,requestedMode=VIEW_MODE;
+      const current=()=>requestId===assetRequestId&&requestedMode===VIEW_MODE;
+      try{if(sse){sse.close();sse=null;}}catch(_){}
+      lineData=[];fcstData=[];drawLine();
+      resetRealtimeInsights('资产或模式已切换，正在读取对应上下文；旧资产指标已清除。');
       // 根据模式切换标题
       const label = String(asset).toUpperCase();
       if (VIEW_MODE==='forecast') $('#title-asset').textContent=`预测功率（${label}）`;
@@ -6160,7 +6252,8 @@ border-left:3px solid rgba(148,163,184,.22);
       try{ if (VIEW_MODE!=='now' && sse){ sse.close(); sse=null; } }catch(_){}
 
       if (VIEW_MODE==='forecast'){
-        fetch(`/api/forecast/${asset}?use_drivers=${USE_DRIVERS?1:0}`).then(r=>r.json()).then(j=>{
+        fetch(`/api/forecast/${encodeURIComponent(asset)}?use_drivers=${USE_DRIVERS?1:0}`).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}).then(j=>{
+          if(!current())return;
           fcstData = toForecastEnvelope(j.points);
           lineData = []; // 清空实时
           drawLine();
@@ -6172,11 +6265,12 @@ border-left:3px solid rgba(148,163,184,.22);
             loadDashlets(selAsset.value || asset, startISO, endISO);
           }
 
-        }).catch((_e)=>{ fcstData=[]; drawLine(); });
+        }).catch((error)=>{if(!current())return;fcstData=[];drawLine();$('#legend').textContent='预测不可用：'+error.message;});
         return;
       }
       if (VIEW_MODE === 'sim') {
-        fetch(`/api/curves/asset/${encodeURIComponent(asset)}?mode=sim&horizon_min=360&step_min=1&scenario=strategy`,{cache:'no-store'}).then(r=>r.json()).then(payload => {
+        fetch(`/api/curves/asset/${encodeURIComponent(asset)}?mode=sim&horizon_min=360&step_min=1&scenario=strategy`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}).then(payload => {
+          if(!current())return;
           const strategy = normalizeCurveSeries(payload?.series);
           fcstData = (strategy?.p50||[]).map((point,index)=>({
             ts:point.ts,
@@ -6191,13 +6285,14 @@ border-left:3px solid rgba(148,163,184,.22);
           if (startISO && endISO) {
             loadDashlets(selAsset.value || asset, startISO, endISO);
           }
-        }).catch(() => { fcstData = []; lineData = []; drawLine(); });
+        }).catch(error=>{if(!current())return;fcstData=[];lineData=[];drawLine();$('#legend').textContent='仿真序列不可用：'+error.message;});
         return;
       }
 
 
       // 默认“现在”模式
-      fetch(`/api/telemetry/recent/${asset}`).then(r=>r.json()).then(j=>{
+      fetch(`/api/telemetry/recent/${encodeURIComponent(asset)}`).then(r=>{if(!r.ok)throw new Error(`HTTP ${r.status}`);return r.json();}).then(j=>{
+        if(!current())return;
         lineData = normalizePointList(j).map(p=>({
           ts:p.ts,
           kW:Number(p.kW||0),
@@ -6210,7 +6305,7 @@ border-left:3px solid rgba(148,163,184,.22);
         renderSelChart();
         const startISO=lineData[0]?.ts, endISO=lineData.at(-1)?.ts;
         if(startISO && endISO) loadDashlets(asset,startISO,endISO);
-      }).catch(()=>{ lineData=[]; drawLine(); });
+      }).catch(error=>{if(!current())return;lineData=[];drawLine();$('#legend').textContent='当前序列不可用：'+error.message;});
     }
 
 
@@ -6526,6 +6621,13 @@ border-left:3px solid rgba(148,163,184,.22);
       renderTwinSignals();
       setTwinLayerBarLoading(layer,true);
       try{ await refresh3DColors(); }
+      catch(error){
+        if(runId===TWIN_LAYER_RUN){
+          $('#twinLayerName').textContent='图层数据不可用';
+          $('#twinLayerDesc').textContent='重新采样失败，点击刷新可重试：'+error.message;
+          $('#twinLayerMetric1').textContent='—';$('#twinLayerMetric2').textContent='—';
+        }
+      }
       finally{
         if(runId===TWIN_LAYER_RUN) setTwinLayerBarLoading(layer,false);
       }
@@ -6550,10 +6652,28 @@ border-left:3px solid rgba(148,163,184,.22);
     if (document.readyState === 'loading'){ document.addEventListener('DOMContentLoaded', bindChipHandlers); } else { bindChipHandlers(); }
 
     // 右侧原有操作按钮
-    $('#btn-forecast').onclick=()=> fetch(`/api/forecast/${selAsset.value}?use_drivers=${USE_DRIVERS?1:0}`).then(r=>r.json()).then(show);
-    $('#btn-rl').onclick=()=> fetch('/api/rl/propose',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({state:{avgForecastKW:11.2,soc:0.55,price:1.2},objective:'cost'})}).then(r=>r.json()).then(show);
-    $('#btn-twin').onclick=()=> fetch('/api/v3/runtime/frame',{cache:'no-store'}).then(r=>r.json()).then(show);
-    $('#btn-report').onclick=()=> fetch(`/api/reporting/mini/${selAsset.value}`).then(r=>r.json()).then(show);
+    let strategyActionId=0;
+    async function readStrategyAction(kind){
+      const token=++strategyActionId,asset=selAsset.value;
+      const button=$('#btn-'+kind);button.disabled=true;
+      show({status:'loading',action:kind,asset_id:asset});
+      try{
+        const urls={forecast:`/api/forecast/${encodeURIComponent(asset)}?use_drivers=${USE_DRIVERS?1:0}`,
+          rl:'/api/v3/runtime/frame',twin:'/api/v3/runtime/frame',report:`/api/reporting/mini/${encodeURIComponent(asset)}`};
+        const response=await fetch(urls[kind],{cache:'no-store'});
+        if(!response.ok)throw new Error(`HTTP ${response.status}`);
+        const data=await response.json();
+        if(token!==strategyActionId||asset!==selAsset.value)return;
+        if(data?.available===false)throw new Error(data.reason||'运行证据不可用');
+        if(kind==='rl'){
+          if(!data.available||!data.decision||!data.policy)throw new Error('当前没有经运行时核验的状态与策略决策，不生成替代建议。');
+          show({source:'/api/v3/runtime/frame',scope:'port_aggregate_runtime',generated_at:data.generated_at,
+            decision:data.decision,policy:data.policy,telemetry:data.telemetry,production_authority:false});
+        }else show(data);
+      }catch(error){if(token===strategyActionId)show({error:'请求失败',action:kind,detail:error.message,production_authority:false});}
+      finally{button.disabled=false;}
+    }
+    ['forecast','rl','twin','report'].forEach(kind=>$('#btn-'+kind).onclick=()=>readStrategyAction(kind));
 
         // 作业驱动开关
     $('#chkDrivers')?.addEventListener('change', e=>{ USE_DRIVERS = !!e.target.checked; });
@@ -6561,21 +6681,28 @@ border-left:3px solid rgba(148,163,184,.22);
     // 聚合仿真（带置信带）画布
     const canvasAgg = $('#aggLine');
     const ctxAgg = canvasAgg ? canvasAgg.getContext('2d') : null;
+    const aggCanvasHeight = Number(canvasAgg?.getAttribute('height')) || 120;
+    let latestAggData = null;
 
-    function drawAgg(data){
+    function drawAgg(data, updateLegend=true){
       if(!ctxAgg || !data || !Array.isArray(data.p50)) return;
-      // 简单自适应分辨率
-      const r = canvasAgg.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      if (canvasAgg.width !== Math.floor(r.width*dpr)) {
-        canvasAgg.width = Math.floor(r.width*dpr);
-        canvasAgg.height = Math.floor((canvasAgg.getAttribute('height')||120)*dpr);
-      }
-      const W = canvasAgg.width, H = canvasAgg.height;
-      ctxAgg.clearRect(0,0,W,H);
+      latestAggData = data;
       const p10=data.p10||[], p50=data.p50||[], p90=data.p90||[];
       const all = p10.concat(p50,p90);
       const mn = Math.min(...all, 0), mx = Math.max(...all, 1);
+      if(updateLegend) $('#aggLegend').textContent = `点数 ${p50.length}；范围 ${fmt1(mn)}~${fmt1(mx)} kW`;
+      // 简单自适应分辨率
+      const r = canvasAgg.getBoundingClientRect();
+      if(!canvasAgg.getClientRects().length || r.width <= 0) return;
+      const dpr = window.devicePixelRatio || 1;
+      const width = Math.max(1, Math.floor(r.width*dpr));
+      const height = Math.max(1, Math.floor(aggCanvasHeight*dpr));
+      if (canvasAgg.width !== width || canvasAgg.height !== height) {
+        canvasAgg.width = width;
+        canvasAgg.height = height;
+      }
+      const W = canvasAgg.width, H = canvasAgg.height;
+      ctxAgg.clearRect(0,0,W,H);
       const x = i => (p50.length>1 ? (i/(p50.length-1))*W : 0);
       const y = v => H - ( (v-mn)/(mx-mn||1) )*H;
 
@@ -6604,23 +6731,33 @@ border-left:3px solid rgba(148,163,184,.22);
       ctxAgg.stroke();
       ctxAgg.restore();
 
-      // 简易坐标/标注
-      $('#aggLegend').textContent = `点数 ${p50.length}；范围 ${fmt1(mn)}~${fmt1(mx)} kW`;
     }
+    window.addEventListener('resize',()=>drawAgg(latestAggData,false));
 
     // 按钮：聚合仿真
-    $('#btn-agg-sim')?.addEventListener('click', async ()=>{
+    let aggregateRequestId=0;
+    async function runAggregateScenario(){
+      const token=++aggregateRequestId,button=$('#btn-agg-sim');
       const scen = $('#sel-scenario').value || '基线场景';
       const scenarioId=runtimeScenarioId(scen);
-      const j = await fetch(`/api/v3/runtime/series?scenario=${encodeURIComponent(scenarioId)}&horizon_min=360&step_min=1`,{cache:'no-store'}).then(r=>r.json()).catch(()=>null);
-      if (!j?.available || !j?.series?.p50?.length) { $('#aggLegend').textContent = '策略运行时未返回可验证结果'; return; }
+      button.disabled=true;drawAgg({p10:[],p50:[],p90:[]},false);$('#aggLegend').textContent='正在推演所选场景…';
+      try{
+      const response=await fetch(`/api/v3/runtime/series?scenario=${encodeURIComponent(scenarioId)}&horizon_min=360&step_min=1`,{cache:'no-store'});
+      if(!response.ok)throw new Error(`HTTP ${response.status}`);
+      const j=await response.json();
+      if(token!==aggregateRequestId||scen!==$('#sel-scenario').value)return;
+      if (!j?.available || !j?.series?.p50?.length)throw new Error(j?.reason||'策略运行时未返回可验证结果');
       drawAgg({
         p10:(j.series.p10||[]).map(p=>Number(p.kW||0)),
         p50:(j.series.p50||[]).map(p=>Number(p.kW||0)),
         p90:(j.series.p90||[]).map(p=>Number(p.kW||0))
       });
       show(j); // 输出到右侧 JSON 面板
-    });
+      }catch(error){if(token===aggregateRequestId){drawAgg({p10:[],p50:[],p90:[]},false);$('#aggLegend').textContent='推演失败，旧曲线已清除：'+error.message;}}
+      finally{if(token===aggregateRequestId)button.disabled=false;}
+    }
+    $('#btn-agg-sim')?.addEventListener('click',runAggregateScenario);
+    $('#sel-scenario')?.addEventListener('change',()=>{aggregateRequestId+=1;$('#btn-agg-sim').disabled=false;drawAgg({p10:[],p50:[],p90:[]},false);$('#aggLegend').textContent='场景已变化，请重新策略推演。';});
 
 
     /************** 3D 场景（保持） **************/
@@ -6702,10 +6839,17 @@ border-left:3px solid rgba(148,163,184,.22);
     }
 
     async function refresh3DColors(){
-      if(TWIN_REFRESH_IN_FLIGHT) return TWIN_REFRESH_IN_FLIGHT;
-      TWIN_REFRESH_IN_FLIGHT=refresh3DColorsOnce();
-      try{return await TWIN_REFRESH_IN_FLIGHT;}
-      finally{TWIN_REFRESH_IN_FLIGHT=null;}
+      const key=VIEW_MODE+':'+(OVERLAY_CARBON?'carbon':'power');
+      if(TWIN_REFRESH_IN_FLIGHT){
+        const pending=TWIN_REFRESH_IN_FLIGHT;
+        if(pending.key===key)return pending.promise;
+        try{await pending.promise;}catch(_){}
+        if(key!==VIEW_MODE+':'+(OVERLAY_CARBON?'carbon':'power'))return [];
+        return refresh3DColors();
+      }
+      const request={key,promise:refresh3DColorsOnce()};TWIN_REFRESH_IN_FLIGHT=request;
+      try{return await request.promise;}
+      finally{if(TWIN_REFRESH_IN_FLIGHT===request)TWIN_REFRESH_IN_FLIGHT=null;}
     }
 
     async function refresh3DColorsOnce(){
@@ -6773,7 +6917,7 @@ border-left:3px solid rgba(148,163,184,.22);
         cancelAnimationFrame(three.colorRaf||0);
         const started=performance.now();
         const tween=(now)=>{
-          const p=Math.min(1,(now-started)/560), eased=1-Math.pow(1-p,3);
+          const p=twinSceneVisible()?Math.min(1,(now-started)/560):1, eased=1-Math.pow(1-p,3);
           transitions.forEach(({mesh,from,to})=>{
             mesh.material.color.copy(from).lerp(to,eased);
             if(mesh.material.emissive) mesh.material.emissive.copy(to).multiplyScalar(OVERLAY_CARBON ? .13 : .07);
@@ -6925,9 +7069,15 @@ border-left:3px solid rgba(148,163,184,.22);
       const hue=194-154*t;
       return `hsl(${hue} 78% 55%)`;
     }
+    function twinSceneVisible(){
+      const host=document.getElementById('sceneHost');
+      if(document.hidden||!host?.getClientRects().length) return false;
+      const rect=host.getBoundingClientRect();
+      return rect.bottom>=-220&&rect.top<=innerHeight+220;
+    }
     function drawLocalTwin(){
       localTwin.raf=0;
-      if(!localTwin.visible||document.hidden)return;
+      if(!localTwin.visible||!twinSceneVisible())return;
       const canvas=localTwin.canvas,ctx=localTwin.ctx;
       if(!canvas||!ctx)return;
       const rect=canvas.getBoundingClientRect(),dpr=Math.min(2,devicePixelRatio||1);
@@ -6972,8 +7122,9 @@ border-left:3px solid rgba(148,163,184,.22);
       localTwin.raf=requestAnimationFrame(drawLocalTwin);
     }
     function syncLocalTwinAnimation(){
-      if(localTwin.visible&&!document.hidden&&!localTwin.raf) localTwin.raf=requestAnimationFrame(drawLocalTwin);
-      else if((!localTwin.visible||document.hidden)&&localTwin.raf){cancelAnimationFrame(localTwin.raf);localTwin.raf=0;}
+      const visible=localTwin.visible&&twinSceneVisible();
+      if(visible&&!localTwin.raf) localTwin.raf=requestAnimationFrame(drawLocalTwin);
+      else if(!visible&&localTwin.raf){cancelAnimationFrame(localTwin.raf);localTwin.raf=0;}
     }
     function initLocalCanvasTwin(host,assets){
       const no3d=document.getElementById('no3d');if(no3d)no3d.style.display='none';
@@ -6988,8 +7139,7 @@ border-left:3px solid rgba(148,163,184,.22);
         const release=e=>{if(!down)return;down=false;if(!moved){const r=canvas.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top;const hit=localTwin.hitboxes.slice().sort((a,b)=>Math.hypot(x-a.x,y-a.y)-Math.hypot(x-b.x,y-b.y))[0];if(hit&&Math.hypot(x-hit.x,y-hit.y)<=hit.r*1.8)switchAsset(hit.id);}};
         canvas.addEventListener('pointerup',release);canvas.addEventListener('pointercancel',()=>{down=false;});
       }
-      const rect=host.getBoundingClientRect();
-      localTwin.visible=rect.bottom>=-180&&rect.top<=innerHeight+180;
+      localTwin.visible=twinSceneVisible();
       if(!localTwin.observer&&'IntersectionObserver' in window){
         localTwin.observer=new IntersectionObserver(entries=>{
           entries.forEach(entry=>{if(entry.target===host){localTwin.visible=entry.isIntersecting;syncLocalTwinAnimation();}});
@@ -6997,15 +7147,21 @@ border-left:3px solid rgba(148,163,184,.22);
         localTwin.observer.observe(host);
         document.addEventListener('visibilitychange',syncLocalTwinAnimation);
       }
+      if(!localTwin.moduleLifecycleBound){
+        const syncModule=()=>{localTwin.visible=twinSceneVisible();syncLocalTwinAnimation();};
+        window.addEventListener('port-module-hidden',syncModule);
+        window.addEventListener('port-module-shown',syncModule);
+        localTwin.moduleLifecycleBound=true;
+      }
       cancelAnimationFrame(localTwin.raf);localTwin.raf=0;syncLocalTwinAnimation();
-      clearInterval(localTwin.timer);localTwin.timer=setInterval(()=>{if(localTwin.visible&&VIEW_MODE==='now')refresh3DColors();},2000);
+      clearInterval(localTwin.timer);localTwin.timer=setInterval(()=>{if(localTwin.visible&&twinSceneVisible()&&VIEW_MODE==='now')refresh3DColors();},2000);
     }
 
     function init3DOnce(){
       const host = $('#sceneHost');
       const ok = !!window.THREE && !!THREE.WebGLRenderer;
       if (!ok){ initLocalCanvasTwin(host,(ALL_ASSETS&&ALL_ASSETS.length)?ALL_ASSETS:[]); return; }
-      const w=host.clientWidth, h=host.clientHeight;
+      const w=Math.max(1,host.clientWidth), h=Math.max(1,host.clientHeight);
       const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0a152a);
       const camera=new THREE.PerspectiveCamera(45, w/h, 1, 2000); camera.position.set(140,120,160);
       const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setPixelRatio(devicePixelRatio); renderer.setSize(w,h); host.appendChild(renderer.domElement);
@@ -7030,11 +7186,29 @@ border-left:3px solid rgba(148,163,184,.22);
         const type=classify(a); const color=0x2340a0; const s=GEO[type]||GEO.misc;
         const mesh=createBox(s.w,s.h,s.d,color); const p=pos.get(a.id)||{x:0,y:s.h/2,z:0}; mesh.position.set(p.x,p.y,p.z); mesh.userData={id:a.id,label:a.label}; scene.add(mesh); entities.push(mesh);
       });
-      const ro=new ResizeObserver(es=>{ for(const e of es){ const cr=e.contentRect; renderer.setSize(cr.width, cr.height); camera.aspect=cr.width/cr.height; camera.updateProjectionMatrix(); } });
+      const ro=new ResizeObserver(es=>{ for(const e of es){ const cr=e.contentRect; if(cr.width<=0 || cr.height<=0) continue; renderer.setSize(cr.width, cr.height); camera.aspect=cr.width/cr.height; camera.updateProjectionMatrix(); } });
       ro.observe(host);
-      (function loop(){ three.anim=requestAnimationFrame(loop); renderer.render(scene,camera); })();
-      three={scene,camera,renderer,controls,entities,anim:three.anim};
-      enablePicking(); refresh3DColors(); setInterval(()=>{ if (VIEW_MODE==='now' && three.scene) refresh3DColors(); }, 2000);
+      three={scene,camera,renderer,controls,entities,anim:0};
+      function renderThreeFrame(){
+        three.anim=0;
+        if(!twinSceneVisible()) return;
+        renderer.render(scene,camera);
+        three.anim=requestAnimationFrame(renderThreeFrame);
+      }
+      function syncThreeAnimation(){
+        if(twinSceneVisible()){
+          if(!three.anim) three.anim=requestAnimationFrame(renderThreeFrame);
+        }else if(three.anim){cancelAnimationFrame(three.anim);three.anim=0;}
+      }
+      if('IntersectionObserver' in window){
+        const observer=new IntersectionObserver(syncThreeAnimation,{rootMargin:'220px 0px'});
+        observer.observe(host);
+      }
+      document.addEventListener('visibilitychange',syncThreeAnimation);
+      window.addEventListener('port-module-hidden',syncThreeAnimation);
+      window.addEventListener('port-module-shown',syncThreeAnimation);
+      syncThreeAnimation();
+      enablePicking(); refresh3DColors(); setInterval(()=>{ if (twinSceneVisible() && VIEW_MODE==='now' && three.scene) refresh3DColors(); }, 2000);
     }
 
     /************** 悬浮小曲线（保持 + 修复 Y 轴计算） **************/
@@ -8099,9 +8273,37 @@ border-left:3px solid rgba(148,163,184,.22);
     const simMeta   = $('#simMeta');
 
     // 仿真小图状态（支持 resize 重绘）
-    let simState = { base: [], sim: [] };
+    let simState = { base: [], sim: [], strategyId:null, rendered:false };
+    let simRequestId = 0;
     let strategyDecisionState = { strategy: null, sim: null, list: [] };
-    function drawSim(){ drawSimChart(simState.base, simState.sim); }
+    function validSimulationSeries(base, policy){
+      return Array.isArray(base) && Array.isArray(policy) && base.length>=2 && base.length===policy.length
+        && base.every(value=>typeof value==='number'&&Number.isFinite(value))
+        && policy.every(value=>typeof value==='number'&&Number.isFinite(value));
+    }
+    function hasCurrentSimulationPlot(){
+      return simState.rendered===true && String(simState.strategyId)===String(selRL.value)
+        && validSimulationSeries(simState.base,simState.sim);
+    }
+    function syncSimulationSaveButton(){
+      const button=document.getElementById('btn-sim-save');if(!button)return;
+      button.disabled=!hasCurrentSimulationPlot();
+      button.title=button.disabled?'请先为当前策略完成评测并获得有效对比曲线':`保存策略 ${simState.strategyId} 的已评测对比曲线`;
+    }
+    function drawSim(){
+      simState.rendered=false;
+      if(simState.strategyId && String(simState.strategyId)===String(selRL.value) && validSimulationSeries(simState.base,simState.sim)){
+        simState.rendered=drawSimChart(simState.base,simState.sim)===true;
+      }else drawSimChart([],[]);
+      syncSimulationSaveButton();
+    }
+    function clearSimulationPlot(message){
+      simRequestId+=1;
+      simState={base:[],sim:[],strategyId:null,rendered:false};
+      strategyDecisionState.sim=null;
+      simMeta.textContent=message||'当前策略尚无有效评测图；完成评测后可保存。';
+      drawSim();
+    }
 
     function selectedStrategy(){
       const payload = JSON.parse(selRL.dataset.payload || '[]');
@@ -8250,9 +8452,10 @@ border-left:3px solid rgba(148,163,184,.22);
       renderListInto('strategy-ready-list', readyItems, '等待评测证据');
     }
 
-    btnOpenRL.onclick = () => window.open(`/rl-panel?from=strategy&return_to=${encodeURIComponent('/#strategy-exec-module')}`, '_blank');
+    btnOpenRL.onclick = () => window.location.assign(`/rl-panel?from=strategy&return_to=${encodeURIComponent('/#strategy-exec-module')}`);
 
     btnListRL.onclick = async () => {
+      clearSimulationPlot('正在重读策略列表；原评测图已失效。');
       btnListRL.disabled = true;
       try{
         const res = await fetch('/api/rl/strategies?horizon_min=360&step_min=5&max_items=12');
@@ -8300,6 +8503,8 @@ border-left:3px solid rgba(148,163,184,.22);
     };
 
     selRL?.addEventListener('change', ()=>{
+      clearSimulationPlot('策略已重选，请完成当前策略评测后保存。');
+      btnSimRL.disabled=!selRL.value;
       strategyDecisionState.strategy = selectedStrategy();
       strategyDecisionState.sim = null;
       renderStrategyDecisionChain();
@@ -8336,19 +8541,23 @@ border-left:3px solid rgba(148,163,184,.22);
     });
     $('btn-strategy-open-rl')?.addEventListener('click', ()=>{
       proxyTopNavAction('.nav-trigger.is-route[data-route="/rl-panel"]', ()=>{
-        window.open(`/rl-panel?from=strategy&return_to=${encodeURIComponent('/#strategy-exec-module')}`, '_blank');
+        window.location.assign(`/rl-panel?from=strategy&return_to=${encodeURIComponent('/#strategy-exec-module')}`);
       });
     });
 
     btnSimRL.onclick = async () => {
       const sid = selRL.value;
-      if (!sid){ show({warn:'请先选择一条策略'}); return; }
+      if (!sid){ clearSimulationPlot('请先选择一条策略。');show({warn:'请先选择一条策略'});return; }
+      clearSimulationPlot('正在评测当前策略；结果就绪前不能保存。');
+      const requestId=simRequestId;
       btnSimRL.disabled = true;
       try{
         const payload = { strategy_id: sid, horizon_min: 360, step_min: 1 };
         const res = await fetch('/api/rl/simulate', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
         if(!res.ok) throw new Error(await res.text());
         const data = await res.json();
+        if(requestId!==simRequestId || sid!==selRL.value)return;
+        if(String(data.strategy_id)!==String(sid))throw new Error('评测返回的策略与当前选择不一致');
         show({
           mode:data.mode,
           strategy_id:data.strategy_id,
@@ -8371,20 +8580,27 @@ border-left:3px solid rgba(148,163,184,.22);
         const peakValue=data.summary?.peak_reduction_kW;
         const peakText=peakValue==null?'峰值差=待接入/未计算':Number(peakValue)>=0?`削峰=${metric(peakValue,2)} kW`:`峰值增加=${metric(Math.abs(Number(peakValue)),2)} kW`;
         simMeta.textContent = `节电=${metric(data.summary?.delta_kWh,3)} kWh | ΔkgCO₂e=${metric(data.summary?.delta_carbon_kg,3)} | ${peakText} | 设备执行权=未授予`;
-        simState.base = data.baseline?.agg_kW||[];
-        simState.sim  = data.simulated?.agg_kW||[];
+        const base=data.baseline?.agg_kW, policy=data.simulated?.agg_kW;
+        if(!validSimulationSeries(base,policy))throw new Error('评测未提供两条长度一致、有限数值的有效功率曲线');
+        simState={base,sim:policy,strategyId:sid,rendered:false};
         drawSim();
       }catch(err){
+        if(requestId!==simRequestId || sid!==selRL.value)return;
         show({error:'模拟失败', detail:String(err).slice(0,400)});
-        strategyDecisionState.sim = null;
+        clearSimulationPlot(`评测失败，图表已清空：${String(err).slice(0,160)}`);
         renderStrategyDecisionChain();
-        simState = { base:[], sim:[] }; drawSim();
+        btnSimRL.disabled=!selRL.value;
       }finally{
-        btnSimRL.disabled = false;
+        if(requestId===simRequestId)btnSimRL.disabled=!selRL.value;
       }
     };
         // ====== 新增：仿真图保存 & Rollout 状态迷你卡 ======
     function saveCanvasPNG(id, filename){
+      if(id==='simCanvas' && !hasCurrentSimulationPlot()){
+        syncSimulationSaveButton();
+        simMeta.textContent='当前策略没有可保存的有效评测图；请先完成评测。';
+        return show({warn:'未导出空图：当前策略尚无有效评测曲线'});
+      }
       const cv = document.getElementById(id);
       if(!cv){ return show({warn:`未找到画布 ${id}`}); }
       try{
@@ -8396,17 +8612,21 @@ border-left:3px solid rgba(148,163,184,.22);
       }
     }
     globalThis.saveCanvasPNG = saveCanvasPNG;
+    globalThis.saveCurrentSimulationPNG=()=>saveCanvasPNG('simCanvas', `rl-sim-${Date.now()}.png`);
 
     function ensureSimSaveButton(){
-      if (document.getElementById('btn-sim-save')) return;
+      if (document.getElementById('btn-sim-save')){syncSimulationSaveButton();return;}
       const btn = document.createElement('button');
       btn.id = 'btn-sim-save';
       btn.className = 'btn';
       btn.style.marginTop = '6px';
       btn.textContent = '保存仿真图(PNG)';
+      btn.disabled=true;
+      btn.title='请先为当前策略完成评测并获得有效对比曲线';
       // 将按钮插在仿真画布后面
       simCanvas.insertAdjacentElement('afterend', btn);
-      btn.onclick = ()=> saveCanvasPNG('simCanvas', `rl-sim-${Date.now()}.png`);
+      btn.onclick = ()=> globalThis.saveCurrentSimulationPNG();
+      syncSimulationSaveButton();
     }
 
     // Rollout 状态卡：若后端无接口/返回非 2xx，会自动不显示。
@@ -8496,16 +8716,17 @@ border-left:3px solid rgba(148,163,184,.22);
     });
 
     function drawSimChart(aggBase, aggSim){
-      if (!simCanvas) return;
+      if (!simCanvas) return false;
       const ctx = simCanvas.getContext('2d');
-      if (!ctx) return;
-      const r = simCanvas.getBoundingClientRect(); simCanvas.width = r.width*devicePixelRatio; simCanvas.height = r.height*devicePixelRatio;
+      if (!ctx) return false;
+      const r = simCanvas.getBoundingClientRect(); simCanvas.width = Math.max(320,(r.width||600))*devicePixelRatio; simCanvas.height = Math.max(180,(r.height||180))*devicePixelRatio;
       const W=simCanvas.width, H=simCanvas.height;
       ctx.clearRect(0,0,W,H);
+      ctx.fillStyle='#0b132b';ctx.fillRect(0,0,W,H);
       ctx.strokeStyle='#193056'; ctx.lineWidth=1;
       for(let i=1;i<6;i++){ const x=(W/6)*i; ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
       for(let i=1;i<4;i++){ const y=(H/4)*i; ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
-      if ((!aggBase||!aggBase.length) && (!aggSim||!aggSim.length)) return;
+      if(!validSimulationSeries(aggBase,aggSim))return false;
       const all = [...(aggBase||[]), ...(aggSim||[])];
       const minY = Math.min(...all, 0)*0.95, maxY = Math.max(...all, 1)*1.05, R = Math.max(1e-6, maxY-minY);
       function plot(arr, color, dash=false){
@@ -8542,6 +8763,8 @@ border-left:3px solid rgba(148,163,184,.22);
       ctx.fillStyle='#e5e7eb'; ctx.fillText('基线', 28, 22);
       ctx.fillStyle='#34d399'; ctx.fillRect(70,12,10*devicePixelRatio,10*devicePixelRatio);
       ctx.fillStyle='#e5e7eb'; ctx.fillText('策略后', 86, 22);
+      ctx.fillText(`策略 ${simState.strategyId} · 聚合功率 kW`, 150, 22, Math.max(50,W-160));
+      return true;
     }
 
     /************** 可解释特征（保持） **************/
@@ -8898,6 +9121,19 @@ border-left:3px solid rgba(148,163,184,.22);
 
     const rangeSpan = byId('cmp-range');
     const factorsSpan = byId('cmp-factors');
+    let complianceInputVersion = 0;
+    let complianceRequestPending = false;
+    let lastComplianceScope = null;
+
+    function clearComplianceValues(label){
+      ['cmp-elec','cmp-s1','cmp-s2','cmp-total','cmp-kwh-teu','cmp-kg-teu'].forEach(id=>{byId(id).textContent=label;});
+      ['cmp-by-asset','cmp-by-proc','cmp-by-group','cmp-by-berth'].forEach(id=>fillAllocTable(id,[],0,0));
+    }
+    function markComplianceInputsChanged(){
+      complianceInputVersion++;
+      clearComplianceValues('待重新计算');
+      byId('cmp-result-scope').textContent='参数或周期已变更，当前结果待重新计算。'+(lastComplianceScope?'\n上次计算参数（已失效）：'+JSON.stringify(lastComplianceScope):'');
+    }
 
     // 切换月/季
     periodSeg.addEventListener('click', e=>{
@@ -8905,9 +9141,11 @@ border-left:3px solid rgba(148,163,184,.22);
       $$('#cmp-period button').forEach(b=>b.classList.remove('active'));
       e.target.classList.add('active');
       updateRangeEcho();
+      markComplianceInputsChanged();
     });
 
-    monthInp.addEventListener('change', updateRangeEcho);
+    monthInp.addEventListener('change', ()=>{updateRangeEcho();markComplianceInputsChanged();});
+    [teuInp,granSel,gridInp,dieselInp,selfkgInp,shareInp,dmodelSel].forEach(el=>['input','change'].forEach(type=>el.addEventListener(type,markComplianceInputsChanged)));
 
     function getPeriod(){ return periodSeg.querySelector('button.active')?.dataset.p || 'month'; }
 
@@ -8927,10 +9165,12 @@ border-left:3px solid rgba(148,163,184,.22);
     updateRangeEcho();
 
     async function loadComplianceReference(){
+      const version = complianceInputVersion;
       try {
         const response = await fetch('/api/esg/summary', {cache:'no-store'});
         if (!response.ok) throw new Error(String(response.status));
         const evidence = await response.json();
+        if(version !== complianceInputVersion || complianceRequestPending || lastComplianceScope) return;
         if (evidence.evidence_mode !== 'public_data_offline_engineering') return;
         const mwh = Number(evidence.baseline_electricity_mwh);
         const teu = Number(evidence.baseline_throughput_teu);
@@ -8948,6 +9188,7 @@ border-left:3px solid rgba(148,163,184,.22);
         const boundary = byId('cmp-boundary');
         if (boundary) boundary.textContent = `V3 公开工程参考：${Number(evidence.public_evidence?.official_reporting_periods || 0)} 个官方吞吐报告期 + ${Number(evidence.public_evidence?.public_reanalysis_hours || 0).toLocaleString('zh-CN')} 小时公开再分析。非审计/非申报；Scope 1/2 台账与分摊明细待接入港口。`;
       } catch (_) {
+        if(version !== complianceInputVersion || complianceRequestPending || lastComplianceScope) return;
         const boundary = byId('cmp-boundary');
         if (boundary) boundary.textContent = '公开工程证据不可用；审计碳台账待接入港口。';
       }
@@ -8967,6 +9208,16 @@ border-left:3px solid rgba(148,163,184,.22);
     btnMake.addEventListener('click', ()=> runCompliance('POST'));
 
     async function runCompliance(mode){
+      if(complianceRequestPending) return;
+      for(const input of [monthInp,teuInp,gridInp,dieselInp,selfkgInp,shareInp]){
+        if(input.value === '' || !input.reportValidity()) return;
+      }
+      const version = ++complianceInputVersion;
+      const actualRange = rangeSpan.textContent;
+      complianceRequestPending = true;
+      btnRun.disabled = true;btnMake.disabled = true;
+      clearComplianceValues('计算中…');
+      byId('cmp-result-scope').textContent='正在计算：'+actualRange+'；回执未完成。';
       const p = getPeriod();
       const ym = monthInp.value || new Date().toISOString().slice(0,7);
       const teu = +teuInp.value || 1;
@@ -8986,8 +9237,6 @@ border-left:3px solid rgba(148,163,184,.22);
 
       try{
         const activeButton = mode === 'GET' ? btnRun : btnMake;
-        const originalLabel = activeButton.textContent;
-        activeButton.disabled = true;
         activeButton.textContent = '计算中…';
         let data;
         if (mode==='GET'){
@@ -9023,26 +9272,22 @@ border-left:3px solid rgba(148,163,184,.22);
           if(!r.ok) throw new Error(`${r.status}`);
           data = await r.json();
         }
+        if(version !== complianceInputVersion) return;
         renderCompliance(data, teu);
+        lastComplianceScope={period:p,range:actualRange,method:mode,params};
+        byId('cmp-result-scope').textContent='当前显示本次工程测算（非审计/非申报）：\n'+JSON.stringify(lastComplianceScope,null,2);
         const boundary = byId('cmp-boundary');
         if (boundary) boundary.textContent = '当前显示“样本日外推”工程测算结果：非审计、非碳盘查、非监管申报。现场表计、油表、岸电、作业与组织边界待接入港口。';
         activeButton.textContent = '已生成·非申报';
-        setTimeout(() => { activeButton.textContent = originalLabel; activeButton.disabled = false; }, 1500);
         show({ok:true, period:p, granularity:gran, params});
       }catch(e){
-        btnRun.disabled = false;
-        btnMake.disabled = false;
-        btnRun.textContent = '工程测算（非申报）';
-        btnMake.textContent = '自定义工程测算';
-        byId('cmp-elec').textContent = '待接入港口';
-        byId('cmp-s1').textContent = '待接入港口';
-        byId('cmp-s2').textContent = '待接入港口';
-        byId('cmp-total').textContent = '待接入港口';
-        renderRows('tb-asset', [], 'asset', 0, 0);
-        renderRows('tb-process', [], 'process', 0, 0);
-        renderRows('tb-group', [], 'group', 0, 0);
-        renderRows('tb-berth', [], 'berth', 0, 0);
+        if(version !== complianceInputVersion) return;
+        clearComplianceValues('计算失败');
+        byId('cmp-result-scope').textContent='本次计算失败，未生成结果：'+actualRange+' · '+String(e);
         show({error:'合规接口不可用，未生成替代数字', e:String(e), period:p, params});
+      }finally{
+        complianceRequestPending=false;btnRun.disabled=false;btnMake.disabled=false;
+        btnRun.textContent='工程测算（非申报）';btnMake.textContent='自定义工程测算';
       }
     }
 
@@ -9867,14 +10112,14 @@ border-left:3px solid rgba(148,163,184,.22);
       </select>
 
       <label for="mon-sens" class="small">灵敏度</label>
-      <input id="mon-sens" type="number" step="0.1" value="1.5" class="mono" style="width:90px;">
+      <input id="mon-sens" type="number" min="0.1" step="0.1" value="1.5" class="mono" style="width:90px;">
 
       <button id="btn-anom" class="btn">扫描异常</button>
       <button id="btn-psi" class="btn">PSI 漂移</button>
       <button id="btn-mon-source" class="btn">查看来源与质量</button>
       <button id="btn-mon-gate" class="btn">查看熔断与现场契约</button>
     </div>
-    <div class="small" style="margin-top:8px;color:#8aa6d8;">留空开始/结束 = 自动使用最近 30 分钟窗口（服务器按 UTC 计算）。建议把它作为进入 RL 训练结果区之前的“数据质量闸门”。</div>
+    <div class="small" style="margin-top:8px;color:#8aa6d8;">留空结束=当前UTC；留空开始=结束前30分钟。PSI近期窗口采用所填开始/结束，基线为紧邻之前的等长窗口。方法与灵敏度仅用于异常扫描。</div>
   </div>
 
   <div class="monitoring-grid">
@@ -9913,6 +10158,24 @@ border-left:3px solid rgba(148,163,184,.22);
   function isoMinusMin(m){ return new Date(Date.now()-m*60000).toISOString(); }
   const API = (window && window.MonitoringAPI) ? window.MonitoringAPI : null;
   let monitoringV3Evidence = null;
+  let monitoringEvidenceRequest = null, monitoringSelectedDetail = null;
+  let anomalyRunId = 0, psiRunId = 0;
+
+  function monitoringWindow(){
+    const parse=value=>/^[-+]?\d+(\.\d+)?$/.test(value)
+      ? Number(value)*(Math.abs(Number(value))<1e12?1000:1) : Date.parse(value);
+    const rawEnd=(qs('mon-end')?.value||'').trim(), rawStart=(qs('mon-start')?.value||'').trim();
+    const end=rawEnd?parse(rawEnd):Date.now(), start=rawStart?parse(rawStart):end-30*60000;
+    if(!Number.isFinite(start)||!Number.isFinite(end)||end<=start)throw new Error('时间窗口无效：请输入ISO时间或epoch，且结束必须晚于开始。');
+    return {start:new Date(start).toISOString(),end:new Date(end).toISOString(),
+      baselineStart:new Date(2*start-end).toISOString(),baselineEnd:new Date(start).toISOString()};
+  }
+  function clearMonitoringRows(kind,message){
+    const table=qs(kind==='anomaly'?'mon-anom-table':'mon-psi-table')?.querySelector('tbody');
+    if(table)table.replaceChildren();
+    qs(kind==='anomaly'?'mon-anom-summary':'mon-psi-summary').textContent=message;
+    if(kind==='psi')drawPSI([]);
+  }
 
   function renderMonitoringEvidence(j){
     monitoringV3Evidence = j;
@@ -9931,7 +10194,13 @@ border-left:3px solid rgba(148,163,184,.22);
   }
 
   async function loadMonitoringEvidence(){
-    renderMonitoringEvidence(await getJSON('/api/v3/monitoring/evidence'));
+    if(monitoringEvidenceRequest)return monitoringEvidenceRequest;
+    monitoringEvidenceRequest=(async()=>{
+      const data=await getJSON('/api/v3/monitoring/evidence');
+      renderMonitoringEvidence(data);
+      return data;
+    })();
+    try{return await monitoringEvidenceRequest;}finally{monitoringEvidenceRequest=null;}
   }
 
   async function getJSON(url){
@@ -9944,14 +10213,15 @@ border-left:3px solid rgba(148,163,184,.22);
   }
 
   async function runAnomaly(){
+    const runId=++anomalyRunId;
+    qs('btn-anom').disabled=true;
+    clearMonitoringRows('anomaly','正在扫描所选窗口…');
     try{
       const asset = (qs('mon-asset')?.value||'qc-01').trim();
-      let start = (qs('mon-start')?.value||'').trim();
-      let end = (qs('mon-end')?.value||'').trim();
+      const {start,end}=monitoringWindow();
       const m = (qs('mon-method')?.value||'iqr').trim();
-      const s = Number(qs('mon-sens')?.value||1.5);
-      if(!start) start = isoMinusMin(30);
-      if(!end) end = nowIso();
+      const s = Number(qs('mon-sens')?.value);
+      if(!['iqr','zscore','ewma'].includes(m)||!Number.isFinite(s)||s<=0)throw new Error('异常扫描参数无效：灵敏度必须大于0。');
 
       let j;
       if (API && typeof API.anomalyScan === 'function') {
@@ -9969,6 +10239,7 @@ border-left:3px solid rgba(148,163,184,.22);
         j = await getJSON(url);
       }
 
+      if(runId!==anomalyRunId)return;
       if (!j || typeof j !== 'object') throw new Error('空响应或非JSON');
       const items = Array.isArray(j.items) ? j.items
                    : (Array.isArray(j.results) ? j.results
@@ -10009,9 +10280,10 @@ border-left:3px solid rgba(148,163,184,.22);
         });
       }
     }catch(e){
+      if(runId!==anomalyRunId)return;
       const s = qs('mon-anom-summary');
       if (s) s.textContent = '请求失败：' + e.message;
-    }
+    }finally{if(runId===anomalyRunId)qs('btn-anom').disabled=false;}
   }
 
   function drawPSI(bins){
@@ -10028,11 +10300,12 @@ border-left:3px solid rgba(148,163,184,.22);
   }
 
   async function runPSI(){
+    const runId=++psiRunId;
+    qs('btn-psi').disabled=true;
+    clearMonitoringRows('psi','正在比较所选窗口及前一等长窗口…');
     try{
       const asset = (qs('mon-asset')?.value||'qc-01').trim();
-      let end = (qs('mon-end')?.value||'').trim();
-      if(!end) end = nowIso();
-      const baseStart = isoMinusMin(60), baseEnd = isoMinusMin(30);
+      const {start,end,baselineStart:baseStart,baselineEnd:baseEnd}=monitoringWindow();
 
       let j;
       if (API && typeof API.psi === 'function') {
@@ -10041,7 +10314,7 @@ border-left:3px solid rgba(148,163,184,.22);
           point: 'active_power_kw',
           baselineStart: baseStart,
           baselineEnd: baseEnd,
-          recentStart: isoMinusMin(30),
+          recentStart: start,
           recentEnd: end,
           bins: 10,
           stepSec: 60
@@ -10049,14 +10322,15 @@ border-left:3px solid rgba(148,163,184,.22);
       } else {
         const url = `/api/monitoring/drift/psi?asset_id=${enc(asset)}&point=active_power_kw`
           + `&baseline_start=${enc(baseStart)}&baseline_end=${enc(baseEnd)}`
-          + `&recent_start=${enc(isoMinusMin(30))}&recent_end=${enc(end)}&bins=10&step_sec=60`;
+          + `&recent_start=${enc(start)}&recent_end=${enc(end)}&bins=10&step_sec=60`;
         j = await getJSON(url);
       }
 
+      if(runId!==psiRunId)return;
       const summary = qs('mon-psi-summary');
       if (summary) {
         summary.textContent =
-          `PSI=${fmt(j?.psi,3)} 级别=${j?.level||'—'}（基线样本=${j?.baseline?.n||0}，近期样本=${j?.recent?.n||0}）`;
+          `PSI=${fmt(j?.psi,3)} 级别=${j?.level||'—'}（基线样本=${j?.baseline?.n||0}，近期样本=${j?.recent?.n||0}） · 近期 ${start} → ${end} · 基线 ${baseStart} → ${baseEnd}`;
       }
       const bins = Array.isArray(j?.bins) ? j.bins : [];
       drawPSI(bins);
@@ -10074,9 +10348,22 @@ border-left:3px solid rgba(148,163,184,.22);
       ));
       tb.innerHTML = rows.length ? rows.join('') : `<tr><td colspan="6" class="small">暂无</td></tr>`;
     }catch(e){
+      if(runId!==psiRunId)return;
       const s = qs('mon-psi-summary');
       if (s) s.textContent = '请求失败：' + e.message;
-    }
+    }finally{if(runId===psiRunId)qs('btn-psi').disabled=false;}
+  }
+
+  async function showMonitoringDetail(kind){
+    monitoringSelectedDetail=kind;
+    qs('mon-v3-detail').textContent='正在读取所选监控证据…';
+    try{
+      if(!monitoringV3Evidence)await loadMonitoringEvidence();
+      if(monitoringSelectedDetail!==kind)return;
+      qs('mon-v3-detail').textContent=JSON.stringify(kind==='source'
+        ? {source:monitoringV3Evidence.source,quality:monitoringV3Evidence.current_analysis?.anomaly?.quality,methods:monitoringV3Evidence.method_registry}
+        : {boundary:monitoringV3Evidence.boundary,admission_decision:monitoringV3Evidence.current_analysis?.admission_decision,alert_policy:monitoringV3Evidence.alert_policy,site_contract:monitoringV3Evidence.site_contract},null,2);
+    }catch(error){if(monitoringSelectedDetail===kind)qs('mon-v3-detail').textContent='所选监控证据不可用，点击可重试：'+error.message;}
   }
 
   document.addEventListener('click', async(event)=>{
@@ -10085,13 +10372,12 @@ border-left:3px solid rgba(148,163,184,.22);
     event.preventDefault();
     if(button.id === 'btn-anom') return runAnomaly();
     if(button.id === 'btn-psi') return runPSI();
-    if(!monitoringV3Evidence) await loadMonitoringEvidence();
-    if(button.id === 'btn-mon-source') {
-      qs('mon-v3-detail').textContent = JSON.stringify({source:monitoringV3Evidence.source, quality:monitoringV3Evidence.current_analysis?.anomaly?.quality, methods:monitoringV3Evidence.method_registry}, null, 2);
-    } else {
-      qs('mon-v3-detail').textContent = JSON.stringify({boundary:monitoringV3Evidence.boundary, admission_decision:monitoringV3Evidence.current_analysis?.admission_decision, alert_policy:monitoringV3Evidence.alert_policy, site_contract:monitoringV3Evidence.site_contract}, null, 2);
-    }
+    return showMonitoringDetail(button.id==='btn-mon-source'?'source':'gate');
   }, true);
+  ['mon-asset','mon-start','mon-end','mon-method','mon-sens'].forEach(id=>qs(id)?.addEventListener('input',()=>{
+    anomalyRunId+=1;psiRunId+=1;qs('btn-anom').disabled=false;qs('btn-psi').disabled=false;
+    clearMonitoringRows('anomaly','参数已变化，请重新扫描。');clearMonitoringRows('psi','参数已变化，请重新计算PSI。');
+  }));
   runAnomaly();
   loadMonitoringEvidence().catch(error=>{ qs('mon-v3-status').textContent='监控证据加载失败：'+error.message; });
 })();
@@ -10945,11 +11231,11 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
 <!-- === [Module C · HVAC Cooling · END] =============================== -->
 <!-- === [Module D · Shore BESS · BEGIN] =============================== -->
 <div class="card" id="sbess-section" style="grid-column:1 / -1; margin-top:8px;">
-  <div class="title">模块D · 岸电储能（Shore BESS）｜V3.1 收敛、盲测与现场准入</div>
-  <div class="small" style="color:#8aa6d8;">
-    来源：<code>/api/v3/modules/shore-bess/evidence</code> ｜ 17,544小时公开时间轴、70/10/20时序隔离、3随机种子；真实加载所选权重并再次经过同一安全投影。
+  <div class="title" id="d-evidence-title">模块D · 岸电储能（Shore BESS）｜训练与碳约束证据核验</div>
+  <div class="small" id="d-evidence-source" style="color:#8aa6d8;">
+    来源：<code>/api/v3/modules/shore-bess/evidence</code> ｜ 正在核验历史V3.1与V8独立训练证据；数据区间、种子数和模型状态以返回的对应版本报告为准。
   </div>
-  <div id="d-training-method" class="small" role="status" style="margin-top:6px;padding:7px 10px;border:1px solid #3b82f6;border-radius:8px;background:#0a1930;color:#bae6fd;">训练类型核验中：安全教师蒸馏 / PPO策略梯度微调准入状态读取中…</div>
+  <div id="d-training-method" class="small" role="status" style="margin-top:6px;padding:7px 10px;border:1px solid #3b82f6;border-radius:8px;background:#0a1930;color:#bae6fd;">正在区分新RL训练、历史教师蒸馏与准入状态…</div>
   <div class="small" id="d-v3-status" style="margin-top:6px;color:#fbbf24;">正在核验策略、历史训练与现场边界…</div>
 
   <!-- KPI 六宫格 -->
@@ -10962,11 +11248,13 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     <div class="kpi"><h4>生产准入</h4><div class="v" id="d-kpi-carbon">加载中</div><div class="s">点表/BMS/PCC/回执</div></div>
   </div>
 
+  <div id="d-v8-benchmarks" hidden style="overflow:auto;margin-top:10px;"></div>
+  <div id="d-v8-diagnostics" hidden style="overflow:auto;margin-top:10px;padding:10px;border:1px solid #70582f;border-radius:10px;color:#d9e5f7;"></div>
   <div class="row" style="justify-content:flex-end;gap:8px;margin-top:8px;flex-wrap:wrap;">
-    <button class="btn" id="btn-d-refresh">刷新V3证据</button>
+    <button class="btn" id="btn-d-refresh">刷新训练证据</button>
     <button class="btn" id="btn-d-model">查看真实模型输出</button>
-    <button class="btn" id="btn-d-convergence">查看蒸馏/验证判据</button>
-    <button class="btn" id="btn-d-business">查看业务盲测</button>
+    <button class="btn" id="btn-d-convergence">查看优化/收敛判据</button>
+    <button class="btn" id="btn-d-business">查看配对业务评估</button>
     <button class="btn" id="btn-d-v32" style="border-color:#f59e0b;color:#fde68a;">查看V3.2增训结论</button>
     <button class="btn" id="btn-d-contract-tech">查看状态/动作/奖励</button>
     <button class="btn" id="btn-d-history">查看历史训练留痕</button>
@@ -10978,28 +11266,28 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   </div>
 
   <div style="margin-top:10px;padding:10px;border:1px solid #244267;border-radius:10px;background:linear-gradient(135deg,rgba(8,27,53,.9),rgba(5,19,39,.96));">
-    <div class="small" style="color:#e2f6ff;font-weight:700;">检查点验证奖励回放 ΔR（非训练时RL奖励） <span style="color:#67e8f9;font-weight:400;">每10环境步采样 · 越高越好 · E1同场景基线=0</span></div>
+    <div class="small" id="d-reward-title" style="color:#e2f6ff;font-weight:700;">历史V3.1检查点验证奖励回放 ΔR（非训练时RL奖励）</div>
     <canvas id="d-reward-convergence" style="width:100%;height:250px;display:block;margin-top:6px;background:#081329;border:1px solid #1e3a5f;border-radius:8px;"></canvas>
-    <div class="small" style="color:#7dd3fc;margin-top:5px;">彩色细线/点＝保存检查点在固定验证窗口的原始10步奖励块；发光白线＝三种子同检查点均值。后训练确定性回放，不冒充优化器逐步日志，不读封存盲测。</div>
+    <div class="small" id="d-reward-note" style="color:#7dd3fc;margin-top:5px;">历史V3.1：彩色线为保存检查点的原始10步验证奖励块；白线为同检查点均值。后训练确定性回放。</div>
   </div>
-  <div class="small" style="margin-top:10px;color:#67e8f9;">
+  <div class="small" id="d-process-note" style="margin-top:10px;color:#67e8f9;">
     前两图直接读取三个 <code>seed_*/metrics.jsonl</code>：彩色线/圆点＝每个种子的原始检查点，粗白线＝同epoch均值；不插值、不加随机抖动、不重新训练。后两图保留验证汇总展示。
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
     <div>
-      <div class="small" style="color:#8aa6d8;">蒸馏过程① · 教师动作模仿损失（3种子原始检查点，对数轴）</div>
+      <div class="small" id="d-chart-title-1" style="color:#8aa6d8;">历史蒸馏① · 教师动作模仿损失（对数轴）</div>
       <canvas id="d-train-reward" style="width:100%;height:200px;display:block;background:#0b132b;border:1px solid #1e2a44;border-radius:8px;"></canvas>
     </div>
     <div>
-      <div class="small" style="color:#8aa6d8;">策略检查点② · 固定验证回报（非PPO策略梯度训练奖励）</div>
+      <div class="small" id="d-chart-title-2" style="color:#8aa6d8;">历史检查点② · 固定验证回报（非PPO训练奖励）</div>
       <canvas id="d-train-econ" style="width:100%;height:200px;display:block;background:#0b132b;border:1px solid #1e2a44;border-radius:8px;"></canvas>
     </div>
     <div>
-      <div class="small" style="color:#8aa6d8;">多种子验证成本标准差</div>
+      <div class="small" id="d-chart-title-3" style="color:#8aa6d8;">历史多种子验证成本标准差</div>
       <canvas id="d-train-carbon" style="width:100%;height:200px;display:block;background:#0b132b;border:1px solid #1e2a44;border-radius:8px;"></canvas>
     </div>
     <div>
-      <div class="small" style="color:#8aa6d8;">固定验证集需量峰值</div>
+      <div class="small" id="d-chart-title-4" style="color:#8aa6d8;">历史固定验证集需量峰值</div>
       <canvas id="d-train-service" style="width:100%;height:200px;display:block;background:#0b132b;border:1px solid #1e2a44;border-radius:8px;"></canvas>
     </div>
   </div>
@@ -11195,11 +11483,118 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   }
 
   let shoreBessV3Evidence = null;
+  function drawShoreBessV8Curve(id, process, metric, decimals=3){
+    const canvas=document.getElementById(id), ctx=canvas.getContext('2d'), dpr=window.devicePixelRatio||1;
+    const box=canvas.getBoundingClientRect(), W=canvas.width=Math.max(500,box.width*dpr), H=canvas.height=Math.max(200,box.height*dpr);
+    ctx.clearRect(0,0,W,H);
+    const runs=(process.series||[]).map(run=>({seed:run.seed,points:run.points.filter(p=>Number.isFinite(p[metric]))}));
+    const all=runs.flatMap(run=>run.points);
+    ctx.font=`${11*dpr}px system-ui`;ctx.fillStyle='#bdd4ef';
+    if(!all.length){ctx.fillText('无已核验检查点',20*dpr,H/2);return;}
+    const minX=Math.min(...all.map(p=>p.step)), maxX=Math.max(...all.map(p=>p.step));
+    const ys=all.map(p=>p[metric]), lo=Math.min(...ys), hi=Math.max(...ys), pad=Math.max((hi-lo)*.1,Math.abs(hi)*.02,.0001);
+    const left=76*dpr,right=W-18*dpr,top=35*dpr,bottom=H-33*dpr;
+    const x=p=>left+(p.step-minX)/Math.max(1,maxX-minX)*(right-left);
+    const y=p=>bottom-(p[metric]-lo+pad)/Math.max(.0001,hi-lo+2*pad)*(bottom-top);
+    ctx.strokeStyle='rgba(90,130,180,.3)';ctx.textAlign='right';
+    for(let n=0;n<=4;n++){
+      const yy=top+n*(bottom-top)/4;ctx.beginPath();ctx.moveTo(left,yy);ctx.lineTo(right,yy);ctx.stroke();
+      ctx.fillText((hi+pad-n*(hi-lo+2*pad)/4).toFixed(decimals),left-7*dpr,yy+4*dpr);
+    }
+    ctx.textAlign='center';
+    for(let n=0;n<=4;n++)ctx.fillText(`${Math.round(minX+n*(maxX-minX)/4)}步`,left+n*(right-left)/4,bottom+19*dpr);
+    const colors=['#60a5fa','#34d399','#f472b6','#fbbf24'];
+    runs.forEach((run,i)=>{
+      ctx.strokeStyle=ctx.fillStyle=colors[i%colors.length];ctx.lineWidth=1.7*dpr;ctx.beginPath();
+      run.points.forEach((p,j)=>j?ctx.lineTo(x(p),y(p)):ctx.moveTo(x(p),y(p)));ctx.stroke();
+      run.points.forEach(p=>{ctx.beginPath();ctx.arc(x(p),y(p),2.5*dpr,0,Math.PI*2);ctx.fill();});
+      ctx.textAlign='left';ctx.fillText(`seed ${run.seed}`,left+i*100*dpr,19*dpr);
+    });
+  }
+  function renderShoreBessV8(payload){
+    const v=payload.v8, cfg=v.config, validationOnly=v.status==='VALIDATION_REJECTED';
+    const primary=v.benchmark_summaries[v.primary_benchmark||'forward'], comparison=primary.comparison;
+    const annual=primary.annualized_scenario, model=v.current_model_output, process=v.training_process;
+    const algorithmLabel=cfg.algorithm_variant?.startsWith('td3_n_step_')?`TD3 · ${cfg.n_step}步回报变体`:cfg.algorithm;
+    const passed=v.convergence.filter(row=>row.passed).length, seedCount=v.convergence.length;
+    const statusLabel=validationOnly?'验证未通过 · 留出未打开':v.admitted?'离线准入通过':'候选未准入';
+    const primaryLabel=validationOnly?'固定验证':'2026前向';
+    $('#d-evidence-title').textContent=`模块D · 岸电储能（Shore BESS）｜V8 ${statusLabel}`;
+    $('#d-evidence-source').textContent=`按SHA-256核验报告、冻结选型、来源与实际权重。训练 ${v.dataset.train.rows.toLocaleString('zh-CN')}小时，验证 ${v.dataset.validation.rows.toLocaleString('zh-CN')}小时；${validationOnly?'完整验证未通过，下列仅显示验证；测试未打开、前向未加载。':'下列主卡为2026前向区间，历史与前向结果分别列示。'}`;
+    const trainingLabel=v.training_reused?'引用已完成的独立种子训练':'从零优化';
+    $('#d-training-method').textContent=`${algorithmLabel} · ${cfg.observation_dimensions}维状态 / ${cfg.discrete?cfg.action_count+'个离散动作':(cfg.action_dimensions||model.neural_action.length)+'维连续动作'} · 网络 ${cfg.network.join(' → ')} · ${trainingLabel} ${v.total_environment_steps.toLocaleString('zh-CN')}环境步 / ${v.total_optimizer_updates.toLocaleString('zh-CN')}次更新${v.training_reused?'；本次正式复评新增训练0步/更新0次':''} · γ=${cfg.gamma} · 无教师动作 · 训练渲染=${process.training_render_calls}`;
+    $('#d-training-method').style.borderColor=v.admitted?'#22c55e':'#f59e0b';
+    const card=(id,title,value,note)=>{const element=$(id);element.textContent=value;const parent=element.closest('.kpi');parent.querySelector('h4').textContent=title;parent.querySelector('.s').textContent=note;};
+    const pct=value=>`${value>=0?'+':''}${nfmt(value,3)} %`;
+    const interval=row=>`周95% CI ${nfmt(row.ci_low,3)}～${nfmt(row.ci_high,3)}%`;
+    const clusterInterval=row=>`来源期簇95% CI ${nfmt(row.clustered_ci_low,3)}～${nfmt(row.clustered_ci_high,3)}%（${row.cluster_count}簇）`;
+    card('#d-kpi-soc','多种子验证收敛',`${passed}/${seedCount} 通过`,'末3个真实检查点与业务门禁');
+    card('#d-kpi-save',`${primaryLabel}成本改善`,pct(comparison.total_cost_cny.mean),interval(comparison.total_cost_cny));
+    if(validationOnly)card('#d-kpi-peak','历史测试 / 前向留出','未打开','完整验证门禁拦截；无留出指标');
+    else card('#d-kpi-peak','前向年化场景节省',`¥ ${nfmt(annual.cost_savings_cny.mean/10000,1)} 万`,'固定8760h外推 · 非实测利润');
+    card('#d-kpi-chg',`${primaryLabel}峰值改善`,pct(comparison.peak_kw.mean),interval(comparison.peak_kw));
+    const carbon=annual.carbon_reduction_t.mean;
+    if(validationOnly)card('#d-kpi-dis','固定验证碳改善',pct(comparison.carbon_kg.mean),interval(comparison.carbon_kg));
+    else card('#d-kpi-dis','前向年化碳变化',`${carbon>=0?'减':'增'} ${nfmt(Math.abs(carbon),1)} t/年`,`${pct(comparison.carbon_kg.mean)} · 固定8760h外推`);
+    $('#d-kpi-dis').style.color=carbon>=0?'#34d399':'#fb7185';
+    card('#d-kpi-carbon','生产准入','待接入港口','模拟建议态 · 无写点权限');
+    $('#d-v3-status').textContent=`V8=${statusLabel} · 实际模型重载=${model.policy_loaded?'成功':'失败'} · 选型seed=${v.selected_seed} · ${primaryLabel}窗口=${primary.windows}×${primary.episode_hours}小时 · 安全违规率=${nfmt(primary.metrics.guardrail_violation_rate,6)}${v.failed_gates.length?' · 未过门禁='+v.failed_gates.join('、'):''}。${v.benchmark_note}`;
+    const table=document.createElement('table'), head=table.createTHead().insertRow();
+    ['评估区间','配对窗口','成本改善 / 95% CI','碳改善 / 95% CI','峰值改善 / 95% CI'].forEach(text=>{const cell=document.createElement('th');cell.textContent=text;head.append(cell);});
+    const body=table.createTBody();
+    for(const [label,data] of Object.entries(v.benchmark_summaries)){
+      const row=body.insertRow();
+      [{validation:'2025年5—7月固定验证',forward:'2026年1—5月前向（重复基准）',test:'2025年8—12月历史测试（重复基准）'}[label]||label,`${data.windows} × ${data.episode_hours} h`,...['total_cost_cny','carbon_kg','peak_kw'].map(key=>`${pct(data.comparison[key].mean)} / ${interval(data.comparison[key])} / ${clusterInterval(data.comparison[key])}`)].forEach(text=>{row.insertCell().textContent=text;});
+    }
+    const ciNote=document.createElement('p');ciNote.textContent=primary.confidence_interval_boundary;
+    $('#d-v8-benchmarks').replaceChildren(table,ciNote);$('#d-v8-benchmarks').hidden=false;
+    const registry=$('#d-algo-body');registry.replaceChildren();
+    [[algorithmLabel,v.status,model.model_path,'固定验证冻结选型；成本/碳/峰值95% CI、逐窗碳与服务安全门禁'],['FIFO柔性负荷 / BESS投影','active','同一物理环境','12小时期限、容量、SOC、斜坡、备用与计量守恒'],['V3.1 / V3.2 / V7','historical_preserved','历史模型与失败报告','原数据与结论保留；历史按钮可查'],['现场写点网关','disabled','shadow only','待授权表计、BMS、PCC、回读与现场验收']].forEach(values=>{const row=document.createElement('tr');values.forEach(text=>{const cell=document.createElement('td');cell.textContent=text;row.append(cell);});registry.append(row);});
+    $('#d-reward-title').textContent='V8固定验证奖励 · 保存的RL检查点（逐种子原始值）';
+    $('#d-reward-note').textContent='奖励按实际电费、需量费、退化成本与碳约束计算；库存势函数在完整周期抵消。此图为固定验证回放，优化次数由下图单独展示。';
+    $('#d-process-note').textContent=`${process.total_persisted_checkpoints}个持久化检查点 · 横轴为${v.training_reused?'所引用训练的':'实际'}环境步 · ${v.training_reused?'当前曲线为原权重在完整验证窗的正式复评；未新增训练。':''}原始曲线SHA-256=${process.raw_curves_hash_verified?'已核验':'仅展示报告锚定检查点'} · 未插值、无展示奖励偏置。`;
+    ['实际神经网络优化更新次数','固定验证成本改善（%）','固定验证碳改善（%）','固定验证峰值改善（%）'].forEach((text,i)=>{$(`#d-chart-title-${i+1}`).textContent=text;});
+    const render=()=>[['d-reward-convergence','validation_reward',2],['d-train-reward','optimizer_updates',0],['d-train-econ','cost_gain_percent',3],['d-train-carbon','carbon_gain_percent',4],['d-train-service','peak_gain_percent',3]].forEach(([id,metric,decimals])=>drawShoreBessV8Curve(id,process,metric,decimals));
+    if(window.__portDtDeferHeavyRender)window.__portDtDeferHeavyRender('sbess-section',render);else window.setTimeout(render,0);
+    $('#d-evidence-detail').textContent=JSON.stringify({version:v.version,status:v.status,failed_gates:v.failed_gates,benchmark_summaries:v.benchmark_summaries,boundary:v.boundary},null,2);
+  }
+  function renderShoreBessDiagnostics(diagnostics){
+    const target=$('#d-v8-diagnostics');target.replaceChildren();target.hidden=true;
+    if(!diagnostics||diagnostics.status==='NO_DIAGNOSTIC_REPORTS')return;
+    target.hidden=false;
+    const title=document.createElement('strong');title.textContent='V8 独立训练诊断 · 非正式策略';target.append(title);
+    const note=document.createElement('p');note.textContent=diagnostics.available?diagnostics.note:`诊断证据核验失败：${diagnostics.error||diagnostics.status}`;target.append(note);
+    if(!diagnostics.available)return;
+    const table=document.createElement('table'),head=table.createTHead().insertRow();
+    table.style.width='100%';table.style.tableLayout='fixed';
+    ['固定最终检查点','真实训练 / 更新','固定验证窗口','成本改善 / 周95% CI','碳改善 / 周95% CI','峰值改善 / 周95% CI','诊断门禁'].forEach(text=>{const th=document.createElement('th');th.textContent=text;th.style.whiteSpace='normal';th.style.overflowWrap='anywhere';head.append(th);});
+    const body=table.createTBody();
+    for(const run of diagnostics.runs){
+      const row=body.insertRow();
+      const algorithm=run.algorithm_variant?.startsWith('td3_n_step_')?`TD3 · ${run.n_step}步回报变体`:run.algorithm.split('.').pop();
+      const value=key=>{const x=run.comparison[key];return `${x.mean>=0?'+':''}${nfmt(x.mean,3)}% / ${nfmt(x.ci_low,3)}～${nfmt(x.ci_high,3)}%`;};
+      [`${algorithm} · seed ${run.seed}`,`${run.checkpoint_step.toLocaleString('zh-CN')}步 / ${run.optimizer_updates.toLocaleString('zh-CN')}次`,`${run.windows} × ${run.episode_hours} h`,value('total_cost_cny'),value('carbon_kg'),value('peak_kw'),run.diagnostic_window_gates_passed?'通过（仅诊断）':'未通过'].forEach(text=>{const cell=row.insertCell();cell.textContent=text;cell.style.whiteSpace='normal';cell.style.overflowWrap='anywhere';});
+    }
+    target.append(table);
+    const boundary=document.createElement('p');boundary.textContent='改善为负表示成本、碳排或峰值增加。单种子固定验证区间，仅按预先约定的最后60k检查点展示。权重反序列化仅用于核验真实步数和更新次数，没有模型在线控制、留出评估或生产准入。';target.append(boundary);
+    const details=document.createElement('button');details.className='btn';details.textContent='查看独立诊断原始证据';details.addEventListener('click',()=>{$('#d-evidence-detail').textContent=JSON.stringify(diagnostics,null,2);});target.append(details);
+  }
   async function refreshShoreBessV3(){
     const response = await fetch('/api/v3/modules/shore-bess/evidence',{cache:'no-store'});
     if(!response.ok) throw new Error(`HTTP ${response.status}`);
     const j = shoreBessV3Evidence = await response.json();
+    renderShoreBessDiagnostics(j.v8?.diagnostics);
+    if(j.v8?.available){renderShoreBessV8(j);return j;}
+    $('#d-evidence-title').textContent='模块D · 岸电储能（Shore BESS）｜历史V3.1经济策略（增碳，非V8当前策略）';
+    $('#d-evidence-source').textContent='历史V3.1归档：17,544小时公开时间轴、70/10/20时序划分；原报告、所选权重和失败记录均保留。';
+    $('#d-v8-benchmarks').hidden=true;
+    [['d-kpi-soc','历史收敛门禁','V3.1教师蒸馏验证平台期'],['d-kpi-save','历史测试成本优势','相对无储能 · 公开工程场景'],['d-kpi-peak','历史年化场景节省','非上海港实测财务值'],['d-kpi-chg','历史需量峰值改善','历史配对测试窗口'],['d-kpi-dis','历史碳变化','碳门禁失败 · 如实保留'],['d-kpi-carbon','生产准入','点表/BMS/PCC/回执']].forEach(([id,title,note])=>{const parent=document.getElementById(id).closest('.kpi');parent.querySelector('h4').textContent=title;parent.querySelector('.s').textContent=note;});
+    $('#d-reward-title').textContent='历史V3.1检查点验证奖励回放 ΔR（非训练时RL奖励）';
+    $('#d-reward-note').textContent='原始10步验证奖励块；后训练确定性回放。历史教师蒸馏不作为新RL训练结果。';
+    $('#d-process-note').textContent='历史V3.1逐种子metrics.jsonl与验证汇总；原结果保留，不作为V8训练进度。';
+    ['历史教师动作模仿损失（对数轴）','历史固定验证回报（非PPO训练奖励）','历史多种子验证成本标准差','历史固定验证集需量峰值'].forEach((text,i)=>{$(`#d-chart-title-${i+1}`).textContent=text;});
     renderAssetTrainingMethod('d-training-method',j);
+    $('#d-training-method').textContent=$('#d-training-method').textContent.replace('当前晋级策略：','历史V3.1策略：');
     const h=j.historical_evidence||{}, q=j.quality_gates||{}, p=j.current_model_output||{}, m=p.model_inference||{}, r=j.business_metrics||{}, b=j.boundary||{}, f=j.formal_training||{}, c=f.convergence||{};
     const carbonAnnual=Number(r.annualized_scenario_carbon_reduction_t||0);
     $('#d-kpi-soc').textContent = c.passed ? `${Math.round(Number(c.seed_pass_rate||0)*3)}/3 通过` : '未通过';
@@ -11211,6 +11606,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     $('#d-kpi-carbon').textContent = q.production_admitted ? '已准入' : (b.site_status || '待接入港口');
     const vi=j.value_improvement||{};
     $('#d-v3-status').textContent = `模型权重=${m.policy_loaded?'已按SHA-256重载':'不可用'} · 数据=${f.dataset?.rows?.toLocaleString('zh-CN')||'—'}小时（${f.dataset?.train_rows||0}/${f.dataset?.validation_rows||0}/${f.dataset?.blind_test_rows||0}） · 收敛=${c.passed?'通过':'失败'} · 经济/削峰=${q.business_advantage_passed?'通过':'失败'} · 碳门禁=${q.carbon_guardrail_passed?'通过':'拦截'} · V3.2=${vi.status_cn||vi.status||'待验收'} · 安全违规=${nfmt(q.guardrail_violation_rate,4)} · 生产=${q.production_admitted?'准入':'待接入港口'}`;
+    $('#d-v3-status').textContent=`历史结果 · V8=${j.v8?.status||'尚无正式报告'}${j.v8?.error?'（核验失败：'+j.v8.error+'）':''} · `+$('#d-v3-status').textContent;
     $('#d-algo-body').innerHTML=(j.algorithm_registry||[]).map(x=>`<tr><td>${x.name}</td><td>${x.state}</td><td><code>${x.artifact||'—'}</code></td><td>${x.admission}</td></tr>`).join('');
     const series=j.history_series||[];
     const renderEvidenceCharts=()=>{
@@ -11230,11 +11626,11 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     : refreshShoreBessV3();
   const shoreBessRefreshButton = document.getElementById('btn-d-refresh');
   shoreBessRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(shoreBessRefreshButton,loadShoreBessV3));
-  document.getElementById('btn-d-model')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({current_model_output:shoreBessV3Evidence.current_model_output,quality_gates:shoreBessV3Evidence.quality_gates},null,2);});
-  document.getElementById('btn-d-convergence')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({convergence:shoreBessV3Evidence.formal_training?.convergence,checkpoint_reward_replay:shoreBessV3Evidence.checkpoint_reward_replay,training_process:shoreBessV3Evidence.training_process},null,2);});
-  document.getElementById('btn-d-business')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({business_metrics:shoreBessV3Evidence.business_metrics,blind_test_protocol:shoreBessV3Evidence.formal_training?.blind_test_protocol,quality_gates:shoreBessV3Evidence.quality_gates},null,2);});
+  document.getElementById('btn-d-model')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?{current_model_output:shoreBessV3Evidence.v8.current_model_output,checks:shoreBessV3Evidence.v8.checks}:{current_model_output:shoreBessV3Evidence.current_model_output,quality_gates:shoreBessV3Evidence.quality_gates},null,2);});
+  document.getElementById('btn-d-convergence')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?{convergence:shoreBessV3Evidence.v8.convergence,training_process:shoreBessV3Evidence.v8.training_process,selection:shoreBessV3Evidence.v8.selection}:{convergence:shoreBessV3Evidence.formal_training?.convergence,checkpoint_reward_replay:shoreBessV3Evidence.checkpoint_reward_replay,training_process:shoreBessV3Evidence.training_process},null,2);});
+  document.getElementById('btn-d-business')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?{benchmark_summaries:shoreBessV3Evidence.v8.benchmark_summaries,checks:shoreBessV3Evidence.v8.checks,boundary:shoreBessV3Evidence.v8.boundary}:{business_metrics:shoreBessV3Evidence.business_metrics,blind_test_protocol:shoreBessV3Evidence.formal_training?.blind_test_protocol,quality_gates:shoreBessV3Evidence.quality_gates},null,2);});
   document.getElementById('btn-d-v32')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.value_improvement||{},null,2);});
-  document.getElementById('btn-d-contract-tech')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.formal_training?.contract||{},null,2);});
+  document.getElementById('btn-d-contract-tech')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?shoreBessV3Evidence.v8.config:shoreBessV3Evidence.formal_training?.contract||{},null,2);});
   document.getElementById('btn-d-history')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({historical_evidence:shoreBessV3Evidence.historical_evidence,historical_business_replay:shoreBessV3Evidence.historical_business_replay,legacy_history_points:shoreBessV3Evidence.legacy_history_series?.length,data_manifest:shoreBessV3Evidence.data_manifest},null,2);});
   document.getElementById('btn-d-contract')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({boundary:shoreBessV3Evidence.boundary,site_contract:shoreBessV3Evidence.site_contract},null,2);});
   setTimeout(()=>loadShoreBessV3().catch(e=>{$('#d-v3-status').textContent='证据加载失败：'+e;}),260);
@@ -11870,7 +12266,17 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
 (function(){
   const byId=id=>document.getElementById(id);
   const esc=value=>String(value??'—').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
-  let governance=null;
+  let governance=null, governanceLoad=null, selectedGovernanceDetail=null;
+  const governanceViews={
+    controls:j=>({controls:j.controls,audit_chain:j.audit_chain}),
+    claims:j=>({claim_registry:j.claim_registry,ab_test_policy:j.ab_test_policy}),
+    rbac:j=>({role_matrix:j.role_matrix,separation_of_duties:j.separation_of_duties}),
+    security:j=>({open_source_security:j.open_source_security,audit_chain:j.audit_chain}),
+    site:j=>({release_gate:j.release_gate,data_policy:j.data_policy,boundary:j.boundary})
+  };
+  function renderGovernanceDetail(){
+    if(selectedGovernanceDetail && governance)byId('gov-detail').textContent=JSON.stringify(governanceViews[selectedGovernanceDetail](governance),null,2);
+  }
   const badge=status=>{
     const map={pass:['通过','#86efac'],warn:['复核','#fbbf24'],pending:['待现场','#fcd34d'],fail:['失败','#fca5a5']};const x=map[status]||[status,'#cfe0ff'];
     return `<span style="color:${x[1]};font-weight:700;">${x[0]}</span>`;
@@ -11891,8 +12297,8 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     (security.workflows||[]).forEach(row=>{const item=document.createElement('span');item.className='chip';item.style.color=row.configured&&row.actions_pinned_to_commit?'#86efac':'#fca5a5';item.textContent=`✓ ${String(row.path).split('/').pop()} · SHA锁定`;strip.appendChild(item);});
     const files=(security.required_files||[]).filter(row=>row.present).length;
     const fileChip=document.createElement('span');fileChip.className='chip';fileChip.style.color='#93c5fd';fileChip.textContent=`开源文件 ${files}/${(security.required_files||[]).length}`;strip.appendChild(fileChip);
-    byId('gov-detail').textContent='V3治理结论：离线证据链、声明红线、执行失效安全、审计文件权限与开源供应链配置已纳入同一准入门；现场IAM、TOS/AIS/遥测、影子/灰度、回滚演练和审计碳台账缺失时保持BLOCK/0%。';
-    renderRbac(j);renderAbBoundary(j);
+    if(!selectedGovernanceDetail)byId('gov-detail').textContent='V3治理结论：离线证据链、声明红线、执行失效安全、审计文件权限与开源供应链配置已纳入同一准入门；现场IAM、TOS/AIS/遥测、影子/灰度、回滚演练和审计碳台账缺失时保持BLOCK/0%。';
+    renderGovernanceDetail();renderRbac(j);renderAbBoundary(j);
   }
   function renderRbac(j){
     byId('rbac-info').textContent=JSON.stringify({policy:'defined_not_site_identity_verified',roles:j.role_matrix,separation_of_duties:j.separation_of_duties},null,2);
@@ -11901,13 +12307,22 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   function renderAbBoundary(j){
     if(byId('ab-res')?.textContent.trim()==='—')byId('ab-res').textContent=`前瞻设计计算器；${j.ab_test_policy?.site_status}，尚无已实施A/B因果结论。`;
   }
-  async function load(){const response=await fetch('/api/v3/governance/evidence',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);render(await response.json());}
-  byId('btn-gov-refresh')?.addEventListener('click',()=>load().catch(error=>{byId('gov-status').textContent='治理证据加载失败：'+error.message;}));
-  byId('btn-gov-controls')?.addEventListener('click',async()=>{if(!governance)await load();byId('gov-detail').textContent=JSON.stringify({controls:governance.controls,audit_chain:governance.audit_chain},null,2);});
-  byId('btn-gov-claims')?.addEventListener('click',async()=>{if(!governance)await load();byId('gov-detail').textContent=JSON.stringify({claim_registry:governance.claim_registry,ab_test_policy:governance.ab_test_policy},null,2);});
-  byId('btn-gov-rbac')?.addEventListener('click',async()=>{if(!governance)await load();byId('gov-detail').textContent=JSON.stringify({role_matrix:governance.role_matrix,separation_of_duties:governance.separation_of_duties},null,2);});
-  byId('btn-gov-security')?.addEventListener('click',async()=>{if(!governance)await load();byId('gov-detail').textContent=JSON.stringify({open_source_security:governance.open_source_security,audit_chain:governance.audit_chain},null,2);});
-  byId('btn-gov-site')?.addEventListener('click',async()=>{if(!governance)await load();byId('gov-detail').textContent=JSON.stringify({release_gate:governance.release_gate,data_policy:governance.data_policy,boundary:governance.boundary},null,2);});
+  function governanceError(error){byId('gov-status').textContent='治理证据加载失败：'+error.message;}
+  async function load(){
+    if(governanceLoad)return governanceLoad;
+    governanceLoad=(async()=>{
+      const response=await fetch('/api/v3/governance/evidence',{cache:'no-store'});
+      if(!response.ok)throw new Error(`HTTP ${response.status}`);
+      render(await response.json());
+    })();
+    try{await governanceLoad;}finally{governanceLoad=null;}
+  }
+  byId('btn-gov-refresh')?.addEventListener('click',()=>load().catch(governanceError));
+  Object.keys(governanceViews).forEach(kind=>byId('btn-gov-'+kind)?.addEventListener('click',async()=>{
+    selectedGovernanceDetail=kind;
+    try{if(!governance)await load();renderGovernanceDetail();}
+    catch(error){byId('gov-detail').textContent='治理详情加载失败：'+error.message;governanceError(error);}
+  }));
   byId('btn-rbac-who')?.addEventListener('click',async event=>{event.stopImmediatePropagation();if(!governance)await load();renderRbac(governance);},true);
   byId('btn-rbac-approve')?.addEventListener('click',async event=>{event.preventDefault();event.stopImmediatePropagation();if(!governance)await load();byId('rbac-approve-res').textContent=JSON.stringify({decision:'BLOCK',approved:false,mutation_performed:false,reason:'现场IAM/SSO、异人身份和第二通道密钥未接入',required:governance.release_gate?.blockers},null,2);},true);
   byId('btn-ab-calc')?.addEventListener('click',async event=>{
@@ -11917,7 +12332,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
     const zA=invNorm(1-alpha/2),zB=invNorm(power),delta=mdes*sigma,k=((zA+zB)**2*sigma**2*(1/alloc+1/(1-alloc)))/(delta**2),design=(1-r2)*(0.9+0.2*(.4**2+.6**2)),nA=Math.ceil(k*(1-alloc)*design),nB=Math.ceil(k*alloc*design);
     byId('ab-res').textContent=JSON.stringify({purpose:'prospective_design_only',alpha,power,mdes_sigma:mdes,r2_cuped:r2,allocation_B:alloc,n_A:nA,n_B:nB,total_n:nA+nB,measured_experiment:false,site_status:'待接入港口',required_governance:governance.ab_test_policy?.required},null,2);
   },true);
-  const start=()=>load().catch(error=>{byId('gov-status').textContent='治理证据加载失败：'+error.message;});setTimeout(start,1800);setTimeout(start,6000);
+  const start=()=>{if(!governance)load().catch(governanceError);};setTimeout(start,1800);setTimeout(start,6000);
 })();
 </script>
 
@@ -12473,12 +12888,9 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
 <script>
 (function(){
   function downloadSimulationCanvas(){
-    const canvas = document.getElementById('simCanvas');
-    if(!canvas || !canvas.width || !canvas.height) return;
-    const anchor = document.createElement('a');
-    anchor.href = canvas.toDataURL('image/png');
-    anchor.download = `rl-sim-${Date.now()}.png`;
-    anchor.click();
+    if(typeof globalThis.saveCurrentSimulationPNG==='function')return globalThis.saveCurrentSimulationPNG();
+    const button=document.getElementById('btn-sim-save');if(button)button.disabled=true;
+    const meta=document.getElementById('simMeta');if(meta)meta.textContent='评测图尚未就绪，未导出空图。';
   }
   function bindSimSaveOnce(){
     const el = document.getElementById('btn-sim-save');
@@ -12715,6 +13127,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
 (function(){
   const byId = (id)=>document.getElementById(id);
   let opsxV3Evidence = null;
+  let opsxV3Request = null, selectedOpsxDetail = null;
 
   function gateBadge(id, label, gate){
     const el = byId(id); if(!el) return;
@@ -12753,12 +13166,17 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     const radar=byId('opsx-radar');
     if(window.echarts&&radar){ const chart=echarts.getInstanceByDom(radar)||echarts.init(radar); chart.setOption({radar:{indicator:[{name:'证据完整'},{name:'盲测'},{name:'漂移'},{name:'南向'},{name:'审计'}],axisName:{color:'#cfe0ff'},splitLine:{lineStyle:{color:'#1e2a44'}}},series:[{type:'radar',data:[{value:[gateById.artifact_integrity?.status==='pass'?100:0,gateById.offline_advantage?.status==='pass'?100:0,gateById.monitoring?.status==='pass'?100:0,gateById.actuator_config?.status==='pass'?100:0,gateById.audit?.status==='pass'?100:0]}]}]}); }
     byId('opsx-v3-detail').textContent='V3 OpsX结论：离线候选与盲测证据可复核，但现场遥测、白名单南向路由、第二通道密钥和回滚演练未完成；当前漂移门也未通过，因此生产流量保持0%，写控制全部禁用。';
+    if(selectedOpsxDetail)renderOpsXSelected();
   }
 
   async function loadOpsXV3(){
-    const response=await fetch('/api/v3/opsx/evidence',{cache:'no-store'});
-    if(!response.ok) throw new Error(`HTTP ${response.status}`);
-    renderOpsXV3(await response.json());
+    if(opsxV3Request)return opsxV3Request;
+    opsxV3Request=(async()=>{
+      const response=await fetch('/api/v3/opsx/evidence',{cache:'no-store'});
+      if(!response.ok) throw new Error(`HTTP ${response.status}`);
+      const data=await response.json();renderOpsXV3(data);return data;
+    })();
+    try{return await opsxV3Request;}finally{opsxV3Request=null;}
   }
   const details={
     'btn-opsx-rollout':()=>({rollout:opsxV3Evidence.rollout,stage_ladder:opsxV3Evidence.stage_ladder}),
@@ -12766,8 +13184,16 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     'btn-opsx-audit':()=>({audit_manifest:opsxV3Evidence.audit_manifest}),
     'btn-opsx-security':()=>({boundary:opsxV3Evidence.boundary,security_contract:opsxV3Evidence.security_contract}),
   };
-  Object.entries(details).forEach(([id,pick])=>byId(id)?.addEventListener('click',async()=>{if(!opsxV3Evidence)await loadOpsXV3();byId('opsx-v3-detail').textContent=JSON.stringify(pick(),null,2);}));
-  const start=()=>loadOpsXV3().catch(error=>{byId('opsx-v3-status').textContent='OpsX证据加载失败：'+error.message;});
+  function renderOpsXSelected(){
+    const pick=details[selectedOpsxDetail];
+    if(pick&&opsxV3Evidence)byId('opsx-v3-detail').textContent=JSON.stringify(pick(),null,2);
+  }
+  Object.keys(details).forEach(id=>byId(id)?.addEventListener('click',async()=>{
+    selectedOpsxDetail=id;byId('opsx-v3-detail').textContent='正在读取所选审计证据…';
+    try{if(!opsxV3Evidence)await loadOpsXV3();if(selectedOpsxDetail===id)renderOpsXSelected();}
+    catch(error){if(selectedOpsxDetail===id)byId('opsx-v3-detail').textContent='所选证据不可用，点击可重试：'+error.message;}
+  }));
+  const start=()=>opsxV3Evidence?Promise.resolve(opsxV3Evidence):loadOpsXV3().catch(error=>{byId('opsx-v3-status').textContent='OpsX证据加载失败：'+error.message;});
   setTimeout(start,1000);
   window.__portDtFeatureFlagsPromise?.then(()=>setTimeout(start,100));
 })();
@@ -12777,6 +13203,20 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   const byId=id=>document.getElementById(id);
   const esc=value=>String(value??'—').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
   let evidence=null;
+  let evidenceLoadPending=null;
+  let selectedMlopsDetail='summary';
+  function renderSelectedMlopsDetail(){
+    if(!evidence)return;
+    const detail={
+      pipeline:{pipeline:evidence.pipeline,boundary:evidence.boundary},
+      registry:{summary:evidence.summary,selected_models:evidence.selected_models,artifact_manifest:evidence.artifact_manifest,historical_evidence:evidence.historical_evidence},
+      evaluation:{evaluation:evidence.evaluation,algorithms:evidence.algorithms,reproducibility:evidence.reproducibility},
+      rollback:{replacement_and_rollback:evidence.replacement_and_rollback,boundary:evidence.boundary}
+    };
+    byId('mlops-detail').textContent=selectedMlopsDetail==='summary'
+      ? `当前证据：正式评测 ${evidence.summary?.formal_runs??'—'} 次，烟测 ${evidence.summary?.smoke_runs??'—'} 次；模型哈希、训练配置和评测报告可复核。现场未准入前不自动替换或下发控制。`
+      : JSON.stringify(detail[selectedMlopsDetail],null,2);
+  }
   const statusBadge=status=>status==='pass'?'<span style="color:#86efac;">通过</span>':status==='pending'?'<span style="color:#fcd34d;">待接入</span>':'<span style="color:#fca5a5;">失败</span>';
   function renderPipeline(rows){
     byId('mlops-pipeline-table').querySelector('tbody').innerHTML=(rows||[]).map(row=>`<tr><td>${esc(row.name)}</td><td>${statusBadge(row.status)}</td><td class="small mono">${esc(row.evidence)}</td></tr>`).join('');
@@ -12789,6 +13229,8 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   }
   function renderTrace(j){
     const r=j.reproducibility||{},e=j.evaluation||{};
+    byId('o11y-job').value=(e.selected_job_ids||[]).join(', ')||'未登记';
+    byId('o11y-asset').value=e.selected_algorithm||'未入选';
     byId('o11y-trace').textContent=JSON.stringify({
       trace_type:'persisted_model_lineage', selected_algorithm:e.selected_algorithm,
       job_ids:e.selected_job_ids, model_sha256:e.selected_model_sha256,
@@ -12805,12 +13247,17 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   function renderDQ(j){
     const r=j.reproducibility||{},pipeline=j.pipeline||[];
     const quality=pipeline.find(row=>row.id==='quality')||{},split=pipeline.find(row=>row.id==='split')||{};
-    byId('dq-res').textContent='✅ 公开数据训练契约通过；现场数据契约待接入港口';
+    const datasetOk=typeof r.dataset_id==='string'&&r.dataset_id.length>0;
+    const hashOk=/^[a-f0-9]{64}$/i.test(r.dataset_sha256||'');
+    const passed=datasetOk&&hashOk&&quality.status==='pass'&&split.status==='pass';
+    byId('dq-dataset').value=r.dataset_id||'未登记';
+    byId('dq-res').textContent=passed?'✅ 当前证据的数据质量及时间隔离门通过；现场数据契约仍待接入港口':'❌ 当前证据的数据契约未通过或不完整；禁止显示为已核验通过';
+    byId('dq-res').style.color=passed?'#86efac':'#fca5a5';
     byId('dq-table').querySelector('tbody').innerHTML=`
-      <tr><td>dataset_id</td><td class="mono">public_cn_sha_hourly_v3</td><td class="mono">${esc(r.dataset_id)}</td><td>✅</td></tr>
-      <tr><td>SHA-256</td><td>必须固定</td><td class="small mono">${esc(r.dataset_sha256)}</td><td>✅</td></tr>
+      <tr><td>dataset_id</td><td>与当前保存证据一致</td><td class="mono">${esc(r.dataset_id)}</td><td>${datasetOk?'✅':'❌'}</td></tr>
+      <tr><td>SHA-256</td><td>必须固定</td><td class="small mono">${esc(r.dataset_sha256)}</td><td>${hashOk?'✅':'❌'}</td></tr>
       <tr><td>质量门</td><td>可训练</td><td class="small">${esc(quality.evidence)}</td><td>${quality.status==='pass'?'✅':'❌'}</td></tr>
-      <tr><td>时间切分</td><td>70/10/20 不打乱</td><td class="small">${esc(split.evidence)}</td><td>✅</td></tr>
+      <tr><td>时间切分</td><td>遵守已保存的时间隔离协议</td><td class="small">${esc(split.evidence)}</td><td>${split.status==='pass'?'✅':'❌'}</td></tr>
       <tr><td>现场遥测</td><td>授权接口+字段映射</td><td>待接入港口</td><td>◷</td></tr>`;
   }
   function render(j){
@@ -12825,19 +13272,16 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     byId('mlops-admission').textContent=b.production_authority?'已授权':'BLOCK / 0%';
     byId('mlops-status').textContent=`离线制品=${b.offline_lifecycle_verified?'已核验':'拦截'} · 现场=${b.site_status} · 生产权限=${b.production_authority?'开启':'关闭'}`;
     renderPipeline(j.pipeline);renderArtifacts(j.artifact_manifest);renderAlgorithms(j.algorithms);renderTrace(j);renderBlockers(j);renderDQ(j);
-    byId('mlops-detail').textContent='V3 MLOps结论：30次学习器正式评测+4次确定性基线评测与32次烟测严格分开；SAC候选三种子、模型哈希、训练配置和盲测报告可复核。未接入现场前不设champion，不自动替换，不下发控制。';
+    renderSelectedMlopsDetail();
   }
-  async function load(){
-    const response=await fetch('/api/v3/mlops/evidence',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);render(await response.json());
+  function load(){
+    if(evidenceLoadPending)return evidenceLoadPending;
+    evidenceLoadPending=(async()=>{const response=await fetch('/api/v3/mlops/evidence',{cache:'no-store'});if(!response.ok)throw new Error(`HTTP ${response.status}`);const payload=await response.json();render(payload);return payload;})().finally(()=>{evidenceLoadPending=null;});
+    return evidenceLoadPending;
   }
-  byId('btn-mlops-pipeline')?.addEventListener('click',async()=>{if(!evidence)await load();byId('mlops-detail').textContent=JSON.stringify({pipeline:evidence.pipeline,boundary:evidence.boundary},null,2);});
-  byId('btn-mlops-registry')?.addEventListener('click',async()=>{if(!evidence)await load();byId('mlops-detail').textContent=JSON.stringify({summary:evidence.summary,selected_models:evidence.selected_models,artifact_manifest:evidence.artifact_manifest,historical_evidence:evidence.historical_evidence},null,2);});
-  byId('btn-mlops-evaluation')?.addEventListener('click',async()=>{if(!evidence)await load();byId('mlops-detail').textContent=JSON.stringify({evaluation:evidence.evaluation,algorithms:evidence.algorithms,reproducibility:evidence.reproducibility},null,2);});
-  byId('btn-mlops-rollback')?.addEventListener('click',async()=>{if(!evidence)await load();byId('mlops-detail').textContent=JSON.stringify({replacement_and_rollback:evidence.replacement_and_rollback,boundary:evidence.boundary},null,2);});
-  byId('btn-o11y-trace')?.addEventListener('click',async event=>{event.stopImmediatePropagation();if(!evidence)await load();renderTrace(evidence);},true);
-  byId('btn-rca-run')?.addEventListener('click',async event=>{event.stopImmediatePropagation();if(!evidence)await load();renderBlockers(evidence);},true);
-  byId('btn-dq-check')?.addEventListener('click',async event=>{event.stopImmediatePropagation();if(!evidence)await load();renderDQ(evidence);},true);
-  const start=()=>load().catch(error=>{byId('mlops-status').textContent='MLOps证据加载失败：'+error.message;});setTimeout(start,1500);setTimeout(start,5000);
+  ['pipeline','registry','evaluation','rollback'].forEach(view=>byId('btn-mlops-'+view)?.addEventListener('click',async()=>{selectedMlopsDetail=view;byId('mlops-detail').textContent='正在读取所选证据…';try{if(!evidence)await load();renderSelectedMlopsDetail();}catch(error){byId('mlops-status').textContent='MLOps证据加载失败：'+error.message;byId('mlops-detail').textContent='所选证据不可用，点击按钮可重试。';}}));
+  [['btn-o11y-trace',renderTrace,'o11y-trace'],['btn-rca-run',renderBlockers,'mlops-status'],['btn-dq-check',renderDQ,'dq-res']].forEach(([id,renderSection,resultId])=>byId(id)?.addEventListener('click',async event=>{event.stopImmediatePropagation();try{if(!evidence)await load();renderSection(evidence);}catch(error){byId(resultId).textContent='证据加载失败：'+error.message;}},true));
+  const start=()=>{if(!evidence)load().catch(error=>{byId('mlops-status').textContent='MLOps证据加载失败：'+error.message;});};setTimeout(start,1500);setTimeout(start,5000);
 })();
 </script>
 <script>
@@ -13071,13 +13515,16 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   }
 
   // === 数据加载 ===
+  let twinRequestId=0;
   async function loadTwin(refresh=false){
+    const requestId=++twinRequestId;
     const runBtn=$('#btn-tw-run'), replayBtn=$('#btn-tw-replay');
     const scenario=window.__runtimeScenarioId?.($('#tw-scen')?.value||'基线场景')||'strategy';
     if(runBtn){runBtn.disabled=true;runBtn.textContent=refresh?'正在运行 7 类压力测试…':'正在读取压力证据…';}
     if(replayBtn){replayBtn.disabled=true;replayBtn.textContent='正在重放…';}
     try{
       const j = await getJSON(`/api/v3/twin/reliability?refresh=${refresh?1:0}&scenario=${encodeURIComponent(scenario)}`);
+      if(requestId!==twinRequestId)return;
       if(j?.available===false) throw new Error(j?.reason||'twin reliability unavailable');
       gauge('tw-fidelity-gauge',j?.site_fidelity?.score??null,1);
       gauge('tw-coverage-gauge',j?.software_coverage?.rate??null,1);
@@ -13118,19 +13565,25 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
       const datasetHash=String(j?.policy?.dataset_sha256||'').slice(0,12);
       $('#tw-meta').textContent=`模型 ${String(j?.policy?.algorithm||'').toUpperCase()} · model ${modelHash}… · dataset ${datasetHash}… · ${j?.telemetry?.measured?'现场实测':'公开校准连续回放'} · 无生产控制权`;
     }catch(e){
+      if(requestId!==twinRequestId)return;
       gauge('tw-fidelity-gauge',null,1); gauge('tw-coverage-gauge',null,1); gauge('tw-stress-gauge',null,1);
       renderErrorBars([]); renderScenarioBars([],[]); renderCoverageMatrix([]); fillEnvelopeTable({});
       $('#tw-replay-summary').textContent='孪生可靠性接口不可用；系统已失效安全，未生成替代指标。';
       $('#tw-meta').textContent = `孪生证据接口不可用；未生成替代指标：${String(e).slice(0,100)}`;
     }finally{
-      if(runBtn){runBtn.disabled=false;runBtn.textContent='运行软件压力矩阵';}
-      if(replayBtn){replayBtn.disabled=false;replayBtn.textContent='重放所选场景';}
+      if(requestId===twinRequestId){
+        if(runBtn){runBtn.disabled=false;runBtn.textContent='运行软件压力矩阵';}
+        if(replayBtn){replayBtn.disabled=false;replayBtn.textContent='重放所选场景';}
+      }
     }
   }
 
   $('#btn-tw-run')?.addEventListener('click',()=>loadTwin(true));
   $('#btn-tw-replay')?.addEventListener('click',()=>loadTwin(false));
   $('#tw-scen')?.addEventListener('change',()=>{
+    twinRequestId+=1;
+    $('#btn-tw-run').disabled=false;$('#btn-tw-run').textContent='运行软件压力矩阵';
+    $('#btn-tw-replay').disabled=false;$('#btn-tw-replay').textContent='重放所选场景';
     $('#tw-replay-summary').textContent='场景已切换；点击“重放所选场景”读取模型与安全门输出。';
   });
   window.__loadTwinReliability=loadTwin;
@@ -13641,7 +14094,7 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   // —— 主循环（含伪 3D 遮挡） —— //
   function frame(){
     frameRequest=0;
-    if(!running||!portvizVisible||document.hidden) return;
+    if(!canRunPortviz()) return;
     const t0=performance.now();
     clearHits();                       // 每帧重建命中盒
     drawBackground();
@@ -13666,11 +14119,14 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
     drawStaticLabels();   // 固定注释：让首次观看者一眼懂
     drawTooltip();        // 悬停讲解：看哪里点哪里
     const dt=performance.now()-t0; fps=0.9*fps+0.1*(1000/Math.max(16,dt)); drawHUD();
-    if(running&&portvizVisible&&!document.hidden) frameRequest=requestAnimationFrame(frame);
+    if(canRunPortviz()) frameRequest=requestAnimationFrame(frame);
+  }
+  function canRunPortviz(){
+    return running&&portvizVisible&&!document.hidden&&cv.getClientRects().length>0;
   }
   function syncPortvizAnimation(){
-    if(running&&portvizVisible&&!document.hidden&&!frameRequest) frameRequest=requestAnimationFrame(frame);
-    else if((!running||!portvizVisible||document.hidden)&&frameRequest){cancelAnimationFrame(frameRequest);frameRequest=0;}
+    if(canRunPortviz()&&!frameRequest) frameRequest=requestAnimationFrame(frame);
+    else if(!canRunPortviz()&&frameRequest){cancelAnimationFrame(frameRequest);frameRequest=0;}
   }
 
   // —— 单体绘制（供排序后调用） —— //
@@ -13697,24 +14153,44 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   }
 
   // —— 数据：严格后端来源；失败时保留最后一帧，不生成替代轨迹 —— //
-  async function pullOnce(){
-    try{
-      const r = await fetch(`/api/portviz/stream?since=${lastTs}`, {cache:'no-store'});
-      if(r.ok){ const j=await r.json(); applyFrame(j); lastTs=j.ts||Date.now();
-        const mode=j.meta?.source_mode||'unknown'; const measured=j.meta?.measured_entity_tracks===true;
-        const el=document.getElementById('portviz-meta'); if(el) el.innerHTML=`数据源：<code>/api/portviz/stream</code> · ${mode} · <span style="color:${measured?'#34d399':'#fbbf24'};">${measured?'实测实体轨迹':'数据集驱动的确定性视觉投影'}</span>`;
-        return;
-      }
-    }catch(_){}
-    const el=document.getElementById('portviz-meta'); if(el) el.innerHTML='数据源：<code>/api/portviz/stream</code>（<span style="color:#ef4444;">离线；保留最后一帧，不生成替代轨迹</span>）';
-  }
   let portvizPullTimer = null;
+  let portvizPullInFlight = null;
+  function pullOnce(){
+    if(portvizPullInFlight) return portvizPullInFlight;
+    if(!canRunPortviz()) return Promise.resolve();
+    portvizPullInFlight=(async()=>{
+      try{
+        const r = await fetch(`/api/portviz/stream?since=${lastTs}`, {cache:'no-store'});
+        if(r.ok){ const j=await r.json(); applyFrame(j); lastTs=j.ts||Date.now();
+          const mode=j.meta?.source_mode||'unknown'; const measured=j.meta?.measured_entity_tracks===true;
+          const el=document.getElementById('portviz-meta'); if(el) el.innerHTML=`数据源：<code>/api/portviz/stream</code> · ${mode} · <span style="color:${measured?'#34d399':'#fbbf24'};">${measured?'实测实体轨迹':'数据集驱动的确定性视觉投影'}</span>`;
+          return;
+        }
+      }catch(_){}
+      const el=document.getElementById('portviz-meta'); if(el) el.innerHTML='数据源：<code>/api/portviz/stream</code>（<span style="color:#ef4444;">离线；保留最后一帧，不生成替代轨迹</span>）';
+    })().finally(()=>{portvizPullInFlight=null;});
+    return portvizPullInFlight;
+  }
   function schedulePull(){
-    if(!running || portvizPullTimer != null) return;
+    if(!canRunPortviz() || portvizPullTimer != null) return;
     portvizPullTimer=setTimeout(()=>{
       portvizPullTimer=null;
-      if(running) pullOnce().finally(schedulePull);
+      if(canRunPortviz()) pullOnce().finally(schedulePull);
     }, Math.max(300,900/Math.max(0.4,speed)));
+  }
+  function syncPortvizActivity(){
+    syncPortvizAnimation();
+    if(!canRunPortviz()){
+      if(portvizPullTimer!=null){clearTimeout(portvizPullTimer);portvizPullTimer=null;}
+      return;
+    }
+    if(portvizPullTimer==null) pullOnce().finally(schedulePull);
+  }
+  function syncPortvizModule(){
+    const rect=cv.getBoundingClientRect();
+    portvizVisible=cv.getClientRects().length>0&&rect.bottom>=-220&&rect.top<=innerHeight+220;
+    if(portvizVisible) resize();
+    syncPortvizActivity();
   }
   function applyFrame(f){
     if(Array.isArray(f.agv)) ENT.agv.forEach((a,i)=>{
@@ -13743,31 +14219,29 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   playBtn?.addEventListener('click',()=>{
     if(!running){
       running=true;
-      syncPortvizAnimation();
-      pullOnce().finally(schedulePull);
+      syncPortvizActivity();
     }
     syncPortvizControls();
   });
   pauseBtn?.addEventListener('click',()=>{
     running=false;
-    if(portvizPullTimer!=null){ clearTimeout(portvizPullTimer); portvizPullTimer=null; }
+    syncPortvizActivity();
     syncPortvizControls();
   });
   const spd=document.getElementById('pv-speed'), spdLbl=document.getElementById('pv-speed-lbl'); spd?.addEventListener('input',()=>{ speed=Number(spd.value||'1'); spdLbl.textContent=speed.toFixed(1)+'x'; });
 
   // —— 启动 —— //
-  const portvizRect=cv.getBoundingClientRect();
-  portvizVisible=portvizRect.bottom>=-180&&portvizRect.top<=innerHeight+180;
   if('IntersectionObserver' in window){
     const portvizObserver=new IntersectionObserver(entries=>{
-      entries.forEach(entry=>{if(entry.target===cv){portvizVisible=entry.isIntersecting;if(portvizVisible)resize();syncPortvizAnimation();}});
+      entries.forEach(entry=>{if(entry.target===cv){portvizVisible=entry.isIntersecting;if(portvizVisible&&cv.getClientRects().length)resize();syncPortvizActivity();}});
     },{rootMargin:'220px 0px'});
     portvizObserver.observe(cv);
   }
-  document.addEventListener('visibilitychange',syncPortvizAnimation);
-  syncPortvizAnimation();
+  document.addEventListener('visibilitychange',syncPortvizActivity);
+  window.addEventListener('port-module-hidden',syncPortvizModule);
+  window.addEventListener('port-module-shown',syncPortvizModule);
+  syncPortvizModule();
   syncPortvizControls();
-  pullOnce().finally(()=> schedulePull());
 })();
 </script>
 <script>
@@ -14118,6 +14592,7 @@ async function pullOverview(scenario=masScenario){
   const $$ = s => Array.from(document.querySelectorAll(s));
   const ech = window.echarts;
   let twinLabEvidence = null;
+  let twinLabRequest=null, twinLabPendingRefresh=false, scenarioViewId=0, drillViewId=0, contractViewId=0;
 
   // 请求失败返回显式空状态，不生成替代业务结果。
   async function safeJSON(url){
@@ -14125,7 +14600,20 @@ async function pullOverview(scenario=masScenario){
       const r = await fetch(url, {cache:'no-store'});
       if(!r.ok) throw new Error('HTTP '+r.status);
       return await r.json();
-    }catch(_){ return {items:[], issues:[], metrics:{}, thresholds:{}, _unavailable:true}; }
+    }catch(error){ return {items:[], issues:[], metrics:{}, thresholds:{}, _unavailable:true, _error:String(error.message||error)}; }
+  }
+  async function requestTwinLab(refresh=false){
+    if(twinLabRequest){
+      if(refresh&&!twinLabPendingRefresh){await twinLabRequest;return requestTwinLab(true);}
+      return twinLabRequest;
+    }
+    if(!refresh&&twinLabEvidence)return twinLabEvidence;
+    twinLabPendingRefresh=refresh;
+    twinLabRequest=(async()=>{
+      const data=await safeJSON(`/api/v3/twinlab/evidence?refresh=${refresh?'true':'false'}`);
+      twinLabEvidence=data._unavailable?null:data;return data;
+    })();
+    try{return await twinLabRequest;}finally{twinLabRequest=null;}
   }
   const twinLabStatusLabel=value=>({
     software_in_envelope_passed:'包络内安全通过',
@@ -14160,8 +14648,7 @@ async function pullOverview(scenario=masScenario){
 
   // ========== 场景工厂 ==========
   async function loadScenarios(refresh=false){
-    const j = await safeJSON(`/api/v3/twinlab/evidence?refresh=${refresh?'true':'false'}`);
-    twinLabEvidence=j;
+    const j = await requestTwinLab(refresh);
     const scenarios=j.scenarios||{};
     // 表格
     const tb = $('#scn-table tbody');
@@ -14171,9 +14658,13 @@ async function pullOverview(scenario=masScenario){
       <td>${x.safe_action_count}/${x.decision_count} · 阻断 ${x.blocked_action_count}</td>
       <td class="mono">${x.peak_kw==null?'待接入港口':Number(x.peak_kw).toFixed(1)+' kW'} / ${x.terminal_soc==null?'待接入港口':(Number(x.terminal_soc)*100).toFixed(1)+'%'}</td>
     </tr>`).join('') || '<tr><td colspan="4" class="small" style="color:#eab308;">软件场景证据不可用；未生成替代结果</td></tr>';
+    if(j._unavailable){
+      ['scn-pass','scn-dist'].forEach(id=>{const el=$('#'+id);if(ech)ech.dispose(el);el.textContent='场景证据不可用，未生成替代图表。';});
+      return j;
+    }
     // 各场景安全处理率
     if (ech){
-      const passEl=document.getElementById('scn-pass'); ech.dispose(passEl); const c = ech.init(passEl);
+      const passEl=document.getElementById('scn-pass'); ech.dispose(passEl); passEl.textContent=''; const c = ech.init(passEl);
       const shortScenario={high_density_berthing:'高密靠泊',channel_congestion:'航道拥堵',equipment_degradation:'设备降级',heatwave_reefer:'高温冷藏',typhoon_closure:'台风封航',island_grid:'孤网运行',tariff_carbon_spike:'电价碳峰'};
       c.setOption({
         grid:{left:40,right:10,top:10,bottom:24,containLabel:true},
@@ -14181,7 +14672,7 @@ async function pullOverview(scenario=masScenario){
         yAxis:{type:'value',min:0,max:1, axisLabel:{color:'#b9cffb', formatter:v=>Math.round(v*100)+'%'}},
         series:[{type:'bar',barMaxWidth:24,data:(scenarios.items||[]).map(x=>x.pass_rate), itemStyle:{color:'#34d399'}}]
       });
-      const distEl=document.getElementById('scn-dist'); ech.dispose(distEl); const h = ech.init(distEl);
+      const distEl=document.getElementById('scn-dist'); ech.dispose(distEl); distEl.textContent=''; const h = ech.init(distEl);
       const dist=scenarios.distribution||{};
       h.setOption({
         grid:{left:40,right:10,top:10,bottom:24,containLabel:true},
@@ -14193,32 +14684,36 @@ async function pullOverview(scenario=masScenario){
     }
     return j;
   }
-  $('#scn-import')?.addEventListener('click', async ()=>{
-    if(!twinLabEvidence?.policy) await loadScenarios(false);
-    const p=twinLabEvidence?.policy||{}, s=twinLabEvidence?.scenarios||{};
-    $('#scn-log').textContent=JSON.stringify({schema:twinLabEvidence?.schema,mode:twinLabEvidence?.mode,scenario_count:s.total,policy:p,claim_boundary:twinLabEvidence?.claim_boundary},null,2);
-  });
-  $('#scn-run')?.addEventListener('click', async ()=>{
-    const j = await loadScenarios(true);
-    $('#scn-log').textContent = JSON.stringify({generated_at:j.generated_at,software_stress:j.scenarios,site_fidelity:j.site_fidelity,production_authority:j.production_authority}, null, 2);
-  });
-  $('#scn-report')?.addEventListener('click', ()=>{
-    const j=twinLabEvidence||{};
-    $('#scn-log').textContent = JSON.stringify({schema:j.schema,generated_at:j.generated_at,policy:j.policy,scenarios:j.scenarios,drills:j.drills,contracts:j.contracts,claim_boundary:j.claim_boundary}, null, 2);
-  });
+  async function showScenarioView(view){
+    const token=++scenarioViewId;
+    $('#scn-log').textContent=view==='run'?'正在运行有界回放…':'正在读取所选场景证据…';
+    const j=await loadScenarios(view==='run');
+    if(token!==scenarioViewId)return;
+    if(j._unavailable){$('#scn-log').textContent='场景证据请求失败，点击可重试：'+j._error;return;}
+    const detail=view==='contract'?{schema:j.schema,mode:j.mode,scenario_count:j.scenarios?.total,policy:j.policy,claim_boundary:j.claim_boundary}
+      :view==='run'?{generated_at:j.generated_at,software_stress:j.scenarios,site_fidelity:j.site_fidelity,production_authority:j.production_authority}
+      :{schema:j.schema,generated_at:j.generated_at,policy:j.policy,scenarios:j.scenarios,drills:j.drills,contracts:j.contracts,claim_boundary:j.claim_boundary};
+    $('#scn-log').textContent=JSON.stringify(detail,null,2);
+  }
+  $('#scn-import')?.addEventListener('click',()=>showScenarioView('contract'));
+  $('#scn-run')?.addEventListener('click',()=>showScenarioView('run'));
+  $('#scn-report')?.addEventListener('click',()=>showScenarioView('report'));
 
   // ========== 韧性演练 ==========
   async function loadDrills(){
-    const j = twinLabEvidence?.drills ? twinLabEvidence : await safeJSON('/api/v3/twinlab/evidence');
-    twinLabEvidence=j; const drills=j.drills||{};
+    const token=++drillViewId;
+    const j = await requestTwinLab();
+    if(token!==drillViewId)return;
+    const drills=j.drills||{};
     $('#drill-state').textContent = `当前：软件证据 ${drills.software_passed||0}/${drills.software_total||0}；现场 RTO/RPO=${drills.site_rto_rpo||'待接入港口'}`;
     const tb = $('#drill-table tbody');
     tb.innerHTML = (drills.items||[]).map(x=>`<tr>
       <td>${x.name}</td><td class="mono">${x.evidence}</td>
       <td>${twinLabStatusLabel(x.result)}</td><td>${x.side_effect}</td>
     </tr>`).join('') || '<tr><td colspan="4">演练证据不可用；未生成替代 SLA</td></tr>';
+    if(j._unavailable){$('#drill-state').textContent='演练证据请求失败：'+j._error;const el=$('#drill-sla');if(ech)ech.dispose(el);el.textContent='演练图表不可用';return;}
     if (ech){
-      const drillEl=document.getElementById('drill-sla'); ech.dispose(drillEl); const s = ech.init(drillEl);
+      const drillEl=document.getElementById('drill-sla'); ech.dispose(drillEl); drillEl.textContent=''; const s = ech.init(drillEl);
       s.setOption({
         grid:{left:40,right:10,top:24,bottom:24,containLabel:true},
         xAxis:{type:'category', data:['场景通过','失效安全覆盖','现场待接入'], axisLabel:{color:'#b9cffb'}},
@@ -14227,23 +14722,27 @@ async function pullOverview(scenario=masScenario){
       });
     }
   }
-  $('#drill-shadow')?.addEventListener('click', async ()=>{
-    const j=await safeJSON('/api/v3/twin/reliability?scenario=strategy'); const r=j.selected_replay||{};
-    $('#drill-state').textContent=`当前：Shadow 只读回放 · ${r.status||'不可用'} · 决策 ${r.decision_count||0} · side_effect=${r.side_effect||'none'}`;
-  });
-  $('#drill-freeze')?.addEventListener('click', async ()=>{
-    const j=await safeJSON('/api/v3/twin/reliability?scenario=telemetry_loss_or_drift'); const r=j.selected_replay||{};
-    $('#drill-state').textContent=`当前：Freeze 失效安全 · ${r.status||'不可用'} · ${r.effect||'待核验'} · side_effect=${r.side_effect||'none'}`;
-  });
-  $('#drill-rollback')?.addEventListener('click', async ()=>{
-    const j=await safeJSON('/api/actuators/capabilities');
-    $('#drill-state').textContent=`当前：Rollback 能力核验 · ${j.enabled?'现场已配置':'待接入港口'} · ${j.mode||'fail_closed'} · 本页未执行回滚`;
-  });
+  async function showDrill(kind){
+    const token=++drillViewId;
+    $('#drill-state').textContent='正在读取'+kind+'证据…';
+    const urls={shadow:'/api/v3/twin/reliability?scenario=strategy',freeze:'/api/v3/twin/reliability?scenario=telemetry_loss_or_drift',rollback:'/api/actuators/capabilities'};
+    const j=await safeJSON(urls[kind]);
+    if(token!==drillViewId)return;
+    if(j._unavailable){$('#drill-state').textContent='演练证据请求失败，未执行动作：'+j._error;return;}
+    const r=j.selected_replay||{};
+    $('#drill-state').textContent=kind==='shadow'?`当前：Shadow 只读回放 · ${r.status||'不可用'} · 决策 ${r.decision_count??'—'} · side_effect=${r.side_effect||'待核验'}`
+      :kind==='freeze'?`当前：Freeze 失效安全 · ${r.status||'不可用'} · ${r.effect||'待核验'} · side_effect=${r.side_effect||'待核验'}`
+      :`当前：Rollback 能力核验 · ${j.enabled?'适配器已配置（非现场验收）':'待接入港口'} · ${j.mode||'fail_closed'} · 本页未执行回滚`;
+  }
+  ['shadow','freeze','rollback'].forEach(kind=>$('#drill-'+kind)?.addEventListener('click',()=>showDrill(kind)));
 
   // ========== 数据契约 ==========
-  async function loadContracts(){
-    const j = twinLabEvidence?.contracts ? twinLabEvidence : await safeJSON('/api/v3/twinlab/evidence');
-    twinLabEvidence=j; const contracts=j.contracts||{};
+  async function loadContracts(refresh=false,verify=false){
+    const token=++contractViewId;
+    $('#con-meta').textContent=verify?'正在核验数据契约…':'正在读取数据契约…';
+    const j = await requestTwinLab(refresh);
+    if(token!==contractViewId)return;
+    const contracts=j.contracts||{};
     const tb = $('#con-table tbody');
     tb.innerHTML = (contracts.items||[]).map(x=>`<tr>
       <td class="mono">${x.feature}</td>
@@ -14253,15 +14752,12 @@ async function pullOverview(scenario=masScenario){
       <td>${x.schema_ok?'OK':'DIFF'}</td>
       <td>${x.status}</td>
     </tr>`).join('') || '<tr><td colspan="6">数据契约不可用；未生成替代覆盖率</td></tr>';
+    if(j._unavailable){$('#con-meta').textContent='数据契约请求失败：'+j._error;return;}
     $('#con-meta').textContent=`${contracts.dataset_id||'数据集不可用'} · ${contracts.available||0}/${contracts.total||0} 字段回放就绪 · SHA256 ${String(contracts.dataset_sha256||'').slice(0,16)}… · 现场新鲜度待接入港口`;
+    if(verify)$('#con-meta').textContent=`校验：schema=${contracts.quality_status||'不可用'} · training_eligible=${contracts.training_eligible===true} · 回放字段=${contracts.available??'—'}/${contracts.total??'—'} · 缺失=${(contracts.missing||[]).join(', ')||'无'} · 现场替换仍必需`;
   }
-  $('#con-refresh')?.addEventListener('click', ()=>{twinLabEvidence=null;loadContracts();});
-  $('#con-verify')?.addEventListener('click', async ()=>{
-    twinLabEvidence=await safeJSON('/api/v3/twinlab/evidence?refresh=true');
-    const c=twinLabEvidence.contracts||{};
-    await loadContracts();
-    $('#con-meta').textContent = `校验：schema=${c.quality_status||'不可用'} · training_eligible=${c.training_eligible===true} · 回放字段=${c.available||0}/${c.total||0} · 缺失=${(c.missing||[]).join(', ')||'无'} · 现场替换仍必需`;
-  });
+  $('#con-refresh')?.addEventListener('click',()=>loadContracts(true,false));
+  $('#con-verify')?.addEventListener('click',()=>loadContracts(true,true));
 
   // ========== 现场标定 ==========
   let calibrationReadiness=null;
@@ -14944,6 +15440,7 @@ async function pullOverview(scenario=masScenario){
         setText("exec-risk-delay", opsRisk === null ? pending("作业延误风险（7 天）", "船期/泊位/设备计划") : `作业延误风险（7 天）：${(opsRisk * 100).toFixed(1)} %`);
         setText("exec-risk-safety", safety === null ? pending("过去 12 个月安全事故", "EHS 事件台账") : `过去 12 个月安全事故：${safety} （目标 ${safetyTarget ?? '待接入'}）`);
         setText("exec-risk-alerts", critical === null && major === null ? pending("当前告警", "告警中心") : `当前告警：${critical ?? '待接入'} 个重大 / ${major ?? '待接入'} 个一般`);
+        window.__syncHomeHero?.();
       } catch (err) {
         console.error("Exec Cockpit 加载失败：", err);
       }
@@ -15686,6 +16183,7 @@ async function pullOverview(scenario=masScenario){
   (function(){
     const $ = (id)=>document.getElementById(id);
     let __storyRequestRun = 0;
+    let __storyAvailable = false;
 
     // 保留原有 loadStory 实现
     async function loadStory(h){
@@ -15712,13 +16210,19 @@ async function pullOverview(scenario=masScenario){
       }
       if (requestRun !== __storyRequestRun) return;
 
+      const availableHour=j.hour!==null&&j.hour!==undefined&&Number.isFinite(Number(j.hour));
+      __storyAvailable=j.available===true&&availableHour;
+      const pending=!__storyAvailable;
+      if(pending)pauseStory();
+      const playButton=$('story-play');
+      if(playButton){playButton.disabled=pending;if(pending)playButton.textContent='待接入可核验轨迹';else if(!__isPlaying)playButton.textContent='▶ 播放故事';}
+
       // 时间轴 + 标签
       if (document.getElementById('story-hour')) document.getElementById('story-hour').value = j.hour ?? h;
       if (document.getElementById('story-hour-label')) document.getElementById('story-hour-label').textContent =
-        (j.hour===0 ? 'T' : (j.hour>0 ? `T+${j.hour}h` : `T${j.hour}h`));
+        pending?'—':(Number(j.hour)===0 ? 'T' : (Number(j.hour)>0 ? `T+${j.hour}h` : `T${j.hour}h`));
 
       const evidence = document.getElementById('story-evidence');
-      const pending = !j.available;
       if (evidence) {
         if (pending) {
           evidence.innerHTML = `<span class="chip">待接入港口</span><span>${j.reason||'没有可核验的同口径轨迹；未生成替代故事'}</span>`;
@@ -15787,31 +16291,51 @@ async function pullOverview(scenario=masScenario){
     let __storyTimer = null;
     let __isPlaying = false;
     let __storyHour = null;
+    let __storyPlaybackRevision = 0;
+
+    function storyViewOpen(){
+      return !document.hidden&&!!$('story-section')?.getClientRects().length;
+    }
+    function pauseStory(){
+      if(!__isPlaying&&__storyTimer==null) return;
+      if(__storyTimer!=null) clearInterval(__storyTimer);
+      __storyTimer=null;
+      __isPlaying=false;
+      ++__storyPlaybackRevision;
+      const btn=$('story-play');
+      if(btn){btn.disabled=!__storyAvailable;btn.textContent=__storyAvailable?'▶ 继续播放':'待接入可核验轨迹';}
+    }
+    const pauseClosedStory=()=>{if(!storyViewOpen()) pauseStory();};
+    window.addEventListener('port-module-hidden',pauseClosedStory);
+    document.addEventListener('visibilitychange',pauseClosedStory);
 
     async function handlePlay(){
       const btn = $('story-play');
 
       // 播放中再次点击即暂停，便于演示时停在关键事件上讲解。
       if (__isPlaying){
-        if (__storyTimer) clearInterval(__storyTimer);
-        __storyTimer = null;
-        __isPlaying = false;
-        if (btn){ btn.disabled = false; btn.textContent = '▶ 继续播放'; }
+        pauseStory();
         return;
       }
+      if(!storyViewOpen()) return;
+      if(!__storyAvailable) return;
 
       const isNewRun = __storyHour == null || __storyHour >= 24;
       if (isNewRun) __storyHour = -24;
       __isPlaying = true;
+      const playbackRevision=++__storyPlaybackRevision;
       if (btn){ btn.disabled = false; btn.textContent = '⏸ 播放中…'; }
 
       // 新一轮回放时通知后端进入剧情模式；从暂停处继续时不重复触发。
       if (isNewRun) await postPlay().catch(()=>{});
+      if(playbackRevision!==__storyPlaybackRevision||!__isPlaying) return;
+      if(!storyViewOpen()){pauseStory();return;}
 
       // 从当前小时继续播放；首次为 -24h，直至 +24h。
       setHour(__storyHour);
       if (__storyTimer) clearInterval(__storyTimer);
       __storyTimer = setInterval(()=>{
+        if(!storyViewOpen()){pauseStory();return;}
         __storyHour += 1;
         setHour(__storyHour);
         if (__storyHour >= 24){
@@ -15840,8 +16364,9 @@ async function pullOverview(scenario=masScenario){
         // 原来是 postPlay；现在用自动播放的 handlePlay（内部会调用 postPlay）
         btn.addEventListener('click', handlePlay);
       }
-      if (selPort){ selPort.addEventListener('change', ()=> setHour(parseInt((rng?.value)||'0')||0)); }
-      if (selScn){  selScn.addEventListener('change',  ()=> setHour(parseInt((rng?.value)||'0')||0)); }
+      const changeSelection=()=>{__storyAvailable=false;pauseStory();if(btn){btn.disabled=true;btn.textContent='读取可核验轨迹…';}setHour(parseInt((rng?.value)||'0')||0);};
+      if (selPort){ selPort.addEventListener('change', changeSelection); }
+      if (selScn){ selScn.addEventListener('change', changeSelection); }
 
       setHour(0); // 首帧
     }
@@ -16032,67 +16557,64 @@ async function pullOverview(scenario=masScenario){
 
   function normalizeStatus(raw){
     const s = String(raw || '').replace(/\s+/g,'').toLowerCase();
-    if (!s || s === '—') return '证据不足';
-    if (/[临界|critical|red|故障|异常]/.test(raw)) return '临界';
-    if (/[需盯|warning|warn|风险|关注]/.test(raw)) return '需盯';
-    return raw;
+    if (!s || /待接入|未接入|待验证|未评定|证据|未知|unknown|unavailable|^[-—]+$/.test(s)) return '证据不足';
+    if (/临界|critical|^red$|故障|异常/.test(s)) return '临界';
+    if (/需盯|warning|warn|风险|关注/.test(s)) return '需盯';
+    return /^(稳定|正常|健康|stable|healthy|ok)$/.test(s) ? '稳定' : '证据不足';
   }
 
   function parsePercent(raw){
-    const m = String(raw || '').replace(/,/g, '').match(/-?\d+(?:\.\d+)?/);
-    return m ? Number(m[0]) : null;
+    const s=String(raw??'').trim();
+    if(!/^\d+(?:\.\d+)?\s*%?$/.test(s))return null;
+    const value=Number(s.replace('%','').trim());
+    return value>=0&&value<=100?value:null;
   }
 
   function parseCount(raw){
-    const m = String(raw || '').match(/\d+/);
-    return m ? Number(m[0]) : null;
+    const s=String(raw??'').trim();
+    return /^\d+$/.test(s)&&Number.isSafeInteger(Number(s))?Number(s):null;
   }
 
   function buildLead(status, risk, focus){
-    const a = status && status !== '—' ? status : '整体可控';
-    const b = risk && risk !== '—' ? risk : '风险可控';
-    const c = focus && focus !== '—' ? focus : '优先处理执行闭环';
+    const a = status && status !== '—' ? status : '证据待补';
+    const b = risk && risk !== '—' ? risk : '风险未评定';
+    const c = focus && focus !== '—' ? focus : '核验现场来源';
     return `当前港区${a}，${b}，优先处理${c}。`;
   }
 
   function buildHomeRules(){
     const rawStatus = normalizeStatus(txt('exec-status'));
-    const statusSub = txt('exec-status-sub') || '运行健康，无需立即进入应急处置。';
+    let statusSub = txt('exec-status-sub') || '现场运行状态证据待补，尚不能确认整体稳定。';
     const peakText = txt('exec-peak');
     const peakSub = txt('exec-peak-sub') || '关注未来负荷峰值、待审批工单与高优先告警。';
     const trust = txt('exec-ai-grade');
     const trustSub = txt('exec-ai-grade-sub');
     const saving = txt('exec-saving');
     const co2 = txt('exec-co2');
-    const pendingText = txt('ap-pending');
-    const lastJob = txt('ap-last');
+    const pendingText = txt('qc-pending-count') || txt('ap-pending') || '待办未接入';
+    const lastJob = txt('qc-last-job') || txt('ap-last');
     const opsxMeta = txt('opsx-meta');
     const peakPct = parsePercent(peakText);
     const pending = parseCount(pendingText);
 
     let status = rawStatus;
-    let riskLabel = '中低';
+    let riskLabel = '风险未评定';
     let riskSub = peakSub;
     let focus = '执行闭环回执';
     let focusSub = trust && trust !== '—' ? `当前 AI 策略可信度：${trust}；建议先确认关键策略与回执。` : '优先确认策略回执，再进入孪生与深层分析。';
     let ruleTag = '规则来源：驾驶舱状态 + 峰值风险 + 执行待办';
 
-    if (status === '证据不足') {
-      status = '证据受限';
-      riskLabel = '待验证';
-      riskSub = '缺少可确认的现场状态，不对港区风险作稳定性推断。';
-      focus = '先核验数据来源';
-      focusSub = '先检查来源、时间戳、质量门与控制权限。';
-    } else if (status === '临界' || (peakPct != null && peakPct >= 25) || (pending != null && pending >= 5)) {
+    const missing=[rawStatus==='证据不足'?'现场运行状态':null,peakPct===null?'峰值风险':null,pending===null?'审批待办':null].filter(Boolean);
+    if (status === '临界' || (peakPct != null && peakPct >= 25) || (pending != null && pending >= 5)) {
       status = '临界';
       riskLabel = '高';
-      riskSub = `规则判定：峰值风险≥25%或待审批≥5。${peakSub}`;
+      riskSub = `规则判定：${[rawStatus==='临界'?'驾驶舱已报告临界状态':null,peakPct!==null&&peakPct>=25?`峰值风险=${peakPct}%（≥25%）`:null,pending!==null&&pending>=5?`待审批=${pending}（≥5）`:null].filter(Boolean).join('；')}。${peakSub}`;
       focus = pending > 0 ? `先清待审批（${pending}）` : '先看高风险时窗';
       focusSub = '先把高风险动作、待确认工单与执行证据补齐，再做扩展分析。';
     } else if (status === '需盯' || (peakPct != null && peakPct >= 10) || (pending != null && pending >= 1)) {
       status = '需盯';
       riskLabel = '中高';
-      riskSub = `规则判定：峰值风险≥10%或存在待审批工单。${peakSub}`;
+      riskSub = `规则判定：${[rawStatus==='需盯'?'驾驶舱已报告需关注状态':null,peakPct!==null&&peakPct>=10?`峰值风险=${peakPct}%（≥10%）`:null,pending!==null&&pending>=1?`已登记待审批=${pending}`:null].filter(Boolean).join('；')}。${peakSub}`;
       if (pending > 0) {
         focus = `先看执行闭环（待审批 ${pending}）`;
         focusSub = '首页已判定存在待确认动作，建议先进入策略编排与闭环结果。';
@@ -16100,6 +16622,13 @@ async function pullOverview(scenario=masScenario){
         focus = peakPct != null ? `先看孪生推演（峰值 ${peakPct}%）` : '先看孪生推演';
         focusSub = '先用孪生和预测确认风险时窗，再决定是否进入策略与执行。';
       }
+    } else if(missing.length){
+      status = '证据待补';
+      riskLabel = '风险未评定';
+      statusSub = `缺少${missing.join('、')}证据，不能确认整体稳定。`;
+      riskSub = `${peakPct===null?'峰值风险未评定':`已知峰值风险=${peakPct}%`}；${pending===null?'待办未接入':`已登记待审批=${pending}`}。不能据缺失值推断低风险或无待办。`;
+      focus = '先核验数据来源';
+      focusSub = '补齐现场状态、合同需量与审批台账后再作完整判断。';
     } else {
       status = '稳定';
       riskLabel = '中低';
@@ -16107,6 +16636,7 @@ async function pullOverview(scenario=masScenario){
       focus = '先看主链路巡检';
       focusSub = '当前更适合做主链路巡检，确认孪生、策略、执行、审计数据一致。';
     }
+    if(missing.length && ['高','中高'].includes(riskLabel)) riskSub+=` 尚缺${missing.join('、')}证据；当前等级只反映已知风险信号。`;
 
     return {
       status, statusSub, riskLabel, riskSub, focus, focusSub,
@@ -16123,13 +16653,13 @@ async function pullOverview(scenario=masScenario){
     if ($('home-focus')) $('home-focus').textContent = rules.focus;
     if ($('home-focus-sub')) $('home-focus-sub').textContent = rules.focusSub;
     if ($('home-lead')) $('home-lead').textContent = buildLead(rules.status, rules.riskLabel, rules.focus);
-    if ($('home-desc')) $('home-desc').textContent = '首页主结论已改成规则驱动：基于驾驶舱状态、峰值需量风险与待审批工单自动生成；下方模块负责承接证据、推演与执行细节。';
+    if ($('home-desc')) $('home-desc').textContent = '首页主结论已改成规则驱动：基于驾驶舱状态、峰值需量风险与待审批工单自动生成；各独立模块承接证据、推演与执行细节，可通过顶部菜单进入。';
     if ($('home-box-1')) $('home-box-1').textContent = `规则口径：驾驶舱状态=${rules.status}。${rules.statusSub}`;
-    if ($('home-box-2')) $('home-box-2').textContent = rules.peakText && rules.peakText !== '— %' && rules.peakText !== '—' ? `峰值需量风险=${rules.peakText}；待审批=${rules.pendingText || '0'}。${rules.riskSub}` : `待审批=${rules.pendingText || '0'}。${rules.riskSub}`;
+    if ($('home-box-2')) $('home-box-2').textContent = `峰值需量风险=${rules.peakPct===null?'未评定':rules.peakText}；待审批=${rules.pending===null?'待办未接入':rules.pending}。${rules.riskSub}`;
     if ($('home-box-3')) $('home-box-3').textContent = rules.trust && rules.trust !== '—' ? `策略可信度：${rules.trust}。${rules.focusSub}` : `当前优先动作：${rules.focus}。${rules.focusSub}`;
     if ($('home-chain-note')) $('home-chain-note').textContent = [rules.saving && rules.saving !== '— 万元' ? `年度节省电费：${rules.saving}` : '', rules.co2 && rules.co2 !== '— 吨' ? `年度减排：${rules.co2}` : '', rules.trust && rules.trust !== '—' ? `可信度：${rules.trust}` : ''].filter(Boolean).join(' · ') || '首页只承担平台入口、主结论与路径引导。';
     if ($('home-loop-strategy')) $('home-loop-strategy').textContent = rules.trust && rules.trust !== '—' ? `最近策略判断优先参考 AI 可信度=${rules.trust}；当前优先动作为“${rules.focus}”。` : `当前未读到可信度等级，先按“${rules.focus}”引导进入策略模块。`;
-    if ($('home-loop-dispatch')) $('home-loop-dispatch').textContent = `待审批=${rules.pendingText || '0'}；最近工单=${rules.lastJob || '—'}。首页会据此优先把你引到策略编排与闭环执行。`;
+    if ($('home-loop-dispatch')) $('home-loop-dispatch').textContent = `待审批=${rules.pending===null?'待办未接入':rules.pending}；最近工单=${rules.lastJob || '—'}。${rules.pending===null?'尚不能判断是否存在待审批工单。':'来自已登记的审批数量。'}`;
     if ($('home-loop-audit')) $('home-loop-audit').textContent = rules.opsxMeta ? `OpsX 当前摘要：${rules.opsxMeta}。跳到审计区后会直接看到上线治理与守护栏信息。` : '等待读取 OpsX 摘要；当前先保留审计入口与证据位。';
   }
 
@@ -16152,7 +16682,6 @@ async function pullOverview(scenario=masScenario){
 (function(){
   const header = document.querySelector('header');
   const navGroups = Array.from(document.querySelectorAll('.nav-group[data-menu-group]'));
-  const triggers = Array.from(document.querySelectorAll('.nav-trigger'));
   const routeButtons = Array.from(document.querySelectorAll('.nav-trigger[data-route]'));
   const directButtons = Array.from(document.querySelectorAll('.nav-trigger[data-direct-target]'));
   const dropdownLinks = Array.from(document.querySelectorAll('.nav-dropdown a[href^="#"]'));
@@ -16161,15 +16690,19 @@ async function pullOverview(scenario=masScenario){
     navGroups.forEach((group) => {
       group.classList.remove('is-open');
       const trigger = group.querySelector('.nav-trigger');
-      if (trigger) trigger.classList.remove('is-open');
+      if (trigger) {
+        trigger.classList.remove('is-open');
+        trigger.setAttribute('aria-expanded', 'false');
+      }
     });
   }
 
   function scrollToTarget(selector, behavior='smooth'){
     if (!selector) return false;
+    if (window.PortModuleNavigation?.open(selector)) return true;
     const raw = String(selector).trim();
     const id = raw.startsWith('#') ? raw.slice(1) : raw;
-    let node = document.getElementById(id) || document.querySelector(raw);
+    let node = document.getElementById(id);
     if (!node) return false;
 
     const card = node.closest('.card[id], section[id], .wrap[id], .wrap-kpi[id], .wrap-3d[id], .wrap-story[id]');
@@ -16185,6 +16718,7 @@ async function pullOverview(scenario=masScenario){
   navGroups.forEach((group) => {
     const trigger = group.querySelector('.nav-trigger');
     if (!trigger) return;
+    trigger.setAttribute('aria-expanded', 'false');
     trigger.addEventListener('click', (event) => {
       event.preventDefault();
       const shouldOpen = !group.classList.contains('is-open');
@@ -16192,22 +16726,22 @@ async function pullOverview(scenario=masScenario){
       if (shouldOpen){
         group.classList.add('is-open');
         trigger.classList.add('is-open');
+        trigger.setAttribute('aria-expanded', 'true');
       }
     });
   });
 
   dropdownLinks.forEach((link) => {
     link.addEventListener('click', (event) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
       event.preventDefault();
       const selector = link.dataset.targetId ? `#${link.dataset.targetId}` : link.getAttribute('href');
       closeAllMenus();
       if (selector) {
-        history.replaceState(null, '', selector);
         const ok = scrollToTarget(selector);
         if (!ok) {
           const fallback = link.getAttribute('href');
           if (fallback && fallback !== selector) {
-            history.replaceState(null, '', fallback);
             scrollToTarget(fallback);
           }
         }
@@ -16221,21 +16755,9 @@ async function pullOverview(scenario=masScenario){
       closeAllMenus();
       const selector = button.dataset.directTarget;
       if (selector) {
-        history.replaceState(null, '', selector);
         scrollToTarget(selector);
       }
     });
-  });
-
-  const strategyMenu = document.querySelector('.nav-group[data-menu-group="strategy"] .nav-dropdown-grid');
-  strategyMenu?.addEventListener('click', (event) => {
-    const link = event.target.closest('a[data-target-id]');
-    if (!link) return;
-    event.preventDefault();
-    closeAllMenus();
-    const selector = `#${link.dataset.targetId}`;
-    history.replaceState(null, '', selector);
-    scrollToTarget(selector);
   });
 
   routeButtons.forEach((button) => {
@@ -16262,21 +16784,7 @@ async function pullOverview(scenario=masScenario){
     if (event.key === 'Escape') closeAllMenus();
   });
 
-  const initialHash=window.location.hash;
-  if (initialHash && document.querySelector(initialHash)) {
-    // The single-page dashboard performs several post-load layout passes.
-    // Re-apply only the original deep link while those passes settle, so a
-    // requested HVAC/BESS/lighting section cannot drift back to Module A.
-    [120,700,1800].forEach((delay,index)=>setTimeout(()=>{
-      if(window.location.hash===initialHash) scrollToTarget(initialHash,index===0?'smooth':'auto');
-    },delay));
-    window.addEventListener('load',()=>setTimeout(()=>{
-      if(window.location.hash===initialHash) scrollToTarget(initialHash,'auto');
-    },80),{once:true});
-  }
-  window.addEventListener('hashchange',()=>{
-    if(window.location.hash&&document.querySelector(window.location.hash)) scrollToTarget(window.location.hash,'auto');
-  });
+  // Initial deep links and browser history are owned by module_navigation.js.
 })();
 </script>
 
@@ -16296,7 +16804,7 @@ async function tryLoadContractRegistry(){
     const provenance = await provenanceResponse.json();
     const actuator = await actuatorResponse.json();
     const rl = provenance.rl || {};
-    const dataset = Array.isArray(rl.datasets) ? rl.datasets[0] : null;
+    const availableDatasets = Array.isArray(rl.datasets) ? rl.datasets : [];
     const portviz = provenance.portviz || {};
     const telemetry = provenance.telemetry || {};
     const runtimePolicy = provenance.runtime_policy || {};
@@ -16310,7 +16818,7 @@ async function tryLoadContractRegistry(){
       {
         key:'rl', name:'RL / 训练与评测', file:'/api/rl/train/*', readiness:rl.runtime?.available?'runtime-ready':'runtime-unavailable',
         ready:rl.runtime?.available===true, mode:'real-algorithm + chronological-holdout', target:'/api/rl/models', timeField:'timestamp', pk:'job_id',
-        summary:`算法=${(rl.algorithms||[]).map(item=>item.name).join('、')||'—'}；数据集=${dataset?.dataset_id||'—'}；训练渲染=${rl.training_rendering||'—'}。`,
+        summary:`算法=${(rl.algorithms||[]).map(item=>item.name).join('、')||'—'}；可用数据集=${availableDatasets.length}项（目录含训练及验证用途，当前训练配置以具体任务为准）；训练渲染=${rl.training_rendering||'—'}。`,
         fields:'job_id、algorithm、dataset_sha256、seed、split、metrics、model_card'
       },
       {
@@ -16409,8 +16917,8 @@ window.addEventListener('load', async ()=>{
 
 const chainState = globalThis.__strategyChainState || (globalThis.__strategyChainState = {
     source: 'overview',
-    status: '稳定',
-    risk: '中低',
+    status: '证据待补',
+    risk: '风险未评定',
     focus: '执行闭环',
     scenario: '基线场景',
     forecast: '等待刷新',
@@ -16433,8 +16941,8 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
   }
 
   function syncFromOverview(){
-    chainState.status = text('home-status') || text('exec-status') || '稳定';
-    chainState.risk = text('home-risk') || '中低';
+    chainState.status = text('home-status') || text('exec-status') || '证据待补';
+    chainState.risk = text('home-risk') || '风险未评定';
     chainState.focus = text('home-focus') || '执行闭环';
     chainState.scenario = inferScenario();
     chainState.lastUpdatedAt = new Date().toISOString();
@@ -16521,6 +17029,7 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     if (!node) return;
     if (bridge?.title) ensureBridgeNote(id, bridge.title, bridge.sub || '');
     flashSection(id);
+    if (window.PortModuleNavigation?.open(id)) return;
     const header = document.querySelector('header');
     const headerOffset = header ? header.offsetHeight + 18 : 18;
     const top = Math.max(0, window.scrollY + node.getBoundingClientRect().top - headerOffset);
@@ -16547,11 +17056,11 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     syncFromOverview();
     chainState.source = 'overview.primary_action';
     renderChain();
+    scrollToSectionWithHeader('strategy-exec-module', { title: '首页为何打开这里', sub: `承接 scene=${chainState.scenario} 的预测、RL 候选与聚合仿真；通过“继续到执行闭环”进入执行模块。` });
     setTimeout(() => {
       enhanceStrategyOptions();
       const forecastBtn = $('btn-forecast');
       if (forecastBtn && typeof forecastBtn.click === 'function') forecastBtn.click();
-      scrollToSectionWithHeader('strategy-exec-module', { title: '首页为何跳到这里', sub: `这里先进入策略编排首屏：承接 scene=${chainState.scenario} 的预测、RL 候选与聚合仿真；执行闭环在同模块下半区继续展开。` });
     }, 80);
   }
 
@@ -16625,8 +17134,10 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     const assetSel = $('#asset');
     const assetText = assetSel?.selectedOptions?.[0]?.textContent || $('#title-asset')?.textContent?.match(/（(.+?)）/)?.[1] || '—';
     if($('#qc-asset-label')) $('#qc-asset-label').textContent = assetText;
-    if($('#qc-pending-count')) $('#qc-pending-count').textContent = realtimeEvidence?.approvals?.available ? String(realtimeEvidence.approvals.pending ?? 0) : '待接入港口';
+    const approvalPending=realtimeEvidence?.approvals?.available===true?realtimeEvidence.approvals.pending:null;
+    if($('#qc-pending-count')) $('#qc-pending-count').textContent = approvalPending!==null&&approvalPending!==undefined&&/^\d+$/.test(String(approvalPending)) ? String(approvalPending) : '待接入港口';
     if($('#qc-last-job')) $('#qc-last-job').textContent = realtimeEvidence?.approvals?.available && realtimeEvidence.approvals.last_job ? String(realtimeEvidence.approvals.last_job).slice(0,8)+'…' : '待接入港口';
+    window.__syncHomeHero?.();
 
     const risks = [];
     const mape = $('#dl-mape')?.textContent?.trim();
@@ -16640,7 +17151,7 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     const riskList = $('#qc-risk-list');
     if(riskList){
       riskList.replaceChildren();
-      const safeRisks = risks.length ? risks : [['', '公开校准模拟器未触发模型风险。', '现场预测校准、合同需量和审批台账待接入港口。']];
+      const safeRisks = risks.length ? risks : [['', '风险证据待补，尚未评定。', '现场预测校准、合同需量和审批台账待接入港口。']];
       safeRisks.forEach(([label, value, meta])=>{
         const li=document.createElement('li');
         if(label){ const strong=document.createElement('strong'); strong.textContent=label; li.appendChild(strong); }
@@ -16666,7 +17177,7 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
   });
 
   $('#qc-open-dispatch')?.addEventListener('click', ()=>{
-    document.getElementById('strategy-exec-module')?.scrollIntoView({behavior:'smooth', block:'start'});
+    window.PortModuleNavigation?.open('exec-wrap');
   });
 
   $('#qc-cp-ask')?.addEventListener('click', async ()=>{

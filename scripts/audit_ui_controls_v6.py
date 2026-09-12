@@ -73,6 +73,35 @@ class ButtonParser(HTMLParser):
             self._button = None
 
 
+def _collection_listener_reference(identifier: str, corpus: str) -> bool:
+    """Resolve bounded literal-key loops that install an actual click listener.
+
+    Deliberately do not accept arbitrary ID concatenation or an unbound list.
+    Runtime callback behavior is covered by the separate JavaScript contracts.
+    """
+    loop = re.compile(
+        r"(?P<collection>\[(?:\s*['\"][^'\"]+['\"]\s*,?)+\]"
+        r"|Object\.keys\((?P<object>[A-Za-z_$][\w$]*)\))"
+        r"\.forEach\(\s*(?P<key>[A-Za-z_$][\w$]*)\s*=>\s*"
+        r"(?:byId|\$)\(\s*['\"]#?(?P<prefix>[^'\"]+)['\"]\s*\+\s*(?P=key)\s*\)"
+        r"\s*(?:\?\.|\.)\s*(?:onclick\s*=|addEventListener\(\s*['\"]click['\"]\s*,)"
+    )
+    for match in loop.finditer(corpus):
+        if match['object']:
+            declaration = re.search(
+                rf"(?:const|let)\s+{re.escape(match['object'])}\s*=\s*\{{(.*?)\n\s*\}};",
+                corpus, re.DOTALL,
+            )
+            if not declaration:
+                continue
+            keys = re.findall(r"^\s*([A-Za-z_$][\w$]*)\s*:", declaration[1], re.MULTILINE)
+        else:
+            keys = re.findall(r"['\"]([^'\"]+)['\"]", match['collection'])
+        if identifier in {match['prefix'] + key for key in keys}:
+            return True
+    return False
+
+
 def _referenced(row: dict[str, Any], corpus: str) -> tuple[bool, str]:
     if row["disabled"]:
         return True, "intentionally_disabled_fail_closed"
@@ -82,6 +111,8 @@ def _referenced(row: dict[str, Any], corpus: str) -> tuple[bool, str]:
         return True, "form_submit"
     identifier = row["id"]
     if identifier:
+        if _collection_listener_reference(identifier, corpus):
+            return True, "bounded_collection_click_listener"
         patterns = (
             rf"getElementById\(\s*['\"]{re.escape(identifier)}['\"]",
             rf"(?:byId|\$)\(\s*['\"]#?{re.escape(identifier)}['\"]",

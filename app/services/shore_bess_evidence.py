@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+from app.services.rl_training.model_artifacts import resolve_model_artifact
 import math
 from functools import lru_cache
 from pathlib import Path
@@ -22,6 +23,7 @@ from app.services.training_process_evidence import (
     seed_metric_paths,
 )
 from app.services.value_improvement import evidence_path, load_module_value_improvement
+from app.services.shore_bess_v8_evidence import ShoreBESSV8EvidenceService
 
 
 class ShoreBESSEvidenceService:
@@ -33,6 +35,7 @@ class ShoreBESSEvidenceService:
         self.artifacts = self.root / "artifacts"
         self.repo_root = self.root.parents[3]
         self.v3_evidence = self.repo_root / "evidence" / "v3" / "shore_bess"
+        self.v8_evidence = ShoreBESSV8EvidenceService(self.repo_root)
 
     @staticmethod
     def _sha(path: Path) -> str | None:
@@ -102,7 +105,7 @@ class ShoreBESSEvidenceService:
                 if report_path.exists():
                     report = json.loads(report_path.read_text(encoding="utf-8"))
                     for item in (report.get("artifacts") or {}).get("models") or []:
-                        formal_paths.append(self.repo_root / str(item.get("path") or ""))
+                        formal_paths.append(resolve_model_artifact(self.repo_root, str(item.get("path") or ""), item.get("sha256")))
                     formal_paths.extend(seed_metric_paths(self.repo_root, latest))
                     formal_paths.append(checkpoint_reward_replay_path(self.repo_root, latest))
             except (OSError, ValueError, json.JSONDecodeError):
@@ -124,7 +127,11 @@ class ShoreBESSEvidenceService:
             for path in tracked
             if path.exists()
         )
-        return self._build_cached(key)
+        # V8 pointers, models and source hashes are checked outside the frozen
+        # V3 cache, so a newly completed run cannot leave the old card current.
+        payload = dict(self._build_cached(key))
+        payload["v8"] = self.v8_evidence.build()
+        return payload
 
     def _load_formal(self) -> tuple[Dict[str, Any], Dict[str, Any]]:
         latest_path = self.v3_evidence / "latest.json"
@@ -143,8 +150,9 @@ class ShoreBESSEvidenceService:
         if not models:
             return {"policy_loaded": False, "error": "formal model artifact is missing", **fallback}
         selected = models[0]
-        model_path = self.repo_root / str(selected.get("path") or "")
-        if not model_path.exists() or self._sha(model_path) != selected.get("sha256"):
+        try:
+            model_path = resolve_model_artifact(self.repo_root, str(selected.get("path") or ""), selected.get("sha256"))
+        except (ValueError, OSError):
             return {"policy_loaded": False, "error": "formal model hash gate failed", **fallback}
         try:
             from stable_baselines3 import PPO
@@ -179,6 +187,8 @@ class ShoreBESSEvidenceService:
                 "seed": selected.get("seed"),
                 "model_path": selected.get("path"),
                 "model_sha256": selected.get("sha256"),
+                "loaded_model_path": str(model_path.relative_to(self.repo_root)),
+                "loaded_model_sha256": self._sha(model_path),
                 "timestamp": info.get("timestamp"),
                 "reset": reset_info,
                 "observation_vector": [round(float(value), 6) for value in observation],

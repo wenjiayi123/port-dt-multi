@@ -9,25 +9,20 @@ let impactRenderGeneration = 0;
 
 function returnToHome(event){
   event.preventDefault();
-  const launchedFromHome = new URLSearchParams(window.location.search).get('from') === 'home';
-  let previous = null;
-  try{ previous = document.referrer ? new URL(document.referrer) : null; }catch(_){ previous = null; }
-  if((launchedFromHome || (previous?.origin === window.location.origin && previous.pathname === '/')) && window.history.length > 1){
-    // Restore the already-rendered homepage from WebKit's back/forward cache.
-    // A direct V3 launch still uses the canonical homepage URL below.
-    window.history.back();
-    return;
-  }
+  // V3 can now be entered from any module. The previous history entry may be
+  // another standalone page or a main-document module, rather than the overview.
   window.location.assign('/');
 }
 
 function safeNumber(value, digits=1){
+  if(value === null || value === undefined || value === '') return '—';
   const n = Number(value);
   return Number.isFinite(n) ? n.toFixed(digits) : '—';
 }
 function escapeHTML(value){ return String(value??'').replace(/[&<>'"]/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[char])); }
-function pct(value,digits=2){ const n=Number(value); return Number.isFinite(n)?`${n>=0?'+':''}${(100*n).toFixed(digits)}%`:'—'; }
+function pct(value,digits=2){ if(value===null||value===undefined||value==='') return '—'; const n=Number(value); return Number.isFinite(n)?`${n>=0?'+':''}${(100*n).toFixed(digits)}%`:'—'; }
 function metricValue(name,value){
+  if(value === null || value === undefined || value === '') return '—';
   const n=Number(value); if(!Number.isFinite(n)) return '—';
   if(['guardrail_violation_rate','service_completion_ratio','weather_block_rate','action_projection_rate','action_projection_severity_mean','action_projection_grid_cap_rate','action_projection_soc_bound_rate','action_projection_terminal_reachability_rate','action_projection_power_bound_rate','operational_resource_factor_mean'].includes(name)) return `${(100*n).toFixed(2)}%`;
   if(name==='delay_index_mean') return n.toFixed(2);
@@ -268,7 +263,7 @@ async function loadReadiness(){
   $('replacementList').innerHTML=data.mandatory_site_replacements.map(item=>`<span>${item}</span>`).join('');
 }
 
-function liveValue(obj,key){ const n=Number(obj?.[key]); return Number.isFinite(n)?n:null; }
+function liveValue(obj,key){ const value=obj?.[key]; if(value===null||value===undefined||value==='') return null; const n=Number(value); return Number.isFinite(n)?n:null; }
 function renderPublicConditions(values,{label,color,currentUnit='m/s'}={}){
   $('liveState').textContent=label; $('liveState').style.color=color;
   $('temperature').textContent=safeNumber(values.temperature,1);

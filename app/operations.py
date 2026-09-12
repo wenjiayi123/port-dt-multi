@@ -491,7 +491,7 @@ def configure_operations(app: FastAPI) -> None:
         return JSONResponse({"status": "alive"})
 
     @app.get("/health/ready", tags=["operations"])
-    async def health_ready() -> JSONResponse:
+    def health_ready() -> JSONResponse:
         report = readiness_report()
         return JSONResponse(report, status_code=200 if report["open_source_runtime_ready"] else 503)
 

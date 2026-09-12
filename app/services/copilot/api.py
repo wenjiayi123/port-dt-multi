@@ -15,7 +15,7 @@ from pathlib import Path
 import time
 from typing import Any, Dict, Iterable, List
 
-from fastapi import APIRouter, Body, Query, Request
+from fastapi import APIRouter, Body, HTTPException, Query, Request
 from fastapi.responses import JSONResponse
 import json
 
@@ -28,6 +28,15 @@ except Exception:  # pragma: no cover - optional adapter dependency
 #   app.include_router(copilot_router, prefix="/api/copilot", tags=["copilot"])
 # 注册了路由，所以这里不要再加前缀。
 router = APIRouter()
+
+
+def _mapped_port(value: Any) -> str:
+    port = str(value or "CNSHA").strip().upper()
+    if port != "CNSHA":
+        raise HTTPException(status_code=422, detail={
+            "status": "unsupported_port", "requested_port": port, "actual_source_port": "CNSHA",
+            "message": "当前仅映射 CNSHA 公开回放数据，该港口尚未接入。", "production_authority": False})
+    return port
 
 # 本地知识库文件路径：app/services/copilot/data/knowledge_base.json
 BASE_DIR = Path(__file__).resolve().parent
@@ -98,7 +107,7 @@ def _score_item(query: str, item: Dict[str, Any]) -> float:
     return score
 
 
-def _rank_items(query: str, scope: str = "all", top_k: int = 8) -> List[Dict[str, Any]]:
+def _rank_items(query: str, scope: str = "all", top_k: int = 8, *, strict_scope: bool = False) -> List[Dict[str, Any]]:
     items = _load_knowledge_items()
     if not items:
         return []
@@ -111,7 +120,7 @@ def _rank_items(query: str, scope: str = "all", top_k: int = 8) -> List[Dict[str
             scopes_norm = _normalize_scope_values(it.get("scopes", []))
             if scope_norm == type_norm or scope_norm in scopes_norm:
                 filtered.append(it)
-        items = filtered or items
+        items = filtered if strict_scope else (filtered or items)
 
     scored: List[Dict[str, Any]] = []
     for it in items:
@@ -549,6 +558,7 @@ def copilot_context(
     asset_id: str = Query("qc-01", description="当前资产"),
     mission: str = Query("situation", description="小懿任务模式"),
 ) -> JSONResponse:
+    port = _mapped_port(port)
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     xiaoyi_status = _probe_xiaoyi_status()
     assistant_status = "ready" if xiaoyi_status.get("online") else "fallback"
@@ -580,6 +590,7 @@ def copilot_context(
     return JSONResponse(
         {
             "port": port,
+            "actual_source_port": "CNSHA",
             "asset_id": asset_id,
             "mission": mission,
             "status": status,
@@ -648,6 +659,29 @@ _MISSION_DEFAULT_QUESTIONS = {
 }
 
 
+def _mission_options(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """Validate visible controls; report severity never changes measured facts."""
+    options = {
+        "scope": str(payload.get("scope") or "all"),
+        "severity": str(payload.get("severity") or "major"),
+        "mode": str(payload.get("mode") or "explain_sop"),
+    }
+    allowed = {"scope": {"all", "sop", "alert", "device", "protocol", "compliance"},
+               "severity": {"medium", "major", "critical"},
+               "mode": {"explain_sop", "alert_triage", "audit_note", "handoff"}}
+    for key, values in allowed.items():
+        if options[key] not in values:
+            raise HTTPException(422, detail=f"不支持的 {key} 参数。")
+    try:
+        raw_top_k = payload.get("top_k", 8)
+        top_k = int(raw_top_k)
+        if isinstance(raw_top_k, bool) or float(raw_top_k) != top_k or not 1 <= top_k <= 10:
+            raise ValueError
+    except (TypeError, ValueError, OverflowError):
+        raise HTTPException(422, detail="知识检索条数必须为 1 至 10 的整数。")
+    return {**options, "top_k": top_k}
+
+
 @router.post(
     "/mission",
     summary="小懿数字孪生任务推理",
@@ -657,6 +691,8 @@ def copilot_mission(
     request: Request,
     payload: Dict[str, Any] = Body(default={}),
 ) -> JSONResponse:
+    _mapped_port(payload.get("port"))
+    options = _mission_options(payload)
     mission_control = getattr(request.app.state, "xiaoyi_mission_control", None)
     if mission_control is None:
         return JSONResponse(
@@ -669,6 +705,8 @@ def copilot_mission(
         )
 
     mission_id = str(payload.get("mission") or "situation").strip().lower()
+    if options["mode"] in {"alert_triage", "handoff"}:
+        mission_id = "triage" if options["mode"] == "alert_triage" else "handoff"
     allowed = {row["id"] for row in mission_control.mission_modes()}
     if mission_id not in allowed:
         mission_id = "situation"
@@ -698,10 +736,12 @@ def copilot_mission(
     }
     if uses_xiaoyi:
         llm_result = _call_xiaoyi(
-            query=_mission_prompt(query, context, mission_id),
-            scope="alert" if mission_id == "triage" else "all",
-            mode="handoff" if mission_id == "handoff" else "ops",
-            top_k=max(1, min(10, int(payload.get("top_k") or 6))),
+            query=_mission_prompt(query, context, mission_id) + (
+                f"\n输出模式：{options['mode']}。人工报告严重度：{options['severity']}，"
+                "这不是实测告警，不能替代或降低后端运行护栏。"),
+            scope=options["scope"],
+            mode=options["mode"],
+            top_k=options["top_k"],
         )
     parsed = llm_result.get("parsed") if llm_result.get("ok") else {}
     generated_answer = str((parsed or {}).get("answer") or "").strip()
@@ -748,9 +788,23 @@ def copilot_mission(
         }
         for row in context.get("signals") or []
     ]
-    xiaoyi_evidence = _xiaoyi_evidence_items(parsed or {}, limit=6) if llm_result.get("ok") else []
-    evidence = system_evidence + xiaoyi_evidence
-    risk = "高" if (context.get("monitoring") or {}).get("new_policy_suggestions_allowed") is False else "中低"
+    xiaoyi_evidence = [{**row, "source": "xiaoyi_retrieval"} for row in
+                       (_xiaoyi_evidence_items(parsed or {}, limit=options["top_k"]) if llm_result.get("ok") else [])]
+    local_evidence = [{**_public_item(row), "source": "local_example_knowledge_base",
+                           "claim_boundary": "本地通用知识示例，非当前港口实测或已批准规程"}
+                          for row in _rank_items(query, scope=options["scope"],
+                                                 top_k=options["top_k"], strict_scope=True)]
+    knowledge_evidence = (xiaoyi_evidence + local_evidence)[:options["top_k"]]
+    evidence = system_evidence + knowledge_evidence
+    runtime_blocked = (context.get("monitoring") or {}).get("new_policy_suggestions_allowed") is False
+    risk = "高" if runtime_blocked or options["severity"] == "critical" else ("中高" if options["severity"] == "major" else "中低")
+    mode_labels = {"explain_sop": "解释 + SOP", "alert_triage": "告警分诊", "audit_note": "审计备注", "handoff": "交接单"}
+    answer = f"{mode_labels[options['mode']]} · 人工报告等级：{options['severity']}（非实测告警）\n\n{answer}"
+    if options["mode"] == "audit_note":
+        answer += f"\n\n审计上下文：{context.get('context_sha256')}\n来源：{(context.get('source') or {}).get('mode', 'unavailable')}\n生产权限：false；缺失现场因素：{'、'.join(str(x) for x in context.get('missing_site_factors') or []) or '详见上下文'}。"
+    elif options["mode"] == "explain_sop":
+        answer += "\n\n人工检查步骤（建议，不代表已执行）：\n" + "\n".join(
+            f"{index + 1}. {row['step']}：{row['detail']}" for index, row in enumerate(sop_steps))
     headline = _first_answer_line(answer)
     invocation_id = "xy-mission-" + datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
     handoff_preview = mission_control.handoff_preview(
@@ -764,6 +818,9 @@ def copilot_mission(
         "generated_at": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
         "mission": mission_id,
         "query": query,
+        "effective_parameters": options,
+        "severity_source": "operator_report_not_measured_alarm",
+        "risk_basis": "runtime_guardrail" if runtime_blocked else "operator_report",
         "context_sha256": context.get("context_sha256"),
         "engine_requested": engine,
         "engine_executed": llm_result.get("engine_execution"),
@@ -773,12 +830,16 @@ def copilot_mission(
         "context_grounding": grounding,
         "latency_ms": llm_result.get("latency_ms"),
         "evidence_count": len(evidence),
+        "runtime_evidence_count": len(system_evidence),
+        "knowledge_evidence_count": len(knowledge_evidence),
+        "knowledge_sources": sorted({row["source"] for row in knowledge_evidence}),
         "production_authority": False,
         "human_in_loop": True,
     }
     return JSONResponse(
         {
             "ok": True,
+            "effective_parameters": options,
             "status": (
                 "xiaoyi_answer"
                 if grounding.get("passed")
@@ -835,23 +896,31 @@ def copilot_handoff(
     request: Request,
     payload: Dict[str, Any] = Body(default={}),
 ) -> JSONResponse:
+    _mapped_port(payload.get("port"))
     mission_control = getattr(request.app.state, "xiaoyi_mission_control", None)
     if mission_control is None:
         return JSONResponse({"ok": False, "status": "mission_context_unavailable"}, status_code=503)
+    if payload.get("confirm") is True:
+        try:
+            result = mission_control.confirm_handoff(payload)
+        except ValueError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        return JSONResponse({"ok": True, **result, "human_confirmation_required": True,
+                             "production_action_executed": False})
     context = mission_control.build_context(
         asset_id=str(payload.get("asset_id") or "qc-01"),
         mission_id="handoff",
     )
-    answer = str(payload.get("answer") or "").strip()
-    if not answer:
-        answer = mission_control.local_fallback_answer(context, _MISSION_DEFAULT_QUESTIONS["handoff"])
+    # A refresh gets a new context and its own evidence-derived summary. Do
+    # not attach an earlier browser answer to a newly generated context hash.
+    answer = mission_control.local_fallback_answer(context, _MISSION_DEFAULT_QUESTIONS["handoff"])
     packet = mission_control.handoff_preview(
         context,
         answer=answer,
         operator=str(payload.get("operator") or ""),
         shift=str(payload.get("shift") or ""),
     )
-    result = mission_control.persist_handoff(packet, confirm=bool(payload.get("confirm")))
+    result = mission_control.persist_handoff(packet, confirm=False)
     return JSONResponse(
         {
             "ok": True,

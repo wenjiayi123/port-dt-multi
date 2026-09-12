@@ -227,21 +227,34 @@
   }
 
   function runDeferredRender(sectionId){
-    const task = deferredRenders.get(sectionId);
-    if(!task) return;
-    deferredRenders.delete(sectionId);
+    if(!deferredRenders.has(sectionId)) return;
     window.requestAnimationFrame(()=>window.setTimeout(()=>{
+      const section = byId(sectionId);
+      // Navigation can hide a module after its intersection callback was queued.
+      // Keep the draw pending until the section has a real layout again.
+      if(section && !section.getClientRects().length){
+        renderObserver?.observe(section);
+        return;
+      }
+      const task = deferredRenders.get(sectionId);
+      if(!task) return;
+      deferredRenders.delete(sectionId);
       try{ task(); }catch(error){ console.warn(`[deferred-render:${sectionId}]`, error); }
       restoreActiveModuleAnchor();
     }, 0));
   }
 
   function restoreActiveModuleAnchor(){
+    // The module router owns page positioning. Background evidence must not
+    // navigate back to a previous module or reset the user's reading position.
+    if(window.PortModuleNavigation) return;
+    const activeHash = window.location.hash;
     const targetId = decodeURIComponent(window.location.hash.replace(/^#/, ""));
     if(!targetId || !Object.values(MODULES).some(module=>module.section === targetId)) return;
     window.requestAnimationFrame(()=>window.setTimeout(()=>{
+      if(window.PortModuleNavigation || window.location.hash !== activeHash) return;
       const target = byId(targetId);
-      if(!target) return;
+      if(!target || !target.getClientRects().length) return;
       const header = document.querySelector("header");
       const offset = (header?.offsetHeight || 0) + 18;
       const top = Math.max(0, window.scrollY + target.getBoundingClientRect().top - offset);
@@ -257,11 +270,6 @@
       return;
     }
     deferredRenders.set(sectionId, task);
-    const rect = section.getBoundingClientRect();
-    if(rect.bottom >= -160 && rect.top <= window.innerHeight + 160){
-      runDeferredRender(sectionId);
-      return;
-    }
     if(!renderObserver){
       renderObserver = new IntersectionObserver(entries=>{
         entries.forEach(entry=>{
@@ -270,6 +278,11 @@
           runDeferredRender(entry.target.id);
         });
       }, {rootMargin:"320px 0px"});
+    }
+    const rect = section.getBoundingClientRect();
+    if(section.getClientRects().length && rect.bottom >= -160 && rect.top <= window.innerHeight + 160){
+      runDeferredRender(sectionId);
+      return;
     }
     renderObserver.observe(section);
   };

@@ -1,0 +1,109 @@
+/* Scope every menu rule so standalone business views keep their own design. */
+#standalone-module-navigation {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  width: 100%;
+  padding: 12px 20px;
+  border-bottom: 1px solid rgba(148, 163, 184, .22);
+  background: #0c1527;
+  color: #e8f1ff;
+  font: 13px/1.35 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  isolation: isolate;
+}
+#standalone-module-navigation,
+#standalone-module-navigation * { box-sizing: border-box; }
+#standalone-module-navigation .nav-shell {
+  display: grid;
+  grid-template-columns: repeat(13, minmax(0, 1fr));
+  gap: clamp(5px, .48vw, 10px);
+  align-items: center;
+  width: 100%;
+  padding: 8px;
+  margin: 0;
+  border: 1px solid rgba(148, 163, 184, .17);
+  border-radius: 28px;
+  background: linear-gradient(180deg, #0e1932, #091329);
+}
+#standalone-module-navigation .nav-group { flex: 1 0 99px; min-width: 0; }
+#standalone-module-navigation .nav-trigger {
+  display: flex;
+  width: 100%;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px clamp(4px, .42vw, 9px);
+  margin: 0;
+  border: 1px solid rgba(125, 163, 255, .24);
+  border-radius: 999px;
+  background: linear-gradient(180deg, #0e1b3a, #08122a);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .04);
+  color: #edf4ff;
+  font: inherit;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+#standalone-module-navigation .nav-trigger::before {
+  content: "";
+  flex: 0 0 6px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #60a5fa;
+  box-shadow: 0 0 8px rgba(96, 165, 250, .65);
+}
+#standalone-module-navigation .is-route::before,
+#standalone-module-navigation .is-direct::before { background: #34d399; }
+#standalone-module-navigation button:not(.is-direct)::after { content: "▾"; font-size: 9px; color: #91a7cc; }
+#standalone-module-navigation .nav-label { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+#standalone-module-navigation .nav-cn { color: #edf4ff; font-size: clamp(9px, .64vw, 12px); line-height: 1.15; font-weight: 800; }
+#standalone-module-navigation .nav-en { color: #91a9d1; font-size: clamp(7px, .46vw, 9px); line-height: 1.1; font-weight: 700; text-transform: uppercase; letter-spacing: .025em; }
+#standalone-module-navigation .nav-trigger:hover,
+#standalone-module-navigation .is-open > .nav-trigger,
+#standalone-module-navigation [aria-current="page"] {
+  border-color: #60a5fa;
+  background: linear-gradient(180deg, #193977, #0d2049);
+  color: #fff;
+}
+#standalone-module-navigation :is(a, button):focus-visible { outline: 2px solid #7dd3fc; outline-offset: 3px; }
+#standalone-module-navigation .nav-dropdown {
+  position: fixed;
+  z-index: 1;
+  width: min(340px, calc(100vw - 16px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 12px;
+  border: 1px solid rgba(125, 163, 255, .35);
+  border-radius: 18px;
+  background: #09172e;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, .5);
+  scrollbar-width: thin;
+  scrollbar-color: #38578c #09172e;
+}
+#standalone-module-navigation .nav-dropdown[hidden] { display: none; }
+#standalone-module-navigation .nav-dropdown-grid { display: grid; gap: 7px; }
+#standalone-module-navigation .nav-dropdown a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 40px;
+  padding: 8px 11px;
+  border: 1px solid rgba(125, 163, 255, .17);
+  border-radius: 10px;
+  background: #102142;
+  color: #e1ebff;
+  font: 12px/1.4 Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+  text-decoration: none;
+}
+#standalone-module-navigation .nav-dropdown a span:last-child { flex-shrink: 0; color: #91a9d1; font-size: 10px; }
+#standalone-module-navigation .nav-dropdown a:hover { border-color: #60a5fa; background: #17315d; }
+#standalone-module-navigation .standalone-nav-fallback { display: inline-flex; padding: 10px 16px; color: #a7f3d0; text-decoration: none; border: 1px solid #397a79; border-radius: 24px; }
+body.has-standalone-navigation > header.topbar { top: var(--standalone-navigation-height, 90px); }
+@media (max-width: 1100px) {
+  #standalone-module-navigation { padding: 8px; }
+  #standalone-module-navigation .nav-shell { display: flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: thin; scrollbar-color: #38578c #091329; border-radius: 22px; }
+  #standalone-module-navigation .nav-group { flex: 0 0 112px; }
+}

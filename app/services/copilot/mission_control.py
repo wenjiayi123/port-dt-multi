@@ -10,10 +10,13 @@ control remains disabled.
 from __future__ import annotations
 
 from datetime import datetime, timezone
+import copy
 import hashlib
 import json
 import math
 from pathlib import Path
+from threading import RLock
+from time import monotonic
 from typing import Any
 
 
@@ -93,6 +96,8 @@ class XiaoyiMissionControl:
         self.realtime = realtime
         self.monitoring = monitoring
         self.runtime = runtime
+        self._handoff_previews: dict[str, dict[str, Any]] = {}
+        self._handoff_lock = RLock()
 
     @classmethod
     def mission_modes(cls) -> list[dict[str, str]]:
@@ -442,8 +447,8 @@ class XiaoyiMissionControl:
             actions.sort(key=lambda row: row["id"] != "review_policy")
         return actions
 
-    @staticmethod
     def handoff_preview(
+        self,
         context: dict[str, Any],
         *,
         answer: str,
@@ -456,6 +461,9 @@ class XiaoyiMissionControl:
             "operator": operator or "未填写",
             "shift": shift or "当前班次",
             "context_sha256": context.get("context_sha256"),
+            "asset_id": context.get("asset_id"),
+            "source_port": "CNSHA",
+            "confirmation_ttl_seconds": 900,
             "overall_state": context.get("overall_state"),
             "source": context.get("source"),
             "forecast": context.get("forecast"),
@@ -468,7 +476,34 @@ class XiaoyiMissionControl:
             "claim_boundary": context.get("claim_boundary"),
         }
         packet["handoff_sha256"] = _sha256_json(packet)
+        with self._handoff_lock:
+            self._handoff_previews = {key: item for key, item in self._handoff_previews.items()
+                                      if item["expires_at"] > monotonic()}
+            while len(self._handoff_previews) >= 128:
+                self._handoff_previews.pop(next(iter(self._handoff_previews)))
+            self._handoff_previews[packet["handoff_sha256"]] = {
+                "packet": copy.deepcopy(packet), "expires_at": monotonic() + 900, "persisted": False}
         return packet
+
+    def confirm_handoff(self, payload: dict[str, Any]) -> dict[str, Any]:
+        """Persist exactly the preview the operator reviewed, at most once."""
+        with self._handoff_lock:
+            item = self._handoff_previews.get(str(payload.get("handoff_sha256") or ""))
+            if item is None or item["expires_at"] <= monotonic():
+                raise ValueError("交接预览不存在或已过期，请刷新预览后确认。")
+            packet = item["packet"]
+            if (payload.get("context_sha256") != packet["context_sha256"]
+                    or str(payload.get("asset_id") or "qc-01") != packet["asset_id"]
+                    or str(payload.get("operator") or "未填写") != packet["operator"]
+                    or str(payload.get("shift") or "当前班次") != packet["shift"]
+                    or (payload.get("answer") is not None and payload["answer"] != packet["xiaoyi_summary"])):
+                raise ValueError("交接内容或上下文已变化，请重新生成预览后确认。")
+            if item["persisted"]:
+                return {"persisted": True, "status": "already_recorded", "packet": copy.deepcopy(packet),
+                        "handoff_sha256": packet["handoff_sha256"], "production_action_executed": False}
+            receipt = self.persist_handoff(packet, confirm=True)
+            item["persisted"] = True
+            return {**receipt, "packet": copy.deepcopy(packet)}
 
     @staticmethod
     def persist_handoff(packet: dict[str, Any], *, confirm: bool) -> dict[str, Any]:

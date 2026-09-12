@@ -1,0 +1,11 @@
+{
+  "selected_seed": 912,
+  "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/selected_model.zip",
+  "model_sha256": "113d6d14a89e43977ca16e528d387eb94e2591dc8a64a1e36a426260eb50e1aa",
+  "selection_access_to_test": false,
+  "selection_access_to_forward": false,
+  "frozen_at": "2026-09-12T03:31:38.912260Z",
+  "per_seed_model_sha256": {
+    "912": "113d6d14a89e43977ca16e528d387eb94e2591dc8a64a1e36a426260eb50e1aa"
+  }
+}

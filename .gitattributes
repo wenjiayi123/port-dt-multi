@@ -20,3 +20,10 @@ data/rl/datasets/public_us_la_6min_v1.csv binary -eol
 app/services/rl_model/hvac_cooling/data/*.csv binary
 evidence/v7/**/monitor.csv binary -eol
 app/services/rl_model/agv_charge/data/*.csv binary -eol
+
+# V8 CSV ledgers and copied audit sources are byte-hash evidence.
+evidence/v8/**/*.csv binary -eol
+evidence/v8/**/source/** -text
+evidence/v8/shore_bess/public_audit_sources/* -text
+# Matplotlib path data includes line-end spaces; retain the archived plot bytes.
+evidence/v8/shore_bess/figures/**/validation_curves.svg whitespace=-blank-at-eol

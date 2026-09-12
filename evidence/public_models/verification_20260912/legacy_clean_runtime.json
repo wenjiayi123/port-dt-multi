@@ -1,0 +1,70 @@
+{
+  "models": [
+    {
+      "job_id": "rl-20260812T065606173Z",
+      "loaded_class": "PPO",
+      "environment_steps": 10000
+    },
+    {
+      "job_id": "rl-20260812T070320120Z",
+      "loaded_class": "DQN",
+      "environment_steps": 10000
+    },
+    {
+      "job_id": "rl-20260812T070452272Z",
+      "loaded_class": "A2C",
+      "environment_steps": 10000
+    },
+    {
+      "job_id": "rl-20260813T063524662Z",
+      "loaded_class": "SAC",
+      "environment_steps": 10000
+    },
+    {
+      "job_id": "rl-20260813T064228701Z",
+      "loaded_class": "SAC",
+      "environment_steps": 10000
+    },
+    {
+      "job_id": "rl-20260821T065745532Z",
+      "loaded_class": "SAC",
+      "environment_steps": 20000
+    },
+    {
+      "job_id": "rl-20260826T094232857Z",
+      "loaded_class": "SAC",
+      "environment_steps": 10000
+    },
+    {
+      "job_id": "rl-20260830T070107706Z",
+      "loaded_class": "SAC",
+      "environment_steps": 30000
+    }
+  ],
+  "api": [
+    {
+      "path": "/api/v3/runtime/status",
+      "status": 200
+    },
+    {
+      "path": "/api/v3/modules/shore-bess/evidence",
+      "status": 200
+    },
+    {
+      "path": "/api/v3/modules/bess-energy/evidence",
+      "status": 200
+    },
+    {
+      "path": "/api/v3/mlops/evidence",
+      "status": 200
+    },
+    {
+      "path": "/api/rl/integrated-business/evidence",
+      "status": 200
+    },
+    {
+      "path": "/api/rl/coordinated-business/evidence",
+      "status": 200
+    }
+  ]
+}

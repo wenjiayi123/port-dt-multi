@@ -1,0 +1,104 @@
+{
+  "schema": "port-public-model-release-verification.v1",
+  "generated_at": "2026-09-12T04:42:21.636522+00:00",
+  "status": "PASS",
+  "scope": "pre-commit isolated publishable working tree; remote clone and GitHub CI verified separately by release owner",
+  "v8_original_archive_paths": 77,
+  "v8_distinct_public_archives": 66,
+  "legacy_original_archive_paths": 18,
+  "legacy_distinct_public_archives": 17,
+  "all_95_local_original_archives_unchanged": true,
+  "raw_original_archives_absent_from_isolated_public_tree": true,
+  "original_legacy_archives_untracked_from_current_git_tree": true,
+  "git_history_rewritten": false,
+  "frozen_r5_training_sources_unchanged": true,
+  "public_archive_deep_scan": {
+    "archives": 128,
+    "status": "PASS",
+    "crc_valid": true,
+    "archive_members_and_json_base64_checked": true,
+    "pickle_executed_for_privacy_scan": false
+  },
+  "export_equivalence": {
+    "all_non_data_members_byte_identical": true,
+    "protected_metadata_sha256_identical": true,
+    "real_sb3_loads": true,
+    "deterministic_inputs_per_unique_archive": 64,
+    "schedule_progress_points_per_archive": 101,
+    "masked_policy_probes_when_applicable": 64,
+    "actual_optimizer_counters_and_replay_snapshots_identical": true
+  },
+  "v8_r5_selected_and_final_validation_replayed": true,
+  "test_or_forward_evaluations_opened": false,
+  "legacy_clean_runtime": {
+    "training_models_loaded": 8,
+    "http_endpoints_passed": 6,
+    "runtime_and_module_model_gates_passed": true
+  },
+  "release_check": "PASS",
+  "v7_artifact_verification": {
+    "selected_models": 45,
+    "environment_steps": 1800000,
+    "optimizer_updates": 469500
+  },
+  "git_index_v8_hashed_csv_and_source_files_checked": 83,
+  "git_index_hashed_bytes_identical": true,
+  "targeted_tests": {
+    "v8_mapping_and_verifier_and_evidence": 46,
+    "post_async_compatibility_v3_and_concurrency_and_container": 11,
+    "deep_archive_privacy": 2,
+    "esg_missing_month": 2
+  },
+  "complete_python_and_js_suite": "separate final integration audit; duplicate run stopped after coordination, not reported as passing",
+  "historical_source_gaps": [
+    {
+      "original_path": "scripts/audit_shore_bess_v8.py",
+      "original_sha256": "ef013e46ce2ec66547b50a9f2385ceae932103ffa4c3c370e1f06db04f6783e0",
+      "affected_audit": "evidence/v8/shore_bess/audits/train-feasibility-20260912-v8.json",
+      "complete_successor_audit": "evidence/v8/shore_bess/audits/train-feasibility-20260912-v8-r1.json",
+      "reason": "Historical source version was not sealed and no matching bytes were found; current source is not substituted."
+    },
+    {
+      "original_path": "scripts/audit_shore_bess_v8_critic.py",
+      "original_sha256": "08d9bbb6f5c5f4ede4e0785d39914def564da6ff8323be6e135bd71e2910b120",
+      "affected_audit": "evidence/v8/shore_bess/audits/td3-demandphi-r2-critic-ranking-20260912.json",
+      "complete_successor_audit": "evidence/v8/shore_bess/audits/td3-demandphi-r2-critic-ranking-20260912-v2.json",
+      "reason": "Historical source version was not sealed and no matching bytes were found; current source is not substituted."
+    }
+  ],
+  "all_historical_audits_reproducible": false,
+  "production_authority": false,
+  "dispatch_allowed": false,
+  "anchored_files_sha256": {
+    "scripts/export_public_shore_bess_v8.py": "899093b5824c78bf9d1b2f5b3cf9b8cd46ca882b86d19fb10db90e540ba06636",
+    "scripts/export_public_legacy_models.py": "32aa30a7ac45df7faa3c23e22c0d4a2a6c5a0159d867066c7cbfb35d307f0795",
+    "scripts/verify_shore_bess_v8.py": "b15149939195ef2665045eee447893458fff968d3d2d24109d3fc17e44d65c6e",
+    "scripts/public_privacy_scan.py": "f9a08fd980747bd99f7fece341fa0c9fcd3eaba64e47c1cc0e2c5883b672fa26",
+    "scripts/release_check.py": "72a3dd2bfea72dac88df895c5264bb65e5d9d0a8502749fde48f5cf51949da6f",
+    "app/services/rl_model/shore_bess/v8_public_artifacts.py": "61b0a6c1b7c099af5260747925de2cd589e43222a85121f21249cb34ec57bc12",
+    "app/services/rl_training/model_artifacts.py": "293b6c228bfea928a5a7a0ee08b2f9bd2609fa1a43b206ea90dd86ad6c235c5c",
+    "app/services/rl_training/runtime_policy.py": "165116a39e86b7cbbeaed49da9e1a6862478f1f6389994c58284622aa6248832",
+    "app/services/rl_training/model_registry.py": "493c413f6020b24492f2bd613d40b60c56d2b2c1c75d545af33cffea942b26d6",
+    "app/services/v3_runtime.py": "ab0678576cf6716f6edc28718520b7ef198cedad3ca180dda954a073a87e1808",
+    "app/services/mlops_evidence.py": "108b6aab5b8a1ee74cb5b0b0d297d0c622d04a2cc07f3948f85ee568403acf10",
+    "app/services/shore_bess_evidence.py": "8c9ae592768ee0dd39f935b0c0ae50cec583425dda2df8c52a57d24afd094990",
+    "app/services/bess_energy_evidence.py": "c8628970c43ba4f46c21483a522616063ef81adefd326a95a497d8d131fc48ae",
+    "app/services/shore_bess_v8_evidence.py": "10517800371f0b130c1c1509a820823f7e8525b7c7837323042ea08d256691e8",
+    ".gitignore": "b0a66d278ca48cfa5672dce8888cc3532289f8ff1871c6465f016d6d6dd241fb",
+    ".gitattributes": "1768c3874d3b5b1823cf70ea32cedd4c7bed5f6f0472d2032f4ff271eff41f04",
+    ".dockerignore": "0df508ef1b983fad83ee2c7ab64410298509b7bf2395a3756117290012768523",
+    "evidence/v8/shore_bess/public_models/manifest.json": "eaddb4e38ce048b2d6963b85c3b760035a1bde736911365790d146b53656b820",
+    "evidence/v8/shore_bess/public_audit_sources/manifest.json": "45e92233848c90f51dad7ad9c127ec453dede84bc7a034c55b689f9f4f311ea2",
+    "evidence/public_models/legacy_v3_v6_20260912/manifest.json": "fc0d043ab4a5b1771d82c72fd9201c86f408c0c1549763732a62be5d1b09fc0d",
+    "evidence/public_models/legacy_v3_v6_20260912/original_archives.json": "657ffa983561b73ec6ca8d3126f23c6a1635c58075da963fc19c61b9533a2c0b",
+    "evidence/public_models/verification_20260912/legacy_clean_runtime.json": "74430c44cae1a30f965b404642504cc0108bd1770164b37752db661e5b99fbd7",
+    "evidence/public_models/verification_20260912/v8_public_bundle_verification.json": "363b6ab6a35032e7fcb1eb4a72755e305edf00e93f501103b310fdea4a497e9a",
+    "evidence/public_models/verification_20260912/legacy_public_bundle_verification.json": "907d7c679628086efd277ec15ce585b36e609ce2b03f7d06430ea9ddf54219b4",
+    "evidence/public_models/verification_20260912/sac_r5_public_replay.json": "17ded5af94881e771a89ed7257f6423cd396d83add22ba4aab6bafcd08c79015",
+    "evidence/public_models/verification_20260912/all_public_archive_scan.json": "9560225e3dc89d0699517033c9fc66a64662c8036a6db23d2f2503513a6a4ded",
+    "evidence/public_models/verification_20260912/td3_r5_public_replay.json": "cd21ca598da2759e38b8a04ad7af56d2f796b61e6628cf09281f322539970c5e",
+    "evidence/public_models/verification_20260912/final_http_acceptance.json": "878e0a8c740937638a6980fc083f1b71ba8bf9dd78965c53438acc6fd8684892"
+  },
+  "publication_migration_modified_historical_reports": false,
+  "other_task_scope_boundary": "This publication migration audit does not attest preservation of files affected by earlier UI evaluation bugs; their incident and recovery are recorded separately."
+}

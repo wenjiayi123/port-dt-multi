@@ -1,0 +1,2000 @@
+{
+  "schema": "shore-bess-v8-public-model-export.v1",
+  "models": [
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "e630caf1aa4b40e74ac736ad6ff63788df75f4506b99edecf7a242f762ff5663",
+      "public_model_path": "evidence/v8/shore_bess/public_models/e630caf1aa4b40e74ac736ad6ff63788df75f4506b99edecf7a242f762ff5663.zip",
+      "public_model_sha256": "5d079fd0b9cd9832e72224c6f9d349d26a6facc312d4e0a542d1784dc367a80b",
+      "original_data_member_sha256": "ca43e9e72377da52bd50023a94a25ae99222f7947f3a10b76d610b5641c84ee5",
+      "protected_metadata_sha256": "b8e90f88de8c042838cd926bffcf6ac40a50700881f00248d8cb2688e87eef5b",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "19cb28d606b290f3630d2473262277f4b5049bb294fd3aae48acdcc5f38eb3d1",
+        "policy.optimizer.pth": "156afe36869f48b1f5508c7bad394e4f79774c06c4e1bc3f502fce968c3215d1",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12-r2/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12-r2/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "8df9507f4e7b570d03f86788f0c63b23ba1470283328467074a19ba90edf7703",
+      "public_model_path": "evidence/v8/shore_bess/public_models/8df9507f4e7b570d03f86788f0c63b23ba1470283328467074a19ba90edf7703.zip",
+      "public_model_sha256": "b9a00362159b2ad21c672c1be04ec2990b142662caf7cde786d6ed49492508b2",
+      "original_data_member_sha256": "dcaa16d3ee2e854632daf82a3def6f76963df9ebb74585e81cb14ac2a888b586",
+      "protected_metadata_sha256": "3472439b76b90706b5f54c60369e78b0c2c8f891076bd388a2be75fdc0554ee0",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "01fa030b52d1567d9adb7b894ea4f970a4e0054987d87f444645a577b11cb74d",
+        "policy.optimizer.pth": "ff35fc15709a6d1522115959a70ea4783fdc517f4f6aee03c9ffc7aacb3d44e5",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12-r2/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "a49af4f311702bae0fa664c9b0d752ec773e24ce8f60415c1ef6e2031cdf1a90",
+      "public_model_path": "evidence/v8/shore_bess/public_models/a49af4f311702bae0fa664c9b0d752ec773e24ce8f60415c1ef6e2031cdf1a90.zip",
+      "public_model_sha256": "02bcec11591f5fba866f7926d13f8f413dce2853192ad501baa96e202ea47cea",
+      "original_data_member_sha256": "87f9a6349f86955520ffa8c09777494139ee8a7dd84d837c6c4c137a316f14f2",
+      "protected_metadata_sha256": "10178b55ec0727175a85c6e0f7e4a2893c4df728678d6f8f245396a0de809cf4",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "5dfc23222c5341d9553293a436bd408f8f99affd90a3b2645a350d620de4de50",
+        "policy.optimizer.pth": "18113ec55e1250505e588c6d560251d42cc7296ea39fd49500450869e7305f82",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12-r2/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "e22e7a052401d7f0521c932e05687d97a44d0631cb526e74d2f484b1e8d894d7",
+      "public_model_path": "evidence/v8/shore_bess/public_models/e22e7a052401d7f0521c932e05687d97a44d0631cb526e74d2f484b1e8d894d7.zip",
+      "public_model_sha256": "1381b40d840082bab0fb3c3c366e440367b751ac08b4354aabd3101b223a905f",
+      "original_data_member_sha256": "57f2ec213894cd08955a6661e18a8d15f9942f7e59f5ff97dff1cee25e169101",
+      "protected_metadata_sha256": "63dcdc0dadc77173b8eccd41e1ce29fa5c02337b17119599ba5d8cec85ecad57",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "c793744af1a1e7783c9a0a2bd67eca96433b7120982354b2087e0f57584cb946",
+        "policy.optimizer.pth": "408a653d01fef1e803eb1b60aac7a53947446630965b43f98ead85ee4cdf04ff",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12-r2/seed_912/step_40000.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "a18feedfe7a8094ed7858c71e7b80e0aed6a094d7b21613bfeebb91321b80fb1",
+      "public_model_path": "evidence/v8/shore_bess/public_models/a18feedfe7a8094ed7858c71e7b80e0aed6a094d7b21613bfeebb91321b80fb1.zip",
+      "public_model_sha256": "9025c78b4ff2b6178bfe42e94a74da50af46c7bf5d04650647ac1d776fa4f1dd",
+      "original_data_member_sha256": "863d283572e0b26220c8bbd4c735698b4fb927bf02242d0d67ee7d82559e3745",
+      "protected_metadata_sha256": "bade16444912e8728cd3da453f18b3917a478eeeaa68129030787d26e180aee7",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "22adafbd87af4e029590df88638669e824cfe2092cd119c46d70f901a60ebd8d",
+        "policy.optimizer.pth": "a310a21ced0863f47557d1cba7ab1aca46b7430d5179ce6315c0aef006c1ea3c",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12-r2/seed_912/step_50000.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "3445a25d57c2682e46cf510cbb530ccc9d056e4c2df3e489a8f8fbc2b631c106",
+      "public_model_path": "evidence/v8/shore_bess/public_models/3445a25d57c2682e46cf510cbb530ccc9d056e4c2df3e489a8f8fbc2b631c106.zip",
+      "public_model_sha256": "2943fea8d0eb1ed37be99a509361527ee4832088388fdf952ced76d76412fd92",
+      "original_data_member_sha256": "de16d09e5bf422b37122e04ea6581b788de2a24289506b7a946c5808b99fd53c",
+      "protected_metadata_sha256": "42e982cd29d7ff1a1cb55595d58df161165d00671ba20d4416429ee28b60942b",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "11b3c759af5c068c3c7da8331046f04093108a6912d8de65332ec6c5f6e7d70a",
+        "policy.optimizer.pth": "c830d7cd42bc2412d1e1d5cd756ed4c975b02b39012acafbb61f2d61817ada07",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-dqn-pilot-20260912-seed912-c12-r2/seed_912/step_60000.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "ecbba94b2649099043863eac7a46f38f2ed30a24ba2397f625a338a783dad21c",
+      "public_model_path": "evidence/v8/shore_bess/public_models/ecbba94b2649099043863eac7a46f38f2ed30a24ba2397f625a338a783dad21c.zip",
+      "public_model_sha256": "9848435f6287530b0c0dd27e7b6afc51c148609f15abfeb63ebfb4cbaae7f8ad",
+      "original_data_member_sha256": "d8f06c2695eb86b36c54d6027fac86e0f7fad2714d986203d1c9eb6e0cca2cba",
+      "protected_metadata_sha256": "9d98cba0576ab75585a590f90c6c8ff07679d78adb588e3ad9c0c8838654b1ec",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "5a57b4751e27b64a54c51dcd0ae3950d0254c33ded9969ed21d54369d4f80015",
+        "policy.optimizer.pth": "e68cc5753e9fa114b667c32877b4b519b6fee1f84652dd5df4a9bc66107c206f",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-flex-sac-diagnostic-20260912-seed912-c12-physicalfix-r4/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "88aeea5f7a762758c7c5b024f1778853d308df4e96ef2fbbfca07adc7196d754",
+      "public_model_path": "evidence/v8/shore_bess/public_models/88aeea5f7a762758c7c5b024f1778853d308df4e96ef2fbbfca07adc7196d754.zip",
+      "public_model_sha256": "098b47f0899603989d92d2dcd092241c135c57da43a9b826ee101f13827e8989",
+      "original_data_member_sha256": "e637e1d8199c5f4ecbacce3ff8fb0c9d1567ec373af02076f4e3a9fed6829a27",
+      "protected_metadata_sha256": "a849322bda2079614b4867e6433d0edf99e0c27eacb5f82f53449e8e3bfe092d",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "3bfa3dbb603e110bf40e84da00456420a23bc7da280afd351f298acb6590d914",
+        "actor.optimizer.pth": "e98c1ac4231c8e543105607205fff7145ffa767f71bfbc303a08333f71c8dd83",
+        "critic.optimizer.pth": "94b8fb8101660f4bdb3df390991fc9c74956f7fa215615b4e35afc182be52a87",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-flex-sac-diagnostic-20260912-seed912-c12-physicalfix-r4/step_15000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "c8963d3c7345fc12b9805e4da774d3b38d837b3be96019f32731c6b40ecddd18",
+      "public_model_path": "evidence/v8/shore_bess/public_models/c8963d3c7345fc12b9805e4da774d3b38d837b3be96019f32731c6b40ecddd18.zip",
+      "public_model_sha256": "2cd53f8bc768a9b6eaeb006f58386415cfb8cb1b3ac55f6dae828aacd3ee0a7c",
+      "original_data_member_sha256": "330453438179e9c47401d0ab1b446a863947840069cc3ae1cc5ff5a2220de7a0",
+      "protected_metadata_sha256": "68cf3322f697cf0b180678559f827af21b87cad703e37b801a43eebafe13b28e",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "d2047f51ead5290958cab42ef0358e3bc446ebd9036dc6bbe3728502407452ce",
+        "actor.optimizer.pth": "ee270ab7c5104000164a6720a29d11192a8418c426ef12e3f43548392c504f0b",
+        "critic.optimizer.pth": "bba8b23912e7f45f7eb3baec5fc58e827f8b957448a29c381257f5288c8b07a5",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-flex-sac-diagnostic-20260912-seed912-c12-physicalfix-r4/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "d0be29cc804fdcdd264786237d4cc18f393c7a8466a93ef161b80459cde170c6",
+      "public_model_path": "evidence/v8/shore_bess/public_models/d0be29cc804fdcdd264786237d4cc18f393c7a8466a93ef161b80459cde170c6.zip",
+      "public_model_sha256": "d5a86e73838cc403c811da1d2becab562369d83dc7809bc83f755a500ee15a6d",
+      "original_data_member_sha256": "14f7b35b66ced46fa59091b17ef4203a921303cdeca433405ff4021bea5d31f9",
+      "protected_metadata_sha256": "d9b72639f573a77c4a7a6e0feea96910b33acec13fc2d3f135d7599b7c76cad1",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "ec3816f76baa235db2a439f10dcf1dc106c2ec0259812850d5b8c4bf33ec13a2",
+        "actor.optimizer.pth": "9a9f13a90711dc00f0aef748f534a5d9127a2143023cfcb3c36a55260562eb16",
+        "critic.optimizer.pth": "938f03fd6a5bffda5c5d3c2a5df720ddb9da668597c5b58bec99cadf57115573",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-flex-sac-diagnostic-20260912-seed912-c12-physicalfix-r4/step_25000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "cb075fdeb4927d68428d7c67aff31fe44ba37b133da3aab8a3aefbc528bb6041",
+      "public_model_path": "evidence/v8/shore_bess/public_models/cb075fdeb4927d68428d7c67aff31fe44ba37b133da3aab8a3aefbc528bb6041.zip",
+      "public_model_sha256": "7875b64872c65b0cb09e9c1c82009d71e721f586225b2f66f0684cecbd178f1b",
+      "original_data_member_sha256": "7cdd4019aaebc782edbb4c117bc399515859c32a0a6e597d4ca1be0e95b1dbf6",
+      "protected_metadata_sha256": "959ad137511b8fcc0874db8102d6eb2ba85d6fc7522ab440796b00a012599c56",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "9b2ad75d6750b5624e56ac818b7c7f9110e7862e40e458c5eaa28d6c608c1628",
+        "actor.optimizer.pth": "b0407ea6454006cd6bd8af7d075cc942766a3bd94e6ef24e7a71b743178b929f",
+        "critic.optimizer.pth": "14a8215ad31b22612d7938a609baa17b4bb4992dc456c8e1b0375d0a4b6efa9f",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-flex-sac-diagnostic-20260912-seed912-c12-physicalfix-r4/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "eadd45097100bc4c5f14cdf09fb7ee31b89c6e40c2b04cc293f345d12ad9ea7e",
+      "public_model_path": "evidence/v8/shore_bess/public_models/eadd45097100bc4c5f14cdf09fb7ee31b89c6e40c2b04cc293f345d12ad9ea7e.zip",
+      "public_model_sha256": "8bd3c3d33d93d18799509f40192afccff7512867ad281c377e721c57836288a5",
+      "original_data_member_sha256": "485e5a6f319de10f370b02a4968a355f0d250225dd189907fc1c477462b2147f",
+      "protected_metadata_sha256": "4e1b8b614c144c76186ea5e5258822b4e85e94906847c724079b7bbce94cd916",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "c3ffb1f08f19c685098b0a047b76ea113c67e2c5ab90216921141537e4c42880",
+        "actor.optimizer.pth": "b74394e6497e29cad7f0dc2570a762126b249075278faa52aa3c06434a76c442",
+        "critic.optimizer.pth": "1b364c75af4a1d582750ff71353c5ab8c6efeb0efbcfe968722c456c1a412e99",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-flex-sac-diagnostic-20260912-seed912-c12-physicalfix-r4/step_5000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "9369c8b2211d1f05ab7aaef0095bb2781007f08100d755eec18c9bfa0fd03f54",
+      "public_model_path": "evidence/v8/shore_bess/public_models/9369c8b2211d1f05ab7aaef0095bb2781007f08100d755eec18c9bfa0fd03f54.zip",
+      "public_model_sha256": "1935dc5c4bc7a2382e3343c53c1d15a328ee3e4170ea664d1fa6dd886226077d",
+      "original_data_member_sha256": "11633a516d945bae8da9918913667017466312be432f9cb2e2e6ec365dedb445",
+      "protected_metadata_sha256": "d1153075a908903ea1ebec6a4057ad99fb69e30a76230d5713ce0c33825a780e",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "81faaab622923668c6e58bb8030d6da1e287462201c1be9548c2513086742e95",
+        "actor.optimizer.pth": "def259b6a4cf63619898107831434b67fb385275f79ec611d37c315d26c235d5",
+        "critic.optimizer.pth": "fddcddd899b559db18757db4f847e925be8878f249168d7a3b671a5129f2c179",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-ppo-pilot-20260912-seed912-c12-r2/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-ppo-pilot-20260912-seed912-c12-r2/seed_912/step_20160.zip"
+      ],
+      "algorithm": "stable_baselines3.PPO",
+      "training_model_sha256": "cb95aeff99039e5d8994ecad05018cae96861e4b4988384233862d1d5bc05811",
+      "public_model_path": "evidence/v8/shore_bess/public_models/cb95aeff99039e5d8994ecad05018cae96861e4b4988384233862d1d5bc05811.zip",
+      "public_model_sha256": "1080771120b47e980fef3e3737f38293c31cc615531ba674308eb4a0248081f1",
+      "original_data_member_sha256": "6a88b59342d83ded070aeecdffde95152ef5d88b62aa4ff21a4170c0b43f1ab1",
+      "protected_metadata_sha256": "b8bd49126ebf35f9b03d38fedb9778f3ecfbb6d013898a7a440183d53071fe3e",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "clip_range"
+      ],
+      "constant_clip_range": 0.15,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "1530cc0f5d19208e69a0c42b816ff66798dd800bd1617ef8b861252a864cc220",
+        "policy.optimizer.pth": "33e04b16ccff8de98e2abe9a45ce8bee9d3c79d7a99cf57137b768232dea916e",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-ppo-pilot-20260912-seed912-c12-r2/seed_912/step_10752.zip"
+      ],
+      "algorithm": "stable_baselines3.PPO",
+      "training_model_sha256": "5195c25a934c303a722091396eba28120126294c848019c81dfea29ebd785f14",
+      "public_model_path": "evidence/v8/shore_bess/public_models/5195c25a934c303a722091396eba28120126294c848019c81dfea29ebd785f14.zip",
+      "public_model_sha256": "e978dd33299e5db3d959acc351c34bb27735f9becb05c60d774c52265495df98",
+      "original_data_member_sha256": "b6c48e25f767f99f12daaeb02dc2f173ded2cc53cfa36e497376a4b43432aab3",
+      "protected_metadata_sha256": "f84a32bacf1f3f250f9827c4d69b33f27258730072473a288f84ad00ef688fd6",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "clip_range"
+      ],
+      "constant_clip_range": 0.15,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "fac3ce2678190f3b29f6f402ce9b52e9d382c661d235e706c7d7df9334835f83",
+        "policy.optimizer.pth": "5dd767ea2496e545414a93066d9bae4731124754749459b0d9ddeccfc296a649",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-ppo-pilot-20260912-seed912-c12-r2/seed_912/step_30912.zip"
+      ],
+      "algorithm": "stable_baselines3.PPO",
+      "training_model_sha256": "321ec8038b1fb6c33dcde82a8608ad5b7782b99ee71f406deaf5f67738f5fefa",
+      "public_model_path": "evidence/v8/shore_bess/public_models/321ec8038b1fb6c33dcde82a8608ad5b7782b99ee71f406deaf5f67738f5fefa.zip",
+      "public_model_sha256": "a4fef0ddf856eff4e3b4387a58614009b6fbe0677c05eb88609e9fbcc297eb26",
+      "original_data_member_sha256": "b3a1481c93b89807903c046254618c0c659dbc0e239dae3d47696223a80485d3",
+      "protected_metadata_sha256": "5b63dd9ae8df23584ca791cd7643a62b418f5b0d12078545f1706e2c9cd9f241",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "clip_range"
+      ],
+      "constant_clip_range": 0.15,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "96d7335f0938f51b2a84a1303612ad633256dbf1f831d72db50c2bb056c11afa",
+        "policy.optimizer.pth": "2b71755d0edf37c319146f8c8916d24b7b619b8abd53e366347c5376dfe356ff",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-ppo-pilot-20260912-seed912-c12-r2/seed_912/step_40320.zip"
+      ],
+      "algorithm": "stable_baselines3.PPO",
+      "training_model_sha256": "e7e6b5f32f969ae8919ed51cb10a490664b4735c4fb8d9075f7a3929f1fa2e74",
+      "public_model_path": "evidence/v8/shore_bess/public_models/e7e6b5f32f969ae8919ed51cb10a490664b4735c4fb8d9075f7a3929f1fa2e74.zip",
+      "public_model_sha256": "f6d5aaae3f3104ef67275a82c33b606246286f66574ace12a1788c413b5f0a61",
+      "original_data_member_sha256": "c47087dd9adaabb7352b6d3c4fee704cc0b611a4e643dd5575e8cb148978195a",
+      "protected_metadata_sha256": "c2444d5347c9141d84356e7b2db7673023c1875eb238665ddef877ba1f86417a",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "clip_range"
+      ],
+      "constant_clip_range": 0.15,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "89d0b306b0b96eb40f32ed4180f0ffcb86212a2d98468a6cb7c857a5f0f463ae",
+        "policy.optimizer.pth": "976bf0a00ccad9eba6f8df29c65d33e0f4a7e23dea740edc1b9d7ce07f140c1e",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-ppo-pilot-20260912-seed912-c12-r2/seed_912/step_51072.zip"
+      ],
+      "algorithm": "stable_baselines3.PPO",
+      "training_model_sha256": "d4e04d20fda44a978e1356ccfdd2a3b334b09f73d927275e996462f7636f9873",
+      "public_model_path": "evidence/v8/shore_bess/public_models/d4e04d20fda44a978e1356ccfdd2a3b334b09f73d927275e996462f7636f9873.zip",
+      "public_model_sha256": "6f79ef44f997a429d0a72ea0f10443a9206f69691e35f38b007c3a9999d85443",
+      "original_data_member_sha256": "92bf78385b88a8682497e8897d14fff98de9af193d556902ec4b0953d44b5526",
+      "protected_metadata_sha256": "c4b1700099a9ce199ed8aec67fa1a7c448b1bebd93cd946ffabfcb7887d0f90a",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "clip_range"
+      ],
+      "constant_clip_range": 0.15,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "76d4c6c07213b290bd0faf1212972a8d203a6673b566a05e5dfe38758bd3b5c4",
+        "policy.optimizer.pth": "7a6f20722dd0fbad6dbcb2445c389164ad649170e8c4ddd3082c7c8631527dbd",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-ppo-pilot-20260912-seed912-c12-r2/seed_912/step_60480.zip"
+      ],
+      "algorithm": "stable_baselines3.PPO",
+      "training_model_sha256": "066b5c93bfb72002cfdbcffa687f5cd2006e4ebdc0ef94ae1d3f7e7d07c0a7c5",
+      "public_model_path": "evidence/v8/shore_bess/public_models/066b5c93bfb72002cfdbcffa687f5cd2006e4ebdc0ef94ae1d3f7e7d07c0a7c5.zip",
+      "public_model_sha256": "8013e2e8609b074f449c4e72b378a854a35c467d8c42660d1cfb3ad8c91b2c12",
+      "original_data_member_sha256": "2808e52d780126abd71f04bb18ecfdab6099c5029e1cb333b6695a9f9a73ac68",
+      "protected_metadata_sha256": "1cf00ad671b0f795e9d2511df70126b0928f0551683c40e15348f4e4f624f890",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "clip_range"
+      ],
+      "constant_clip_range": 0.15,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "e06e661203165d0722b2c2448cb56f948daf195a13d61d070168ef23466d8bfd",
+        "policy.optimizer.pth": "6840bf268b9efee7b350a2f6383cab5925bb78008a3dd1f154951830df2f153d",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "2c9e10fbcae76871c15160af295079423b3310bc588e2d3e23bc657eef30ec45",
+      "public_model_path": "evidence/v8/shore_bess/public_models/2c9e10fbcae76871c15160af295079423b3310bc588e2d3e23bc657eef30ec45.zip",
+      "public_model_sha256": "1debf1453df873b652e3c916fe218636e5566f517970185a80c35afaea8a4591",
+      "original_data_member_sha256": "261947b5db401392879264c3c0e5eaedb219aba7f28faa18449cfae66e85ea8b",
+      "protected_metadata_sha256": "0fb9b1b94bcb04fd1c9d956f9ba18731cab3259a5be34711744b011942b5ec8c",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "7910edd102fd10a550881cd432d10ab80f985f6759c8472f9e865bd802b00f31",
+        "actor.optimizer.pth": "cd406912fcff0b104872b869cb014c81f3e46077c8d39d43eacc7fe719215ded",
+        "critic.optimizer.pth": "39c5614f2b7339b8815f7fd2850e6e5d62e84ad7ff8388409ee2591ea36eb824",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "6161c75bde7b5f88af276becfe3007f47d1cae8d421be1f2d4901595d9543730",
+      "public_model_path": "evidence/v8/shore_bess/public_models/6161c75bde7b5f88af276becfe3007f47d1cae8d421be1f2d4901595d9543730.zip",
+      "public_model_sha256": "4fae189b370b67f63575dc2161773e03e0c44338ffdac0bf9c32c9cc4da25771",
+      "original_data_member_sha256": "432c5e0024119eca5d08db8e1a3900fff834728392da85150854593bec3c4db9",
+      "protected_metadata_sha256": "8bfb1a3a6f37fe97055ff02a48b4fc43992817f27e7e7d28e6d2177b03a6097b",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "313a0d65dcc054045dddd77712d0b0027cf87913bc79f9ce7edf9ea5df6fe7ff",
+        "actor.optimizer.pth": "1a95ff4cbf82492654eb52b02a4cc57c37bd568bb19cd586505a08f9e5311619",
+        "critic.optimizer.pth": "a3f4b3a1c53a260bbd04bdd09e5e0f59b9ac79c143740ff1aa3047c53726283f",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "3d2e01fcdb61faf7e4e9b5c77cae54a55153fad90497aaec448d01599292be39",
+      "public_model_path": "evidence/v8/shore_bess/public_models/3d2e01fcdb61faf7e4e9b5c77cae54a55153fad90497aaec448d01599292be39.zip",
+      "public_model_sha256": "0f16d9c398b352e585d1a999bc9cecc99a9fbc12c68605d1f9f55e73da62f149",
+      "original_data_member_sha256": "a7224df25c0f6ee0f7a891ef6d0d3660de46fc6d32d050ab26b63e80a270c923",
+      "protected_metadata_sha256": "5be994b0ab31d2c0352fdfc294f03a0942c817619e45a657001def9a238e0b55",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "f5ce3ce588b248e94187e4292d41f326eb7dc78ca35eff34217b6043c7037f92",
+        "actor.optimizer.pth": "ca64b4f9a59a5edcda1aaebb743edc16f88d865d70c0ec3c79fa28c15e59b8f4",
+        "critic.optimizer.pth": "c19ded8f847d6d71030c0a64d32943ebdf56612f0c4ed506d1de332c76ad7aad",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/step_40000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "7c46a4af88195ba02a7dac50f70a25c9e9c6c6ce0c77f9ae691ba83e46ffb476",
+      "public_model_path": "evidence/v8/shore_bess/public_models/7c46a4af88195ba02a7dac50f70a25c9e9c6c6ce0c77f9ae691ba83e46ffb476.zip",
+      "public_model_sha256": "7843ad40bf1d56d20d79e1afb75446f74b3012a748da6f3622009df93688a766",
+      "original_data_member_sha256": "0b008b3cfaab840759e60a690553e888469635db89f9814f135e382dc1933d0e",
+      "protected_metadata_sha256": "65b603f30fd781354038e73ad7768edf15fafda7758e6e36f3fe1cd05efa93d5",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "906a81a2c32ebe994370601120d25b1f05e8e9ad528a7f898486ee6c477e7f5f",
+        "actor.optimizer.pth": "5b0857ace6d38dcd6423c9b354d9d975be7833f28ec2ecf101f11f1f2f1ccba4",
+        "critic.optimizer.pth": "9f31cff6a526c0faa8b216c59f63fc031923229bba5d3cc1ce7e5a98d47f7958",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/step_50000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "95f2a6c0fc9adf299c0ffa65804cee89cec783fbdf20e7a93fd6594045e7150d",
+      "public_model_path": "evidence/v8/shore_bess/public_models/95f2a6c0fc9adf299c0ffa65804cee89cec783fbdf20e7a93fd6594045e7150d.zip",
+      "public_model_sha256": "a4c8dfbfb4b2e6500afc314da70c21375b0a4a375dc28238e4b6d3ff10b938c8",
+      "original_data_member_sha256": "a41e0d127a633a27092a06ec43c24af1923716933cabf26e7e9204ef5c011249",
+      "protected_metadata_sha256": "4416761ed5c4d7f0f95cb195307e28dc80d70e6a3525e52927eb8dd5d6882db6",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "bda00d07c313cff8990f65e77cca9474e22411c18d41c06c75110609f72c7f11",
+        "actor.optimizer.pth": "fbb212b567521570b6bebb4671dcc1da3eb9bb1238fc15a016913ce8ba58a814",
+        "critic.optimizer.pth": "1b7b165070d0ccf7261b1ba08719fd9767f5ea20f5a54748e16a90aa20bb00f6",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/step_60000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "030ef86d541fadd4ad49ab1f9565accef811f856c80438356b3abab03371de8b",
+      "public_model_path": "evidence/v8/shore_bess/public_models/030ef86d541fadd4ad49ab1f9565accef811f856c80438356b3abab03371de8b.zip",
+      "public_model_sha256": "d8f2a42cec4c8b1151b1eae9b8b5671c1cddb39cd4dc2a893bd21b77a645d37f",
+      "original_data_member_sha256": "f6b4135fa9a5db36a871669611ae8aad6df6fe3b73163c7215a404d9f87aa999",
+      "protected_metadata_sha256": "263bff2b64cb29e96771bfde6554555f7b808f61b0d4578a2b542fe89968e771",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "b8e991244084584134e9e76d2e33f2ab625ef06ea92ce4f1fa02c48543315a40",
+        "actor.optimizer.pth": "04ce7f1ad20e4c9364f58bc5ff986ca6d85bd1cc2bf555e797668856c079edcf",
+        "critic.optimizer.pth": "ee393cbb32c0aea1762bfdb1b738a943073f89d30d76772e02afb3b50334c446",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "d7fe600d39854f92867089b250af5d63d89fb76b9156bb16369a3a518733de7c",
+      "public_model_path": "evidence/v8/shore_bess/public_models/d7fe600d39854f92867089b250af5d63d89fb76b9156bb16369a3a518733de7c.zip",
+      "public_model_sha256": "7192fdf997bee5f4dfc7caec3372809907ca3cd1f45bcad66e9987c946de1082",
+      "original_data_member_sha256": "a9b1e7b7cf92cfa4dedf972943a6455dce230ab78007abfdf2b6af2b9f503931",
+      "protected_metadata_sha256": "4acda31925f40f605c1601ffc773ceafd8ec65c400058d8fd7454b4219378080",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "a7321f0dd04de0bca34603b26ffc02e1e620a115acababe9acd1352e25975f12",
+        "actor.optimizer.pth": "a48410356cd682b728d1f58a1440190a9d4d82b4829dc819b9f7a155f6925e77",
+        "critic.optimizer.pth": "6e968f5171b10118548593104c9e15b0ed90130f1f9ff387308374a0cfc950dc",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "03ae6fe6bc918f00ebaae438b1c5544aa79fef5e99668eaf7d4c85e9c2a80ddc",
+      "public_model_path": "evidence/v8/shore_bess/public_models/03ae6fe6bc918f00ebaae438b1c5544aa79fef5e99668eaf7d4c85e9c2a80ddc.zip",
+      "public_model_sha256": "ab2975c0a810cf99ae73f5eb89a40d4ca424c227cb93be7c78b47d1eb929174b",
+      "original_data_member_sha256": "c585e0a5ebbd551bd366e6dbc1da75bb9ca8105e75fcbae44ab7752006185c42",
+      "protected_metadata_sha256": "ed4d17ebc71b80aefd4eb9674cb70d317313e286d88b04b625b46b5812402c03",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "8f574970b0a437a54cb8c1c882a063ab518db7084be19989a9bbcfea017e5e64",
+        "actor.optimizer.pth": "de5c822fcaec04a0cd6e36a6a46f50116a1d93b1d9a0723c7d9559d51bf42cbb",
+        "critic.optimizer.pth": "aaa57a787db75c406e3a507ac70d2c522101e687aa99ae59e1699baa574fe32f",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "4f17c089c747dbe13aae6b328bf1d68d1ec11c46e79c3cc4d02a106e1b028b7f",
+      "public_model_path": "evidence/v8/shore_bess/public_models/4f17c089c747dbe13aae6b328bf1d68d1ec11c46e79c3cc4d02a106e1b028b7f.zip",
+      "public_model_sha256": "f281b4c27f07f6b9675a4b91f8d97384e0f5d94b95607db892ffc327b87fe37b",
+      "original_data_member_sha256": "43d7d7696284a1f54132f3107fb3d79e5df80b6412de2bc0c42f13fe64f6ce9e",
+      "protected_metadata_sha256": "5619b55035b16d5f87ccddeb0399dcc12b360b13d53e067005c3ae5215adfe05",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "30d07627241f6ba9cc733dc397f0aeb26c22e7c3dd0bc6e249b19b8c1b7f1b47",
+        "actor.optimizer.pth": "435d393fac2ce5255487206cc1e0f10cbf0a588f697bf9a322bd0a3002d000a1",
+        "critic.optimizer.pth": "aa5e53909f74eb470d605533f3174c93d09f07666d28f467bf6f35c473bc87ab",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_40000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "0470019e664ce4e41b5887897718be6b234eaf027ac7e24b264e9dc80f6e5384",
+      "public_model_path": "evidence/v8/shore_bess/public_models/0470019e664ce4e41b5887897718be6b234eaf027ac7e24b264e9dc80f6e5384.zip",
+      "public_model_sha256": "d0e47a7014412b47ac72f160eaa3bc9582418d705296f458ffdeb57327f8318e",
+      "original_data_member_sha256": "d50f138a1275f59a7916d37d3ddc6a09abbd5af7d49d1167e8b04cf96c943b8f",
+      "protected_metadata_sha256": "26d9b63faa53c4b15eddd287376ff2fbd58c5cab7e8b435fe72275111c6c9247",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "12d06670c4084f79117b9cef7438d10bc85cc20f2353b1d2a9472e0ad0016b96",
+        "actor.optimizer.pth": "e9f7878828d0b68d4883a93a258b54a7bdfd8a413c943cb3c3fea1d9f9ae2c98",
+        "critic.optimizer.pth": "9a00ea9b069d5e6a859fbeea0816150d748ed0f6fd00b344d89821e660b97d17",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_50000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "c63fc0d086f6a3f609fe307844cb624b36c02442e41c8f2dd43a7f877ce8e808",
+      "public_model_path": "evidence/v8/shore_bess/public_models/c63fc0d086f6a3f609fe307844cb624b36c02442e41c8f2dd43a7f877ce8e808.zip",
+      "public_model_sha256": "b53782ae81c4af936ce839dec81085095abf40abae6d3b54f3a8ede7b052c932",
+      "original_data_member_sha256": "6ac1e7020f443da145cf284bb6fd572347cceabe786c0887ae034d5fd2a5ea17",
+      "protected_metadata_sha256": "d1de09734101d99a5a3a9cfbac91dc252d2db7d6997e3d0f2e0381348f6ce00d",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "c1896bb56acc68d8fd456859f1e26f633a0915a8ed906684da9126d9325ed842",
+        "actor.optimizer.pth": "c119737302b263052d8d6db276d9e7b6184c036ff0771f818bb01815b222871e",
+        "critic.optimizer.pth": "57694ffa62c411e557582b11287d2f721c5a27436a4bfa561ee62fa7ea033360",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_60000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "52398f2a3f067a3b28cd15f4ac08ab495fcf26117c9b7826c1207e7e0c05b23c",
+      "public_model_path": "evidence/v8/shore_bess/public_models/52398f2a3f067a3b28cd15f4ac08ab495fcf26117c9b7826c1207e7e0c05b23c.zip",
+      "public_model_sha256": "2bf96f578a8a9c6dd9979eb012162729d86af6fbc7719a14f2cab41aa411bca0",
+      "original_data_member_sha256": "f925c48fcce6da42dfd37763699a4360f71223dd829d31377705e6f631638424",
+      "protected_metadata_sha256": "56a18d38581790560b30a3a0d887eed5ee825f293c466ec8d561fd04e48485ce",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "f0503f4734d5528649536bdea7c56ec7762b70bb9fb03e5a79eca567da794c30",
+        "actor.optimizer.pth": "b9cac500fc8cfe2730ac15aa4804d522abf4308a0750ab7355544d938dd1b7a4",
+        "critic.optimizer.pth": "2bb57473bc6719d6ccbdf36d3e8bcee1fd17841d874712d1e10e821ae0430587",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "e321678c5d3c59be8914bee1b1dada16d679ade1fe7d91bd3e8866cabdafc453",
+      "public_model_path": "evidence/v8/shore_bess/public_models/e321678c5d3c59be8914bee1b1dada16d679ade1fe7d91bd3e8866cabdafc453.zip",
+      "public_model_sha256": "c6f476d79ba2d64d6e1cc69735469515dbe420c9e5333db2fcd206abbe5a2ef6",
+      "original_data_member_sha256": "23b08811f51c82d996d39387e37d1b1f06f65278697487fefcd18634445e5b81",
+      "protected_metadata_sha256": "4e0964a54f2cd79540f9d090941c67545b5f7bb5f5294f1fff2db1c369867f2b",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "ab7819589906470f7a7aee980f3f93b78e6c918c87f4465048ee9ed8e13bc789",
+        "actor.optimizer.pth": "305f8140ec6cbca3afd59bb5d6342f431b6013b53429268a22e4c6960a3b98ce",
+        "critic.optimizer.pth": "cf96d1ea5fdbca3d3ab5d242c299a82694a64c823454f8f6da5933003fa7859f",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "bcd7742eaedde7b640d77358cd480d3c294b38154352221f6411998688554c14",
+      "public_model_path": "evidence/v8/shore_bess/public_models/bcd7742eaedde7b640d77358cd480d3c294b38154352221f6411998688554c14.zip",
+      "public_model_sha256": "1e9478e01af1545b490f800c848fdf3f445bfee14d9ebf39fb7c8d877da55304",
+      "original_data_member_sha256": "5b5bb56169e20593e1111a35f004f8827209ba9bd47872d80f49322b0f9e75aa",
+      "protected_metadata_sha256": "ebf32ed91705a054d7a17742771c7b5b6faa0c8cc6f49c83ce4c6895ec2928d0",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "1d76e19031b00f5d6f821a37d31d9eb7f1902b5def19b90a76ffe9d43d1ad35f",
+        "actor.optimizer.pth": "93da6448c00dda8f9b63209cdc6dbfcf5d901a76a5d1a46d635cd29cce5d5137",
+        "critic.optimizer.pth": "6bc32c0db5703062e545b08fd5394691da6c0ed99cc6073064da0abe2ac4dff7",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "6eddc7ad7b7a9cb150e98473e276ad35344f58395b8b145c0c6b08d43cfa5155",
+      "public_model_path": "evidence/v8/shore_bess/public_models/6eddc7ad7b7a9cb150e98473e276ad35344f58395b8b145c0c6b08d43cfa5155.zip",
+      "public_model_sha256": "2940aad3c3c3093e48359ed2b5932ecc0b0aaa506e3cb7e13eacc384d107eb5b",
+      "original_data_member_sha256": "29949bcef85facc50b09a9e4c3d3f268a11b854bb56a4dceecf1df71e42949e3",
+      "protected_metadata_sha256": "cc5c0ca41205c335140836f47061e178675ef724560ca02c7dabb81bc8800615",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "193ea243a1603239e738bfd46e0c93be39d75e612f57d828a3b4d0f0b51806b3",
+        "actor.optimizer.pth": "584277720f0443631bf829edefe875715608775bd7fa3f41f6587e7cb6853406",
+        "critic.optimizer.pth": "2ddf8ccab0f59629fceefc4fc2200a683d7d3b0e28c63d4f91199917bbda5380",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_40000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "76c736d8f90abd5194613eafd8260d674822f46fd87626d842cab9d9c7e2ea65",
+      "public_model_path": "evidence/v8/shore_bess/public_models/76c736d8f90abd5194613eafd8260d674822f46fd87626d842cab9d9c7e2ea65.zip",
+      "public_model_sha256": "6ab11cab6b413bd1aaeb4714edbf0bf268970bc72a64beaf63885ef0d180f44c",
+      "original_data_member_sha256": "cd34a42435909e0241c5572381f834e9271c042995d9bb22622f2eff73d4fb22",
+      "protected_metadata_sha256": "721229be899b876c44f3df6fa24064b45fd15f0ffd394aa4510b372c53fbe73e",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "3f4d873f657d3f9eada26575bec74f9efd4e713d675b642597affbba27b64ab2",
+        "actor.optimizer.pth": "4491a5a856cc4e7ea26eb5b00f93b3cc3440c7070a4c2adf5ae9af257dee4523",
+        "critic.optimizer.pth": "9bf57efbecad24aaed59e17c4f4e9ec5f22a4b2b0dfc40e23a5e18eea105843e",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_50000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "e6fe8557bd705f624272bd2d2cded0487ac0e027bf3841e39967e944d4ee6a6b",
+      "public_model_path": "evidence/v8/shore_bess/public_models/e6fe8557bd705f624272bd2d2cded0487ac0e027bf3841e39967e944d4ee6a6b.zip",
+      "public_model_sha256": "35e7799e03a7ea5206815e7042801ffe70a4c977fb6489ed58850f58f6cc596e",
+      "original_data_member_sha256": "a88acbab5a6e7b67eed7210e4f6c5b2f67b9cd05c3b6e0973856d3b5ee3cb2f2",
+      "protected_metadata_sha256": "7bc86d2329dc4cc386b8773b6996a0a6509f3280099e178a40ece68e4d0f91ef",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "64b03df09835904d7c2d6a8ab244392e35a1970a0592fe7b026727338360ce5e",
+        "actor.optimizer.pth": "e67f55a3195c9c16048fe4989754d0ac496bbb36694698eabe2ef146bb59d169",
+        "critic.optimizer.pth": "b8c025b928a2acdd38290f604045af5179fc194898a8ae20b68aa5df6e90cdf4",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_60000.zip"
+      ],
+      "algorithm": "stable_baselines3.SAC",
+      "training_model_sha256": "b793d617c2f0f7e0a14d219217d328922be91900c709e4d26fc786da691d10c9",
+      "public_model_path": "evidence/v8/shore_bess/public_models/b793d617c2f0f7e0a14d219217d328922be91900c709e4d26fc786da691d10c9.zip",
+      "public_model_sha256": "b47d3c5f41cb247014cfc2a1d5f0bed46ac1c36a2f7733e882e34832a064306d",
+      "original_data_member_sha256": "4b94e240f70e466d6605d0cf1cbbd7900ec475bb82c08ff14cafab35d20f596c",
+      "protected_metadata_sha256": "925d70fc2f934ef59df671014ad32c91d29bcbdb60ebbdcf2627cc50d8aef46c",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "e02bba7ab0596561628af31405c33babd071539aa307610179a9448410a5e66c",
+        "policy.pth": "6421bdd229024700b5804fe288414b5d21f22d64a1ad9a0108a276b15f10a0df",
+        "actor.optimizer.pth": "c393ddb2e6df53d80f021bf08f670882ede54c8e880dd27f8454224a05d2d58d",
+        "critic.optimizer.pth": "54be151059f5d5eff0d1a26f807771180819d9763af1b713e9210e2c928e732c",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12/seed_912/step_60000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "1b9f2bcf0e539a606402cc2c2fb4a06f61ba568689492bc15de5c944d2d18651",
+      "public_model_path": "evidence/v8/shore_bess/public_models/1b9f2bcf0e539a606402cc2c2fb4a06f61ba568689492bc15de5c944d2d18651.zip",
+      "public_model_sha256": "c6c312989ea651dc40b877d579fed35dac7c70e4ca306e758f928667ddb205d4",
+      "original_data_member_sha256": "defecab1ed49365a277a0bc7966dbd7464cd1d277ae8d2190ca91ab220cd8df1",
+      "protected_metadata_sha256": "63cea77c77fb553a0d91cf94b6a14956dde0970b8cdde1b7fa95ae6949dc2916",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "dbd93a1808ed2fe1005f82c4be4374afb1938aa626c30f94f9404cbff3ae608b",
+        "actor.optimizer.pth": "79f44aefc580fb543121253f800698a1f77b90decd671b713643a3f4971492e1",
+        "critic.optimizer.pth": "794c36989a35ee51ced6eadde547575723070617f7e05be3f44fa3e7237954ee",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "40ece24ae50c43bf2c0dd65b22ddb9157f3ad50336ad09a74851f9d19f0673b9",
+      "public_model_path": "evidence/v8/shore_bess/public_models/40ece24ae50c43bf2c0dd65b22ddb9157f3ad50336ad09a74851f9d19f0673b9.zip",
+      "public_model_sha256": "3e027f87920e8c58f2645673ade1afdb15383c7ba8aa8d77c850434778882bd9",
+      "original_data_member_sha256": "a094e2cfe7c1b3b8a43eb35d414ab2d62d7daeb3e164b1d0e24a5b89ff240b75",
+      "protected_metadata_sha256": "7e232fa156ae4031ecc4f1b3b2c016dd6b2bcba70672b086c39bf5066d0d51a7",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "23e271c7d32e967113bb7eb758a6949bc143aa9bd96cd951f1f0d2b81e207e19",
+        "actor.optimizer.pth": "8168ac426df6fcca785fa5d3e965688adbedc2ff275a3b4254d0112be4a55de4",
+        "critic.optimizer.pth": "2acb4d942292e02c8fecef99d8ed02d43e7915044ddd8f24dd45036316231e8a",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "2254aef4b742d52ac64e86794a6902340af6348cc8c7b85e51ea7da110fb16db",
+      "public_model_path": "evidence/v8/shore_bess/public_models/2254aef4b742d52ac64e86794a6902340af6348cc8c7b85e51ea7da110fb16db.zip",
+      "public_model_sha256": "14b14f941c5872ef8af2cb72d34a5036e3188eb01c53983d4e0d02cc9c9a1a72",
+      "original_data_member_sha256": "cac90f52b07fa2874ac51cf7b2a0023947791659e009aadd49115220d658f8cf",
+      "protected_metadata_sha256": "dc0cd7a28d4b2b3d6d0068643582702edef9fd714907f993f95e57ae7b90a61c",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "81111542e3e9ffc84df7b5294b4f88cca7c69ebb5692888a54a06955a92b7a47",
+        "actor.optimizer.pth": "8eacb9282391a1693ace4ef858cd2800b4ce1e72a33616b5670fe5636163bb8c",
+        "critic.optimizer.pth": "862ea3416cace0acc8d497eb179b1fb1d50345cbfb80db155a38a34c3a57d9ad",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "4985a2d5695bf1a97f389e1b7c903a350e7835d78bebd0c8cc137908365185a7",
+      "public_model_path": "evidence/v8/shore_bess/public_models/4985a2d5695bf1a97f389e1b7c903a350e7835d78bebd0c8cc137908365185a7.zip",
+      "public_model_sha256": "df2c8a33a0cb04888c0ed828680207580328623804d2f2ebfcd7152660abc3d5",
+      "original_data_member_sha256": "a3e009256fcd0a0cbf69826f4eee0cc69ee5f5f248e7a1648c9fb5acd61f66f8",
+      "protected_metadata_sha256": "34635a660dfbb4397842d55c609086a535a932e5871512935e01facf616beed4",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "1a67fc729b5850d83b7a3a0288ef39960ae1db354de42372e77422fc4437c32d",
+        "actor.optimizer.pth": "60fbcbaf2c47d5c997535496c66ca03d83f49b373f60bd69975030836310dd67",
+        "critic.optimizer.pth": "1ff02f732bf33094c8da9e4642608a106aa6ddb174f51e69fa8fa72c485c1f5c",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12/seed_912/step_40000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "42f8abcce76e42c717e09eeb0a2014ed169444c3146b6a2e0483695296b59cdf",
+      "public_model_path": "evidence/v8/shore_bess/public_models/42f8abcce76e42c717e09eeb0a2014ed169444c3146b6a2e0483695296b59cdf.zip",
+      "public_model_sha256": "fef5da654b57ce30e9fab58f015d08d246491bfe360ba05dc5a43b4ff6c48a17",
+      "original_data_member_sha256": "cedb740232c98d0fe96350e475baf30bca0e4830a7fba6f51f8382bd01543bbf",
+      "protected_metadata_sha256": "73bb0cae69bfc41efac4a960d2c9fd308d1539c907313bf8d3f6cd321086de75",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "cb0cbedff6d5211e525b0ec63fe3afdba746d63d043b381797cb75a7b4df14c6",
+        "actor.optimizer.pth": "81f8edb3307763a93c196f701f6c51345a74ff42b7bd1131570024289952d6d4",
+        "critic.optimizer.pth": "7c204377a9cec842ea2e60c2eac832b041c8b1c618cb114caa8d593b30c16e9a",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12/seed_912/step_50000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "ad32d3fd77a571a658786ed8697e220de5087025abba7d2652a6b25e503cf755",
+      "public_model_path": "evidence/v8/shore_bess/public_models/ad32d3fd77a571a658786ed8697e220de5087025abba7d2652a6b25e503cf755.zip",
+      "public_model_sha256": "a31b5834af315b428632456d275da84ca280383403c882438fb8fbb257333260",
+      "original_data_member_sha256": "8e7514fa167ceab21558caa55244ba5d2667db2dad7ef0862651ccc2b1b4bda1",
+      "protected_metadata_sha256": "b13102d53f570277bf84218237e55ac46c2a146eb0e73d7fe2919612b1ea612e",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "35d58b18d3fbb01f4d4281e533f57bb9f37caa6faf6e30075f212196e607fa81",
+        "actor.optimizer.pth": "bfce93477df9ca3444feec26576de7665d7ff1b7edd4efeb499805d1bce07bd6",
+        "critic.optimizer.pth": "072230a5a044f53a39fd44a95da15d2818615f72ea9fc0354603a097ac129074",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "62fecf2e0adb205f7948ddfdf798ea354ee3029782b59b08892e742847035645",
+      "public_model_path": "evidence/v8/shore_bess/public_models/62fecf2e0adb205f7948ddfdf798ea354ee3029782b59b08892e742847035645.zip",
+      "public_model_sha256": "f7faab1aa45fb1ab15146fe83cacc7b91622cd40451805bf1be85a9a4f4a37fd",
+      "original_data_member_sha256": "6f163157b2ed7eb3f987b413570a436d369bbb334d807b921dd04bbe0cbf99fb",
+      "protected_metadata_sha256": "891686acff8e55d91da0a7d0cf448cfe00aaed94515c9fb642ba2af23af6d67d",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "eb31f9ac9d1df1539e9dd37b7ee3cd25899ce711d5f9a472198fb8d4491ad3e2",
+        "actor.optimizer.pth": "8f8571e1da5b65c67f849dcf1783d486fe5a19a1f5425d9c5c057b2ba5985886",
+        "critic.optimizer.pth": "343a47276406aa2a17a311a7fe644ea62a24e2d9ac73ccc9785d7d1e15ecb8f3",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "1d6655e62bdd26f8a2f878f806fda3eae250ff16a053bd79a3a2c7658d71ffad",
+      "public_model_path": "evidence/v8/shore_bess/public_models/1d6655e62bdd26f8a2f878f806fda3eae250ff16a053bd79a3a2c7658d71ffad.zip",
+      "public_model_sha256": "a3da68577b329baee8709ead7638cc7306691d83c8832a617171fcffa84af87a",
+      "original_data_member_sha256": "ee0a0d38eff548a9abe61e75aff3279cc2eab13aa7b5be7106e4ccc67c432be2",
+      "protected_metadata_sha256": "353d32281848dcd7a843b1e1bb417bef9907aab161891310808fd71b98ee98f6",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "59e7e037ea7690efab9d22e5237e285ab20096f697c88d3438ea97a9dd7545ef",
+        "actor.optimizer.pth": "285d87b88d7e39f2bc6f8aa2a06e8e5e8109cc812efbd7134676124eb794885a",
+        "critic.optimizer.pth": "74829b61b5c22cf8929c8c7a7318cc6b16da8c6cffe20ea9b4516e6fef1376bf",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "3114f34bbf00d79a208598c1f342042db6be453aa0d2eeb20056f5bbebe6b661",
+      "public_model_path": "evidence/v8/shore_bess/public_models/3114f34bbf00d79a208598c1f342042db6be453aa0d2eeb20056f5bbebe6b661.zip",
+      "public_model_sha256": "16f6b2fe3290c571339525fb4fa1988885413208355299844da3a908197a95b1",
+      "original_data_member_sha256": "0f519c00ac65cd21ded6521b7d5612973a7b9ae52aac249754ebd5e523056ab5",
+      "protected_metadata_sha256": "878013a39d5e5bfeef9de1a31fc417d870b7b3f34a60e1aa6cd273d15653565f",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "51f238100b7f49dafadb8c67650fca61a1fc1ed01c8579ad71c64774ebc26ca2",
+        "actor.optimizer.pth": "1a633f8d5f5fdd6dece4cd4150363d31f14ae03634bfb1de0d9fbf79595dcd6c",
+        "critic.optimizer.pth": "e9567e1618990c31eb690a02c3443e7ba021b9a4999f6c0ddb7014b29218be8b",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_60000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "2ea4491c78503c6cbb515b7d553756805d7d96917dec8c60dbc47ef2e5caaffe",
+      "public_model_path": "evidence/v8/shore_bess/public_models/2ea4491c78503c6cbb515b7d553756805d7d96917dec8c60dbc47ef2e5caaffe.zip",
+      "public_model_sha256": "5734b11109c460d129effa4fe9a68ad9178452218344468fa16a1cff8d10ebf2",
+      "original_data_member_sha256": "3d49707654c4839179014b695e799e7ed00fe8cecb0c6755b704c6eb9ee2ee00",
+      "protected_metadata_sha256": "ee425d39ab0ed367ad430f0d9349d0a2f92ff6a84431be3b788f0f69c4deb34f",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "7bf0ec2800722cafa7017d6fb160622e30818186efae0f3324cc2b1b5707b979",
+        "actor.optimizer.pth": "21598791b671f24ef2f2e3c948032dbcd990e59f1144a21c652b646e779e8e6d",
+        "critic.optimizer.pth": "0616aa297604ba8415ae5558524e64fde508dfe735889ee9c185616d816e6332",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "acbe2a5abcc456b0cc8a5aeb9a0ed6a89e8bca31d04ba03fe078541d4f62fd19",
+      "public_model_path": "evidence/v8/shore_bess/public_models/acbe2a5abcc456b0cc8a5aeb9a0ed6a89e8bca31d04ba03fe078541d4f62fd19.zip",
+      "public_model_sha256": "0abcf1386a0f07f6eb350e02b6981d0f940183e81fc0803d5019daba58843a62",
+      "original_data_member_sha256": "e01af7b7a07e29aaa5796c82324a3566f035fb17aadf82651deb6ee6c614696a",
+      "protected_metadata_sha256": "c7fff24bcfe644b08cb524db49c6af1f63b1446cd1db5c733a3278da4f383e67",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "fb6d5dc43ee5b66cbcfc1c0ad4a8e108d3445b42b6d297920c17b86f698e6e47",
+        "actor.optimizer.pth": "718821adb0155413e8617ceb9f518f01c98ac572cdcce290941091d79a51d6a2",
+        "critic.optimizer.pth": "f8692e235bebdb2e10d45d57611c6da4e2e002cbd57253583ed7df5a76126369",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "c316c69655e2f30f9215f2742e3d16219c843de4b9a734bed8e5f913ee8f8677",
+      "public_model_path": "evidence/v8/shore_bess/public_models/c316c69655e2f30f9215f2742e3d16219c843de4b9a734bed8e5f913ee8f8677.zip",
+      "public_model_sha256": "a822a8899d5b9dd0fd574bf710fd871449e62ed2a5c3be18c12fcef6afa67cdc",
+      "original_data_member_sha256": "a5e45b735663ce322a4c8046355d71165bee043eded9410c8dc83202ac67bc82",
+      "protected_metadata_sha256": "7f3f2710832073570b207a4c5b82c0401d39ead3b3e5181223893ac84f99708f",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "0a1fd93dcb9a8c119bfb76f8ee671e1261fe94f0db61f2a3a30bba78353ce072",
+        "actor.optimizer.pth": "83b639455052fb89d6772966b335d3ddb34aae9c132f824c47d815137cb2660e",
+        "critic.optimizer.pth": "5771aebed32efbb2df9177f2bf6a415af379d1a00df53cb38b207e055e52a1bd",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "75d4ad0bd1defe06c4ca97b40de23208f5cac4d5b8d9e084501ac1c72badcbac",
+      "public_model_path": "evidence/v8/shore_bess/public_models/75d4ad0bd1defe06c4ca97b40de23208f5cac4d5b8d9e084501ac1c72badcbac.zip",
+      "public_model_sha256": "c43ad7aff31cfd9b6e6ba80218e70f22d9c09283800da79da1ac02fdc40e4ceb",
+      "original_data_member_sha256": "2c565c0d5b848819b812a20f0cdc56564ca71c76c2dafdf3536a4f0c71475b7c",
+      "protected_metadata_sha256": "dcbcbeb50dd88dfae384028c5c29e5daaaeca055803fdfdd3593c8a33bc98125",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "8797b3a3536b2f969ae0aa6e5bd862ab46937e03af6e4181cdc1a20f9b6ae95c",
+        "actor.optimizer.pth": "9c416f8557a5e9e04a414093cfa9b3c551927cc827798037a53ad3c26964a409",
+        "critic.optimizer.pth": "c4bc7515a611884dea2d88b8e61f24c54823e23fa2fd3757aec9efa4bf998d0d",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_40000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "ba7ec1d77cfc81370c8843a687044b1c0ea9791e61d02f9a17bd5a33b4a4ce75",
+      "public_model_path": "evidence/v8/shore_bess/public_models/ba7ec1d77cfc81370c8843a687044b1c0ea9791e61d02f9a17bd5a33b4a4ce75.zip",
+      "public_model_sha256": "9d787ae75c41688b5ecab7715a6f0ba34cbc4899499e11a3ba6e33bb66a3791f",
+      "original_data_member_sha256": "3c5860d6ae19056e06f374d72822429c717ef6b372b989e15f13aec9dad56d34",
+      "protected_metadata_sha256": "a793abb8dc4ddce6cfc1f7cde970212df5d002e4a79c475c81ef7ca6944d46b7",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "8fccd0d647c4c1c1a8977d9c129418de76b6e2297dd56bc59df868891c44299e",
+        "actor.optimizer.pth": "23a6cbf54c64c84e901f00d86cba170fd427d24efa4bf0e409cd12ad10cc15dd",
+        "critic.optimizer.pth": "ca9aa2c8e973feeec6af0422f4024caf422ea9959206685f597c85b5725120c2",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-r2/seed_912/step_50000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "f513f4c79233b0741dc9e37e794003f17079805a2a3202712aa566fb0c1b7dd8",
+      "public_model_path": "evidence/v8/shore_bess/public_models/f513f4c79233b0741dc9e37e794003f17079805a2a3202712aa566fb0c1b7dd8.zip",
+      "public_model_sha256": "a2e3896c377de45bd985eca4d18ab364cc7c22b29e5ce3edd0085616b7556b14",
+      "original_data_member_sha256": "ff79c1867121435085994d7994d2ac182c12d3537bf07531bb7aad6c4913f0de",
+      "protected_metadata_sha256": "7dc4c5394d86de387f749fc1e3b366210e76d9d0882d9e3101e2c3c6c121a4c5",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "2b7016a34e77daa4bce3930d6007fc6964f52c6da9ed22df4e09e4e079b6a9a1",
+        "actor.optimizer.pth": "1cb97344cbe433c5508bb5acc52543c51bf727456738c931e0ac719ae5aa7d5a",
+        "critic.optimizer.pth": "7a72cafb2f3b2d835cd810fa55ae61f488a9580658147d213bcc9f8e8da189c4",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "d6b4fb5e83019c36b96aef41d16af92774b99d974c53e24e4b6a72b348df4859",
+      "public_model_path": "evidence/v8/shore_bess/public_models/d6b4fb5e83019c36b96aef41d16af92774b99d974c53e24e4b6a72b348df4859.zip",
+      "public_model_sha256": "91842add18412d9acb3c5927503e8bfb5d8c31b943b3336cbd6cb5e74cc7d8cb",
+      "original_data_member_sha256": "42aa717135d69ebeb31408069f90539a7db09afffea7c8097f586b5627b009ef",
+      "protected_metadata_sha256": "7ee87a79a4055de19f63077d00d2a17d978a602fc85d30bfbe3d473f47d3b53f",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "0b689c0ac8ab34d95bf6683a8ac3ece8283573a9c73bea787068267112006b31",
+        "actor.optimizer.pth": "2578f973da73d6b5d859624df0552fc6613e161db6f1ca304c50d881205ed705",
+        "critic.optimizer.pth": "659d0682a20fad07e218391134290506c47375f6d16a92f15fd8089801be4d73",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "7d434dd41642785c4f419bed0e322cd1e8d1fedcdcd8e87d1eaa2d37d5fb11a1",
+      "public_model_path": "evidence/v8/shore_bess/public_models/7d434dd41642785c4f419bed0e322cd1e8d1fedcdcd8e87d1eaa2d37d5fb11a1.zip",
+      "public_model_sha256": "27f839f5dac82c05614900a2d1ab83b5771fe8d5a22a7d635501e05b4e8f3dba",
+      "original_data_member_sha256": "a1488428a396a287a4d3258dde5681fb18e4ff231809d0581144a6b22c9861a5",
+      "protected_metadata_sha256": "29951a75df7abe34894a049bc7aaff8289de6e112cfa4fa3e337a94e20c85ca3",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "3de03ccffb17cd85e9c410af67b5ae93ac3890bcc7724e21df1e4e2a83df5308",
+        "actor.optimizer.pth": "3fe7195e7b19e2e6e549cc66e1fa0c817dfcfcb3cd7ddde3e37889d3d08090bb",
+        "critic.optimizer.pth": "595fa86f40cd23e71e60cb2ce52a1225f7d77be5e82ce9077cc8488b0ece9e2b",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "4a3a6bbbf5e782a5c54d59b7e40e5dbc45f6b24a47ea54f18ad7a6ca7783b85f",
+      "public_model_path": "evidence/v8/shore_bess/public_models/4a3a6bbbf5e782a5c54d59b7e40e5dbc45f6b24a47ea54f18ad7a6ca7783b85f.zip",
+      "public_model_sha256": "0da6e8118820ee4d2fa01f4fe36f21e0e5a7c98741cfe89cf2374967980d8622",
+      "original_data_member_sha256": "1bd2abf439b8323d974c29af0e591538ee34b648423eab1670465cdce66502d1",
+      "protected_metadata_sha256": "21e65a4af6b0a0fa224e08fc662acdfd5847875e87f013b5b4d31ae728356368",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "c98d6b41accf3ecd9180a2bd550640371c65da58b77199e1f8656d0b8db395b2",
+        "actor.optimizer.pth": "24f4d958290c0a76aa36ce042ad067848e1f935907f3366cd2e8453d23f4da1d",
+        "critic.optimizer.pth": "870e0300de813e9d10ea3f52ce4b2d610f7c8a1696ca6f114102afd10d6db6b2",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_40000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "89b143c932ccff9c55ff05ceba575ab6cbce982ccdc3af571000415df699dae6",
+      "public_model_path": "evidence/v8/shore_bess/public_models/89b143c932ccff9c55ff05ceba575ab6cbce982ccdc3af571000415df699dae6.zip",
+      "public_model_sha256": "5aeb6cd2fd08f28db8ae333ea4bd041ffe0b17ecea4f3a9f17243cd5075cc3c4",
+      "original_data_member_sha256": "f6c4141f35da30608b3f5fa96159ce1fed76524a196060660538daad702f4adc",
+      "protected_metadata_sha256": "e433eb9dd59a244852c989c028c155d78a577a33c556b68321d929cecfe2cbe8",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "6a9bfab9f7e7f8f8d7d4c2f5a1b2bbd77fc84392be469ffba689161e45bf7dc5",
+        "actor.optimizer.pth": "baa85a12ae0f0cade168f7eba37c3c8c2756849233cc486ff5f994362750d901",
+        "critic.optimizer.pth": "a3ccdbd367a9a74acf7564d5d79a70eef46c344872c08464ff5f98167db853a9",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_50000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "c04700e351e0ab8dbef4cd6a9cee50489c39ac7856eac6d7ba038283ffd6f35f",
+      "public_model_path": "evidence/v8/shore_bess/public_models/c04700e351e0ab8dbef4cd6a9cee50489c39ac7856eac6d7ba038283ffd6f35f.zip",
+      "public_model_sha256": "75172e3e0a53067c45938ada3456e3bc94a492625e9dcb881cc278514ae11e24",
+      "original_data_member_sha256": "d0e2082b092b5706b7a19357a91ee19f6bd87384804c62c95d0eb27816d29fcb",
+      "protected_metadata_sha256": "f4e52f75023a15a440a8fce254fd0bc21c28740d688ebdb9df65538f86cbf45d",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "c0d58388e2528f635737c6a442fd99f44296946cf7813c7e56df37f2b4a11576",
+        "actor.optimizer.pth": "f36a498b692ae80e97611fc5a3704465285cda052af81d341a79aaafce2657aa",
+        "critic.optimizer.pth": "bd4d490682a1f50c75f6f49d8976f8c9fb6cf75e39d572e4d3c2c6ab1350476b",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-nstep24-physicalfix-r4/seed_912/step_60000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "e21b95ef67e13baa5c10850555134c0382083b6a78c6485b0b7393d1de5d4101",
+      "public_model_path": "evidence/v8/shore_bess/public_models/e21b95ef67e13baa5c10850555134c0382083b6a78c6485b0b7393d1de5d4101.zip",
+      "public_model_sha256": "fd3733ea15d23cc1e71674c9ee5c68bdc326f124f646ee006962f78caa92dac9",
+      "original_data_member_sha256": "a5cf76ed71a9198c40ec9e57549a2cb300115e495cd7167cbfe029005fcc4409",
+      "protected_metadata_sha256": "5b34a8fb7cecfd461eed9edf891635d217688925e047c2775e2eafdcc63b26f6",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "b2d9832d8e20fd522a5bd91f83cbe3cb7d3cb63c78ea203695997d76c4883321",
+        "actor.optimizer.pth": "f3ba88c9376d60bbb0f7c87b3322d30616269fdc2ff77a32eb9b5c8e413ea9bc",
+        "critic.optimizer.pth": "09b298eaa6e2465cd6f77352a8e2fc4b37966d75deaef49a6b4883bf6105cc08",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_40000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "113d6d14a89e43977ca16e528d387eb94e2591dc8a64a1e36a426260eb50e1aa",
+      "public_model_path": "evidence/v8/shore_bess/public_models/113d6d14a89e43977ca16e528d387eb94e2591dc8a64a1e36a426260eb50e1aa.zip",
+      "public_model_sha256": "9108058773654395ac7c0461049b273ab65a0541f378e351c84dc897c4998938",
+      "original_data_member_sha256": "2c97f77c7e407a0dfa917da0389a1a9d357d14e33f2ed8987ed44bb7c17bbc20",
+      "protected_metadata_sha256": "2af089d7aa150f6541d2841ae96bb26a075e11c3b5d177b00bfff3db238225d9",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "fd3ea9ce7fb425bc0d54c8e09d4b5209c7fdbcb1f8e455a117e099c8dfb9e07a",
+        "actor.optimizer.pth": "dde84420716da53dd8472418af5d65fc86e4a88ad563ae8942c7fe31132cb339",
+        "critic.optimizer.pth": "4dd20fdbe596bc36087b277d8395350996ac64e0506ad301fd159e1abff301d5",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_10000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "5ec716f7d8bb5f6b4d8641a3f6ee34ba2b0cc14444399df38779953cd9b0a16c",
+      "public_model_path": "evidence/v8/shore_bess/public_models/5ec716f7d8bb5f6b4d8641a3f6ee34ba2b0cc14444399df38779953cd9b0a16c.zip",
+      "public_model_sha256": "7e757970a814921318c99c2cd6aeab5f7f475ead798a6c90fd06ca5bc026b79e",
+      "original_data_member_sha256": "cf23004bcbe5290b2a185b99871935a4e8b3cca21f44f10c4c40dcf241cca362",
+      "protected_metadata_sha256": "28bbce8e296bc9bdab94bfdf54072dd96938abaed22872309fb2e56f9119ff13",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "7b785487bc3474437e3994338f94cf67640e78443b86bc73eac2d30fb46f16f2",
+        "actor.optimizer.pth": "d179a0a7e9d1cc9b4fda3282b8f556f0d1ee70fb2d0a3b94e093b7d5187ec379",
+        "critic.optimizer.pth": "550dcff18c82016787b8c51b4d29775a242e22f7988c0bdbccde9bbd584467c2",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_20000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "ec62d061632e5ab808472d7a315f61854a2713662cfc56e97ba5d85e258d8bc2",
+      "public_model_path": "evidence/v8/shore_bess/public_models/ec62d061632e5ab808472d7a315f61854a2713662cfc56e97ba5d85e258d8bc2.zip",
+      "public_model_sha256": "5892c6a6642ee0bbcb125d2a0c9640cefb9fb1fb4723effd17138904ca372c94",
+      "original_data_member_sha256": "02e1fbb490c46e146306ba7f1b5805cf4b5d90561a43b130d9cc21df0f4da4af",
+      "protected_metadata_sha256": "afe5a083e270c9325b3d36b2223cff111f92f8bd858f9c60f62170d2c6601c52",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "47d65b66f8c451b3afcc9ef02da63e43b6ac4f25dbeeaa89cb2626407f8d93c0",
+        "actor.optimizer.pth": "f373c70f7c4cdfc09fb2bfb2a4c17536139cbc6739eeb49cc172eb7083b2efbe",
+        "critic.optimizer.pth": "62f36ff16daeb98b0fc947cc6d926ff6ab6f4453b916e4f3deca82d650d8e8ce",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_30000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "9549b8c2a78cd5209f3eb17ccd1da306bba18f00b92c758d51eaad1acac91f30",
+      "public_model_path": "evidence/v8/shore_bess/public_models/9549b8c2a78cd5209f3eb17ccd1da306bba18f00b92c758d51eaad1acac91f30.zip",
+      "public_model_sha256": "5d51fb56b5ee33ef2419aa354ac2e6c68ef6722de8590ed23a6bbc5ce727e7f4",
+      "original_data_member_sha256": "7a84aad2539bba45a4323c9d58258b99b3c915745295bb4a7261d808389355dc",
+      "protected_metadata_sha256": "84c1380d79f982aec90ae1c0220578d077f14eec6756858b8b1476cad13a3796",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "4e2671af807e9c1ea919ede994a14051a949b9a90f8e118100a49c89ce5085de",
+        "actor.optimizer.pth": "cd4710c13b8b0f746ebc6d6e3fddf32f06037d46edd7acf34181279417852a5f",
+        "critic.optimizer.pth": "15d503ba2ccc8e3b2946d3168e5268b8b8233a5ac3fd0a2733188b4f0edc020c",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_50000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "9c2b96487d756612f6f6012e5ae31457818e02b34a7a8be0d2875102dc7d44d3",
+      "public_model_path": "evidence/v8/shore_bess/public_models/9c2b96487d756612f6f6012e5ae31457818e02b34a7a8be0d2875102dc7d44d3.zip",
+      "public_model_sha256": "9c0ce85cf1ade61fc4d875edc87bd9be46c3fcd72ebdbe70cabc6bd2ef36efc5",
+      "original_data_member_sha256": "e3b9124764aefca90f148aa4a38db6eea2800196c562c1596ea3cbb0c64a36af",
+      "protected_metadata_sha256": "cf623495713be1bed9afc147fafbb096ae83d58e202703ef7c2f2d1b649415e9",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "dda87da904acda8ab5bed07015bc41a2d99d6c2bc5537bd2c8bd5f9e653411ea",
+        "actor.optimizer.pth": "f2a31ed793da093c3a3730c34a6a0543bd37c2d4c5124b7673ca8a2e9ea3b78c",
+        "critic.optimizer.pth": "2e26d0c535f93f7f862fd08e85720cdbf4dbd01c3c0b6b0084446bda9a35b014",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_60000.zip"
+      ],
+      "algorithm": "stable_baselines3.TD3",
+      "training_model_sha256": "8da40f5f3f309402f4c26674dc746fc40c366b897de01022952d20d976207ab1",
+      "public_model_path": "evidence/v8/shore_bess/public_models/8da40f5f3f309402f4c26674dc746fc40c366b897de01022952d20d976207ab1.zip",
+      "public_model_sha256": "929f6358717c76e0038b8c5bb9f7cf9ada29a7cb92b726231cb870f646d3e1e4",
+      "original_data_member_sha256": "cdd790cabacd13d1d836c7b9e48beaa1fec20254125ba66e8575e3d5ec8966b2",
+      "protected_metadata_sha256": "e124ecefcb7ce9a5b3f371a8b3a6fbcd96bc0b4cef5214c357cbde554def7459",
+      "regenerated_schedule_fields": [
+        "lr_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "d8bca9b4905c00dca866e20d657d7b8d862f44fbc64de631832a99f16bcea83c",
+        "actor.optimizer.pth": "73edcefa3cd36ea63684256f159aabb72c145e112a2226e338d9e881d2b5c109",
+        "critic.optimizer.pth": "03cad6e0a1fe1188484be01766e0dbdeb62906d5bf560e17dcbbe4b9b5571634",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-verifier-integrity-pilot-20260912/seed_991212/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-verifier-integrity-pilot-20260912/seed_991212/step_2100.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "83c3f23e829437482bf40149989d35b5a806bb41399dcad001ceb62a64419fdd",
+      "public_model_path": "evidence/v8/shore_bess/public_models/83c3f23e829437482bf40149989d35b5a806bb41399dcad001ceb62a64419fdd.zip",
+      "public_model_sha256": "11b13ed28c5374ff8c84d468a98e2f497d890db537ab1ebb090821de53524479",
+      "original_data_member_sha256": "284dbdee6ad716bd15d8815e6583a795df080b0f4e6972fe37ae33a7ae450dc8",
+      "protected_metadata_sha256": "7e7e03636171368216391a37191dd579638a9ae0925773f0b50f8f62dc6479bb",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "18949ecd658725c01a1839e28f62bf70e84fbd477cd05d105cd87a9f6f9246e5",
+        "policy.optimizer.pth": "754ba123e4da6a9dc06e2be2b419c45a6baaabaf1b16d94db9285546111224bc",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    },
+    {
+      "source_paths": [
+        "evidence/v8/shore_bess/runs/shore-bess-v8-verifier-period-integrity-pilot-20260912/seed_991213/selected_model.zip",
+        "evidence/v8/shore_bess/runs/shore-bess-v8-verifier-period-integrity-pilot-20260912/seed_991213/step_2100.zip"
+      ],
+      "algorithm": "stable_baselines3.DQN",
+      "training_model_sha256": "8d219ed060bb8ef8b9b0cce46e820dc8a657dbeb718a363657ba0c88da2a9fd5",
+      "public_model_path": "evidence/v8/shore_bess/public_models/8d219ed060bb8ef8b9b0cce46e820dc8a657dbeb718a363657ba0c88da2a9fd5.zip",
+      "public_model_sha256": "7e257fa36206f3534ee9b86f0dadb89682276347ebcb63b80bd5a672eeff31d4",
+      "original_data_member_sha256": "12087b33f276f6695e433f4706ffe7a4362544e1578da42ddb4ff2e2de3ad3ac",
+      "protected_metadata_sha256": "b157b7bb72890739adfa6fa76aeb38d07a50e7083bef918df46b7424f89c7db7",
+      "regenerated_schedule_fields": [
+        "lr_schedule",
+        "exploration_schedule"
+      ],
+      "constant_clip_range": null,
+      "unchanged_zip_member_sha256": {
+        "pytorch_variables.pth": "ebdad4b9cfe9cd22a3abadb5623bf7bb1f6eb2e408740245eb3f2044b0adc018",
+        "policy.pth": "d9626390a556f8465463329088c4599a654668985911e1e09db80745c6ee9588",
+        "policy.optimizer.pth": "a4c4d81b75a1fd9b4890766d466078beba98bd4a1332f511277b1c034adc114a",
+        "_stable_baselines3_version": "d9b9df5366456e9ce6248ed35bcdac540d227aa3569dbcdeaef3ebe91bd6a4c1",
+        "system_info.txt": "a7d7bfde390011fc8e2b222150b332a20929099648424174a14aeac5a9c8c3c2"
+      },
+      "weights_and_optimizer_members_identical": true,
+      "inference_identical": true,
+      "inference_probe_count": 64,
+      "masked_inference_identical": false,
+      "schedules_identical": true,
+      "schedule_progress_probe_count": 101,
+      "training_counters_identical": true
+    }
+  ],
+  "method": "Regenerate scalar learning-rate and DQN exploration schedules from unchanged parameters; replace verified constant PPO clipping schedule with its identical scalar. All non-data archive members are byte-identical.",
+  "source_model_archives_modified": false,
+  "historical_reports_modified": false,
+  "production_authority": false
+}

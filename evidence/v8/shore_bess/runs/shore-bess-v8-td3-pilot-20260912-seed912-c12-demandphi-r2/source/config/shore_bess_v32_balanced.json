@@ -1,0 +1,59 @@
+{
+  "schema": "port-dt-shore-bess-v3.2-balanced",
+  "version": "3.2.0",
+  "dataset_id": "public_cn_sha_hourly_v3",
+  "port_profile_id": "cn_sha_public_benchmark_v3",
+  "control_authority": "recommendation_only",
+  "split": {"train_ratio": 0.70, "validation_ratio": 0.10, "blind_test_ratio": 0.20, "shuffle": false},
+  "asset": {
+    "rated_energy_kwh": 50000.0, "rated_power_kw": 4000.0,
+    "charge_efficiency": 0.96, "discharge_efficiency": 0.96,
+    "soc_min": 0.15, "soc_max": 0.90, "soc_initial": 0.58, "soh_initial": 0.98,
+    "ramp_kw_per_hour": 2400.0, "cycle_cost_cny_per_kwh": 0.08,
+    "temperature_derate_c": 40.0, "temperature_trip_c": 47.0
+  },
+  "shore_service": {
+    "mandatory_load_fraction_min": 0.18, "mandatory_load_fraction_occupancy_gain": 0.22,
+    "flexible_aux_fraction": 0.055, "flexible_aux_limit": 0.45,
+    "reserve_min_kw": 600.0, "reserve_critical_kw": 1200.0,
+    "critical_hours_local": [9, 10, 11, 18, 19, 20, 21], "sla_min": 1.0
+  },
+  "grid": {
+    "hard_pcc_limit_kw": 36000.0, "soft_cap_train_quantile": 0.86,
+    "demand_charge_cny_per_kw_month": 38.0, "export_allowed": false,
+    "carbon_shadow_price_cny_per_kg": 0.08
+  },
+  "reward_weights": {
+    "energy_cost": 0.25, "carbon": 0.30, "demand_peak": 0.20,
+    "degradation": 0.08, "reserve": 0.05, "shore_sla": 0.05,
+    "safety_projection": 0.04, "terminal_state": 0.03
+  },
+  "training": {
+    "algorithm": "Constrained BC warm-start + PPO balanced safe policy improvement",
+    "episode_hours": 168, "behavior_trajectories_per_seed": 100,
+    "behavior_epochs": 80, "behavior_validation_every_epochs": 10,
+    "behavior_batch_size": 256, "behavior_learning_rate": 0.0003,
+    "formal_steps_per_seed": 30000, "checkpoint_steps": 5000,
+    "seeds": [43, 143, 243], "learning_rate": 0.00015,
+    "batch_size": 256, "buffer_size": 100000, "learning_starts": 1000,
+    "entropy_coefficient": 0.001, "gamma": 0.995, "tau": 0.005,
+    "network": [128, 128]
+  },
+  "convergence_gate": {
+    "fixed_validation_windows": 8, "tail_checkpoints": 3,
+    "tail_relative_range_max": 0.08, "tail_regression_slope_max": 0.025,
+    "minimum_seed_pass_rate": 0.6666667
+  },
+  "promotion_gate": {
+    "validation_cost_reduction_vs_no_bess_percent_min": 0.0,
+    "validation_peak_reduction_vs_no_bess_percent_min": 0.0,
+    "validation_carbon_reduction_vs_no_bess_percent_min": 0.0,
+    "forward_cost_reduction_vs_no_bess_percent_min": 0.0,
+    "forward_peak_reduction_vs_no_bess_percent_min": 0.0,
+    "forward_carbon_reduction_vs_no_bess_percent_min": 0.0,
+    "guardrail_violation_rate_max": 0.0,
+    "terminal_soc_error_max": 0.000001,
+    "terminal_flex_backlog_kwh_max": 0.000001
+  },
+  "claim_boundary": "V3.2候选先在2024-2025训练/验证段调优，再一次性打开2026年1-5月公开前向窗口。公开数据不含岸电表计、BMS、PCC结算或控制回执；任何候选均不得据此宣称上海港现场节省。"
+}

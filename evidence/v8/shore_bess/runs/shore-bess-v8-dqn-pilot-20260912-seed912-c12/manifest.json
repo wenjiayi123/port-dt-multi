@@ -1,0 +1,56 @@
+{
+  "schema": "port-shore-bess-v8-manifest.v1",
+  "run_id": "shore-bess-v8-dqn-pilot-20260912-seed912-c12",
+  "started_at": "2026-09-12T01:51:18.065249Z",
+  "dataset_id": "public_cn_sha_hourly_v3",
+  "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+  "train": {
+    "start_row": 0,
+    "stop_row_exclusive": 11664,
+    "rows": 11664,
+    "first_timestamp": "2024-01-01T00:00:00Z",
+    "last_timestamp": "2025-04-30T23:00:00Z"
+  },
+  "validation": {
+    "start_row": 11664,
+    "stop_row_exclusive": 13872,
+    "rows": 2208,
+    "first_timestamp": "2025-05-01T00:00:00Z",
+    "last_timestamp": "2025-07-31T23:00:00Z"
+  },
+  "validation_starts": [
+    0,
+    336,
+    672,
+    1176,
+    1512,
+    2016
+  ],
+  "normalization_fit_split": "train_only",
+  "selection_protocol": "validation_only_then_frozen_checkpoint_and_seed",
+  "test_status": "not_opened",
+  "forward_status": "not_loaded",
+  "teacher_actions_used": false,
+  "warm_start_used": false,
+  "source_sha256": {
+    "scripts/train_shore_bess_v8.py": "8a98250c930601c6badeda9f3e8fbc7e0e4022f6876af89851b7920c199d2565",
+    "app/services/rl_model/shore_bess/v8_environment.py": "025c722a4e03e2183700eff920682bf5a42556888f5165ac99caa64eeb864b87",
+    "app/services/rl_model/shore_bess/v3_environment.py": "20f029c3f8904463b257980ffe8370c1945fa36aa5d265591b52094ead2ed05d",
+    "config/shore_bess_v32_balanced.json": "1402a005e8d5b75d2e8eddbb82d48aa722f25eeeed23547705aed2c484a3623b",
+    "app/services/rl_training/statistics.py": "429e3c00ebeb0517b7670c03e7cee2253b67a762ff45dc8bca026ab79047f8f2",
+    "app/services/rl_training/datasets.py": "9ccb5c7c3d28b0db8267e080f9f67b453790330c5cac458c6250f6b4e5a33e73"
+  },
+  "historical_pointer_sha256": {
+    "evidence/v3/shore_bess/latest.json": "90cabf808958f301ef91eb0b2dbcc37e25fda4121e04ce54cf6986a49a2cdd8b",
+    "evidence/v7/shore_bess/latest.json": "bf93f71d3417e84f78d72c4d3e91a5bbaec4b2250c7d25072d558a13733e08f3"
+  },
+  "versions": {
+    "python": "3.12.14",
+    "torch": "2.2.2",
+    "stable_baselines3": "2.3.2"
+  },
+  "simulation_mode": true,
+  "production_authority": false,
+  "dispatch_allowed": false,
+  "live_data_verified": false
+}

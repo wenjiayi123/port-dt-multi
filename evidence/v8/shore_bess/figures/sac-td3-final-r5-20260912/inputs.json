@@ -1,0 +1,30 @@
+{
+  "reports": [
+    {
+      "report": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/report.json",
+      "sha256": "45f77ef9aed52646a70944df9f89a5869f4587bff5464af689d3239bc7b1bb0c",
+      "curves": [
+        {
+          "path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/curve.json",
+          "sha256": "b4cf94c465bcd7d91361b5519ff81b9bb5ecdc6adcb92e3d7dba4c1adb5ead44",
+          "bound_to_report_hash_registry": true
+        }
+      ]
+    },
+    {
+      "report": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/report.json",
+      "sha256": "5159e920733cf4f4b2f3784c28ffdb075bf8ac3926e0b0986753e6e4b65e1e32",
+      "curves": [
+        {
+          "path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/curve.json",
+          "sha256": "c6636a463b2887e19dca5d87e5ac7c8bf1ad2e346a6538d9edd25426025a4da9",
+          "bound_to_report_hash_registry": true
+        }
+      ]
+    }
+  ],
+  "plot_source_sha256": "c43e6449caf71690564cceca4df234d7ea054b73ed6ab64b61c3204c4b9af2a2",
+  "point_source": "persisted per-seed curve.json",
+  "smoothing": false,
+  "lines": "straight connectors between observed checkpoints, not extra observations"
+}

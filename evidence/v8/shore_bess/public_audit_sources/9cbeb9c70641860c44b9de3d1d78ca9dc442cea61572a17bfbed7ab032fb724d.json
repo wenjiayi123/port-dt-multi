@@ -1,0 +1,690 @@
+{
+  "run_id": "shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3",
+  "checkpoint_step": 20000,
+  "model_sha256": "1d6655e62bdd26f8a2f878f806fda3eae250ff16a053bd79a3a2c7658d71ffad",
+  "sources_and_dataset_match_frozen_manifest": true,
+  "replayed_windows": [
+    0,
+    336,
+    672,
+    1176,
+    1512,
+    2016
+  ],
+  "recorded_episode_metrics_match": true,
+  "violation_count": 2,
+  "max_numeric_error": {
+    "mapped_roundtrip_kw": 0.00011349866599630332,
+    "executed_vs_intended_kw": 370.7185745239258
+  },
+  "violations": [
+    {
+      "violation": {
+        "window_start": 336,
+        "step": 3,
+        "timestamp": "2025-05-15T03:00:00Z",
+        "previous": {
+          "power_kw": -2740.4818534851074,
+          "soc": 0.7502292196282715,
+          "soh": 0.9799852231580183,
+          "temperature_c": 28.994155555731588,
+          "flex_backlog_kwh": 451.55045982617344
+        },
+        "latent_action": [
+          -1.0,
+          -1.0
+        ],
+        "bounds_kw": [
+          -284.3439128239327,
+          -340.4818534851074
+        ],
+        "intended_float64_kw": 0.0,
+        "mapped_float32_roundtrip_kw": 0.0,
+        "mapped_error_kw": 0.0,
+        "executed_bess_kw": -340.4816373748313,
+        "executed_vs_intended_kw": -340.4816373748313,
+        "actual_ramp_kw": 2400.000216110276,
+        "ramp_excess_kw": 0.00021611027614198974,
+        "available_kw": 3744.719430805374,
+        "available_excess_kw": -3404.2377934305428,
+        "new_soc": 0.7567664670658683,
+        "mapping": {
+          "version": "physical_feasible_interval_zero_preserving_v1",
+          "deadband": 0.1,
+          "bess_interval_kw": [
+            -284.3439128239327,
+            -340.4818534851074
+          ],
+          "flex_interval_kw": [
+            -150.51682330870418,
+            183.3618783322168
+          ],
+          "mapped_action": [
+            0.0,
+            -0.8208730220794678
+          ]
+        },
+        "projection_stages": [
+          {
+            "at_line": 430,
+            "event": "line",
+            "bess_kw": 0.0,
+            "requested_bess": 0.0,
+            "available_power": 3744.719430805374
+          },
+          {
+            "at_line": 435,
+            "event": "line",
+            "bess_kw": -340.4818534851074,
+            "requested_bess": 0.0,
+            "available_power": 3744.719430805374,
+            "ramped": -340.4818534851074
+          },
+          {
+            "at_line": 469,
+            "event": "line",
+            "bess_kw": -340.4816373748313,
+            "requested_bess": 0.0,
+            "available_power": 3744.719430805374,
+            "ramped": -340.4818534851074,
+            "limited": -340.4818534851074,
+            "discharge_limit": 2403.315016628433,
+            "charge_limit": 3744.719430805374,
+            "next_soc": 0.7567664712151856,
+            "remaining": 164.0,
+            "reachable_soc": 0.7567664670658683
+          },
+          {
+            "at_line": 525,
+            "event": "return",
+            "bess_kw": -340.4816373748313,
+            "requested_bess": 0.0,
+            "available_power": 3744.719430805374,
+            "ramped": -340.4818534851074,
+            "limited": -340.4818534851074,
+            "discharge_limit": 2403.315016628433,
+            "charge_limit": 3744.719430805374,
+            "next_soc": 0.7567664670658683,
+            "remaining": 164.0,
+            "reachable_soc": 0.7567664670658683,
+            "executed_soc": 0.7567664670658683,
+            "reconciled_soc": 0.7567664670658683,
+            "net_kw": 21862.0370837991
+          }
+        ],
+        "projection_reasons": null,
+        "physical_violation": true,
+        "guardrail_violation": true
+      },
+      "previous_steps": [
+        {
+          "window_start": 336,
+          "step": 0,
+          "timestamp": "2025-05-15T00:00:00Z",
+          "previous": {
+            "power_kw": 0.0,
+            "soc": 0.58,
+            "soh": 0.98,
+            "temperature_c": 28.700000762939453,
+            "flex_backlog_kwh": 0.0
+          },
+          "latent_action": [
+            -1.0,
+            -1.0
+          ],
+          "bounds_kw": [
+            -2400.0,
+            2400.0
+          ],
+          "intended_float64_kw": -2400.0,
+          "mapped_float32_roundtrip_kw": -2400.0000953674316,
+          "mapped_error_kw": -9.5367431640625e-05,
+          "executed_bess_kw": -2400.0,
+          "executed_vs_intended_kw": 0.0,
+          "actual_ramp_kw": 2400.0,
+          "ramp_excess_kw": 0.0,
+          "available_kw": 3714.486184120178,
+          "available_excess_kw": -1314.4861841201782,
+          "new_soc": 0.62608,
+          "mapping": {
+            "version": "physical_feasible_interval_zero_preserving_v1",
+            "deadband": 0.1,
+            "bess_interval_kw": [
+              -2400.0,
+              2400.0
+            ],
+            "flex_interval_kw": [
+              -150.51682330870418,
+              0.0
+            ],
+            "mapped_action": [
+              -0.6000000238418579,
+              -0.8654654026031494
+            ]
+          },
+          "projection_stages": [
+            {
+              "at_line": 430,
+              "event": "line",
+              "bess_kw": -2400.0000953674316,
+              "requested_bess": -2400.0000953674316,
+              "available_power": 3714.486184120178
+            },
+            {
+              "at_line": 435,
+              "event": "line",
+              "bess_kw": -2400.0,
+              "requested_bess": -2400.0000953674316,
+              "available_power": 3714.486184120178,
+              "ramped": -2400.0
+            },
+            {
+              "at_line": 525,
+              "event": "return",
+              "bess_kw": -2400.0,
+              "requested_bess": -2400.0000953674316,
+              "available_power": 3714.486184120178,
+              "ramped": -2400.0,
+              "limited": -2400.0,
+              "discharge_limit": 3052.431186437607,
+              "charge_limit": 3714.486184120178,
+              "next_soc": 0.62608,
+              "remaining": 167.0,
+              "reachable_soc": 0.62608,
+              "executed_soc": 0.62608,
+              "reconciled_soc": 0.62608,
+              "net_kw": 23193.430445769263
+            }
+          ],
+          "projection_reasons": null,
+          "physical_violation": false,
+          "guardrail_violation": false
+        },
+        {
+          "window_start": 336,
+          "step": 1,
+          "timestamp": "2025-05-15T01:00:00Z",
+          "previous": {
+            "power_kw": -2400.0,
+            "soc": 0.62608,
+            "soh": 0.979996,
+            "temperature_c": 28.660000686645507,
+            "flex_backlog_kwh": 150.51681985573535
+          },
+          "latent_action": [
+            -1.0,
+            -1.0
+          ],
+          "bounds_kw": [
+            -3725.6233354873657,
+            0.0
+          ],
+          "intended_float64_kw": -3725.6233354873657,
+          "mapped_float32_roundtrip_kw": -3725.623369216919,
+          "mapped_error_kw": -3.372955325176008e-05,
+          "executed_bess_kw": -3725.6233354873657,
+          "executed_vs_intended_kw": 0.0,
+          "actual_ramp_kw": 1325.6233354873657,
+          "ramp_excess_kw": -1074.3766645126343,
+          "available_kw": 3725.6233354873657,
+          "available_excess_kw": 0.0,
+          "new_soc": 0.6976119680413574,
+          "mapping": {
+            "version": "physical_feasible_interval_zero_preserving_v1",
+            "deadband": 0.1,
+            "bess_interval_kw": [
+              -3725.6233354873657,
+              0.0
+            ],
+            "flex_interval_kw": [
+              -150.51682330870418,
+              150.51681985573535
+            ],
+            "mapped_action": [
+              -0.9314058423042297,
+              -0.8581703305244446
+            ]
+          },
+          "projection_stages": [
+            {
+              "at_line": 430,
+              "event": "line",
+              "bess_kw": -3725.6233354873657,
+              "requested_bess": -3725.623369216919,
+              "available_power": 3725.6233354873657
+            },
+            {
+              "at_line": 525,
+              "event": "return",
+              "bess_kw": -3725.6233354873657,
+              "requested_bess": -3725.623369216919,
+              "available_power": 3725.6233354873657,
+              "ramped": -3725.6233354873657,
+              "limited": -3725.6233354873657,
+              "discharge_limit": 2398.7791320152282,
+              "charge_limit": 3725.6233354873657,
+              "next_soc": 0.6976119680413574,
+              "remaining": 166.0,
+              "reachable_soc": 0.6976119680413574,
+              "executed_soc": 0.6976119680413574,
+              "reconciled_soc": 0.6976119680413574,
+              "net_kw": 24634.165109205882
+            }
+          ],
+          "projection_reasons": null,
+          "physical_violation": false,
+          "guardrail_violation": false
+        },
+        {
+          "window_start": 336,
+          "step": 2,
+          "timestamp": "2025-05-15T02:00:00Z",
+          "previous": {
+            "power_kw": -3725.6233354873657,
+            "soc": 0.6976119680413574,
+            "soh": 0.9799897906277741,
+            "temperature_c": 28.97197674354639,
+            "flex_backlog_kwh": 301.03363988721844
+          },
+          "latent_action": [
+            -1.0,
+            -1.0
+          ],
+          "bounds_kw": [
+            -2740.481745429971,
+            -1325.6233354873657
+          ],
+          "intended_float64_kw": -2740.481745429971,
+          "mapped_float32_roundtrip_kw": -2740.4818534851074,
+          "mapped_error_kw": -0.00010805513647937914,
+          "executed_bess_kw": -2740.4818534851074,
+          "executed_vs_intended_kw": -0.00010805513647937914,
+          "actual_ramp_kw": 985.1414820022583,
+          "ramp_excess_kw": -1414.8585179977417,
+          "available_kw": 3736.7912241897798,
+          "available_excess_kw": -996.3093707046723,
+          "new_soc": 0.7502292196282715,
+          "mapping": {
+            "version": "physical_feasible_interval_zero_preserving_v1",
+            "deadband": 0.1,
+            "bess_interval_kw": [
+              -2740.481745429971,
+              -1325.6233354873657
+            ],
+            "flex_interval_kw": [
+              -150.51682330870418,
+              178.66529954241898
+            ],
+            "mapped_action": [
+              -0.6851204633712769,
+              -0.8424513339996338
+            ]
+          },
+          "projection_stages": [
+            {
+              "at_line": 430,
+              "event": "line",
+              "bess_kw": -2740.4818534851074,
+              "requested_bess": -2740.4818534851074,
+              "available_power": 3736.7912241897798
+            },
+            {
+              "at_line": 525,
+              "event": "return",
+              "bess_kw": -2740.4818534851074,
+              "requested_bess": -2740.4818534851074,
+              "available_power": 3736.7912241897798,
+              "ramped": -2740.4818534851074,
+              "limited": -2740.4818534851074,
+              "discharge_limit": 2403.9320418319917,
+              "charge_limit": 3736.7912241897798,
+              "next_soc": 0.7502292196282715,
+              "remaining": 165.0,
+              "reachable_soc": 0.7502292196282715,
+              "executed_soc": 0.7502292196282715,
+              "reconciled_soc": 0.7502292196282715,
+              "net_kw": 23902.275580421152
+            }
+          ],
+          "projection_reasons": null,
+          "physical_violation": false,
+          "guardrail_violation": false
+        }
+      ]
+    },
+    {
+      "violation": {
+        "window_start": 1512,
+        "step": 3,
+        "timestamp": "2025-07-03T03:00:00Z",
+        "previous": {
+          "power_kw": -2755.805015563965,
+          "soc": 0.7499350140221435,
+          "soh": 0.9799852486966995,
+          "temperature_c": 32.880937100858034,
+          "flex_backlog_kwh": 451.550461615214
+        },
+        "latent_action": [
+          -1.0,
+          -1.0
+        ],
+        "bounds_kw": [
+          -299.66712147643426,
+          -355.80501556396484
+        ],
+        "intended_float64_kw": 0.0,
+        "mapped_float32_roundtrip_kw": 0.0,
+        "mapped_error_kw": 0.0,
+        "executed_bess_kw": -355.80484602733276,
+        "executed_vs_intended_kw": -355.80484602733276,
+        "actual_ramp_kw": 2400.0001695366323,
+        "ramp_excess_kw": 0.00016953663225649507,
+        "available_kw": 3708.2993832132934,
+        "available_excess_kw": -3352.494537185961,
+        "new_soc": 0.7567664670658683,
+        "mapping": {
+          "version": "physical_feasible_interval_zero_preserving_v1",
+          "deadband": 0.1,
+          "bess_interval_kw": [
+            -299.66712147643426,
+            -355.80501556396484
+          ],
+          "flex_interval_kw": [
+            -150.51682330870418,
+            187.32784256364542
+          ],
+          "mapped_action": [
+            0.0,
+            -0.8034941554069519
+          ]
+        },
+        "projection_stages": [
+          {
+            "at_line": 430,
+            "event": "line",
+            "bess_kw": 0.0,
+            "requested_bess": 0.0,
+            "available_power": 3708.2993832132934
+          },
+          {
+            "at_line": 435,
+            "event": "line",
+            "bess_kw": -355.80501556396484,
+            "requested_bess": 0.0,
+            "available_power": 3708.2993832132934,
+            "ramped": -355.80501556396484
+          },
+          {
+            "at_line": 469,
+            "event": "line",
+            "bess_kw": -355.80484602733276,
+            "requested_bess": 0.0,
+            "available_power": 3708.2993832132934,
+            "ramped": -355.80501556396484,
+            "limited": -355.80501556396484,
+            "discharge_limit": 2367.923399498236,
+            "charge_limit": 3708.2993832132934,
+            "next_soc": 0.7567664703209716,
+            "remaining": 164.0,
+            "reachable_soc": 0.7567664670658683
+          },
+          {
+            "at_line": 525,
+            "event": "return",
+            "bess_kw": -355.80484602733276,
+            "requested_bess": 0.0,
+            "available_power": 3708.2993832132934,
+            "ramped": -355.80501556396484,
+            "limited": -355.80501556396484,
+            "discharge_limit": 2367.923399498236,
+            "charge_limit": 3708.2993832132934,
+            "next_soc": 0.7567664670658683,
+            "remaining": 164.0,
+            "reachable_soc": 0.7567664670658683,
+            "executed_soc": 0.7567664670658683,
+            "reconciled_soc": 0.7567664670658683,
+            "net_kw": 22370.55950709363
+          }
+        ],
+        "projection_reasons": null,
+        "physical_violation": true,
+        "guardrail_violation": true
+      },
+      "previous_steps": [
+        {
+          "window_start": 1512,
+          "step": 0,
+          "timestamp": "2025-07-03T00:00:00Z",
+          "previous": {
+            "power_kw": 0.0,
+            "soc": 0.58,
+            "soh": 0.98,
+            "temperature_c": 32.0,
+            "flex_backlog_kwh": 0.0
+          },
+          "latent_action": [
+            -1.0,
+            -1.0
+          ],
+          "bounds_kw": [
+            -2400.0,
+            2400.0
+          ],
+          "intended_float64_kw": -2400.0,
+          "mapped_float32_roundtrip_kw": -2400.0000953674316,
+          "mapped_error_kw": -9.5367431640625e-05,
+          "executed_bess_kw": -2400.0,
+          "executed_vs_intended_kw": 0.0,
+          "actual_ramp_kw": 2400.0,
+          "ramp_excess_kw": 0.0,
+          "available_kw": 3691.9618368148804,
+          "available_excess_kw": -1291.9618368148804,
+          "new_soc": 0.62608,
+          "mapping": {
+            "version": "physical_feasible_interval_zero_preserving_v1",
+            "deadband": 0.1,
+            "bess_interval_kw": [
+              -2400.0,
+              2400.0
+            ],
+            "flex_interval_kw": [
+              -150.51682330870418,
+              0.0
+            ],
+            "mapped_action": [
+              -0.6000000238418579,
+              -0.8455151319503784
+            ]
+          },
+          "projection_stages": [
+            {
+              "at_line": 430,
+              "event": "line",
+              "bess_kw": -2400.0000953674316,
+              "requested_bess": -2400.0000953674316,
+              "available_power": 3691.9618368148804
+            },
+            {
+              "at_line": 435,
+              "event": "line",
+              "bess_kw": -2400.0,
+              "requested_bess": -2400.0000953674316,
+              "available_power": 3691.9618368148804,
+              "ramped": -2400.0
+            },
+            {
+              "at_line": 525,
+              "event": "return",
+              "bess_kw": -2400.0,
+              "requested_bess": -2400.0000953674316,
+              "available_power": 3691.9618368148804,
+              "ramped": -2400.0,
+              "limited": -2400.0,
+              "discharge_limit": 3029.787141084671,
+              "charge_limit": 3691.9618368148804,
+              "next_soc": 0.62608,
+              "remaining": 167.0,
+              "reachable_soc": 0.62608,
+              "executed_soc": 0.62608,
+              "reconciled_soc": 0.62608,
+              "net_kw": 23682.004661066298
+            }
+          ],
+          "projection_reasons": null,
+          "physical_violation": false,
+          "guardrail_violation": false
+        },
+        {
+          "window_start": 1512,
+          "step": 1,
+          "timestamp": "2025-07-03T01:00:00Z",
+          "previous": {
+            "power_kw": -2400.0,
+            "soc": 0.62608,
+            "soh": 0.979996,
+            "temperature_c": 32.15999992370606,
+            "flex_backlog_kwh": 150.51682330870418
+          },
+          "latent_action": [
+            -1.0,
+            -1.0
+          ],
+          "bounds_kw": [
+            -3694.976964756012,
+            0.0
+          ],
+          "intended_float64_kw": -3694.976964756012,
+          "mapped_float32_roundtrip_kw": -3694.977045059204,
+          "mapped_error_kw": -8.03031921350339e-05,
+          "executed_bess_kw": -3694.976964756012,
+          "executed_vs_intended_kw": 0.0,
+          "actual_ramp_kw": 1294.976964756012,
+          "ramp_excess_kw": -1105.023035243988,
+          "available_kw": 3694.976964756012,
+          "available_excess_kw": 0.0,
+          "new_soc": 0.6970235577233154,
+          "mapping": {
+            "version": "physical_feasible_interval_zero_preserving_v1",
+            "deadband": 0.1,
+            "bess_interval_kw": [
+              -3694.976964756012,
+              0.0
+            ],
+            "flex_interval_kw": [
+              -150.51682330870418,
+              150.51682330870418
+            ],
+            "mapped_action": [
+              -0.923744261264801,
+              -0.8393067121505737
+            ]
+          },
+          "projection_stages": [
+            {
+              "at_line": 430,
+              "event": "line",
+              "bess_kw": -3694.976964756012,
+              "requested_bess": -3694.977045059204,
+              "available_power": 3694.976964756012
+            },
+            {
+              "at_line": 525,
+              "event": "return",
+              "bess_kw": -3694.976964756012,
+              "requested_bess": -3694.977045059204,
+              "available_power": 3694.976964756012,
+              "ramped": -3694.976964756012,
+              "limited": -3694.976964756012,
+              "discharge_limit": 2368.6541469535828,
+              "charge_limit": 3694.976964756012,
+              "next_soc": 0.6970235577233154,
+              "remaining": 166.0,
+              "reachable_soc": 0.6970235577233154,
+              "executed_soc": 0.6970235577233154,
+              "reconciled_soc": 0.6970235577233154,
+              "net_kw": 25089.06561495102
+            }
+          ],
+          "projection_reasons": null,
+          "physical_violation": false,
+          "guardrail_violation": false
+        },
+        {
+          "window_start": 1512,
+          "step": 2,
+          "timestamp": "2025-07-03T02:00:00Z",
+          "previous": {
+            "power_kw": -3694.976964756012,
+            "soc": 0.6970235577233154,
+            "soh": 0.9799898417050588,
+            "temperature_c": 32.66393138458391,
+            "flex_backlog_kwh": 301.0336418636965
+          },
+          "latent_action": [
+            -1.0,
+            -1.0
+          ],
+          "bounds_kw": [
+            -2755.804930795648,
+            -1294.976964756012
+          ],
+          "intended_float64_kw": -2755.804930795648,
+          "mapped_float32_roundtrip_kw": -2755.805015563965,
+          "mapped_error_kw": -8.476831681036856e-05,
+          "executed_bess_kw": -2755.805015563965,
+          "executed_vs_intended_kw": -8.476831681036856e-05,
+          "actual_ramp_kw": 939.1719491920471,
+          "ramp_excess_kw": -1460.8280508079529,
+          "available_kw": 3702.6171592401483,
+          "available_excess_kw": -946.8121436761835,
+          "new_soc": 0.7499350140221435,
+          "mapping": {
+            "version": "physical_feasible_interval_zero_preserving_v1",
+            "deadband": 0.1,
+            "bess_interval_kw": [
+              -2755.804930795648,
+              -1294.976964756012
+            ],
+            "flex_interval_kw": [
+              -150.51682330870418,
+              182.56942593378872
+            ],
+            "mapped_action": [
+              -0.6889512538909912,
+              -0.8244360685348511
+            ]
+          },
+          "projection_stages": [
+            {
+              "at_line": 430,
+              "event": "line",
+              "bess_kw": -2755.805015563965,
+              "requested_bess": -2755.805015563965,
+              "available_power": 3702.6171592401483
+            },
+            {
+              "at_line": 525,
+              "event": "return",
+              "bess_kw": -2755.805015563965,
+              "requested_bess": -2755.805015563965,
+              "available_power": 3702.6171592401483,
+              "ramped": -2755.805015563965,
+              "limited": -2755.805015563965,
+              "discharge_limit": 2370.6147459672907,
+              "charge_limit": 3702.6171592401483,
+              "next_soc": 0.7499350140221435,
+              "remaining": 165.0,
+              "reachable_soc": 0.7499350140221435,
+              "executed_soc": 0.7499350140221435,
+              "reconciled_soc": 0.7499350140221435,
+              "net_kw": 24403.52452393745
+            }
+          ],
+          "projection_reasons": null,
+          "physical_violation": false,
+          "guardrail_violation": false
+        }
+      ]
+    }
+  ]
+}

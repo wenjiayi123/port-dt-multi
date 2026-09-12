@@ -3,6 +3,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+from app.services.rl_training.model_artifacts import resolve_model_artifact
 import math
 from functools import lru_cache
 from pathlib import Path
@@ -108,7 +109,7 @@ class BESSEnergyEvidenceService:
             if formal:
                 formal_paths.append(self.repo_root / str((_latest or {}).get("report_path") or ""))
                 for item in (formal.get("artifacts") or {}).get("models") or []:
-                    formal_paths.append(self.repo_root / str(item.get("path") or ""))
+                    formal_paths.append(resolve_model_artifact(self.repo_root, str(item.get("path") or ""), item.get("sha256")))
                 formal_paths.extend(seed_metric_paths(self.repo_root, _latest))
                 formal_paths.append(checkpoint_reward_replay_path(self.repo_root, _latest))
         except (OSError, ValueError, json.JSONDecodeError, RuntimeError):
@@ -157,8 +158,9 @@ class BESSEnergyEvidenceService:
         if not models:
             return {"policy_loaded": False, "error": "formal model artifact is missing", **fallback}
         selected = models[0]
-        model_path = self.repo_root / str(selected.get("path") or "")
-        if not model_path.exists() or self._sha(model_path) != selected.get("sha256"):
+        try:
+            model_path = resolve_model_artifact(self.repo_root, str(selected.get("path") or ""), selected.get("sha256"))
+        except (ValueError, OSError):
             return {"policy_loaded": False, "error": "formal model hash gate failed", **fallback}
         try:
             from stable_baselines3 import PPO
@@ -178,6 +180,8 @@ class BESSEnergyEvidenceService:
                 "production_admitted": False, "decision_source": "selected_event_aware_actor_plus_cmdp_safety_projection",
                 "algorithm": (report.get("training") or {}).get("algorithm"), "seed": selected.get("seed"),
                 "model_path": selected.get("path"), "model_sha256": selected.get("sha256"),
+                "loaded_model_path": str(model_path.relative_to(self.repo_root)),
+                "loaded_model_sha256": self._sha(model_path),
                 "timestamp": info.get("timestamp"), "reset": reset_info,
                 "observation_vector": [round(float(value), 6) for value in observation],
                 "state": info.get("context"), "requested_action": info.get("requested_action"),

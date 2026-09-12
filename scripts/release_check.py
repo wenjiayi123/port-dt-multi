@@ -12,6 +12,15 @@ from app.services.mobile_api.benchmark import (
 )
 from app.services.rl_training.datasets import load_port_dataset
 from app.services.rl_training.profiles import load_profile
+from app.services.rl_training.model_artifacts import resolve_model_artifact
+
+
+def valid_model_identity(relative: str, expected: str) -> bool:
+    try:
+        resolve_model_artifact(ROOT, relative, expected)
+        return True
+    except (ValueError, OSError, KeyError):
+        return False
 
 
 REQUIRED = (
@@ -102,7 +111,7 @@ REQUIRED = (
     "evidence/v3/bess_energy/latest.json",
     "evidence/v3/bess_energy/latest_grid_only.json",
     "evidence/v3/value_improvement_v32.json",
-    "evidence/v3/runtime/selected_sac_v3.zip",
+    "evidence/public_models/legacy_v3_v6_20260912/manifest.json",
     "evidence/v3/runtime/selected_sac_v3.config.json",
     "evidence/v3/runtime/runtime_model.json",
     "evidence/v3/runtime/runtime_model.sha256",
@@ -221,15 +230,6 @@ REQUIRED = (
     "app/services/rl_model/yard_lighting/data/market_price.csv",
     "app/services/rl_model/yard_lighting/data/weather_astro.csv",
     "app/services/rl_model/yard_lighting/data/zones_master.csv",
-    "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_43/selected_model.zip",
-    "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_143/selected_model.zip",
-    "evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_243/selected_model.zip",
-    "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_47/selected_model.zip",
-    "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_147/selected_model.zip",
-    "evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_247/selected_model.zip",
-    "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_71/selected_model.zip",
-    "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_171/selected_model.zip",
-    "evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_271/selected_model.zip",
     "docs/V3_RUNTIME_DATA_CONTRACT.md",
     "app/ui/v3/index.html",
     "app/ui/v3/v3.css",
@@ -328,12 +328,7 @@ def verify_container_contract(errors: list[str]) -> None:
         errors.append("Docker context excludes portable V3 evidence")
 
     gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
-    archive_allowlists = (
-        "!evidence/v3/runtime/selected_sac_v3.zip",
-        "!evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_*/selected_model.zip",
-        "!evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_*/selected_model.zip",
-        "!evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_*/selected_model.zip",
-    )
+    archive_allowlists = ("!evidence/public_models/legacy_v3_v6_20260912/*.zip",)
     gitignore_rules = {line.strip() for line in gitignore}
     for archive_allowlist in archive_allowlists:
         if archive_allowlist not in gitignore_rules:
@@ -474,11 +469,9 @@ def verify_regulatory_resilience_evidence(errors: list[str]) -> None:
 
     model_path = (ROOT / str(pointer.get("selected_model_path") or "")).resolve()
     model_root = (ROOT / "data/rl/runs").resolve()
-    if not model_path.is_relative_to(model_root) or not model_path.is_file():
+    if not model_path.is_relative_to(model_root):
         errors.append("V4 selected model path is invalid")
-    elif hashlib.sha256(model_path.read_bytes()).hexdigest() != pointer.get(
-        "selected_model_sha256"
-    ):
+    elif not valid_model_identity(str(model_path.relative_to(ROOT)), pointer.get("selected_model_sha256")):
         errors.append("V4 selected model hash mismatch")
 
     selection = payloads.get("selection") or {}
@@ -572,11 +565,9 @@ def verify_integrated_business_evidence(errors: list[str]) -> None:
 
     model_path = (ROOT / str(champion.get("selected_model_path") or "")).resolve()
     model_root = (ROOT / "data/rl/runs").resolve()
-    if not model_path.is_relative_to(model_root) or not model_path.is_file():
+    if not model_path.is_relative_to(model_root):
         errors.append("V5 selected model path is invalid")
-    elif hashlib.sha256(model_path.read_bytes()).hexdigest() != champion.get(
-        "selected_model_sha256"
-    ):
+    elif not valid_model_identity(str(model_path.relative_to(ROOT)), champion.get("selected_model_sha256")):
         errors.append("V5 selected model hash mismatch")
     for identifier_key, hash_key in (
         ("dataset_id", "dataset_sha256"),
@@ -666,11 +657,9 @@ def verify_coordinated_business_evidence(errors: list[str]) -> None:
 
     model_path = (ROOT / str(champion.get("selected_model_path") or "")).resolve()
     model_root = (ROOT / "data/rl/runs").resolve()
-    if not model_path.is_relative_to(model_root) or not model_path.is_file():
+    if not model_path.is_relative_to(model_root):
         errors.append("V6 selected model path is invalid")
-    elif hashlib.sha256(model_path.read_bytes()).hexdigest() != champion.get(
-        "selected_model_sha256"
-    ):
+    elif not valid_model_identity(str(model_path.relative_to(ROOT)), champion.get("selected_model_sha256")):
         errors.append("V6 selected model hash mismatch")
     for identifier_key, hash_key in (
         ("dataset_id", "dataset_sha256"),
@@ -689,7 +678,14 @@ def main() -> int:
     report: dict = {}
     claims: dict = {}
     for relative in REQUIRED:
-        if not (ROOT / relative).is_file():
+        exists = (ROOT / relative).is_file()
+        if relative.endswith(".zip"):
+            legacy = ROOT / "evidence/public_models/legacy_v3_v6_20260912/manifest.json"
+            if legacy.is_file():
+                row = next((r for r in json.loads(legacy.read_text())["models"] if relative in r["source_paths"]), None)
+                if row:
+                    exists = valid_model_identity(relative, row["training_model_sha256"])
+        if not exists:
             errors.append(f"missing release evidence: {relative}")
     verify_regulatory_resilience_evidence(errors)
     verify_integrated_business_evidence(errors)
@@ -729,8 +725,9 @@ def main() -> int:
             errors.append("V3 runtime policy incorrectly grants production authority")
         for line in (runtime_root / "runtime_model.sha256").read_text(encoding="utf-8").splitlines():
             expected, name = line.split(maxsplit=1)
-            observed = hashlib.sha256((runtime_root / name.strip()).read_bytes()).hexdigest()
-            if observed != expected:
+            artifact = runtime_root / name.strip()
+            valid = valid_model_identity(str(artifact.relative_to(ROOT)), expected) if artifact.suffix == ".zip" else hashlib.sha256(artifact.read_bytes()).hexdigest() == expected
+            if not valid:
                 errors.append(f"V3 runtime artifact hash mismatch: {name.strip()}")
         shanghai = load_port_dataset("public_cn_sha_hourly_v3")
         if runtime.get("dataset_sha256") != shanghai.fingerprint:
@@ -943,7 +940,7 @@ def main() -> int:
             if metrics.get("claim_eligible") is not False:
                 errors.append("BESS grid-only profile fabricates a site claim")
             model_path = ROOT / str(row.get("model_path") or "")
-            if hashlib.sha256(model_path.read_bytes()).hexdigest() != row.get("model_sha256"):
+            if not valid_model_identity(str(model_path.relative_to(ROOT)), row.get("model_sha256")):
                 errors.append(f"BESS grid-only selected model hash mismatch: {row.get('seed')}")
     except Exception as exc:
         errors.append(f"V3.2 value-improvement verification failed: {exc}")
@@ -980,7 +977,7 @@ def main() -> int:
                 errors.append(f"{module_id} latest formal run is not public-offline admitted")
             for model in (specialized.get("artifacts") or {}).get("models") or []:
                 model_path = ROOT / str(model.get("path") or "")
-                if hashlib.sha256(model_path.read_bytes()).hexdigest() != model.get("sha256"):
+                if not valid_model_identity(str(model_path.relative_to(ROOT)), model.get("sha256")):
                     errors.append(f"{module_id} selected model hash mismatch: {model.get('seed')}")
         bess_report_path = ROOT / json.loads(
             (ROOT / "evidence/v3/bess_energy/latest.json").read_text(encoding="utf-8")

@@ -605,6 +605,10 @@ async def v3_asset(asset_name: str) -> FileResponse:
 
 @router.get("/api/v3/overview")
 async def v3_overview() -> dict[str, Any]:
+    return await asyncio.to_thread(_v3_overview_read)
+
+
+def _v3_overview_read() -> dict[str, Any]:
     now = time.monotonic()
     cached = _OVERVIEW_CACHE.get("payload")
     if cached is not None and now - float(_OVERVIEW_CACHE.get("at") or 0.0) < _OVERVIEW_CACHE_TTL_SECONDS:
@@ -681,6 +685,10 @@ async def v3_overview() -> dict[str, Any]:
 
 @router.get("/api/v3/algorithms/{algorithm_id}/evidence")
 async def v3_algorithm_evidence(algorithm_id: str) -> dict[str, Any]:
+    return await asyncio.to_thread(_v3_algorithm_evidence_read, algorithm_id)
+
+
+def _v3_algorithm_evidence_read(algorithm_id: str) -> dict[str, Any]:
     row = next((item for item in _algorithm_rows() if item["id"] == algorithm_id), None)
     if row is None:
         raise HTTPException(status_code=404, detail="algorithm not found")
@@ -717,6 +725,10 @@ async def v3_algorithm_evidence(algorithm_id: str) -> dict[str, Any]:
 
 @router.get("/api/v3/capabilities/{capability_id}")
 async def v3_capability_detail(capability_id: str) -> dict[str, Any]:
+    return await asyncio.to_thread(_v3_capability_detail_read, capability_id)
+
+
+def _v3_capability_detail_read(capability_id: str) -> dict[str, Any]:
     capability = next(
         (item for item in BUSINESS_CAPABILITIES if item["id"] == capability_id),
         None,
@@ -733,6 +745,10 @@ async def v3_capability_detail(capability_id: str) -> dict[str, Any]:
 
 @router.get("/api/v3/data-readiness")
 async def v3_data_readiness() -> dict[str, Any]:
+    return await asyncio.to_thread(_v3_data_readiness_read)
+
+
+def _v3_data_readiness_read() -> dict[str, Any]:
     dataset_ids = ["public_us_la_6min_v1", "public_port_ops_v1", "public_cn_sha_hourly_v3"]
     ports = []
     for dataset_id in dataset_ids:

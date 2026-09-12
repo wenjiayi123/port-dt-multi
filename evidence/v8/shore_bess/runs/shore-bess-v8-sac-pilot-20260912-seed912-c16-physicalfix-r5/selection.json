@@ -1,0 +1,11 @@
+{
+  "selected_seed": 912,
+  "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/selected_model.zip",
+  "model_sha256": "e321678c5d3c59be8914bee1b1dada16d679ade1fe7d91bd3e8866cabdafc453",
+  "selection_access_to_test": false,
+  "selection_access_to_forward": false,
+  "frozen_at": "2026-09-12T03:36:59.098117Z",
+  "per_seed_model_sha256": {
+    "912": "e321678c5d3c59be8914bee1b1dada16d679ade1fe7d91bd3e8866cabdafc453"
+  }
+}

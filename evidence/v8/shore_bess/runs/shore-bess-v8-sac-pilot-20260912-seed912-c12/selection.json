@@ -1,0 +1,11 @@
+{
+  "selected_seed": 912,
+  "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/selected_model.zip",
+  "model_sha256": "2c9e10fbcae76871c15160af295079423b3310bc588e2d3e23bc657eef30ec45",
+  "selection_access_to_test": false,
+  "selection_access_to_forward": false,
+  "frozen_at": "2026-09-12T02:18:32.803955Z",
+  "per_seed_model_sha256": {
+    "912": "2c9e10fbcae76871c15160af295079423b3310bc588e2d3e23bc657eef30ec45"
+  }
+}

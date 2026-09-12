@@ -1,0 +1,17 @@
+{
+  "schema": "port-shore-bess-v8-diagnostics-pointer.v1",
+  "reports": [
+    {
+      "run_id": "shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5",
+      "report_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/report.json",
+      "report_sha256": "45f77ef9aed52646a70944df9f89a5869f4587bff5464af689d3239bc7b1bb0c",
+      "checkpoint_step": 60000
+    },
+    {
+      "run_id": "shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5",
+      "report_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c16-physicalfix-r5/report.json",
+      "report_sha256": "5159e920733cf4f4b2f3784c28ffdb075bf8ac3926e0b0986753e6e4b65e1e32",
+      "checkpoint_step": 60000
+    }
+  ]
+}

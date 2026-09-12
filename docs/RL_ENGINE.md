@@ -33,12 +33,14 @@ V3 完整时间序列 = [ chronological train | validation | blind test ]
 
 训练环境只接收 `train_slice`。V3 由独立的 `evaluate_split_evidence(..., split_name="validation")` 在验证段比较算法；选型完成后，最终评测环境才接收 `test_slice`，盲测指标不参与冠军选择。不进行随机全局打乱，也不从验证/盲测段计算训练奖励。旧 manifest 不含 `validation_ratio` 时保持原 80/20 语义，避免破坏历史证据。
 
+这里的切片隔离指梯度、归一化和选型使用范围；加载器仍会读取完整历史 CSV 并做质量校验。目录可以包含前瞻挑战集，`forward_challenge_only` 或 `candidate_selection_allowed=false` 的数据不能从桌面或移动审批入口启动训练，数值质量通过也不会解除该限制。用户重复打开已有模型的留出集评测不再称为新盲测。
+
 ## 渲染隔离
 
 - `training=True` 与 `record_trace=True` 同时出现会直接抛错。
 - 训练环境 `render()` 总是抛错并记录调用次数。
 - 训练产物清单记录 `render_calls_during_training`，正常值必须是 0。
-- 测试环境才允许 `record_trace=True`，第一条测试 episode 的轨迹写入 `evaluation_trajectory.json`。
+- 测试环境才允许 `record_trace=True`。正式离线登记保留原 `evaluation_trajectory.json`；交互评测把第一条 episode 轨迹保存在本次独立版本的 `evaluation.json`。
 
 ## 环境版本、观测与动作
 
@@ -73,24 +75,29 @@ V3 评测除吞吐、延误、成本、碳排、峰值和违规率外，还输�
 - `monitor.csv`：Gymnasium episode 监控；
 - `model.zip`：RL 模型；MPC/FCFS 无模型文件；
 - `manifest.json`：实现、数据哈希、切分、种子、步数与训练渲染次数；
-- `evaluation.json`：留出集聚合指标；
-- `evaluation_trajectory.json`：测试回放轨迹。
+- `evaluation.json`、`evaluation_trajectory.json`：已有正式离线登记的留出指标和轨迹；新训练完成时不保证存在。
 
-`data/rl/runs` 是运行时目录，默认不提交 Git。经模型哈希和数据哈希校验的安全摘要由 `scripts.export_rl_evidence` 写入 `evidence/rl`，供全新 clone 复核；模型二进制仍需本地重跑生成。
+交互接口 `POST /api/rl/train/{job_id}/evaluate` 与 `/api/rl/simulate` 每次写入 `data/rl/user_evaluations/{job_id}/ui-eval-…/`，保存结果、轨迹和来源校验。它们不会覆盖原训练目录、正式评测、模型登记或冠军指针，也不会把原任务状态改成 `EVALUATED`。页面单独显示进行中、已保存版本 ID 或失败；后端返回完整保存回执后才显示成功。手动轮询训练状态不会抹掉当前交互回执。
+
+`data/rl/runs` 是本地运行时目录。经过审查的历史公开模型已有等价安全副本和 SHA 映射，加载时同时核对原训练 SHA 与实际公开副本 SHA，详见 [公开模型隐私处理](PUBLIC_MODEL_PRIVACY_20260912.md)。未发布的本地模型仍需保留本地文件或重跑。短步数界面 QA 的原始任务与评测留在本地，验收摘要不得把它们计为正式优化成果。
+
+RL 面板使用通用港口训练器：objective、scenario、asset 是任务元数据，不会选择 V8 岸电储能专用学习器；环境与硬约束由数据/港口画像决定，奖励权重按实际提交值生效。页面可编辑字段不包含网络结构与优化器类型。通用训练器的 SAC/TQC 使用自动熵系数，PPO/A2C/RecurrentPPO 才消费显式 `entropy_coef`；TRPO、TD3 等不消费该项。
 
 ## 主要接口
 
 | 方法 | 路径 | 用途 |
 |---|---|---|
 | GET | `/api/rl/engine/capabilities` | 运行时、算法和数据集 |
-| GET | `/api/rl/datasets` | 可训练数据集 |
+| GET | `/api/rl/datasets` | 数据目录及质量/用途限制；不代表全部允许训练 |
 | GET | `/api/rl/port-profiles` | 可换港场景包、目标权重和校准状态 |
 | POST | `/api/rl/datasets/upload` | CSV + 字段映射导入 |
 | POST | `/api/rl/train/start` | 启动真实训练/创建 MPC 或 FCFS 基线 |
 | GET | `/api/rl/train/status` | 后端拥有的当前状态 |
 | GET | `/api/rl/train/{job_id}/history` | 优化器真实历史 |
 | POST | `/api/rl/train/{job_id}/control` | pause/resume/cancel |
-| POST | `/api/rl/train/{job_id}/evaluate` | 留出集测试与轨迹生成 |
+| POST | `/api/rl/train/{job_id}/evaluate` | 保存独立交互留出评测与轨迹，不修改正式登记 |
+| GET | `/api/rl/train/{job_id}/evaluation-runs` | 当前模型的独立交互评测历史 |
+| GET | `/api/rl/train/{job_id}/evaluation-runs/{evaluation_id}` | 本次完整交互回执与轨迹 |
 | POST | `/api/rl/train/{job_id}/predict` | 已训练策略/确定性基线推理，不渲染、不下发 |
 | GET | `/api/rl/train/baselines` | 十二控制器已评测结果登记 |
 | GET | `/api/rl/benchmarks/summary?dataset_id=...` | 同一数据集范围内的多种子比较门禁 |

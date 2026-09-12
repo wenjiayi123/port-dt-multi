@@ -1,0 +1,9 @@
+{
+  "status": "ABORTED_ENVIRONMENT_CORRECTION",
+  "at": "2026-09-12T01:51:55.357189Z",
+  "reason": "Independent tests found FIFO numerical remainder and normalization default issue; preserve original pilot and restart only after source correction.",
+  "last_completed_checkpoint_steps": 10000,
+  "test_evaluated": false,
+  "forward_dataset_loaded": false,
+  "promoted": false
+}

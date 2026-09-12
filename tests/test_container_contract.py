@@ -95,10 +95,11 @@ class ContainerContractTests(unittest.TestCase):
 
         gitignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
         for archive_allowlist in (
-            "!evidence/v3/runtime/selected_sac_v3.zip",
-            "!evidence/v3/shore_bess/runs/shore-bess-v3-safe-20260813T015000Z/seed_*/selected_model.zip",
-            "!evidence/v3/bess_energy/runs/bess-energy-v3-safe-20260813T043000Z/seed_*/selected_model.zip",
-            "!evidence/v3/bess_energy/runs/bess-energy-v32-grid-only-balanced-20260813T090000Z/seed_*/selected_model.zip",
+            "!evidence/public_models/legacy_v3_v6_20260912/*.zip",
+
+
+
+
         ):
             self.assertIn(archive_allowlist, gitignore)
 

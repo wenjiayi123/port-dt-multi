@@ -1,0 +1,278 @@
+{
+  "schema": "shore-bess-v8-independent-verification.v1",
+  "integrity_status": "PASS",
+  "report_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/report.json",
+  "report_sha256": "45f77ef9aed52646a70944df9f89a5869f4587bff5464af689d3239bc7b1bb0c",
+  "run_id": "shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5",
+  "reported_status": "PILOT_VALIDATION_ONLY",
+  "admitted_offline": false,
+  "failed_admission_checks": [
+    "formal_run",
+    "three_independent_seeds",
+    "all_seeds_validation_passed",
+    "all_seeds_last_three_stable",
+    "test_all_seed_gates",
+    "forward_all_seed_gates"
+  ],
+  "verified_seed_count": 1,
+  "verified_optimizer_updates": 116000,
+  "training_reused": false,
+  "verified_original_training_runs": [],
+  "new_optimizer_updates": 116000,
+  "verified_anchored_artifacts": 16,
+  "current_source_drift": [],
+  "replay": {
+    "validation": {
+      "selected_seed": 912,
+      "windows": 6,
+      "checkpoint_step": 10000,
+      "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/selected_model.zip",
+      "model_sha256": "e321678c5d3c59be8914bee1b1dada16d679ade1fe7d91bd3e8866cabdafc453",
+      "loaded_model_path": "evidence/v8/shore_bess/public_models/e321678c5d3c59be8914bee1b1dada16d679ade1fe7d91bd3e8866cabdafc453.zip",
+      "loaded_model_sha256": "c6f476d79ba2d64d6e1cc69735469515dbe420c9e5333db2fcd206abbe5a2ef6",
+      "zero_baseline_replayed": true,
+      "all_persisted_metrics_reproduced": true
+    },
+    "final_validation": {
+      "selected_seed": 912,
+      "windows": 6,
+      "checkpoint_step": 60000,
+      "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/step_60000.zip",
+      "model_sha256": "b793d617c2f0f7e0a14d219217d328922be91900c709e4d26fc786da691d10c9",
+      "loaded_model_path": "evidence/v8/shore_bess/public_models/b793d617c2f0f7e0a14d219217d328922be91900c709e4d26fc786da691d10c9.zip",
+      "loaded_model_sha256": "b47d3c5f41cb247014cfc2a1d5f0bed46ac1c36a2f7733e882e34832a064306d",
+      "zero_baseline_replayed": true,
+      "all_persisted_metrics_reproduced": true
+    }
+  },
+  "production_authority": false,
+  "training_episode_ledgers": [
+    {
+      "status": "PASS",
+      "seed": 912,
+      "path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c16-physicalfix-r5/seed_912/training_episodes.csv",
+      "sha256": "b4cc878883332bf896bd384fd1735a5241198a81b2b0d30b04b47f154d0911b9",
+      "completed_episodes": 357,
+      "completed_episode_steps": 59976,
+      "remaining_partial_episode_steps": 24,
+      "record_phase": "after_environment_step_before_replay_storage_and_optimizer",
+      "exact_pre_optimizer_counters_recomputed": true,
+      "max_training_reward_identity_error": 2.8421709430404007e-13,
+      "max_monitor_return_rounding_error": 4.964369892945797e-07,
+      "unsafe_completed_episode_indices": [],
+      "metrics": {
+        "carbon_delta_kg": {
+          "min": 117.27086631847123,
+          "max": 3398.5251725869693,
+          "mean": 538.5237859700588
+        },
+        "carbon_kg": {
+          "min": 2027984.4841265643,
+          "max": 2253298.4500185996,
+          "mean": 2118223.265471786
+        },
+        "degradation_cost_cny": {
+          "min": 1170.565763596286,
+          "max": 10610.63617884311,
+          "mean": 1751.62596759096
+        },
+        "demand_charge_cny": {
+          "min": 206542.33489361114,
+          "max": 242318.79849660295,
+          "mean": 217763.6534272162
+        },
+        "energy_cost_cny": {
+          "min": 2560536.124881374,
+          "max": 2845357.4585850276,
+          "mean": 2675951.217837703
+        },
+        "financial_delta_cny": {
+          "min": -5051.2232343573,
+          "max": 43609.13697558381,
+          "mean": 2251.3849502728617
+        },
+        "flex_deadline_violation_kwh": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "guardrail_violation_rate": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "guardrail_violations": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "max_flex_age_hours": {
+          "min": 8.0,
+          "max": 12.0,
+          "mean": 11.92156862745098
+        },
+        "nonzero_bess_action_rate": {
+          "min": 0.7738095238095238,
+          "max": 1.0,
+          "mean": 0.9579665199413098
+        },
+        "nonzero_bess_actions": {
+          "min": 130.0,
+          "max": 168.0,
+          "mean": 160.93837535014006
+        },
+        "nonzero_flex_action_rate": {
+          "min": 0.017857142857142856,
+          "max": 0.9880952380952381,
+          "mean": 0.44672869147659056
+        },
+        "nonzero_flex_actions": {
+          "min": 3.0,
+          "max": 166.0,
+          "mean": 75.05042016806723
+        },
+        "peak_kw": {
+          "min": 23633.9560839259,
+          "max": 27727.7384557908,
+          "mean": 24917.974440567265
+        },
+        "physical_power_violations": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "projection_count": {
+          "min": 0.0,
+          "max": 1.0,
+          "mean": 0.6274509803921569
+        },
+        "projection_rate": {
+          "min": 0.0,
+          "max": 0.005952380952380952,
+          "mean": 0.0037348272642390283
+        },
+        "reserve_shortfall_kwh": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "shore_sla_violation_kwh": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "soc_max_observed": {
+          "min": 0.58,
+          "max": 0.7506466825843112,
+          "mean": 0.6574280470191126
+        },
+        "soc_min_observed": {
+          "min": 0.40323353293780834,
+          "max": 0.577876565870065,
+          "mean": 0.4784345079978456
+        },
+        "temperature_max_c": {
+          "min": 24.0,
+          "max": 33.07586415889576,
+          "mean": 26.72973947860614
+        },
+        "terminal_flex_backlog_kwh": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "terminal_soc_error": {
+          "min": 0.0,
+          "max": 0.0,
+          "mean": 0.0
+        },
+        "total_cost_cny": {
+          "min": 2770586.3735119365,
+          "max": 3078777.4185481775,
+          "mean": 2895466.49723251
+        },
+        "training_reward": {
+          "min": -420.4057662908383,
+          "max": -25.706800417976652,
+          "mean": -54.33882762896903
+        }
+      },
+      "admission_reinterpreted": false,
+      "claim_boundary": "Full recorded training episodes only; the final partial episode is not claimed to have a complete physical ledger. Monitor return is the V8 training reward, not legacy reward."
+    }
+  ],
+  "contained_official_period_sensitivity": {
+    "validation": {
+      "status": "COMPUTED",
+      "admission_reinterpreted": false,
+      "estimand": "Mean weekly gain among windows fully contained in one official source period; differs from the all-window mean.",
+      "all_business_windows_retained": true,
+      "included_start_indices": [
+        0,
+        336,
+        1176,
+        1512,
+        2016
+      ],
+      "cross_period_start_indices_excluded_from_sensitivity_only": [
+        672
+      ],
+      "selection_rule": "Timestamps only, independent of returns or candidate metrics; January/February remain one period.",
+      "metrics": {
+        "total_cost_cny": {
+          "contained_window_mean": -0.005524359584218752,
+          "clustered_ci_low": -0.03477145573183956,
+          "clustered_ci_high": 0.02632125666311096,
+          "cluster_count": 3,
+          "cluster_confidence": 0.95,
+          "cluster_method": "percentile_bootstrap_of_contained_official_source_period_groups",
+          "cluster_resamples": 5000,
+          "cluster_window_counts": {
+            "2025-05": 2,
+            "2025-06": 1,
+            "2025-07": 2
+          },
+          "cluster_boundary": "Only windows fully contained in one official MOT period; January/February share an anchor. This subset sensitivity is not a confidence interval for the all-window mean or a field confidence claim.",
+          "cluster_group_field": "source_period"
+        },
+        "carbon_kg": {
+          "contained_window_mean": -0.036020233849822315,
+          "clustered_ci_low": -0.04293999084727509,
+          "clustered_ci_high": -0.029607878400403565,
+          "cluster_count": 3,
+          "cluster_confidence": 0.95,
+          "cluster_method": "percentile_bootstrap_of_contained_official_source_period_groups",
+          "cluster_resamples": 5000,
+          "cluster_window_counts": {
+            "2025-05": 2,
+            "2025-06": 1,
+            "2025-07": 2
+          },
+          "cluster_boundary": "Only windows fully contained in one official MOT period; January/February share an anchor. This subset sensitivity is not a confidence interval for the all-window mean or a field confidence claim.",
+          "cluster_group_field": "source_period"
+        },
+        "peak_kw": {
+          "contained_window_mean": 0.39755344603053516,
+          "clustered_ci_low": -0.01913947101708364,
+          "clustered_ci_high": 0.8796847232633885,
+          "cluster_count": 3,
+          "cluster_confidence": 0.95,
+          "cluster_method": "percentile_bootstrap_of_contained_official_source_period_groups",
+          "cluster_resamples": 5000,
+          "cluster_window_counts": {
+            "2025-05": 2,
+            "2025-06": 1,
+            "2025-07": 2
+          },
+          "cluster_boundary": "Only windows fully contained in one official MOT period; January/February share an anchor. This subset sensitivity is not a confidence interval for the all-window mean or a field confidence claim.",
+          "cluster_group_field": "source_period"
+        }
+      }
+    }
+  },
+  "limitations": [
+    "Hashes anchor recorded evidence; no signed wall-clock attestation is available.",
+    "No-teacher and no-warm-start declarations are source/manifest evidence, not third-party attestation.",
+    "Start-period clusters approximate cross-period dependence. Contained-period sensitivity has a different estimand and never changes admission."
+  ]
+}

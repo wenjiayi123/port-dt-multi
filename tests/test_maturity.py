@@ -431,11 +431,11 @@ class RuntimeHardeningTests(unittest.TestCase):
         v3_css = Path("app/ui/v3/v3.css").read_text(encoding="utf-8")
         self.assertIn("v3.css?v=3.2.2-controls", v3_html)
         self.assertIn('id="returnHome"', v3_html)
-        self.assertIn("v3.js?v=3.2.1-fast-return", v3_html)
+        self.assertIn("v3.js?v=3.2.4-null-evidence", v3_html)
         v3_js = Path("app/ui/v3/v3.js").read_text(encoding="utf-8")
         self.assertIn("function returnToHome(event)", v3_js)
-        self.assertIn("get('from') === 'home'", v3_js)
-        self.assertIn("window.history.back()", v3_js)
+        self.assertIn("window.location.assign('/')", v3_js)
+        self.assertNotIn("window.history.back()", v3_js)
         self.assertIn(".gate-action{display:block;min-height:32px", v3_css)
         self.assertIn(".lineage-action{display:block;min-height:34px", v3_css)
         ops_copilot = Path("app/ui/ops_copilot.html").read_text(encoding="utf-8")
@@ -493,7 +493,7 @@ class RuntimeHardeningTests(unittest.TestCase):
                 {"timestamp": "2026-01-01T01:00:00Z", "baseline_kw": 120.0, "net_load_kw": 105.0},
             ]},
         }
-        with patch.object(server_module.TRAINING_MANAGER, "evaluate", return_value=heldout):
+        with patch.object(server_module, "evaluate_user_run", return_value=heldout):
             evaluation = client.post("/api/rl/simulate", json={"strategy_id": "registered-test-job", "episodes": 5})
         self.assertEqual(evaluation.status_code, 200)
         self.assertEqual(evaluation.json()["mode"], "chronological_holdout_evaluation")

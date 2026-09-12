@@ -20,6 +20,10 @@ from .datasets import (
 )
 from .profiles import list_profiles, load_profile
 from .trainer import TRAINING_MANAGER
+from .user_evaluation import evaluate_user_run
+from .identifiers import validate_identifier
+from .runtime_policy import predict_runtime
+from .model_artifacts import resolve_model_artifact
 from .business_api import router as business_rl_router
 
 
@@ -34,12 +38,12 @@ COORDINATED_EVIDENCE_ROOT = REPO_ROOT / "evidence/v6/coordinated_business"
 
 @router.get("/engine/capabilities")
 async def capabilities() -> JSONResponse:
-    return JSONResponse(TRAINING_MANAGER.capabilities())
+    return JSONResponse(await asyncio.to_thread(TRAINING_MANAGER.capabilities))
 
 
 @router.get("/datasets")
 async def datasets() -> JSONResponse:
-    items = list_datasets(TRAINING_MANAGER.data_root)
+    items = await asyncio.to_thread(list_datasets, TRAINING_MANAGER.data_root)
     return JSONResponse({"datasets": items, "count": len(items)})
 
 
@@ -131,12 +135,37 @@ async def training_history(job_id: str, limit: int = 1000) -> JSONResponse:
 @router.post("/train/{job_id}/evaluate")
 async def evaluate_training(job_id: str, payload: Optional[Dict[str, Any]] = Body(default=None)) -> JSONResponse:
     try:
-        result = await asyncio.to_thread(TRAINING_MANAGER.evaluate, job_id, int((payload or {}).get("episodes") or 10))
+        result = await asyncio.to_thread(evaluate_user_run, TRAINING_MANAGER, job_id, int((payload or {}).get("episodes") or 10))
         return JSONResponse(result)
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=f"unknown training job: {job_id}") from exc
     except (ValueError, FileNotFoundError) as exc:
         raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@router.get("/train/{job_id}/evaluation-runs")
+async def user_evaluation_history(job_id: str) -> JSONResponse:
+    try:
+        job_id = validate_identifier(job_id, field="job_id")
+        root = TRAINING_MANAGER.run_root.parent / "user_evaluations" / job_id
+        items = []
+        for path in sorted(root.glob("*/evaluation.json"), key=lambda item: item.stat().st_mtime, reverse=True)[:50]:
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            items.append({key: payload.get(key) for key in ("evaluation_id", "job_id", "algorithm", "episodes", "evaluated_at", "metrics", "evaluation_artifacts", "evaluation_kind")})
+        return JSONResponse({"job_id": job_id, "items": items, "count": len(items), "formal_evidence_updated": False})
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+
+@router.get("/train/{job_id}/evaluation-runs/{evaluation_id}")
+async def user_evaluation_detail(job_id: str, evaluation_id: str) -> JSONResponse:
+    try:
+        job_id = validate_identifier(job_id, field="job_id")
+        evaluation_id = validate_identifier(evaluation_id, field="evaluation_id")
+        path = TRAINING_MANAGER.run_root.parent / "user_evaluations" / job_id / evaluation_id / "evaluation.json"
+        return JSONResponse(json.loads(path.read_text(encoding="utf-8")))
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=404, detail="interactive evaluation not found") from exc
 
 
 @router.get("/benchmarks/summary")
@@ -258,15 +287,14 @@ async def integrated_business_evidence() -> JSONResponse:
         REPO_ROOT / str(champion.get("selected_model_path") or "")
     ).resolve()
     model_root = (REPO_ROOT / "data/rl/runs").resolve()
-    if (
-        not model_path.is_relative_to(model_root)
-        or not model_path.is_file()
-        or hashlib.sha256(model_path.read_bytes()).hexdigest()
-        != champion.get("selected_model_sha256")
-    ):
+    if not model_path.is_relative_to(model_root):
         raise HTTPException(
             status_code=409, detail="integrated champion model hash gate failed"
         )
+    try:
+        model_path = resolve_model_artifact(REPO_ROOT, str(model_path.relative_to(REPO_ROOT)), champion.get("selected_model_sha256"))
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=409, detail="integrated champion model hash gate failed") from exc
 
     dataset_root = (REPO_ROOT / "data/rl/datasets").resolve()
     verified_datasets: Dict[str, Dict[str, Any]] = {}
@@ -341,6 +369,7 @@ async def integrated_business_evidence() -> JSONResponse:
             "report_sha256": report_sha256,
             "selected_job_id": champion.get("selected_job_id"),
             "selected_model_sha256": champion.get("selected_model_sha256"),
+            "runtime_model_sha256": hashlib.sha256(model_path.read_bytes()).hexdigest(),
             "business_score": champion.get("business_score"),
             "training_dataset": verified_datasets["training"],
             "forward_dataset": verified_datasets["forward"],
@@ -394,13 +423,12 @@ async def coordinated_business_evidence() -> JSONResponse:
 
     model_path = (REPO_ROOT / str(champion.get("selected_model_path") or "")).resolve()
     model_root = (REPO_ROOT / "data/rl/runs").resolve()
-    if (
-        not model_path.is_relative_to(model_root)
-        or not model_path.is_file()
-        or hashlib.sha256(model_path.read_bytes()).hexdigest()
-        != champion.get("selected_model_sha256")
-    ):
+    if not model_path.is_relative_to(model_root):
         raise HTTPException(status_code=409, detail="coordinated model hash gate failed")
+    try:
+        model_path = resolve_model_artifact(REPO_ROOT, str(model_path.relative_to(REPO_ROOT)), champion.get("selected_model_sha256"))
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=409, detail="coordinated model hash gate failed") from exc
 
     verified_datasets: Dict[str, Dict[str, Any]] = {}
     dataset_root = (REPO_ROOT / "data/rl/datasets").resolve()
@@ -445,6 +473,7 @@ async def coordinated_business_evidence() -> JSONResponse:
             "report_sha256": report_sha256,
             "selected_job_id": champion.get("selected_job_id"),
             "selected_model_sha256": champion.get("selected_model_sha256"),
+            "runtime_model_sha256": hashlib.sha256(model_path.read_bytes()).hexdigest(),
             "business_score_vs_fcfs": champion.get("business_score_vs_fcfs"),
             "business_score_vs_fixed_rule": champion.get(
                 "business_score_vs_fixed_rule"
@@ -548,7 +577,7 @@ async def get_evaluation(job_id: str) -> JSONResponse:
 @router.post("/train/{job_id}/predict")
 async def predict_control(job_id: str, payload: Dict[str, Any] = Body(...)) -> JSONResponse:
     try:
-        return JSONResponse(await asyncio.to_thread(TRAINING_MANAGER.predict, job_id, payload))
+        return JSONResponse(await asyncio.to_thread(predict_runtime, TRAINING_MANAGER, job_id, payload))
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=f"unknown training job: {job_id}") from exc
     except (ValueError, FileNotFoundError) as exc:

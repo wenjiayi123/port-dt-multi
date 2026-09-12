@@ -23,6 +23,7 @@ import math  # 监测统计用（z-score/PSI 等）
 import asyncio
 import hashlib
 import json
+import re
 import subprocess
 import sys
 import time
@@ -64,6 +65,8 @@ from app.services.energyx.api import router as energyx_router
 from app.services.app_center import service as app_center_service
 from app.services.story.service import router as story_router
 from app.services.rl_training.api import router as real_rl_training_router
+from app.services.rl_training.user_evaluation import evaluate_user_run
+from app.services.rl_training.runtime_policy import predict_runtime
 from app.services.rl_training.trainer import ALGORITHMS as REAL_RL_ALGORITHMS
 from app.services.rl_training.trainer import TRAINING_MANAGER
 from app.services.rl_training.datasets import FACTOR_COLUMNS, load_port_dataset
@@ -262,10 +265,40 @@ except Exception:
 app = FastAPI(
     title="Smart Port Twin API",
     version="3.2.0",
-    docs_url=None if is_production() else "/docs",
+    docs_url=None,
     redoc_url=None if is_production() else "/redoc",
     openapi_url=None if is_production() else "/openapi.json",
 )
+
+# Keep API documentation in its own view with the same explicit home route.
+# Development documentation remains disabled in production.
+if not is_production():
+    from fastapi.openapi.docs import get_swagger_ui_html, get_swagger_ui_oauth2_redirect_html
+
+    @app.get("/docs", response_class=HTMLResponse, include_in_schema=False)
+    async def api_docs_page() -> HTMLResponse:
+        response = get_swagger_ui_html(
+            openapi_url=app.openapi_url,
+            title=f"{app.title} - Swagger UI",
+            oauth2_redirect_url=app.swagger_ui_oauth2_redirect_url,
+            init_oauth=app.swagger_ui_init_oauth,
+            swagger_ui_parameters=app.swagger_ui_parameters,
+        )
+        home_bar = (
+            '<div style="padding:14px 24px;background:#0b1220;color:#eaf2ff;'
+            'display:flex;align-items:center;justify-content:space-between;'
+            'font:15px system-ui"><span>接口文档</span>'
+            '<a href="/" style="color:#a7f3d0;text-decoration:none;'
+            'padding:8px 16px;border:1px solid #397a79;border-radius:24px">'
+            '← 返回主界面</a></div>'
+        )
+        html = response.body.decode("utf-8").replace("<body>", "<body>" + home_bar)
+        return HTMLResponse(_inject_standalone_navigation(html))
+
+    @app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
+    async def api_docs_oauth_redirect() -> HTMLResponse:
+        return get_swagger_ui_oauth2_redirect_html()
+
 app.include_router(router)
 _ENABLE_ENGINEERING_SIMULATORS = os.getenv(
     "PORT_DT_ENABLE_ENGINEERING_SIMULATORS", ""
@@ -990,6 +1023,7 @@ async def system_provenance() -> JSONResponse:
     }
     telemetry_live = telemetry_status.get("mode") in {"live", "live_rest", "opcua", "mqtt", "tsdb"}
     runtime_status = await asyncio.to_thread(di.strategy_runtime.status)
+    rl_capabilities = await asyncio.to_thread(TRAINING_MANAGER.capabilities)
     engineering_simulators_enabled = os.getenv("PORT_DT_ENABLE_ENGINEERING_SIMULATORS", "").strip().lower() in {"1", "true", "yes", "on"}
     legacy_rl_enabled = os.getenv("PORT_DT_ENABLE_LEGACY_RL", "").strip().lower() in {"1", "true", "yes", "on"}
     twin_calibration_readiness = _site_twin_calibration.readiness()
@@ -1013,7 +1047,7 @@ async def system_provenance() -> JSONResponse:
                 *( [] if portviz_measured else ["measured_entity_tracks_not_configured"] ),
                 "production_actuator_and_site_acceptance_not_configured",
             ],
-            "rl": TRAINING_MANAGER.capabilities(),
+            "rl": rl_capabilities,
             "portviz": {
                 "mode": portviz_cfg.mode,
                 "dataset_artifact": Path(portviz_cfg.dataset_path).name if portviz_cfg.mode in {"dataset", "replay", "public"} else None,
@@ -1104,6 +1138,17 @@ _XIAOYI_SPRITE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "xiaoy
 _RUNTIME_RECOVERY_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "runtime_recovery.js"
 _BILINGUAL_UI_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "bilingual_ui.js"
 _RL_EVIDENCE_CONSOLE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "rl_evidence_console.js"
+
+
+def _inject_standalone_navigation(html: str) -> str:
+    """Use the same menu component in dynamically generated standalone pages."""
+    if "/static/standalone_navigation.js" in html:
+        return html
+    resources = (
+        '  <link rel="stylesheet" href="/static/standalone_navigation.css?v=20260912-2">\n'
+        '  <script src="/static/standalone_navigation.js?v=20260912-2"></script>\n'
+    )
+    return html.replace("</head>", resources + "</head>")
 
 
 def _inject_xiaoyi_sprite(html: str) -> str:
@@ -1265,7 +1310,7 @@ _RL_PANEL_HTML = r"""
     .link-health-item.bad b{color:#ef4444}
     .link-health-detail{margin-top:6px;color:#93a4c4;line-height:1.55}
     .confirm-backdrop{position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.72);padding:18px}
-    .confirm-dialog{width:min(760px,100%);border:1px solid #334155;border-radius:14px;background:#081222;box-shadow:0 28px 80px rgba(0,0,0,.5);padding:16px}
+    .confirm-dialog{width:min(760px,100%);max-height:90vh;overflow:auto;border:1px solid #334155;border-radius:14px;background:#081222;box-shadow:0 28px 80px rgba(0,0,0,.5);padding:16px}
     .confirm-dialog h2{margin:0 0 8px;font-size:18px;color:#f8fafc}
     .confirm-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
     .confirm-item{border:1px solid #1f2937;border-radius:10px;background:#0a1120;padding:10px;min-width:0}
@@ -1294,7 +1339,7 @@ _RL_PANEL_HTML = r"""
   </div>
   <div class="row-actions">
     <button id="btnBackToPlatform" class="btn ghost">回主平台策略区</button>
-    <button id="btnBackToHome" class="btn ghost">回主平台首页</button>
+    <button id="btnBackToHome" class="btn ghost">返回主界面</button>
   </div>
 </header>
 <div id="returnBanner" class="card" style="margin:16px 18px 0 18px;padding:12px 14px;display:none;">
@@ -1355,6 +1400,7 @@ _RL_PANEL_HTML = r"""
     <div class="train-layout">
       <div>
         <div class="section-label">训练参数 / Training Parameters</div>
+        <p class="small" id="trainingExecutionScope" style="color:#fcd34d;">此页运行通用港口训练器：实际环境由数据集与港口档案决定，优化目标由下方权重决定。目标、场景和设备组仅是任务说明；选择岸电/BESS不会启动 V8 专用训练。神经网络固定 64×64；硬约束始终由环境与档案执行。</p>
         <div class="param-grid">
           <div class="field">
             <label for="selAlgo">算法 / Algorithm</label>
@@ -1373,7 +1419,7 @@ _RL_PANEL_HTML = r"""
             <select id="selDataset"><option value="public_us_la_6min_v1">正在校验数据集…</option></select>
           </div>
           <div class="field">
-            <label for="selObjective">优化目标 / Objective</label>
+            <label for="selObjective">任务目标标签 / Objective metadata</label>
             <select id="selObjective">
               <option value="multi_objective" selected>综合最优 · Energy + Carbon + Cost + Safety</option>
               <option value="energy_min">能耗最低 · Min Energy</option>
@@ -1396,7 +1442,7 @@ _RL_PANEL_HTML = r"""
             </select>
           </div>
           <div class="field">
-            <label for="selScenario">训练场景 / Scenario</label>
+            <label for="selScenario">任务场景标签 / Scenario metadata</label>
             <select id="selScenario">
               <option value="mapped_dataset" selected>当前映射数据集 · Mapped Dataset</option>
               <option value="noon_peak">午间作业高峰 · Noon Peak</option>
@@ -1406,7 +1452,7 @@ _RL_PANEL_HTML = r"""
             </select>
           </div>
           <div class="field">
-            <label for="selAsset">设备组 / Asset Group</label>
+            <label for="selAsset">任务设备标签 / Asset metadata</label>
             <select id="selAsset">
               <option value="all_port" selected>全港设备 · Whole Port</option>
               <option value="qc_bess_shore">岸桥 + BESS + 岸电</option>
@@ -1422,23 +1468,21 @@ _RL_PANEL_HTML = r"""
 
           <div class="field"><label for="inpTrainHorizon">预测窗口 min / Horizon</label><input id="inpTrainHorizon" type="number" value="720" min="60" max="2880" step="30"></div>
           <div class="field"><label for="inpTrainStep">步长 min / Step</label><input id="inpTrainStep" type="number" value="5" min="1" max="60" step="1"></div>
-          <div class="field"><label for="inpTotalSteps">训练步数 / Total Steps</label><input id="inpTotalSteps" type="number" value="20000" min="64" max="5000000" step="1000"></div>
-          <div class="field"><label for="inpBatch">批大小 / Batch Size</label><input id="inpBatch" type="number" value="256" min="32" max="2048" step="32"></div>
+          <div class="field"><label for="inpTotalSteps">训练步数 / Total Steps</label><input id="inpTotalSteps" type="number" value="20000" min="64" max="5000000" step="1"></div>
+          <div class="field"><label for="inpBatch">批大小 / Batch Size</label><input id="inpBatch" type="number" value="256" min="16" max="2048" step="1"></div>
 
-          <div class="field"><label for="inpLR">学习率 / Learning Rate</label><input id="inpLR" type="number" value="0.0003" min="0.00001" max="0.01" step="0.00001"></div>
-          <div class="field"><label for="inpGamma">折扣因子 / Gamma</label><input id="inpGamma" type="number" value="0.995" min="0.8" max="0.999" step="0.001"></div>
-          <div class="field"><label for="inpTau">目标网络 τ / Target Tau</label><input id="inpTau" type="number" value="0.005" min="0.001" max="0.1" step="0.001"></div>
-          <div class="field"><label for="inpEntropy">熵系数 / Entropy Coef</label><input id="inpEntropy" type="number" value="0.02" min="0" max="1" step="0.001"></div>
+          <div class="field"><label for="inpLR">学习率 / Learning Rate</label><input id="inpLR" type="number" value="0.0003" min="0.000001" max="0.01" step="any"></div>
+          <div class="field"><label for="inpGamma">折扣因子 / Gamma</label><input id="inpGamma" type="number" value="0.995" min="0.8" max="0.9999" step="any"></div>
+          <div class="field"><label for="inpTau">目标网络 τ / Target Tau</label><input id="inpTau" type="number" value="0.005" min="0.0001" max="1" step="any"></div>
+          <div class="field"><label for="inpEntropy">熵系数 / Entropy Coef</label><input id="inpEntropy" type="number" value="0.02" min="0" max="1" step="0.001"><small id="entropyContractHint">仅部分算法使用此参数</small></div>
 
-          <div class="field"><label for="inpReplay">回放池 / Replay Buffer</label><input id="inpReplay" type="number" value="120000" min="10000" max="2000000" step="10000"></div>
-          <div class="field"><label for="inpSeed">随机种子 / Seed</label><input id="inpSeed" type="number" value="42" min="1" max="9999" step="1"></div>
-          <div class="field"><label for="inpDemandCap">需量上限 kW / Demand Cap</label><input id="inpDemandCap" type="number" value="3000" min="100" max="20000" step="10"></div>
+          <div class="field"><label for="inpReplay">回放池 / Replay Buffer</label><input id="inpReplay" type="number" value="120000" min="1000" max="5000000" step="1"></div>
+          <div class="field"><label for="inpSeed">随机种子 / Seed</label><input id="inpSeed" type="number" value="42" min="0" max="4294967295" step="1"></div>
+          <div class="field"><label for="inpDemandCap">需量上限 kW / Demand Cap</label><input id="inpDemandCap" type="number" value="3000" min="100" step="any"></div>
           <div class="field">
-            <label for="selGuardrail">安全护栏 / Guardrails</label>
-            <select id="selGuardrail">
-              <option value="strict" selected>严格 · Strict</option>
-              <option value="balanced">均衡 · Balanced</option>
-              <option value="explore">探索 · Explore</option>
+            <label for="selGuardrail">环境硬约束 / Guardrails</label>
+            <select id="selGuardrail" disabled title="只读说明：硬约束由环境及港口档案执行，此页不能解除或切换">
+              <option value="profile_hard_constraints" selected>档案硬约束始终生效</option>
             </select>
           </div>
 
@@ -1525,10 +1569,9 @@ _RL_PANEL_HTML = r"""
   <section class="card">
     <div class="toolbar">
       <button id="btnLoad" class="btn">拉取策略列表</button>
-      <label class="small muted">窗口(min)</label>
-      <input id="inpHor" type="number" value="360" min="30" max="1440" step="30">
-      <label class="small muted">步长(min)</label>
-      <input id="inpStep" type="number" value="5" min="1" max="60" step="1">
+      <label class="small muted" for="inpEvalEpisodes">评测回合</label>
+      <input id="inpEvalEpisodes" type="number" value="10" min="5" max="50" step="1">
+      <span class="small muted">每回合窗口与步长使用已登记模型及数据集的固定协议。</span>
     </div>
     <table>
       <thead>
@@ -1594,6 +1637,7 @@ _RL_PANEL_HTML = r"""
       <div class="confirm-item"><span>设备组 / 时窗</span><b id="confirmAssetHorizonText">—</b></div>
       <div class="confirm-item recommend"><span>小懿推荐参数</span><b id="confirmRecommendText">—</b></div>
     </div>
+    <details><summary>本次将提交的完整配置</summary><pre id="confirmConfigSnapshot" class="small mono" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></details>
     <div class="risk-list" id="confirmRiskText"></div>
     <div class="row-actions" style="margin-top:14px;justify-content:flex-end;">
       <button id="btnCancelAssistantRun" class="btn ghost">取消</button>
@@ -1622,6 +1666,13 @@ const operatorNoteFrom = query.get("operator_note") || "";
 let selectedId = null;
 let currentList = [];
 let lastSimulation = null;
+let simulationActive = false;
+let pendingTrainConfig = null;
+let trainingStartPending = false;
+let trainingControlPending = false;
+let trainingEvaluation = null;
+let datasetProfileGeneration = 0;
+let baselineMetricsGeneration = 0;
 const BASELINE_ALGOS = [
   {id:"sac", label:"SAC", type:"RL", cn:"Soft Actor-Critic", desc:"Stable-Baselines3 连续动作最大熵 actor-critic。"},
   {id:"ppo", label:"PPO", type:"RL", cn:"Proximal Policy Optimization", desc:"Stable-Baselines3 裁剪式 on-policy 策略优化。"},
@@ -1633,7 +1684,7 @@ const BASELINE_ALGOS = [
 ];
 const TRAIN_STAGES = [
   {cn:"任务排队", en:"Queued", detail:"后端校验算法、数据集哈希和训练配置。"},
-  {cn:"训练环境就绪", en:"Environment Ready", detail:"只装载时间顺序训练段；测试留出段不可见。"},
+  {cn:"训练环境就绪", en:"Environment Ready", detail:"按时间切分，梯度仅使用训练段；完整数据文件会做质量校验。"},
   {cn:"真实优化器运行", en:"Optimizer Running", detail:"进度来自 Stable-Baselines3 实际 timestep 回调。"},
   {cn:"模型归档", en:"Artifact Archive", detail:"保存模型、监控日志、配置和可复现清单。"},
   {cn:"待独立测试", en:"Evaluation Pending", detail:"训练结束后才允许读取测试段并生成回放轨迹。"}
@@ -1790,7 +1841,7 @@ async function reviewMobileTrainingRequest(requestId, action){
       trainJobId = data.job_id || data.job?.job_id || null;
       if(data.training_status) renderTrainingStatus(data.training_status, "desktop approved");
       appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] desktop human approved · request=${requestId} · operator=${operator}`);
-      await startTraining();
+      if(trainJobId) startStatusPolling();
     }
     await loadMobileTrainingRequests();
   }catch(err){
@@ -1839,11 +1890,11 @@ function trainConfig(){
     learning_rate: numberValue("#inpLR", 0.0003),
     gamma: numberValue("#inpGamma", 0.995),
     tau: numberValue("#inpTau", 0.005),
-    entropy_coef: numberValue("#inpEntropy", 0.02),
+    entropy_coef: ["ppo","a2c","recurrent_ppo"].includes($("#selAlgo")?.value) ? numberValue("#inpEntropy", 0.02) : undefined,
     replay_buffer: numberValue("#inpReplay", 120000),
     seed: numberValue("#inpSeed", 42),
     demand_cap_kw: numberValue("#inpDemandCap", 3000),
-    guardrail_mode: $("#selGuardrail")?.value || "strict",
+    guardrail_mode: "profile_hard_constraints",
     reward_weights: {
       cost: numberValue("#inpCostW", 0.24),
       carbon: numberValue("#inpCarbonW", 0.22),
@@ -1905,15 +1956,15 @@ function recommendationSummaryText(cfg){
   const title = recommendationTitleFrom || "推荐训练参数";
   const reason = recommendationReasonFrom || "根据训练目标自动选择算法、窗口、护栏和 reward 权重。";
   const weights = cfg.reward_weights || {};
-  return `${title}：${reason} 参数：算法=${cfg.algorithm_label}，场景=${cfg.scenario_label}，设备=${cfg.asset_label}，horizon=${cfg.horizon_min}min，step=${cfg.step_min}min，total_steps=${cfg.total_steps.toLocaleString("zh-CN")}，batch=${cfg.batch_size}，lr=${cfg.learning_rate}，gamma=${cfg.gamma}，entropy=${cfg.entropy_coef}，guardrail=${cfg.guardrail_mode}，权重 cost=${weights.cost} / carbon=${weights.carbon} / peak=${weights.peak} / safety=${weights.safety}`;
+  const entropy=["sac","tqc"].includes(cfg.algorithm)?"auto（后端自动调节）":["ppo","a2c","recurrent_ppo"].includes(cfg.algorithm)?String(cfg.entropy_coef??0):"不使用";
+  return `${title}：${reason} 参数：算法=${cfg.algorithm_label}，场景标签=${cfg.scenario_label}，设备标签=${cfg.asset_label}，horizon=${cfg.horizon_min}min，step=${cfg.step_min}min，total_steps=${cfg.total_steps.toLocaleString("zh-CN")}，batch=${cfg.batch_size}，lr=${cfg.learning_rate}，gamma=${cfg.gamma}，entropy=${entropy}，guardrail=环境/档案硬约束始终生效，权重 cost=${weights.cost} / carbon=${weights.carbon} / peak=${weights.peak} / safety=${weights.safety}。任务标签不切换训练环境，不启动 V8 专用训练。`;
 }
 
-function confirmationSummary(){
-  const cfg = trainConfig();
+function confirmationSummary(cfg=trainConfig()){
   const risks = OBJECTIVE_RISK[cfg.objective] || OBJECTIVE_RISK.multi_objective;
   return {
     command: commandFrom || "操作员点击“启动训练”",
-    objective: objectiveLabelFrom || cfg.objective_label,
+    objective: cfg.objective_label,
     algoScenario: `${cfg.algorithm_label} · ${cfg.scenario_label}`,
     assetHorizon: `${cfg.asset_label} · horizon=${cfg.horizon_min}min · step=${cfg.step_min}min`,
     recommendation: recommendationSummaryText(cfg),
@@ -1923,21 +1974,38 @@ function confirmationSummary(){
 
 function showAssistantRunConfirm(){
   const box = $("#assistantConfirmBackdrop");
-  if(!box) return;
-  const s = confirmationSummary();
+  if(!box || trainingStartPending || trainingEvaluation?.state === "RUNNING" || ["QUEUED","RUNNING","PAUSED"].includes(lastTrainStatus?.status)) return;
+  for(const input of $$(".train-card input")){
+    input.setCustomValidity(input.value.trim() === "" ? "请输入完整训练参数" : "");
+    if(!input.reportValidity()){
+      const label=document.querySelector(`label[for="${input.id}"]`)?.textContent||input.id;
+      if($("#trainDetail")) $("#trainDetail").textContent=`请修正配置：${label} · ${input.validationMessage||"超出允许范围或值无效"}`;
+      input.scrollIntoView({block:"center",behavior:"smooth"});
+      return;
+    }
+  }
+  if(!trainingDatasetCatalog.some(row=>row.dataset_id === $("#selDataset")?.value && isTrainableDataset(row))){
+    $("#trainDetail").textContent = "训练数据集尚未完成校验，请刷新接入口后重试。";
+    return;
+  }
+  pendingTrainConfig = JSON.parse(JSON.stringify(trainConfig()));
+  const s = confirmationSummary(pendingTrainConfig);
   $("#confirmCommandText").textContent = s.command;
   $("#confirmObjectiveText").textContent = s.objective;
   $("#confirmAlgoScenarioText").textContent = s.algoScenario;
   $("#confirmAssetHorizonText").textContent = s.assetHorizon;
   $("#confirmRecommendText").textContent = s.recommendation;
+  $("#confirmConfigSnapshot").textContent = JSON.stringify(pendingTrainConfig, null, 2);
   $("#confirmRiskText").innerHTML = `<b>执行风险与边界</b><br>${s.risks.map(x=>`• ${x}`).join("<br>")}<br>• 点击“开始执行”后才会调用 /api/rl/train/start；训练结果仍需策略测试、安全校验和 dry-run，不能直接生产执行。`;
   box.style.display = "flex";
+  $("#btnCancelAssistantRun").focus();
   appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training confirmation pending · ${s.objective}`);
 }
 
 function hideAssistantRunConfirm(){
   const box = $("#assistantConfirmBackdrop");
   if(box) box.style.display = "none";
+  pendingTrainConfig = null;
 }
 
 function renderBaselineCards(){
@@ -2025,7 +2093,13 @@ function statusSummaryText(status){
 
 function renderTrainingStatus(status, sourceLabel="poll"){
   if(!status) return;
+  const terminalStates=["COMPLETED","EVALUATED","FAILED","CANCELLED","INTERRUPTED"];
+  if(lastTrainStatus?.job_id && status.job_id === lastTrainStatus.job_id){
+    if(terminalStates.includes(lastTrainStatus.status) && ["QUEUED","RUNNING","PAUSED"].includes(status.status)) return;
+    if(status.updated_at && lastTrainStatus.updated_at && Date.parse(status.updated_at)<Date.parse(lastTrainStatus.updated_at)) return;
+  }
   lastTrainStatus = status;
+  trainPaused=status.status === "PAUSED";
   const metrics = status.metrics || {};
   const step = finiteNumber(status.step ?? metrics.step, 0);
   const reward = metrics.reward_mean;
@@ -2043,7 +2117,7 @@ function renderTrainingStatus(status, sourceLabel="poll"){
   if($("#statPolicy")) $("#statPolicy").textContent = policyVersion;
   if($("#statStatusSync")) $("#statStatusSync").textContent = sourceLabel;
   if($("#statLastPoll")) $("#statLastPoll").textContent = new Date().toLocaleTimeString("zh-CN",{hour12:false});
-  const showMetric = (selector, value, digits=5)=>{ const el=$(selector); if(el) el.textContent=Number.isFinite(Number(value))?Number(value).toFixed(digits):"N/A"; };
+  const showMetric = (selector, value, digits=5)=>{ const el=$(selector); if(el) el.textContent=value!==null&&value!==undefined&&value!==""&&Number.isFinite(Number(value))?Number(value).toFixed(digits):"N/A"; };
   showMetric("#statReward", reward);
   showMetric("#statEntropy", entropy);
   showMetric("#statActor", metrics.actor_loss ?? metrics.policy_gradient_loss);
@@ -2051,12 +2125,18 @@ function renderTrainingStatus(status, sourceLabel="poll"){
   if($("#statReplay")) $("#statReplay").textContent = metrics.updates == null ? "N/A" : Number(metrics.updates).toLocaleString("zh-CN");
   if($("#statEpoch")) $("#statEpoch").textContent = metrics.updates == null ? "N/A" : Number(metrics.updates).toLocaleString("zh-CN");
   if($("#statGuardrail")) $("#statGuardrail").textContent = status.rendering?.render_calls === 0 ? "TRAIN RENDER=0" : "N/A";
-  if($("#statGap")) $("#statGap").textContent = status.evaluation?.metrics ? "TESTED" : "待独立测试";
+  const currentEvaluation=trainingEvaluation?.job_id===trainJobId?trainingEvaluation:null;
+  const evaluating=currentEvaluation?.state === "RUNNING";
+  if($("#statGap")) $("#statGap").textContent = currentEvaluation?.state === "COMPLETED" ? "交互评测已保存" : status.evaluation?.metrics ? "TESTED" : "待独立测试";
   if($("#trainLog") && Array.isArray(status.logs) && status.logs.length) $("#trainLog").textContent = status.logs.join("\n");
-  const terminal = ["COMPLETED","EVALUATED","FAILED","CANCELLED","INTERRUPTED"].includes(status.status);
-  if($("#btnStartTrain")) $("#btnStartTrain").disabled = !terminal && status.status !== "IDLE";
-  if($("#btnPauseTrain")) $("#btnPauseTrain").disabled = !["RUNNING","PAUSED"].includes(status.status);
-  if($("#btnEvaluateTrain")) $("#btnEvaluateTrain").disabled = !status.evaluation_available;
+  const terminal = terminalStates.includes(status.status);
+  if($("#btnStartTrain")) $("#btnStartTrain").disabled = evaluating || (!terminal && status.status !== "IDLE");
+  if($("#btnResetTrain")) $("#btnResetTrain").disabled = evaluating;
+  if($("#btnPauseTrain")){ $("#btnPauseTrain").disabled = trainingControlPending || !["RUNNING","PAUSED"].includes(status.status); $("#btnPauseTrain").textContent=trainPaused?"继续":"暂停"; }
+  const detail={QUEUED:"任务已接收，等待后端训练环境。",RUNNING:"后端优化器正在训练；进度与指标来自实际回调。",PAUSED:"后端已确认暂停；可继续或取消。",COMPLETED:"训练已完成，模型与日志已归档；可运行独立交互评测。",EVALUATED:"训练及登记评测已完成；再次交互评测将保存独立版本。",CANCELLED:"后端已确认取消，原模型与已产生的训练证据保留。",FAILED:"训练失败，请查看后端日志。",INTERRUPTED:"训练已中断，请查看保留的任务日志。"}[status.status];
+  if((currentEvaluation?.detail||detail)&&$("#trainDetail")) $("#trainDetail").textContent=currentEvaluation?.detail||detail;
+  if(currentEvaluation?.stage&&$("#trainStage")) $("#trainStage").textContent=currentEvaluation.stage;
+  if($("#btnEvaluateTrain")) $("#btnEvaluateTrain").disabled = evaluating || !status.evaluation_available;
   if(terminal) stopStatusPolling();
   if($("#trainRunSummary")) $("#trainRunSummary").textContent = status.summary || statusSummaryText(status);
   updateConnectorPreview();
@@ -2094,6 +2174,9 @@ function stopStatusPolling(){
 
 function updateConnectorPreview(){
   const cfg = trainConfig();
+  const entropyEditable=["ppo","a2c","recurrent_ppo"].includes(cfg.algorithm);
+  if($("#inpEntropy")){ $("#inpEntropy").readOnly=!entropyEditable; $("#inpEntropy").disabled=!entropyEditable; }
+  if($("#entropyContractHint")) $("#entropyContractHint").textContent=entropyEditable?"实际传入该算法 ent_coef":["sac","tqc"].includes(cfg.algorithm)?"当前训练器使用自动熵调节，此输入不提交":"该算法不使用熵系数，此输入不提交";
   const payload = {
     config: cfg,
     baselines: BASELINE_ALGOS.map(a=>({id:a.id, name:a.label, type:a.type, enabled:true})),
@@ -2225,30 +2308,42 @@ async function requestTrainStart(cfg){
 
 async function updateBaselineMetrics(){
   const set = (id, value)=>{ const el = document.getElementById(id); if(el) el.textContent = value; };
+  const generation = ++baselineMetricsGeneration;
+  const datasetId = trainConfig().dataset_id;
+  const stillCurrent = ()=>generation === baselineMetricsGeneration && datasetId === trainConfig().dataset_id;
+  const display = (value,digits)=>value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value)) ? Number(value).toFixed(digits) : "—";
+  BASELINE_ALGOS.forEach(item=>{
+    ["reward","carbon","peak"].forEach(key=>set(`algo_${item.id}_${key}`, "—"));
+    set(`algo_${item.id}_status`, "LOADING");
+  });
   try{
-    const dataset = encodeURIComponent(trainConfig().dataset_id);
+    const dataset = encodeURIComponent(datasetId);
     const response = await fetch(`/api/rl/train/baselines?dataset_id=${dataset}`, {cache:"no-store"});
     if(!response.ok) throw new Error(await response.text());
     const payload = await response.json();
+    if(!stillCurrent()) return;
     (payload.baselines || []).forEach(item=>{
       const metrics = item.latest_evaluation?.metrics || {};
-      set(`algo_${item.id}_reward`, Number.isFinite(Number(metrics.reward)) ? Number(metrics.reward).toFixed(4) : "—");
-      set(`algo_${item.id}_carbon`, Number.isFinite(Number(metrics.carbon_kg)) ? Number(metrics.carbon_kg).toFixed(1) : "—");
-      set(`algo_${item.id}_peak`, Number.isFinite(Number(metrics.peak_kw)) ? Number(metrics.peak_kw).toFixed(1) : "—");
+      set(`algo_${item.id}_reward`, display(metrics.reward,4));
+      set(`algo_${item.id}_carbon`, display(metrics.carbon_kg,1));
+      set(`algo_${item.id}_peak`, display(metrics.peak_kw,1));
       set(`algo_${item.id}_status`, item.status || "UNTRAINED");
     });
   }catch(_error){
+    if(!stillCurrent()) return;
     BASELINE_ALGOS.forEach(item=>set(`algo_${item.id}_status`, "API ERROR"));
   }
 }
 
-async function startTraining(){
+async function startTraining(confirmedConfig=null){
   const activeStatus = lastTrainStatus?.status;
-  if(["QUEUED","RUNNING","PAUSED"].includes(activeStatus)) return;
-  const cfg = trainConfig();
+  if(trainingStartPending || trainingEvaluation?.state === "RUNNING" || ["QUEUED","RUNNING","PAUSED"].includes(activeStatus)) return;
+  const cfg = confirmedConfig || trainConfig();
+  trainingStartPending = true;
   trainPaused = false;
   trainJobId = null;
   lastTrainStatus = null;
+  trainingEvaluation = null;
   $("#trainLog").textContent = "";
   $("#evaluationPanel").style.display = "none";
   $("#btnEvaluateTrain").disabled = true;
@@ -2263,11 +2358,15 @@ async function startTraining(){
     $("#btnStartTrain").disabled = false;
     $("#trainStatus").textContent = "FAILED";
     $("#trainRunSummary").textContent = `训练任务未创建：${String(err).slice(0,220)}`;
+  }finally{
+    trainingStartPending = false;
   }
 }
 
 async function pauseTraining(){
-  if(!trainJobId || !["RUNNING","PAUSED"].includes(lastTrainStatus?.status)) return;
+  if(trainingControlPending || !trainJobId || !["RUNNING","PAUSED"].includes(lastTrainStatus?.status)) return;
+  trainingControlPending=true;
+  $("#btnPauseTrain").disabled=true;
   const action = lastTrainStatus.status === "PAUSED" ? "resume" : "pause";
   try{
     const response = await fetch(`/api/rl/train/${encodeURIComponent(trainJobId)}/control`, {
@@ -2275,19 +2374,35 @@ async function pauseTraining(){
     });
     if(!response.ok) throw new Error(await response.text());
     const status = await response.json();
-    trainPaused = status.status === "PAUSED";
-    $("#btnPauseTrain").textContent = trainPaused ? "继续" : "暂停";
     renderTrainingStatus(status, "control");
-  }catch(err){ appendTrainLog(`control failed · ${String(err).slice(0,160)}`); }
+  }catch(err){ appendTrainLog(`control failed · ${String(err).slice(0,160)}`); await pollTrainingStatus({sourceLabel:"control receipt refresh"}); }
+  finally{trainingControlPending=false;if(lastTrainStatus)renderTrainingStatus(lastTrainStatus,"control reconciled");}
 }
 
 async function resetTraining(){
+  if(trainingEvaluation?.state === "RUNNING") return;
+  if(trainingStartPending){
+    $("#trainDetail").textContent = "训练请求正在提交，收到任务回执后才能取消。";
+    return;
+  }
   if(trainJobId && ["QUEUED","RUNNING","PAUSED"].includes(lastTrainStatus?.status)){
     try{
-      await fetch(`/api/rl/train/${encodeURIComponent(trainJobId)}/control`, {
+      const response = await fetch(`/api/rl/train/${encodeURIComponent(trainJobId)}/control`, {
         method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({action:"cancel"})
       });
-    }catch(_err){}
+      if(!response.ok) throw new Error(await response.text());
+      const status = await response.json();
+      renderTrainingStatus(status, "cancel requested");
+      if(["QUEUED","RUNNING","PAUSED"].includes(status.status)){
+        $("#trainDetail").textContent = "取消已请求；保留任务直到后端确认停止，停止后可重置面板。";
+        startStatusPolling();
+        return;
+      }
+    }catch(error){
+      $("#trainDetail").textContent = `取消失败，任务和状态已保留：${String(error).slice(0,180)}`;
+      appendTrainLog($("#trainDetail").textContent);
+      return;
+    }
   }
   hideAssistantRunConfirm();
   stopStatusPolling();
@@ -2297,6 +2412,7 @@ async function resetTraining(){
   trainTick = 0;
   trainJobId = null;
   lastTrainStatus = null;
+  trainingEvaluation = null;
   setArtifactPath(null);
   setProgress(0);
   if($("#trainStatus")){
@@ -2367,7 +2483,7 @@ async function loadTrainingDatasets(){
   const response = await fetch("/api/rl/datasets", {cache:"no-store"});
   if(!response.ok) throw new Error(await response.text());
   const payload = await response.json();
-  const valid = (payload.datasets || []).filter(item=>item.valid !== false);
+  const valid = (payload.datasets || []).filter(isTrainableDataset);
   if(!valid.length) throw new Error("没有通过字段契约校验的训练数据集");
   trainingDatasetCatalog = valid;
   select.innerHTML = valid.map(item=>{
@@ -2383,7 +2499,12 @@ async function loadTrainingDatasets(){
   await syncSelectedDatasetContract();
 }
 
+function isTrainableDataset(item){
+  return item.valid !== false && item.quality?.training_eligible !== false && item.split_policy?.role !== "forward_challenge_only" && item.split_policy?.candidate_selection_allowed !== false;
+}
+
 async function syncSelectedDatasetContract(){
+  const generation = ++datasetProfileGeneration;
   const selected = trainingDatasetCatalog.find(item=>item.dataset_id === $("#selDataset")?.value);
   if(!selected) return;
   const cadenceMinutes = Number(selected.quality?.time?.median_cadence_seconds || 0) / 60;
@@ -2396,6 +2517,7 @@ async function syncSelectedDatasetContract(){
     const response = await fetch(`/api/rl/port-profiles/${encodeURIComponent(selected.port_profile_id)}`, {cache:"no-store"});
     if(!response.ok) throw new Error(await response.text());
     const profile = await response.json();
+    if(generation !== datasetProfileGeneration || selected.dataset_id !== $("#selDataset")?.value) return;
     const objectives = profile.objectives || {};
     const values = {
       inpCostW: objectives.cost,
@@ -2405,12 +2527,13 @@ async function syncSelectedDatasetContract(){
       inpDemandCap: profile.assets?.demand_cap_kw
     };
     Object.entries(values).forEach(([id,value])=>{
-      if(Number.isFinite(Number(value)) && document.getElementById(id)){
+      if(value !== null && value !== undefined && value !== "" && Number.isFinite(Number(value)) && document.getElementById(id)){
         document.getElementById(id).value = String(value);
       }
     });
   }
   updateConnectorPreview();
+  await updateBaselineMetrics();
 }
 
 async function loadBusinessEvidence(){
@@ -2432,7 +2555,7 @@ async function loadBusinessEvidence(){
 
 function drawEvaluationTrajectory(frames){
   const canvas = $("#evaluationCanvas");
-  if(!canvas || !frames?.length) return;
+  if(!canvas) return;
   const width = canvas.clientWidth || 640;
   const height = canvas.clientHeight || 180;
   canvas.width = width * devicePixelRatio;
@@ -2440,6 +2563,7 @@ function drawEvaluationTrajectory(frames){
   const ctx = canvas.getContext("2d");
   ctx.scale(devicePixelRatio, devicePixelRatio);
   ctx.clearRect(0,0,width,height);
+  if(!frames?.length) return;
   const values = frames.flatMap(item=>[Number(item.baseline_kw||0),Number(item.net_load_kw||0)]);
   const min = Math.min(...values), max = Math.max(...values);
   const pad = 24, span = Math.max(1,max-min);
@@ -2460,33 +2584,45 @@ function drawEvaluationTrajectory(frames){
 }
 
 async function evaluateTraining(){
-  if(!trainJobId || !lastTrainStatus?.evaluation_available) return;
+  if(!trainJobId || !lastTrainStatus?.evaluation_available || trainingEvaluation?.state === "RUNNING") return;
+  const evaluationJobId=trainJobId;
   const button = $("#btnEvaluateTrain");
-  button.disabled = true;
-  $("#trainStage").textContent = "读取独立测试集并生成回放 / Held-out evaluation";
+  trainingEvaluation={job_id:evaluationJobId,state:"RUNNING",stage:"独立交互评测进行中 / Evaluation running",detail:`正在对 ${evaluationJobId} 做 10 回合既有留出集评测；结果将保存为独立版本。`};
+  renderTrainingStatus(lastTrainStatus,"evaluation started");
+  drawEvaluationTrajectory([]);
+  $("#evaluationPanel").style.display = "block";
+  $("#evaluationMetrics").textContent = "评测进行中，等待后端真实回执。";
   try{
-    const response = await fetch(`/api/rl/train/${encodeURIComponent(trainJobId)}/evaluate`, {
+    const response = await fetch(`/api/rl/train/${encodeURIComponent(evaluationJobId)}/evaluate`, {
       method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({episodes:10})
     });
     if(!response.ok) throw new Error(await response.text());
     const result = await response.json();
+    if(!result.evaluation_id || result.formal_evidence_updated!==false || result.model_registry_updated!==false) throw new Error("未收到完整独立评测保存回执，请核对接口与历史记录。");
     const metrics = result.metrics || {};
-    $("#evaluationPanel").style.display = "block";
-    $("#evaluationMetrics").textContent = `真实测试集 · ${result.algorithm.toUpperCase()} · reward=${Number(metrics.reward||0).toFixed(5)} · cost=${Number(metrics.energy_cost||0).toFixed(2)} · carbon=${Number(metrics.carbon_kg||0).toFixed(2)} kg · peak=${Number(metrics.peak_kw||0).toFixed(2)} kW · delay=${Number(metrics.delay_index_mean||0).toFixed(4)} · violations=${(100*Number(metrics.guardrail_violation_rate||0)).toFixed(2)}% · frames=${result.render?.frame_count||0}`;
+    const format=(value,digits,scale=1)=>value!==null&&value!==undefined&&value!==""&&Number.isFinite(Number(value))?(Number(value)*scale).toFixed(digits):"N/A";
+    const receipt=result.evaluation_id||"回执未提供版本 ID";
+    trainingEvaluation={job_id:evaluationJobId,state:"COMPLETED",stage:"独立交互评测已保存 / Evaluation saved",evaluation_id:result.evaluation_id,result_url:result.evaluation_artifacts?.result_url,detail:`独立交互评测已完成并保存：${receipt}。这是既有留出集重复评测，未覆盖原登记评测，也未晋级冠军。`};
+    $("#evaluationMetrics").textContent = `独立交互评测 · ${String(result.algorithm||"—").toUpperCase()} · ${receipt} · reward=${format(metrics.reward,5)} · cost=${format(metrics.energy_cost,2)} · carbon=${format(metrics.carbon_kg,2)} kg · peak=${format(metrics.peak_kw,2)} kW · delay=${format(metrics.delay_index_mean,4)} · violations=${format(metrics.guardrail_violation_rate,2,100)}% · frames=${result.render?.frame_count??"N/A"}`;
     drawEvaluationTrajectory(result.render?.frames || []);
+    appendTrainLog(trainingEvaluation.detail);
     await pollTrainingStatus({sourceLabel:"evaluation"});
-    await updateBaselineMetrics();
   }catch(err){
-    $("#evaluationPanel").style.display = "block";
-    $("#evaluationMetrics").textContent = `测试失败：${String(err).slice(0,220)}`;
-    button.disabled = false;
+    trainingEvaluation={job_id:evaluationJobId,state:"FAILED",stage:"独立交互评测失败 / Evaluation failed",detail:`独立交互评测失败：${String(err).slice(0,220)}。原训练任务与登记证据保持不变，可重试。`};
+    $("#evaluationMetrics").textContent = trainingEvaluation.detail;
+    drawEvaluationTrajectory([]);
+    appendTrainLog(trainingEvaluation.detail);
+  }finally{
+    if(trainJobId===evaluationJobId&&lastTrainStatus) renderTrainingStatus(lastTrainStatus,"evaluation receipt");
+    else button.disabled=!lastTrainStatus?.evaluation_available;
   }
 }
 
 function fmtImpact(imp){
   if(!imp) return "-";
-  const value = (raw,digits=3)=>Number.isFinite(Number(raw))?Number(raw).toFixed(digits):"N/A";
-  return `reward:${value(imp.reward,5)} · peak:${value(imp.peak_kw,2)}kW · violations:${Number.isFinite(Number(imp.guardrail_violation_rate))?(100*Number(imp.guardrail_violation_rate)).toFixed(2)+"%":"N/A"}`;
+  const present = raw=>raw !== null && raw !== undefined && raw !== "" && Number.isFinite(Number(raw));
+  const value = (raw,digits=3)=>present(raw)?Number(raw).toFixed(digits):"N/A";
+  return `reward:${value(imp.reward,5)} · peak:${value(imp.peak_kw,2)}kW · violations:${present(imp.guardrail_violation_rate)?(100*Number(imp.guardrail_violation_rate)).toFixed(2)+"%":"N/A"}`;
 }
 
 function rowHTML(item, idx){
@@ -2537,6 +2673,10 @@ function drawChart(a,b){
 }
 
 function pickStrategy(strategyId){
+  if(selectedId !== strategyId){
+    lastSimulation = null;
+    clearSimulationResults();
+  }
   selectedId = strategyId;
   $$("input[name='pick']").forEach(r=>{ r.checked = (r.value===selectedId); });
   $("#btnSim").disabled = !selectedId;
@@ -2570,12 +2710,13 @@ async function latestPolicyArtifactInfo(){
 }
 
 async function loadList(){
+  if(simulationActive) return;
+  currentList = [];
+  pickStrategy(null);
   $("#btnLoad").disabled = true;
   $("#tbl").innerHTML = `<tr><td colspan="4" class="muted small">加载中...</td></tr>`;
   try{
-    const h = Number($("#inpHor").value||360);
-    const s = Number($("#inpStep").value||5);
-    const res = await fetch(`/api/rl/strategies?horizon_min=${h}&step_min=${s}&max_items=12`);
+    const res = await fetch('/api/rl/strategies?max_items=12');
     if(!res.ok) throw new Error(await res.text());
     const data = await res.json();
     currentList = data.strategies || [];
@@ -2595,14 +2736,31 @@ async function loadList(){
       });
     });
   }catch(err){
+    currentList = [];
+    pickStrategy(null);
     $("#tbl").innerHTML = `<tr><td colspan="4" class="small" style="color:#ef4444;">加载失败：${String(err).slice(0,200)}</td></tr>`;
   }finally{
     $("#btnLoad").disabled = false;
   }
 }
 
+function clearSimulationResults(){
+  ["#m_dkwh","#m_dco2","#m_peak","#m_win"].forEach(selector=>{ $(selector).textContent = "—"; });
+  $("#simRaw").textContent = "尚无当前策略的评测回执";
+  drawChart([], []);
+}
+
 async function simulate(options={}){
-  if(!selectedId) return;
+  if(!selectedId || simulationActive) return;
+  const episodesInput = $("#inpEvalEpisodes");
+  if(!episodesInput.reportValidity() || !episodesInput.value.trim()) return;
+  const evaluationStrategyId = selectedId;
+  simulationActive = true;
+  episodesInput.disabled = true;
+  lastSimulation = null;
+  clearSimulationResults();
+  $("#btnLoad").disabled = true;
+  $$("input[name='pick']").forEach(input=>{input.disabled = true;});
   const rowSimulationButtons = $$("#tbl button[data-simid]");
   rowSimulationButtons.forEach(button=>{ button.disabled = true; });
   $("#btnSim").disabled = true;
@@ -2610,7 +2768,7 @@ async function simulate(options={}){
   if($("#btnVerifyDryRun")) $("#btnVerifyDryRun").disabled = true;
   $("#simHint").textContent = "正在独立留出集上测试...";
   try{
-    const payload = {strategy_id: selectedId, horizon_min: 360, step_min: 1};
+    const payload = {strategy_id: evaluationStrategyId, episodes: Number(episodesInput.value)};
     const res = await fetch("/api/rl/simulate", {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(payload)});
     if(!res.ok) throw new Error(await res.text());
     const data = await res.json();
@@ -2635,7 +2793,7 @@ async function simulate(options={}){
 
     $("#btnDispatch").disabled = true;
     if($("#btnVerifyDryRun")) $("#btnVerifyDryRun").disabled = false;
-    $("#simHint").textContent = `留出集测试完成：${selectedId}；请继续检查模型上线门禁，本结果不授予设备执行权。`;
+    $("#simHint").textContent = `留出集测试完成：${evaluationStrategyId} · ${payload.episodes}回合；本结果不授予设备执行权。`;
     return data;
   }catch(err){
     lastSimulation = null;
@@ -2643,8 +2801,12 @@ async function simulate(options={}){
     $("#simHint").textContent = "模拟失败，请检查接口日志";
     return null;
   }finally{
+    simulationActive = false;
+    episodesInput.disabled = false;
+    $("#btnLoad").disabled = false;
+    $$("input[name='pick']").forEach(input=>{input.disabled = false;});
     rowSimulationButtons.forEach(button=>{ button.disabled = false; });
-    $("#btnSim").disabled = false;
+    $("#btnSim").disabled = !selectedId;
     if($("#btnVerifyDryRun")) $("#btnVerifyDryRun").disabled = !selectedId;
   }
 }
@@ -2788,11 +2950,18 @@ $("#btnCancelAssistantRun")?.addEventListener("click", ()=>{
   if($("#trainDetail")) $("#trainDetail").textContent = "已取消训练启动；未调用 /api/rl/train/start。";
 });
 $("#btnConfirmAssistantRun")?.addEventListener("click", async ()=>{
+  const confirmedConfig = pendingTrainConfig;
+  if(!confirmedConfig) return;
   hideAssistantRunConfirm();
-  const s = confirmationSummary();
+  const s = confirmationSummary(confirmedConfig);
   if($("#trainDetail")) $("#trainDetail").textContent = `人工确认通过：${s.objective}，正在启动训练。`;
-  await startTraining();
+  await startTraining(confirmedConfig);
   appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training confirmed · ${s.objective} -> #btnStartTrain -> /api/rl/train/start`);
+});
+document.addEventListener("keydown", event=>{
+  if(event.key === "Escape" && $("#assistantConfirmBackdrop")?.style.display === "flex"){
+    $("#btnCancelAssistantRun").click();
+  }
 });
 $("#btnPingConnector")?.addEventListener("click", refreshConnector);
 $("#btnRefreshMobileRequests")?.addEventListener("click", loadMobileTrainingRequests);
@@ -2835,6 +3004,25 @@ window.addEventListener("load", async ()=>{
 # -------------------------------------------------
 # 主页（返回 index.html）
 # -------------------------------------------------
+@app.get("/ui/module-menu", response_class=HTMLResponse, include_in_schema=False)
+async def standalone_module_menu() -> HTMLResponse:
+    """Keep standalone destinations in sync with the authoritative home menu."""
+    if not _UI_INDEX.exists():
+        raise HTTPException(status_code=503, detail="Module menu unavailable")
+    source = _UI_INDEX.read_text(encoding="utf-8")
+    menu = re.search(
+        r'<nav\b(?=[^>]*\bid=[\"\']panel-nav-primary[\"\'])[^>]*>.*?</nav>',
+        source,
+        flags=re.DOTALL,
+    )
+    if not menu:
+        raise HTTPException(status_code=503, detail="Module menu unavailable")
+    # Hash modules live in the main document, while the six route entries are
+    # already absolute local paths. Do not clone any module bodies or scripts.
+    html = re.sub(r'\b(href|data-direct-target)=([\"\'])#', r'\1=\2/#', menu.group())
+    return HTMLResponse(html, headers={"Cache-Control": "no-cache"})
+
+
 @app.get("/", response_class=HTMLResponse, tags=["ui"])
 async def home() -> HTMLResponse:
     if not _UI_INDEX.exists():
@@ -3105,7 +3293,7 @@ async def home_brief_adapter_js() -> HTMLResponse:
 async def rl_panel_page(request: Request) -> HTMLResponse:
     return HTMLResponse(
         _inject_rl_evidence_console(
-            _inject_xiaoyi_sprite(_inject_bilingual_ui(_RL_PANEL_HTML))
+            _inject_xiaoyi_sprite(_inject_bilingual_ui(_inject_standalone_navigation(_RL_PANEL_HTML)))
         ),
         status_code=200,
     )
@@ -3701,18 +3889,20 @@ async def external_weather(
         raise HTTPException(status_code=502, detail="weather adapter failed") from exc
 
 @app.get("/external/vessels_schedule", tags=["external"])
-async def external_vessels(
+def external_vessels(
     start: str = Query(..., description="开始时间 ISO8601"),
     end: str = Query(..., description="结束时间 ISO8601"),
     port: str = Query("CN_DEMO", description="港口代码"),
 ) -> JSONResponse:
     """
     船舶计划 / 靠离泊窗口查询。
-    优先使用 DI 中的 schedule 适配器；若无，则回退到模块内 CSV（app/services/app_center/data/）。
+    仅使用明确配置的 schedule 适配器；未配置时返回不可用。
     同时对返回结构做轻量“字段归一化”，保证前端可读到 vessel_id / berth_id 等。
     """
     try:
         sch = getattr(di, "schedule", None)
+        if sch is None or not hasattr(sch, "vessels"):
+            raise HTTPException(status_code=503, detail="vessel schedule adapter is not configured")
         if sch is not None and hasattr(sch, "vessels"):
             status = sch.source_status() if hasattr(sch, "source_status") else {"mode": "unavailable"}
             if status.get("mode") == "unavailable":
@@ -3868,6 +4058,8 @@ async def external_vessels(
                 })
 
         return JSONResponse(rows)
+    except HTTPException:
+        raise
     except Exception as exc:
         raise HTTPException(status_code=502, detail="vessel schedule adapter failed") from exc
 
@@ -4122,7 +4314,7 @@ async def rl_propose(
     if not job_id:
         raise HTTPException(status_code=409, detail="no trained policy is available; provide job_id")
     try:
-        return JSONResponse(await asyncio.to_thread(TRAINING_MANAGER.predict, job_id, payload))
+        return JSONResponse(await asyncio.to_thread(predict_runtime, TRAINING_MANAGER, job_id, payload))
     except KeyError as exc:
         raise HTTPException(status_code=404, detail=f"unknown training job: {job_id}") from exc
     except (ValueError, FileNotFoundError) as exc:
@@ -4540,7 +4732,7 @@ async def rl_simulate(
         if not job_id:
             raise HTTPException(status_code=422, detail="job_id or registered strategy_id is required")
         episodes = max(5, min(50, int(payload.get("episodes") or 10)))
-        result = await asyncio.to_thread(TRAINING_MANAGER.evaluate, job_id, episodes)
+        result = await asyncio.to_thread(evaluate_user_run, TRAINING_MANAGER, job_id, episodes)
         frames = (result.get("render") or {}).get("frames") or []
         baseline = [float(item.get("baseline_kw") or 0.0) for item in frames]
         policy = [float(item.get("net_load_kw") or 0.0) for item in frames]
@@ -5338,6 +5530,23 @@ def _create_rl_train_job(
     source: str = "rl-panel",
     approval: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
+    # A dataset can pass numeric quality checks while remaining reserved for
+    # forward evaluation. Enforce its role before either desktop or approved
+    # mobile requests can create an optimizer job.
+    dataset_id = str(cfg.get("dataset_id") or "public_port_ops_v1")
+    try:
+        dataset = load_port_dataset(dataset_id, TRAINING_MANAGER.data_root)
+    except (ValueError, FileNotFoundError) as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    split_policy = dataset.metadata.get("split_policy") or {}
+    if (
+        split_policy.get("role") == "forward_challenge_only"
+        or split_policy.get("candidate_selection_allowed") is False
+    ):
+        raise HTTPException(
+            status_code=422,
+            detail="该数据集仅用于前向评估，禁止用于训练或候选选模",
+        )
     real_cfg = {**cfg, "source": source, "approval": approval}
     job = TRAINING_MANAGER.start(real_cfg)
     job.update(

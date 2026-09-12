@@ -1,0 +1,18 @@
+{
+  "schema": "port-dt-browser-export-evidence.v1",
+  "date": "2026-09-12",
+  "source": "CUA actual export button clicks; downloaded PNGs then visually inspected",
+  "scope": "offline UI acceptance, not new business benchmark",
+  "items": [
+    {
+      "path": "evidence/ui_audit/exports/registered-policy-holdout.png",
+      "sha256": "64d997a43018445a44bc18aa06dc13d80cd82118519b28d78fbb6ff370fcff0d",
+      "bytes": 150249
+    },
+    {
+      "path": "evidence/ui_audit/exports/bess-main-panel.png",
+      "sha256": "4d0da2d41eb2eff8b6f89bd92b7d3941d76086e665c40de68f77a4617f5f45dd",
+      "bytes": 177540
+    }
+  ]
+}

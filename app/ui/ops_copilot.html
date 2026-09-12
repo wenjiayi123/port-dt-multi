@@ -4,6 +4,8 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>运营副驾 / Ops Copilot</title>
+  <link rel="stylesheet" href="/static/standalone_navigation.css?v=20260912-2">
+  <script src="/static/standalone_navigation.js?v=20260912-2"></script>
   <style>
     :root{
       --bg:#07111f;--panel:#0b1426;--panel2:#0e1b32;--line:#203456;--text:#e8f1ff;--muted:#91a7c7;
@@ -135,7 +137,7 @@
       </div>
     </div>
     <div class="top-actions">
-      <a class="btn ghost" href="/">回首页</a>
+      <a class="btn ghost" href="/">返回主界面</a>
       <a class="btn secondary" href="/#exec-cockpit">管理驾驶舱</a>
       <a class="btn secondary" href="/#opsx-section">OpsX 审计</a>
     </div>
@@ -193,7 +195,7 @@
         </div>
         <div class="grid2">
           <div class="field">
-            <label for="scope">范围 / Scope</label>
+            <label for="scope">知识检索范围 / Scope</label>
             <select id="scope">
               <option value="all">全部</option>
               <option value="sop">SOP / 标准作业</option>
@@ -204,7 +206,7 @@
             </select>
           </div>
           <div class="field">
-            <label for="severity">等级 / Severity</label>
+            <label for="severity">人工报告等级 / Severity</label>
             <select id="severity">
               <option value="medium">中等</option>
               <option value="major" selected>较高</option>
@@ -250,7 +252,7 @@
           </div>
         </div>
         <div class="grid2">
-          <div class="field"><label for="topK">证据数 / Evidence</label><input id="topK" type="number" min="1" max="16" value="8"></div>
+          <div class="field"><label for="topK">知识检索上限 / 运行信号另列</label><input id="topK" type="number" min="1" max="10" value="8"></div>
           <div class="field">
             <label>模型状态 / Model Status</label>
             <div class="stage-log" id="llmStatusBox" style="min-height:40px;">正在检查小懿AI...</div>
@@ -315,14 +317,23 @@
     <section class="playbook-section" id="playbookSection"></section>
   </main>
 
+  <dialog id="handoffConfirmDialog" aria-labelledby="handoffConfirmTitle" aria-describedby="handoffConfirmBoundary" style="max-width:680px;width:calc(100% - 40px);border:1px solid #3c879d;border-radius:16px;padding:24px;background:#0b1b2a;color:#e8f5ff">
+    <h2 id="handoffConfirmTitle">确认交接班本地留痕</h2>
+    <pre id="handoffConfirmDetails" class="audit-box" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre>
+    <p id="handoffConfirmBoundary">仅写入当前交接快照的本地审计记录，不执行生产指令，不发送外部消息。请核对值班员、班次和两个 SHA。</p>
+    <div class="row"><button type="button" class="btn secondary" id="cancelHandoffConfirm">取消</button><button type="button" class="btn" id="approveHandoffConfirm">确认写入本地留痕</button></div>
+  </dialog>
   <script>
     const $ = (sel) => document.querySelector(sel);
     const $$ = (sel) => Array.from(document.querySelectorAll(sel));
     let lastAudit = null;
     let lastHandoff = null;
+    let handoffConfirmation = null;
     let currentContext = null;
     let generationCount = 0;
     let answerRunId = 0;
+    let contextRunId = 0;
+    let interfaceReady = false;
     const THINKING_TEXT = "思考中......\nThinking......";
     const RETRIEVING_TEXT = "正在检索港航知识库并组织回答...\nRetrieving port knowledge and composing the answer...";
     const THINKING_DELAY_MS = 2000;
@@ -344,7 +355,7 @@
 
     async function getJSON(url, fallback){
       try{ const r = await fetch(url, {cache:"no-store"}); if(!r.ok) throw new Error(await r.text()); return await r.json(); }
-      catch(e){ return fallback; }
+      catch(e){ return {...fallback, error:String(e)}; }
     }
     async function postJSON(url, payload){
       const r = await fetch(url, {method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload)});
@@ -376,8 +387,9 @@
       $("#contextList").innerHTML = signals.map(s => `<div class="context-item"><div><b>${escapeHTML(s.name)}</b><br><span>${escapeHTML(s.source)}</span></div><div><b>${escapeHTML(s.value)}</b><br><span class="${levelClass(s.level)}">${escapeHTML(s.level)}</span></div></div>`).join("");
       $("#connectorList").innerHTML = (data.connectors||[]).map(c => `<div class="connector"><b>${escapeHTML(c.name)}</b><br><span class="note">${escapeHTML(c.endpoint)}</span><br><span class="${levelClass(c.status)}">${escapeHTML(c.status)}</span></div>`).join("");
       $("#ctxStatus").textContent = `Context ${String(data.status||"ready").toUpperCase()}`;
-      $("#liveHeadline").textContent = `${data.port || "PORT"} · 运营副驾已接入`;
-      $("#liveSub").textContent = `信号 ${signals.length} 个，接入口 ${(data.connectors||[]).length} 个，上下文已按哈希留痕。`;
+      const unavailable = ["offline","unavailable"].includes(data.status) || !data.context_sha256;
+      $("#liveHeadline").textContent = `${data.port || $("#port").value || "PORT"} · ${unavailable?"上下文不可用":"公开回放上下文"}`;
+      $("#liveSub").textContent = unavailable ? (data.reason || data.error || "当前没有已核验上下文，不能视为现场已接入。") : `信号 ${signals.length} 个，接入口 ${(data.connectors||[]).length} 个；公开回放，生产权限=false。`;
       renderMissionRail(data.mission_modes || []);
       const ctx = data.context || {};
       $("#sourceRail").textContent = ctx.source?.mode || "待接入港口";
@@ -407,6 +419,7 @@
         $("#query").value = pb.query;
         $("#scope").value = pb.scope || "all";
         $("#severity").value = pb.severity || "medium";
+        invalidateAnswer("已载入快捷任务，请生成答案。");
         window.scrollTo({top:0, behavior:"smooth"});
       }));
     }
@@ -423,6 +436,27 @@
       else if(mission === "strategy" || mission === "dry_run") { $("#scope").value = "device"; $("#mode").value = "explain_sop"; }
       else { $("#scope").value = "all"; $("#mode").value = "explain_sop"; }
       renderMissionRail(currentContext?.mission_modes || []);
+      if(interfaceReady){invalidateAnswer("任务已切换，请重新生成答案。");refreshContext();}
+    }
+    function contextKey(){return JSON.stringify([$("#port").value.trim(),$("#asset").value,$("#mission").value]);}
+    function selectOutputMode(){
+      const mode=$("#mode").value;
+      const mission=mode==="alert_triage"?"triage":mode==="handoff"?"handoff":$("#mission").value;
+      if(mission!==$("#mission").value){selectMission(mission,false);$("#mode").value=mode;}
+      else invalidateAnswer("输出模式已修改，请重新生成答案。");
+    }
+    async function refreshContext(){
+      const token=++contextRunId, key=contextKey();
+      $("#ctxStatus").textContent="Context LOADING";
+      const url=`/api/copilot/context?port=${encodeURIComponent($("#port").value.trim()||"CNSHA")}&asset_id=${encodeURIComponent($("#asset").value)}&mission=${encodeURIComponent($("#mission").value)}`;
+      const data=await getJSON(url,{signals:[],connectors:[],mission_modes:currentContext?.mission_modes||[],status:"unavailable"});
+      if(token===contextRunId && key===contextKey())renderContext(data);
+      return data;
+    }
+    function invalidateAnswer(message){
+      answerRunId+=1;
+      clearAnswerState();
+      setProgress(0,message);
     }
     function payload(){
       return {
@@ -506,6 +540,7 @@
         recommendation: rec,
         human_confirmation: data?.human_confirmation
       };
+      $("#copyAudit").disabled=false;
       $("#auditBox").textContent = JSON.stringify(lastAudit, null, 2);
     }
     async function handoffRlTrainingCommand(p, runId){
@@ -538,26 +573,44 @@
       setProgress(78, "回答完成，准备回到首页并点击强化学习面板...");
       $("#stageLog").textContent = "下一步：回首页 → 顶部菜单“强化学习面板” → 打开训练 UI → 等待人工确认。";
       await wait(1100);
+      if(runId !== answerRunId) return true;
       setProgress(92, "正在回到首页总入口 / Opening platform home");
       await wait(650);
+      if(runId !== answerRunId) return true;
       window.location.assign(url);
       return true;
+    }
+    function handoffCanConfirm(){
+      return !!lastHandoff && $("#mission").value === "handoff"
+        && lastHandoff.operator===($("#operator").value.trim()||"未填写")
+        && lastHandoff.shift===($("#shift").value.trim()||"当前班次");
     }
     function updateHandoffPanel(packet){
       lastHandoff = packet || null;
       const visible = !!lastHandoff && $("#mission").value === "handoff";
       $("#handoffPanel").hidden = !visible;
+      $("#confirmHandoff").disabled = !handoffCanConfirm();
       if(!visible) return;
       $("#handoffMeta").textContent = `上下文 ${lastHandoff.context_sha256 || "—"}\n交接包 ${lastHandoff.handoff_sha256 || "—"}\n状态 ${lastHandoff.overall_state || "—"} · 未确认时不留痕`;
+      if(!handoffCanConfirm()){
+        $("#confirmHandoff").disabled=true;
+        $("#handoffMeta").textContent+="\n值班员或班次已变化，请刷新预览后确认。";
+      }
     }
     async function renderBrief(data, runId){
       const s = data.summary || {};
       const llm = data.llm || {};
       const generation = llm.generation || {};
       const grounding = llm.context_grounding || {};
+      if(data.context){
+        contextRunId+=1;
+        renderContext({...currentContext,context:data.context,signals:data.context.signals||[],
+          context_sha256:data.context_sha256,mission_modes:data.mission_modes||[],
+          port:$("#port").value.trim()||"CNSHA",status:data.context.overall_state==="data_unavailable"?"unavailable":"review"});
+      }
       $("#headline").textContent = s.headline || "已生成运营副驾答案。";
       $("#operatorNote").textContent = "";
-      $("#riskBadge").textContent = `Risk ${s.risk_level || "—"}`;
+      $("#riskBadge").textContent = `Risk ${s.risk_level || "—"} · ${data.audit_packet?.risk_basis==="operator_report"?"人工报告等级":"运行护栏"}`;
       $("#intentMetric").textContent = s.intent || "—";
       $("#evidenceMetric").textContent = String((data.evidence || []).length);
       $("#llmMetric").textContent = llm.true_xiaoyi_called ? "小懿已调用" : "证据兜底";
@@ -573,8 +626,9 @@
           : `<a class="action action-link" href="${escapeHTML(a.handoff || a.href || "#")}">${body}</a>`;
       }).join("");
       $("#sopSteps").innerHTML = (data.sop_steps || []).map((x,i) => `<div class="step"><div class="step-num">${i+1}</div><div><b>${escapeHTML(x.step)}</b><p>${escapeHTML(x.detail)}</p><p>${escapeHTML(x.owner)}</p></div><div class="eta">${escapeHTML(x.status || `${x.eta_min} min`)}</div></div>`).join("");
-      $("#evidenceList").innerHTML = (data.evidence || []).map(e => `<div class="evidence"><span class="type">${escapeHTML(String(e.type||"item").toUpperCase())}</span><b>${escapeHTML(e.title)}</b><p>${escapeHTML(e.snippet)}</p></div>`).join("") || `<div class="evidence"><b>待接入港口</b><p>当前任务未返回可用证据。</p></div>`;
+      $("#evidenceList").innerHTML = (data.evidence || []).map(e => `<div class="evidence"><span class="type">${escapeHTML(String(e.type||"item").toUpperCase())}</span><b>${escapeHTML(e.title)}</b><p>${escapeHTML(e.snippet)}</p><p>${escapeHTML(e.source || "")} ${escapeHTML(e.claim_boundary || "")}</p></div>`).join("") || `<div class="evidence"><b>待接入港口</b><p>当前任务未返回可用证据。</p></div>`;
       lastAudit = data.audit_packet || null;
+      $("#copyAudit").disabled = !lastAudit;
       $("#auditBox").textContent = JSON.stringify(lastAudit || {}, null, 2);
       updateHandoffPanel(data.handoff_preview);
       const stamp = lastAudit
@@ -610,6 +664,7 @@
     }
     function clearAnswerState(){
       lastAudit = null;
+      $("#copyAudit").disabled = true;
       $("#headline").textContent = "";
       $("#operatorNote").textContent = "";
       $("#operatorNote").classList.remove("typing");
@@ -628,13 +683,16 @@
       $("#auditBox").textContent = "";
       $("#handoffPanel").hidden = true;
       lastHandoff = null;
+      $("#confirmHandoff").disabled = true;
       $("#askBtn").disabled = false;
       $("#askBtn").textContent = "生成 Copilot 答案";
     }
     async function ask(){
       const p = payload();
       if(!p.query){ setProgress(0, "请输入问题。"); return; }
+      if(!$("#topK").reportValidity())return;
       const runId = ++answerRunId;
+      clearAnswerState();
       generationCount += 1;
       $("#askBtn").disabled = true;
       $("#askBtn").textContent = "生成中...";
@@ -648,6 +706,7 @@
       let i = 0;
       setProgress(4, stages[0]);
       const timer = window.setInterval(() => {
+        if(runId!==answerRunId){window.clearInterval(timer);return;}
         i += 1;
         const stage = stages[Math.min(stages.length - 1, Math.floor(i / 2))];
         setProgress(Math.min(86, 8 + i * 11), stage);
@@ -675,11 +734,28 @@
         }
       }catch(e){
         window.clearInterval(timer);
+        if(runId!==answerRunId)return;
         $("#operatorNote").classList.remove("typing");
         setProgress(0, "请求失败：" + String(e).slice(0,180));
+        const failure = String(e).slice(0,300);
         $("#headline").textContent = "生成失败，请检查接口状态。";
+        $("#operatorNote").textContent = `本次请求失败，未生成可用答案。\n${failure}`;
+        $("#auditBox").textContent = `本次请求失败，未生成审计包。\n${failure}`;
+        $("#actions").innerHTML = "";
+        $("#sopSteps").innerHTML = "";
+        $("#evidenceList").innerHTML = "";
+        lastAudit = null; lastHandoff = null; currentContext = null; contextRunId += 1;
+        $("#copyAudit").disabled = true; $("#confirmHandoff").disabled = true; $("#handoffPanel").hidden = true;
+        $("#ctxStatus").textContent = "Context INVALID";
+        $("#ctxRisk").textContent = "Risk 未核验";
+        ["#sourceRail","#policyRail","#gateRail","#hashRail"].forEach(selector=>$(selector).textContent="本次上下文无效");
+        ["#sourceCell","#policyCell","#gateCell"].forEach(selector=>$(selector).className="runtime-cell major");
+        $("#liveHeadline").textContent = "本次请求上下文无效";
+        $("#liveSub").textContent = "请修正港口或请求参数并重新获取上下文；旧快照不能作为本次答案证据。";
+        $("#contextList").innerHTML = ""; $("#connectorList").innerHTML = "";
         $("#answerStamp").textContent = `第 ${generationCount} 次生成失败`;
       }finally{
+        window.clearInterval(timer);
         if(runId === answerRunId){
           $("#operatorNote").classList.remove("typing");
           $("#askBtn").disabled = false;
@@ -690,14 +766,13 @@
     async function init(){
       applyQueryParams();
       if(!$("#query").value.trim()) selectMission($("#mission").value, true);
-      const ctxUrl = `/api/copilot/context?port=${encodeURIComponent($("#port").value || "CNSHA")}&asset_id=${encodeURIComponent($("#asset").value)}&mission=${encodeURIComponent($("#mission").value)}`;
-      const ctx = await getJSON(ctxUrl, {signals:[], connectors:[], mission_modes:[], status:"offline"});
-      renderContext(ctx);
+      await refreshContext();
       const llmStatus = await getJSON("/api/copilot/llm/status", {configured:false, fallback:"Ops Copilot local fallback"});
       renderLLMStatus(llmStatus);
       const pbs = await getJSON("/api/copilot/playbooks", {items:[]});
       renderPlaybooks(pbs.items || []);
       clearAnswerState();
+      interfaceReady = true;
       if(shouldAutoRun()){
         window.setTimeout(()=>ask(), 180);
       }
@@ -714,22 +789,76 @@
     $("#mission").addEventListener("change", () => selectMission($("#mission").value, true));
     async function persistHandoff(confirm){
       const p = payload();
-      const data = await postJSON("/api/copilot/handoff", {...p, answer: $("#operatorNote").textContent, confirm});
+      if(confirm&&!lastHandoff)throw new Error("交接信息已变化，请先刷新预览。");
+      const token=answerRunId;
+      const data = await postJSON("/api/copilot/handoff", {...p, answer: $("#operatorNote").textContent, confirm,
+        handoff_sha256:confirm?lastHandoff.handoff_sha256:undefined,context_sha256:confirm?lastHandoff.context_sha256:undefined});
+      if(token!==answerRunId)return;
       const packet = data.packet || lastHandoff;
       if(packet) updateHandoffPanel(packet);
+      if(packet?.xiaoyi_summary){$("#operatorNote").textContent=packet.xiaoyi_summary;$("#answerStamp").textContent="交接快照 · 本地证据摘要";}
+      if(packet){
+        lastAudit={kind:"shift_handoff_snapshot",packet,persisted:data.persisted,production_action_executed:false};
+        $("#auditBox").textContent=JSON.stringify(lastAudit,null,2);$("#copyAudit").disabled=false;
+        $("#invokeProof").textContent="交接快照 · 未新增小懿调用";$("#llmMetric").textContent="本地交接证据";
+      }
       $("#handoffMeta").textContent = data.persisted
         ? `已留痕 · ${data.handoff_sha256} · 无生产动作`
         : `预览已刷新 · ${(packet||{}).handoff_sha256 || "—"} · 尚未留痕`;
+      if(packet&&!handoffCanConfirm())$("#handoffMeta").textContent+="\n值班员或班次已变化，请刷新预览后确认。";
     }
     $("#previewHandoff").addEventListener("click", () => persistHandoff(false).catch(e => $("#handoffMeta").textContent = String(e)));
-    $("#confirmHandoff").addEventListener("click", async () => {
-      if(!window.confirm("确认将当前交接包写入本地审计留痕？该动作不会执行生产指令。")) return;
-      try{ await persistHandoff(true); }catch(e){ $("#handoffMeta").textContent = String(e); }
-    });
+    function handoffConfirmationKey(){
+      return JSON.stringify({answerRunId,contextRunId,port:$("#port").value,asset:$("#asset").value,
+        mission:$("#mission").value,operator:$("#operator").value.trim(),shift:$("#shift").value.trim(),
+        context_sha256:lastHandoff?.context_sha256,handoff_sha256:lastHandoff?.handoff_sha256,
+        current_context_sha256:currentContext?.context_sha256});
+    }
+    function openHandoffConfirmation(){
+      if(!handoffCanConfirm()){$("#handoffMeta").textContent="交接预览已失效，请刷新后确认。";return;}
+      handoffConfirmation = {key:handoffConfirmationKey()};
+      $("#handoffConfirmDetails").textContent = `值班员：${lastHandoff.operator}\n班次：${lastHandoff.shift}\n上下文 SHA：${lastHandoff.context_sha256}\n交接包 SHA：${lastHandoff.handoff_sha256}\n边界：本地审计留痕，生产动作=false`;
+      $("#approveHandoffConfirm").disabled=false;
+      $("#handoffConfirmDialog").showModal();
+      $("#cancelHandoffConfirm").focus();
+    }
+    function cancelHandoffConfirmation(){
+      handoffConfirmation=null;
+      $("#handoffConfirmDialog").close();
+      $("#handoffMeta").textContent="已取消确认；未新增本地留痕。";
+      $("#confirmHandoff").focus();
+    }
+    async function approveHandoffConfirmation(){
+      const snapshot=handoffConfirmation;
+      handoffConfirmation=null;
+      $("#handoffConfirmDialog").close();
+      if(!snapshot || !handoffCanConfirm() || snapshot.key!==handoffConfirmationKey()){
+        $("#handoffMeta").textContent="确认期间上下文或交接参数已变化，本次未留痕；请刷新预览。";return;
+      }
+      $("#confirmHandoff").disabled=true;$("#approveHandoffConfirm").disabled=true;
+      try{ await persistHandoff(true); }catch(e){ $("#handoffMeta").textContent=String(e); }
+      finally{$("#confirmHandoff").disabled=!handoffCanConfirm();$("#confirmHandoff").focus();}
+    }
+    function bindHandoffConfirmation(){
+      $("#confirmHandoff").addEventListener("click", openHandoffConfirmation);
+      $("#cancelHandoffConfirm").addEventListener("click", cancelHandoffConfirmation);
+      $("#approveHandoffConfirm").addEventListener("click", approveHandoffConfirmation);
+      $("#handoffConfirmDialog").addEventListener("cancel", event=>{event.preventDefault();cancelHandoffConfirmation();});
+    }
+    bindHandoffConfirmation();
     $("#copyAudit").addEventListener("click", async () => {
       if(!lastAudit) return;
-      try{ await navigator.clipboard.writeText(JSON.stringify(lastAudit, null, 2)); $("#copyAudit").textContent = "已复制"; setTimeout(()=>$("#copyAudit").textContent="复制审计包", 1200); }catch(e){}
+      try{ await navigator.clipboard.writeText(JSON.stringify(lastAudit, null, 2)); $("#copyAudit").textContent = "已复制"; }
+      catch(e){$("#copyAudit").textContent="复制失败，请手动复制下方内容";}
+      setTimeout(()=>$("#copyAudit").textContent="复制审计包", 2400);
     });
+    ["port","asset"].forEach(id=>$("#"+id).addEventListener("change",()=>{invalidateAnswer("上下文参数已修改，请重新生成答案。");refreshContext();}));
+    $("#mode").addEventListener("change",selectOutputMode);
+    ["query","scope","severity","engine","topK"].forEach(id=>$("#"+id).addEventListener(id==="query"?"input":"change",()=>invalidateAnswer("问题或参数已修改，请重新生成答案。")));
+    ["operator","shift"].forEach(id=>$("#"+id).addEventListener("input",()=>{
+      if(!lastHandoff)return;lastHandoff=null;$("#confirmHandoff").disabled=true;
+      $("#handoffMeta").textContent="值班员或班次已修改，请刷新预览后确认。";
+    }));
     init();
   </script>
 </body>

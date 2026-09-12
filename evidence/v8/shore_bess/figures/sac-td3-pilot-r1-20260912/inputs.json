@@ -1,0 +1,8 @@
+{
+  "reports": [
+    "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/report.json",
+    "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12/report.json"
+  ],
+  "point_source": "persisted per-seed curve.json",
+  "interpolation": false
+}

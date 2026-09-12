@@ -1,0 +1,2302 @@
+{
+  "status": "FAIL",
+  "checkpoint_path": "evidence/v8/shore_bess/runs/shore-bess-v8-td3-pilot-20260912-seed912-c12-demandphi-nstep24-r3/seed_912/step_20000.zip",
+  "checkpoint_sha256": "1d6655e62bdd26f8a2f878f806fda3eae250ff16a053bd79a3a2c7658d71ffad",
+  "checkpoint_steps": 20000,
+  "windows": [
+    0,
+    336,
+    672,
+    1176,
+    1512,
+    2016
+  ],
+  "compared_environment_steps": 1008,
+  "comparison": "exact equality of float32 observation/neural action and every step reward, numeric mapping, execution, ledger and flags; mapping version label is separately recorded",
+  "mapping_version_labels": {
+    "main": "physical_feasible_interval_float64_bidirectional_braking_v2",
+    "candidate": "physical_feasible_interval_zero_preserving_v1"
+  },
+  "mismatch_count": 372,
+  "mismatches": [
+    {
+      "start": 0,
+      "step": 95,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 0,
+      "step": 95,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 96,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 97,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 98,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 99,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 100,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 101,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 102,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 103,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 104,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 105,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 106,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 107,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 108,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 109,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 110,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 111,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 112,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 113,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 114,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 115,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 116,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 117,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 118,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 119,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 120,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 121,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 122,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 123,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 124,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 125,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 126,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 127,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 128,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 129,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 130,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 131,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 132,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 133,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 134,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 135,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 136,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 137,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 138,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 139,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 140,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 141,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 142,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 143,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 144,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 145,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 146,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 147,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 148,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 149,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 150,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 151,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 152,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 153,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 154,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 155,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 156,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 157,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 158,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 159,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 160,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 161,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 162,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 163,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 164,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 165,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 166,
+      "kind": "ledger"
+    },
+    {
+      "start": 0,
+      "step": 167,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 23,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 672,
+      "step": 23,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 24,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 25,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 26,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 27,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 28,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 29,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 30,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 31,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 32,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 33,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 34,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 35,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 36,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 37,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 38,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 39,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 40,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 41,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 42,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 43,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 44,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 45,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 46,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 47,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 48,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 49,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 50,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 51,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 52,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 53,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 54,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 55,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 56,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 57,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 58,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 59,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 60,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 61,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 62,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 63,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 64,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 65,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 66,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 67,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 68,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 69,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 70,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 71,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 72,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 73,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 74,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 75,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 76,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 77,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 78,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 79,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 80,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 81,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 82,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 83,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 84,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 85,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 86,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 87,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 88,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 89,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 90,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 91,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 92,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 93,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 94,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 95,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 96,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 97,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 98,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 99,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 100,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 101,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 102,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 103,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 104,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 105,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 106,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 107,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 108,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 109,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 110,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 111,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 112,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 113,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 114,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 115,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 116,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 117,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 118,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 119,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 672,
+      "step": 119,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 120,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 121,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 122,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 123,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 124,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 125,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 126,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 127,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 128,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 129,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 130,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 131,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 132,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 133,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 134,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 135,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 136,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 137,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 672,
+      "step": 137,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 138,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 139,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 140,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 141,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 142,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 143,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 144,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 145,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 146,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 147,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 148,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 149,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 150,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 151,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 152,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 153,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 154,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 155,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 156,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 157,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 158,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 159,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 160,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 161,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 162,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 163,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 164,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 165,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 166,
+      "kind": "ledger"
+    },
+    {
+      "start": 672,
+      "step": 167,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 23,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 1512,
+      "step": 23,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 24,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 25,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 26,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 27,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 28,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 29,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 30,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 31,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 32,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 33,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 34,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 35,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 36,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 37,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 38,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 39,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 40,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 41,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 42,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 43,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 44,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 45,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 46,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 47,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 48,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 49,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 50,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 51,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 52,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 53,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 54,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 55,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 56,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 57,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 58,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 59,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 60,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 61,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 62,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 63,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 64,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 65,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 66,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 67,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 68,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 69,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 70,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 71,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 1512,
+      "step": 71,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 72,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 73,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 74,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 75,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 76,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 77,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 78,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 79,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 80,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 81,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 82,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 83,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 84,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 85,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 86,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 87,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 88,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 89,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 90,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 91,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 92,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 93,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 94,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 95,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 1512,
+      "step": 95,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 96,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 97,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 98,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 99,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 100,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 101,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 102,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 103,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 104,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 105,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 106,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 107,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 108,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 109,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 110,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 111,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 112,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 113,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 114,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 115,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 116,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 117,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 118,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 119,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 1512,
+      "step": 119,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 120,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 121,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 122,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 123,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 124,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 125,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 126,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 127,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 128,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 129,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 130,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 131,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 132,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 133,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 134,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 135,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 136,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 137,
+      "kind": "mapping_values"
+    },
+    {
+      "start": 1512,
+      "step": 137,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 138,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 139,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 140,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 141,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 142,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 143,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 144,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 145,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 146,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 147,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 148,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 149,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 150,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 151,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 152,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 153,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 154,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 155,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 156,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 157,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 158,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 159,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 160,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 161,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 162,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 163,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 164,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 165,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 166,
+      "kind": "ledger"
+    },
+    {
+      "start": 1512,
+      "step": 167,
+      "kind": "ledger"
+    }
+  ],
+  "per_window": [
+    {
+      "start_index": 0,
+      "first_timestamp": "2025-05-01T00:00:00Z",
+      "last_timestamp": "2025-05-07T23:00:00Z",
+      "main_metrics": {
+        "reward": -0.6570121781710628,
+        "energy_cost_cny": 2730477.836744414,
+        "carbon_kg": 2159083.6444897307,
+        "degradation_cost_cny": 1736.0265233144437,
+        "bess_throughput_kwh": 21700.331541430452,
+        "aux_shift_kwh": 19003.315052461272,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 1.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 134.0,
+        "peak_kw": 25264.809593237595,
+        "soc_min_observed": 0.5399438371764717,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 27.17109452733091,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -45.34197887578448,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 220794.72203042955,
+        "total_cost_cny": 2953008.585298158,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.005952380952380952,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7976190476190477,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 4449.503189909541,
+        "carbon_delta_kg": 384.90771543727715
+      },
+      "candidate_metrics": {
+        "reward": -0.6731926648372571,
+        "energy_cost_cny": 2730477.836744414,
+        "carbon_kg": 2159083.6444897307,
+        "degradation_cost_cny": 1736.0265233144437,
+        "bess_throughput_kwh": 21700.331541430452,
+        "aux_shift_kwh": 19003.315052461272,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 2.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 134.0,
+        "peak_kw": 25264.809593237595,
+        "soc_min_observed": 0.5399438371764717,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 27.17109452733091,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -45.34197887578448,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 220794.72203042955,
+        "total_cost_cny": 2953008.585298158,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.011904761904761904,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7976190476190477,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 4449.503189909541,
+        "carbon_delta_kg": 384.90771543727715
+      }
+    },
+    {
+      "start_index": 336,
+      "first_timestamp": "2025-05-15T00:00:00Z",
+      "last_timestamp": "2025-05-21T23:00:00Z",
+      "main_metrics": {
+        "reward": -0.5976391352390018,
+        "energy_cost_cny": 2756622.662430274,
+        "carbon_kg": 2179201.3218841525,
+        "degradation_cost_cny": 1739.569238743477,
+        "bess_throughput_kwh": 21744.615484293365,
+        "aux_shift_kwh": 18145.151053222366,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 1.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 133.0,
+        "peak_kw": 25653.91991544191,
+        "soc_min_observed": 0.5395013664734283,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 28.99415552736712,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -45.16551297945121,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 224195.24262858473,
+        "total_cost_cny": 2982557.4742976017,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.005952380952380952,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7916666666666666,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 4205.8571685400375,
+        "carbon_delta_kg": 402.270452279181
+      },
+      "candidate_metrics": {
+        "reward": -0.5976391352390018,
+        "energy_cost_cny": 2756622.662430274,
+        "carbon_kg": 2179201.3218841525,
+        "degradation_cost_cny": 1739.569238743477,
+        "bess_throughput_kwh": 21744.615484293365,
+        "aux_shift_kwh": 18145.151053222366,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 1.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 133.0,
+        "peak_kw": 25653.91991544191,
+        "soc_min_observed": 0.5395013664734283,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 28.99415552736712,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -45.16551297945121,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 224195.24262858473,
+        "total_cost_cny": 2982557.4742976017,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.005952380952380952,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7916666666666666,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 4205.8571685400375,
+        "carbon_delta_kg": 402.270452279181
+      }
+    },
+    {
+      "start_index": 672,
+      "first_timestamp": "2025-05-29T00:00:00Z",
+      "last_timestamp": "2025-06-04T23:00:00Z",
+      "main_metrics": {
+        "reward": -0.5259625663503996,
+        "energy_cost_cny": 2779355.224628683,
+        "carbon_kg": 2197835.900487584,
+        "degradation_cost_cny": 1733.6893360829272,
+        "bess_throughput_kwh": 21671.11670103649,
+        "aux_shift_kwh": 17742.100075370145,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 0.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 134.0,
+        "peak_kw": 26159.16928522504,
+        "soc_min_observed": 0.5402357423261198,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 28.343266904383153,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -43.16950948387998,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 228610.72788073463,
+        "total_cost_cny": 3009699.6418455006,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.0,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7976190476190477,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 3587.5948702471565,
+        "carbon_delta_kg": 420.5255855440664
+      },
+      "candidate_metrics": {
+        "reward": -0.5560084961143016,
+        "energy_cost_cny": 2779355.224628683,
+        "carbon_kg": 2197835.900487584,
+        "degradation_cost_cny": 1733.6893360829272,
+        "bess_throughput_kwh": 21671.11670103649,
+        "aux_shift_kwh": 17742.100075370145,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 3.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 134.0,
+        "peak_kw": 26159.16928522504,
+        "soc_min_observed": 0.5402357423261198,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 28.343266904383153,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -43.16950948387998,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 228610.72788073463,
+        "total_cost_cny": 3009699.6418455006,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.017857142857142856,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7976190476190477,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 3587.5948702471565,
+        "carbon_delta_kg": 420.5255855440664
+      }
+    },
+    {
+      "start_index": 1176,
+      "first_timestamp": "2025-06-19T00:00:00Z",
+      "last_timestamp": "2025-06-25T23:00:00Z",
+      "main_metrics": {
+        "reward": -0.48873803305148555,
+        "energy_cost_cny": 2815774.758036752,
+        "carbon_kg": 2226425.8816955546,
+        "degradation_cost_cny": 1725.621929339123,
+        "bess_throughput_kwh": 21570.274116738932,
+        "aux_shift_kwh": 17671.29362593943,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 0.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 132.0,
+        "peak_kw": 25970.31859695386,
+        "soc_min_observed": 0.5412433285139389,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 32.526505242815794,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -42.50383932501644,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 226960.32022307112,
+        "total_cost_cny": 3044460.7001891625,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.0,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7857142857142857,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 3371.462354252316,
+        "carbon_delta_kg": 427.4421258959119
+      },
+      "candidate_metrics": {
+        "reward": -0.48873803305148555,
+        "energy_cost_cny": 2815774.758036752,
+        "carbon_kg": 2226425.8816955546,
+        "degradation_cost_cny": 1725.621929339123,
+        "bess_throughput_kwh": 21570.274116738932,
+        "aux_shift_kwh": 17671.29362593943,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 0.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 132.0,
+        "peak_kw": 25970.31859695386,
+        "soc_min_observed": 0.5412433285139389,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 32.526505242815794,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -42.50383932501644,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 226960.32022307112,
+        "total_cost_cny": 3044460.7001891625,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.0,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7857142857142857,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 3371.462354252316,
+        "carbon_delta_kg": 427.4421258959119
+      }
+    },
+    {
+      "start_index": 1512,
+      "first_timestamp": "2025-07-03T00:00:00Z",
+      "last_timestamp": "2025-07-09T23:00:00Z",
+      "main_metrics": {
+        "reward": -0.609413835825635,
+        "energy_cost_cny": 2790518.767742962,
+        "carbon_kg": 2207976.227088929,
+        "degradation_cost_cny": 1716.2662045439454,
+        "bess_throughput_kwh": 21453.327556799228,
+        "aux_shift_kwh": 19376.53674383511,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 0.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 133.0,
+        "peak_kw": 25568.7763964259,
+        "soc_min_observed": 0.5424118203701225,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 32.88093707860635,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -42.79208046725694,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 223451.15470880622,
+        "total_cost_cny": 3015686.1886563124,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.0,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7916666666666666,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 3931.088201121934,
+        "carbon_delta_kg": 385.61065769411834
+      },
+      "candidate_metrics": {
+        "reward": -0.670721196517411,
+        "energy_cost_cny": 2790518.767742962,
+        "carbon_kg": 2207976.227088929,
+        "degradation_cost_cny": 1716.2662045439454,
+        "bess_throughput_kwh": 21453.327556799228,
+        "aux_shift_kwh": 19376.53674383511,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 5.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 133.0,
+        "peak_kw": 25568.7763964259,
+        "soc_min_observed": 0.5424118203701225,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 32.88093707860635,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -42.79208046725694,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 223451.15470880622,
+        "total_cost_cny": 3015686.1886563124,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.02976190476190476,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7916666666666666,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 3931.088201121934,
+        "carbon_delta_kg": 385.61065769411834
+      }
+    },
+    {
+      "start_index": 2016,
+      "first_timestamp": "2025-07-24T00:00:00Z",
+      "last_timestamp": "2025-07-30T23:00:00Z",
+      "main_metrics": {
+        "reward": -0.6054365241836753,
+        "energy_cost_cny": 2763241.3291613297,
+        "carbon_kg": 2187036.243290601,
+        "degradation_cost_cny": 1714.2405279823934,
+        "bess_throughput_kwh": 21428.006599779823,
+        "aux_shift_kwh": 19338.656383805937,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 1.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 132.0,
+        "peak_kw": 25673.346702612595,
+        "soc_min_observed": 0.5426648191080349,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 33.014773553804915,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -44.613900095167224,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 224365.0175899778,
+        "total_cost_cny": 2989320.58727929,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.005952380952380952,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7857142857142857,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 4274.764085907181,
+        "carbon_delta_kg": 387.33466109385336
+      },
+      "candidate_metrics": {
+        "reward": -0.6054365241836753,
+        "energy_cost_cny": 2763241.3291613297,
+        "carbon_kg": 2187036.243290601,
+        "degradation_cost_cny": 1714.2405279823934,
+        "bess_throughput_kwh": 21428.006599779823,
+        "aux_shift_kwh": 19338.656383805937,
+        "reserve_shortfall_kwh": 0.0,
+        "shore_sla_violation_kwh": 0.0,
+        "guardrail_violations": 0.0,
+        "projection_count": 1.0,
+        "nonzero_bess_actions": 168.0,
+        "nonzero_flex_actions": 132.0,
+        "peak_kw": 25673.346702612595,
+        "soc_min_observed": 0.5426648191080349,
+        "soc_max_observed": 0.7567664670658683,
+        "temperature_max_c": 33.014773553804915,
+        "flex_deadline_violation_kwh": 0.0,
+        "physical_power_violations": 0.0,
+        "training_reward": -44.613900095167224,
+        "max_flex_age_hours": 12,
+        "demand_charge_cny": 224365.0175899778,
+        "total_cost_cny": 2989320.58727929,
+        "guardrail_violation_rate": 0.0,
+        "projection_rate": 0.005952380952380952,
+        "nonzero_bess_action_rate": 1.0,
+        "nonzero_flex_action_rate": 0.7857142857142857,
+        "terminal_soc_error": 0.0,
+        "terminal_flex_backlog_kwh": 0.0,
+        "financial_delta_cny": 4274.764085907181,
+        "carbon_delta_kg": 387.33466109385336
+      }
+    }
+  ],
+  "main_environment_sha256_at_start": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+  "main_environment_sha256_at_end": "38e2fa6f8a1f3fad8decae610a7530c9caf2f7e804295d2f9358e8563e7f2017",
+  "source_unchanged": true
+}

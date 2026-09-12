@@ -24,12 +24,17 @@ jobs:
         run: python -m pip_audit --local
       - name: Compile Python
         run: python -m compileall -q app scripts tests
+      - name: Require Node for JavaScript UI contracts
+        run: node --version
       - name: Unit tests
         run: python -m unittest discover -s tests -v
       - name: Verify fixed business KPI evidence
         run: |
           python -m scripts.business_kpi_benchmark --verify
           python -m scripts.release_check
+          python scripts/public_privacy_scan.py
+          python scripts/export_public_shore_bess_v8.py --verify
+          python scripts/export_public_legacy_models.py --verify
       - name: Five-controller smoke test
         run: python -m scripts.rl_smoke_test --steps 64
 
@@ -56,6 +61,7 @@ jobs:
           python -m json.tool /tmp/port-dt-overview.json >/dev/null
           curl --fail --silent --output /tmp/port-dt-runtime.json http://127.0.0.1:8000/api/v3/runtime/status
           python -m json.tool /tmp/port-dt-runtime.json >/dev/null
+          python -c "import json; p=json.load(open('/tmp/port-dt-runtime.json')); assert p.get('available') is True, p.get('model_error')"
           curl --fail --silent --output /tmp/port-dt-hvac.json http://127.0.0.1:8000/api/v3/modules/hvac/evidence
           python -m json.tool /tmp/port-dt-hvac.json >/dev/null
           test "$(docker inspect --format '{{.Config.User}}' port-dt-multi-ci)" = "portdt"

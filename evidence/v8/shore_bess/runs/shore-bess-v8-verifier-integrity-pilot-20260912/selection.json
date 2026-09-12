@@ -1,0 +1,11 @@
+{
+  "selected_seed": 991212,
+  "model_path": "evidence/v8/shore_bess/runs/shore-bess-v8-verifier-integrity-pilot-20260912/seed_991212/selected_model.zip",
+  "model_sha256": "83c3f23e829437482bf40149989d35b5a806bb41399dcad001ceb62a64419fdd",
+  "selection_access_to_test": false,
+  "selection_access_to_forward": false,
+  "frozen_at": "2026-09-12T02:11:54.262046Z",
+  "per_seed_model_sha256": {
+    "991212": "83c3f23e829437482bf40149989d35b5a806bb41399dcad001ceb62a64419fdd"
+  }
+}

@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+from copy import deepcopy
+import hashlib
+from threading import Lock
 import os
 from pathlib import Path
 from typing import Any
@@ -11,6 +14,7 @@ from fastapi.responses import JSONResponse
 from app.services.business_benchmark import (
     load_verified_report as load_business_benchmark,
 )
+from app.services.mobile_api import benchmark as workflow_benchmark
 from app.services.mobile_api.benchmark import (
     load_verified_report as load_workflow_benchmark,
 )
@@ -33,10 +37,51 @@ STORE = MobileWorkflowStore(RUNTIME_ROOT)
 router = APIRouter(prefix="/api/mobile", tags=["shared-web-mobile-contract"])
 
 
+_workflow_lock = Lock()
+_workflow_cache: tuple[bytes, dict[str, Any]] | None = None
+
+
+def _workflow_fingerprint() -> bytes:
+    # Hash contents on every access: edits/deletions invalidate verified evidence,
+    # even if file size or timestamps are preserved.
+    paths = (
+        workflow_benchmark.DEFAULT_REPORT,
+        workflow_benchmark.DEFAULT_CONFIG,
+        Path(workflow_benchmark.__file__),
+        Path(__file__).with_name("workflow.py"),
+    )
+    digest = hashlib.sha256()
+    for path in paths:
+        digest.update(hashlib.sha256(path.read_bytes()).digest())
+    return digest.digest()
+
+
+def _verified_workflow() -> dict[str, Any]:
+    global _workflow_cache
+    with _workflow_lock:
+        fingerprint = _workflow_fingerprint()
+        if _workflow_cache is None or _workflow_cache[0] != fingerprint:
+            report = load_workflow_benchmark()
+            if fingerprint != _workflow_fingerprint():
+                raise ValueError("mobile workflow evidence changed during validation")
+            _workflow_cache = (fingerprint, report)
+        return deepcopy(_workflow_cache[1])
+
+
+def _business_report() -> dict[str, Any]:
+    try:
+        return load_business_benchmark()
+    except (OSError, ValueError) as exc:
+        raise HTTPException(
+            status_code=409,
+            detail=f"shared Web/mobile evidence is unavailable: {exc}",
+        ) from exc
+
+
 def _reports() -> tuple[dict[str, Any], dict[str, Any]]:
     try:
-        return load_business_benchmark(), load_workflow_benchmark()
-    except (FileNotFoundError, ValueError) as exc:
+        return _business_report(), _verified_workflow()
+    except (OSError, ValueError) as exc:
         raise HTTPException(
             status_code=409,
             detail=f"shared Web/mobile evidence is unavailable: {exc}",
@@ -233,7 +278,7 @@ def _system_alerts() -> list[dict[str, Any]]:
 
 
 @router.get("/status")
-async def mobile_status() -> JSONResponse:
+def mobile_status() -> JSONResponse:
     business, workflow = _reports()
     return JSONResponse(
         {
@@ -281,8 +326,8 @@ async def mobile_status() -> JSONResponse:
 
 
 @router.get("/situation")
-async def mobile_situation() -> JSONResponse:
-    business, _workflow = _reports()
+def mobile_situation() -> JSONResponse:
+    business = _business_report()
     daily = business["test"]["daily_paired_metrics"]
     trend = [
         round(
@@ -333,7 +378,7 @@ async def mobile_situation() -> JSONResponse:
 
 
 @router.get("/alerts")
-async def mobile_alerts() -> JSONResponse:
+def mobile_alerts() -> JSONResponse:
     items = _system_alerts()
     return JSONResponse(
         {
@@ -368,8 +413,8 @@ async def mobile_alerts_websocket(websocket: WebSocket) -> None:
 
 
 @router.get("/strategy/candidates")
-async def mobile_strategy_candidates() -> JSONResponse:
-    business, _workflow = _reports()
+def mobile_strategy_candidates() -> JSONResponse:
+    business = _business_report()
     items = [_business_candidate(business), *_registered_model_candidates()]
     return JSONResponse(
         {
@@ -383,7 +428,7 @@ async def mobile_strategy_candidates() -> JSONResponse:
 
 
 @router.post("/strategy/decisions")
-async def mobile_strategy_decision(
+def mobile_strategy_decision(
     payload: dict[str, Any] = Body(...),
     idempotency_key: str | None = Header(
         default=None,
@@ -409,7 +454,7 @@ async def mobile_strategy_decision(
 
 
 @router.get("/strategy/decisions/{request_id}")
-async def mobile_strategy_receipt(request_id: str) -> JSONResponse:
+def mobile_strategy_receipt(request_id: str) -> JSONResponse:
     try:
         return JSONResponse(STORE.get_receipt(request_id))
     except KeyError as exc:
@@ -420,14 +465,14 @@ async def mobile_strategy_receipt(request_id: str) -> JSONResponse:
 
 
 @router.post("/strategy/replan")
-async def mobile_replan_review(
+def mobile_replan_review(
     payload: dict[str, Any] = Body(...),
     idempotency_key: str | None = Header(
         default=None,
         alias="Idempotency-Key",
     ),
 ) -> JSONResponse:
-    business, _workflow = _reports()
+    business = _business_report()
     key = idempotency_key or (
         "mobile-replan-"
         + str(payload.get("source_alert_id") or "manual")
@@ -460,7 +505,7 @@ async def mobile_replan_review(
 
 
 @router.post("/audit/events")
-async def mobile_audit_event(
+def mobile_audit_event(
     payload: dict[str, Any] = Body(...),
 ) -> JSONResponse:
     try:
@@ -480,12 +525,12 @@ async def mobile_audit_event(
 
 
 @router.get("/audit/verify")
-async def mobile_audit_verify() -> JSONResponse:
+def mobile_audit_verify() -> JSONResponse:
     return JSONResponse(STORE.verify())
 
 
 @router.get("/business-benchmark")
-async def mobile_business_benchmark() -> JSONResponse:
+def mobile_business_benchmark() -> JSONResponse:
     business, workflow = _reports()
     return JSONResponse(
         {

@@ -1,0 +1,871 @@
+{
+  "schema": "shore-bess-v8-demand-credit-diagnostic.v1",
+  "created_at": "2026-09-12T02:25:02.224899+00:00",
+  "status": "TRAIN_ONLY_DIAGNOSTIC",
+  "dataset_id": "public_cn_sha_hourly_v3",
+  "dataset_sha256": "803214ea0202abde241f75a28d7bf46b9c7ad801d40605a0916ec14ef7906a01",
+  "train_only": true,
+  "validation_replayed": false,
+  "test_replayed": false,
+  "forward_dataset_loaded": false,
+  "training_performed": false,
+  "models_changed": false,
+  "episode_hours": 168,
+  "window_sample_rng_seed": 19012,
+  "window_independence_boundary": "Random training probes may overlap. Variance diagnostic only; no confidence intervals or business admission from these windows.",
+  "proposal": {
+    "gamma": 1.0,
+    "potential": "((policy_peak-baseline_peak)-(max(policy_peak,train_soft_cap)-max(baseline_peak,train_soft_cap)))*demand_rate/reward_scale",
+    "reset_potential": 0.0,
+    "terminal_potential": 0.0,
+    "nonterminal_demand_reward": "-Delta(max(policy_peak,H)-max(baseline_peak,H))*demand_rate/reward_scale",
+    "business_accounting_changed": false,
+    "physical_actions_changed": false
+  },
+  "algorithms": [
+    {
+      "algorithm": "sac",
+      "checkpoint_step": 40000,
+      "checkpoint_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/seed_912/step_40000.zip",
+      "checkpoint_sha256": "7c46a4af88195ba02a7dac50f70a25c9e9c6c6ce0c77f9ae691ba83e46ffb476",
+      "checkpoint_optimizer": {
+        "train/learning_rate": 0.0003,
+        "train/n_updates": 38000.0,
+        "train/ent_coef": 0.0010000000474974513,
+        "train/actor_loss": 17.176185607910156,
+        "train/critic_loss": 0.36028003692626953
+      },
+      "original_manifest_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/manifest.json",
+      "original_manifest_sha256": "eb86eef6083553b21951dc2bb0c8f19026b5bbb0972047c9d99f0e25e2237138",
+      "config_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/config.json",
+      "config_sha256": "d4f877de446d3ad4ff754537f578a1b3c4ab6fcb57c9cf7e2d8181c53602b1b5",
+      "frozen_environment_path": "evidence/v8/shore_bess/runs/shore-bess-v8-sac-pilot-20260912-seed912-c12/source/app/services/rl_model/shore_bess/v8_environment.py",
+      "frozen_environment_sha256": "00148cc7b1c3b437b2e5e8177b13e0f773ade25cbff53d714f8d0272dac104b7",
+      "train_slice": {
+        "start_row": 0,
+        "stop_row_exclusive": 11664,
+        "rows": 11664,
+        "first_timestamp": "2024-01-01T00:00:00Z",
+        "last_timestamp": "2025-04-30T23:00:00Z"
+      },
+      "train_window_starts": [
+        9038,
+        2624,
+        4757,
+        1522,
+        4255,
+        1317,
+        1358,
+        9109,
+        11085,
+        6454,
+        4233,
+        6647
+      ],
+      "summary": {
+        "original_reward": {
+          "n": 2016,
+          "mean": -0.18807402810712884,
+          "std": 4.520222507640671,
+          "p99_abs": 18.44533781464268,
+          "max_abs": 89.75901494036191,
+          "sum_squares": 41263.051250997596
+        },
+        "demand_potential_reward": {
+          "n": 2016,
+          "mean": -0.18807402810712884,
+          "std": 1.5260773901732814,
+          "p99_abs": 5.5449940722345765,
+          "max_abs": 29.131977245670175,
+          "sum_squares": 4766.396626346614
+        },
+        "original_demand_component": {
+          "n": 2016,
+          "mean": -0.006350040355572355,
+          "std": 4.541505196991492,
+          "p99_abs": 18.715707227648082,
+          "max_abs": 89.9908847534681,
+          "sum_squares": 41580.62451106352
+        },
+        "shaped_demand_component": {
+          "n": 2016,
+          "mean": -0.006350040355572355,
+          "std": 1.5340116781560809,
+          "p99_abs": 5.616226366985321,
+          "max_abs": 30.465456455395206,
+          "sum_squares": 4744.116017891213
+        },
+        "reward_variance_reduction_percent": 88.60187306485986,
+        "maximum_episode_return_difference": 1.0658141036401503e-14,
+        "first_step_original_reward": {
+          "n": 12,
+          "mean": 31.28912536475565,
+          "std": 33.089527792456856,
+          "p99_abs": 89.2057734821567,
+          "max_abs": 89.75901494036191,
+          "sum_squares": 24887.114587430046
+        },
+        "first_step_shaped_reward": {
+          "n": 12,
+          "mean": 2.786480796139806,
+          "std": 8.3243121785922,
+          "p99_abs": 26.561137096077744,
+          "max_abs": 29.131977245670175,
+          "sum_squares": 924.7037816869721
+        },
+        "mean_cost_delta_cny": 1077.2307785243318,
+        "mean_carbon_delta_kg": 436.8380471562664,
+        "mean_accounting": {
+          "bess_energy_cost_delta_cny": 486.39171228351796,
+          "flex_energy_cost_delta_cny": -973.2580185360106,
+          "bess_carbon_delta_kg": 358.7550411316415,
+          "flex_carbon_delta_kg": 78.08300602460965,
+          "charge_kwh": 8786.530255005346,
+          "discharge_kwh": 8097.666355364102,
+          "flex_deferred_kwh": 2798.0866361428193
+        },
+        "critic_vs_deterministic_mc": {
+          "mean_q": -17.29914016727846,
+          "mean_mc": -11.937069356347662,
+          "mean_bias": -5.362070810930797,
+          "rmse": 6.4339158175117
+        }
+      },
+      "per_window": [
+        {
+          "start_index": 9038,
+          "first_timestamp": "2025-01-11T14:00:00Z",
+          "last_timestamp": "2025-01-18T13:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.1896967294549826,
+            "std": 0.710856744090257,
+            "p99_abs": 3.5006358969824958,
+            "max_abs": 5.760703158466127,
+            "sum_squares": 90.93876284379903
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.1896967294549826,
+            "std": 0.710856744090257,
+            "p99_abs": 3.5006358969824958,
+            "max_abs": 5.760703158466127,
+            "sum_squares": 90.93876284379903
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": -0.014601187100971823,
+            "std": 0.6434940656664708,
+            "p99_abs": 3.427442456326128,
+            "max_abs": 5.95151779991428,
+            "sum_squares": 69.60203161173726
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": -0.014601187100971823,
+            "std": 0.6434940656664708,
+            "p99_abs": 3.427442456326128,
+            "max_abs": 5.95151779991428,
+            "sum_squares": 69.60203161173726
+          },
+          "first_step_original_reward": 5.760703158466127,
+          "first_step_shaped_reward": 5.760703158466127,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": 2556.0331631007202,
+          "carbon_delta_kg": 318.1480788822246,
+          "degradation_cost_cny": 1246.3461437821388,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 1509.2143148851274,
+            "flex_energy_cost_delta_cny": -690.1271821592547,
+            "bess_carbon_delta_kg": 259.18389350003883,
+            "flex_carbon_delta_kg": 58.96418538216054,
+            "charge_kwh": 8107.476428151131,
+            "discharge_kwh": 7471.850369125605,
+            "flex_deferred_kwh": 2389.1698439274164
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -15.894394181358317,
+            "mean_mc": -11.715169580455395,
+            "bias": -4.1792246009029235,
+            "rmse": 4.901770946443178
+          }
+        },
+        {
+          "start_index": 2624,
+          "first_timestamp": "2024-04-19T08:00:00Z",
+          "last_timestamp": "2024-04-26T07:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.18665975325398562,
+            "std": 2.2455060741785813,
+            "p99_abs": 9.614381068939496,
+            "max_abs": 23.826500953345327,
+            "sum_squares": 852.9594179665007
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.18665975325398562,
+            "std": 0.33465841103025196,
+            "p99_abs": 1.559043426295341,
+            "max_abs": 2.7250569078463998,
+            "sum_squares": 24.668803413766152
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": -0.014361473311169834,
+            "std": 2.362072530966137,
+            "p99_abs": 11.495975847022601,
+            "max_abs": 23.826500953345327,
+            "sum_squares": 937.3716061013536
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": -0.014361473311169846,
+            "std": 0.13371772426883338,
+            "p99_abs": 0.392446402651795,
+            "max_abs": 1.3455324347552824,
+            "sum_squares": 3.038562525482938
+          },
+          "first_step_original_reward": 0.025943341833731207,
+          "first_step_shaped_reward": -0.0009377768786303815,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": 1195.3066001059349,
+          "carbon_delta_kg": 423.0384257689984,
+          "degradation_cost_cny": 1311.8880315311253,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": -79.97199027520423,
+            "flex_energy_cost_delta_cny": -519.154944405365,
+            "bess_carbon_delta_kg": 390.2130110218938,
+            "flex_carbon_delta_kg": 32.825414747087535,
+            "charge_kwh": 8533.82613696158,
+            "discharge_kwh": 7864.774257177487,
+            "flex_deferred_kwh": 1128.992010907929
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -16.899428384068113,
+            "mean_mc": -11.496511019813411,
+            "bias": -5.402917364254702,
+            "rmse": 6.603484835674923
+          }
+        },
+        {
+          "start_index": 4757,
+          "first_timestamp": "2024-07-17T05:00:00Z",
+          "last_timestamp": "2024-07-24T04:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.19342766299424896,
+            "std": 4.834732360869406,
+            "p99_abs": 21.72476464010289,
+            "max_abs": 43.003673416226555,
+            "sum_squares": 3933.224612024279
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.19342766299424902,
+            "std": 3.197094657686891,
+            "p99_abs": 18.302887915773518,
+            "max_abs": 19.64727193891773,
+            "sum_squares": 1723.483189851608
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": 0.017310208267849306,
+            "std": 4.920479809103968,
+            "p99_abs": 21.11964402899144,
+            "max_abs": 45.13515766151632,
+            "sum_squares": 4067.5187607784974
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": 0.017310208267849285,
+            "std": 3.27949416369541,
+            "p99_abs": 17.624363202969885,
+            "max_abs": 19.61161126796714,
+            "sum_squares": 1806.9041109877853
+          },
+          "first_step_original_reward": 43.003673416226555,
+          "first_step_shaped_reward": -2.131484245289762,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": -430.97965132115405,
+          "carbon_delta_kg": 577.5124273273268,
+          "degradation_cost_cny": 1343.4892591834068,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 975.0534060074018,
+            "flex_energy_cost_delta_cny": -2167.899318712258,
+            "bess_carbon_delta_kg": 374.35731581164407,
+            "flex_carbon_delta_kg": 203.15511151566534,
+            "charge_kwh": 8739.39198628068,
+            "discharge_kwh": 8054.223753511906,
+            "flex_deferred_kwh": 6852.183685059502
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -21.894837211994897,
+            "mean_mc": -14.404227130989987,
+            "bias": -7.49061008100491,
+            "rmse": 8.311572644616527
+          }
+        },
+        {
+          "start_index": 1522,
+          "first_timestamp": "2024-03-04T10:00:00Z",
+          "last_timestamp": "2024-03-11T09:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.2045113621433662,
+            "std": 0.414490426557523,
+            "p99_abs": 1.9296326501017576,
+            "max_abs": 2.122931348115597,
+            "sum_squares": 35.88937144020017
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.20451136214336615,
+            "std": 0.4154149436382702,
+            "p99_abs": 1.9296326501017576,
+            "max_abs": 2.1514404064620263,
+            "sum_squares": 36.01827140414534
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": 0.013456454450834458,
+            "std": 0.1738957152626047,
+            "p99_abs": 0.0,
+            "max_abs": 2.260684347740189,
+            "sum_squares": 5.110693720117484
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": 0.013456454450834458,
+            "std": 0.1738957152626047,
+            "p99_abs": 0.0,
+            "max_abs": 2.260684347740189,
+            "sum_squares": 5.110693720117484
+          },
+          "first_step_original_reward": 0.0,
+          "first_step_shaped_reward": 0.0,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": 1234.3648130115398,
+          "carbon_delta_kg": 469.76807958379686,
+          "degradation_cost_cny": 1479.600714049302,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 350.19891681769815,
+            "flex_energy_cost_delta_cny": -143.29794830739294,
+            "bess_carbon_delta_kg": 455.58231386961717,
+            "flex_carbon_delta_kg": 14.185765714159439,
+            "charge_kwh": 9624.796515970957,
+            "discharge_kwh": 8870.212409645319,
+            "flex_deferred_kwh": 506.90432249396935
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -16.55577223938668,
+            "mean_mc": -12.318682504300867,
+            "bias": -4.2370897350858145,
+            "rmse": 5.044076961832827
+          }
+        },
+        {
+          "start_index": 4255,
+          "first_timestamp": "2024-06-26T07:00:00Z",
+          "last_timestamp": "2024-07-03T06:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.23405268617416386,
+            "std": 2.725484891779673,
+            "p99_abs": 16.285944048594562,
+            "max_abs": 18.47345731359485,
+            "sum_squares": 1257.1521572777328
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.23405268617416392,
+            "std": 2.296084412753762,
+            "p99_abs": 12.577779572037915,
+            "max_abs": 16.706945363639313,
+            "sum_squares": 894.8997607865499
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": -0.014601187100971802,
+            "std": 2.7807011265586583,
+            "p99_abs": 16.392846674498635,
+            "max_abs": 21.326341760780288,
+            "sum_squares": 1299.0620075847708
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": -0.014601187100971823,
+            "std": 2.407278310674201,
+            "p99_abs": 14.460353257370693,
+            "max_abs": 18.57442633470226,
+            "sum_squares": 973.5939460308088
+          },
+          "first_step_original_reward": 18.347470957348538,
+          "first_step_shaped_reward": -0.5014997770146827,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": 476.76793086855514,
+          "carbon_delta_kg": 615.616860381946,
+          "degradation_cost_cny": 1336.505219116807,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 302.8426162339383,
+            "flex_energy_cost_delta_cny": -1653.1797910748683,
+            "bess_carbon_delta_kg": 463.7521777484358,
+            "flex_carbon_delta_kg": 151.8646826334864,
+            "charge_kwh": 8693.960834294558,
+            "discharge_kwh": 8012.35440466553,
+            "flex_deferred_kwh": 5547.3609061558645
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -19.904216963620414,
+            "mean_mc": -15.14319877567821,
+            "bias": -4.761018187942201,
+            "rmse": 5.496652072075958
+          }
+        },
+        {
+          "start_index": 1317,
+          "first_timestamp": "2024-02-24T21:00:00Z",
+          "last_timestamp": "2024-03-02T20:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.17664299822136748,
+            "std": 7.357580297792412,
+            "p99_abs": 24.784831669815212,
+            "max_abs": 84.7295471384963,
+            "sum_squares": 9099.752018663661
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.17664299822136748,
+            "std": 0.43051661732902946,
+            "p99_abs": 2.416160990960564,
+            "max_abs": 3.9375723004122136,
+            "sum_squares": 36.379947511666764
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": -0.014601187100971908,
+            "std": 7.290598159927219,
+            "p99_abs": 22.829448985978743,
+            "max_abs": 84.94842458799388,
+            "sum_squares": 8929.70983366542
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": -0.014601187100971887,
+            "std": 0.18868892128187392,
+            "p99_abs": 1.6278065205599495e-07,
+            "max_abs": 2.4529994329632676,
+            "sum_squares": 6.017206218118166
+          },
+          "first_step_original_reward": 84.7295471384963,
+          "first_step_shaped_reward": -0.21887744949758314,
+          "full_return_difference": -1.0658141036401503e-14,
+          "cost_delta_cny": 2301.393191608372,
+          "carbon_delta_kg": 302.8176290524643,
+          "degradation_cost_cny": 1379.5922024548054,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 290.97541776798516,
+            "flex_energy_cost_delta_cny": 140.22568479285738,
+            "bess_carbon_delta_kg": 313.91147311959895,
+            "flex_carbon_delta_kg": -11.093844067147458,
+            "charge_kwh": 8974.241480231285,
+            "discharge_kwh": 8270.661050453782,
+            "flex_deferred_kwh": 631.2829723552959
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -16.024488943451573,
+            "mean_mc": -11.361092998665438,
+            "bias": -4.663395944786135,
+            "rmse": 5.519001520033763
+          }
+        },
+        {
+          "start_index": 1358,
+          "first_timestamp": "2024-02-26T14:00:00Z",
+          "last_timestamp": "2024-03-04T13:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.17576942136490642,
+            "std": 1.326520971853592,
+            "p99_abs": 6.228851640062687,
+            "max_abs": 13.65077853930857,
+            "sum_squares": 300.8128667467312
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.1757694213649064,
+            "std": 0.3375525757480033,
+            "p99_abs": 1.4553381161237509,
+            "max_abs": 2.122931348115597,
+            "sum_squares": 24.332553988019008
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": 0.013456454450834453,
+            "std": 1.2693616204972702,
+            "p99_abs": 6.228851640062687,
+            "max_abs": 13.240455553221107,
+            "sum_squares": 270.7252799593176
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": 0.013456454450834448,
+            "std": 0.1738957152626047,
+            "p99_abs": 5.861977570021049e-16,
+            "max_abs": 2.260684347740189,
+            "sum_squares": 5.110693720117484
+          },
+          "first_step_original_reward": -13.65077853930857,
+          "first_step_shaped_reward": -0.4103229860874631,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": -1206.5764935421994,
+          "carbon_delta_kg": 592.7024209502542,
+          "degradation_cost_cny": 1491.371788335964,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": -1259.8489447302436,
+            "flex_energy_cost_delta_cny": -985.9624675998687,
+            "bess_carbon_delta_kg": 515.7688182976501,
+            "flex_carbon_delta_kg": 76.93360265259643,
+            "charge_kwh": 9701.367298141122,
+            "discharge_kwh": 8940.78005605843,
+            "flex_deferred_kwh": 2389.4633326480866
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -16.41006757066186,
+            "mean_mc": -9.378651274972086,
+            "bias": -7.031416295689775,
+            "rmse": 8.212999456987799
+          }
+        },
+        {
+          "start_index": 9109,
+          "first_timestamp": "2025-01-14T13:00:00Z",
+          "last_timestamp": "2025-01-21T12:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.14242177782014326,
+            "std": 0.7873722334280665,
+            "p99_abs": 4.082148032197881,
+            "max_abs": 6.98730439172466,
+            "sum_squares": 107.56015145751991
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.14242177782014326,
+            "std": 0.7873722334280665,
+            "p99_abs": 4.082148032197881,
+            "max_abs": 6.98730439172466,
+            "sum_squares": 107.56015145751991
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": 0.006017627451622741,
+            "std": 0.7512653860348718,
+            "p99_abs": 4.223722824579758,
+            "max_abs": 6.920163646799406,
+            "sum_squares": 94.82522987183762
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": 0.006017627451622741,
+            "std": 0.7512653860348718,
+            "p99_abs": 4.223722824579758,
+            "max_abs": 6.920163646799406,
+            "sum_squares": 94.82522987183762
+          },
+          "first_step_original_reward": 5.601165079766922,
+          "first_step_shaped_reward": 5.601165079766922,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": 407.57708334257586,
+          "carbon_delta_kg": 364.81622095118655,
+          "degradation_cost_cny": 1261.8976303189993,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 450.9292049979935,
+            "flex_energy_cost_delta_cny": -1103.057469599941,
+            "bess_carbon_delta_kg": 281.85279858034,
+            "flex_carbon_delta_kg": 82.96342237083425,
+            "charge_kwh": 8208.63878261298,
+            "discharge_kwh": 7565.081596374512,
+            "flex_deferred_kwh": 2771.122019682865
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -16.953894762100564,
+            "mean_mc": -10.506283459857897,
+            "bias": -6.447611302242665,
+            "rmse": 7.589934115468695
+          }
+        },
+        {
+          "start_index": 11085,
+          "first_timestamp": "2025-04-06T21:00:00Z",
+          "last_timestamp": "2025-04-13T20:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.1726137129194558,
+            "std": 7.899881778937787,
+            "p99_abs": 29.946379579759245,
+            "max_abs": 89.75901494036191,
+            "sum_squares": 10489.571839333623
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.17261371291945574,
+            "std": 0.49208791339356683,
+            "p99_abs": 2.8331807115716128,
+            "max_abs": 4.003216804716359,
+            "sum_squares": 45.68692941050696
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": -0.014601188069904444,
+            "std": 7.826159216946202,
+            "p99_abs": 27.775799838139953,
+            "max_abs": 89.9908847534681,
+            "sum_squares": 10289.828855659087
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": -0.01460118806990435,
+            "std": 0.2914200614162298,
+            "p99_abs": 1.762082268009141,
+            "max_abs": 2.7626815926416146,
+            "sum_squares": 14.30332627733383
+          },
+          "first_step_original_reward": 89.75901494036191,
+          "first_step_shaped_reward": -0.23186981310618648,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": 1215.282586515525,
+          "carbon_delta_kg": 382.0448472981825,
+          "degradation_cost_cny": 1377.937170267105,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 292.1287856953022,
+            "flex_energy_cost_delta_cny": -945.3832885957183,
+            "bess_carbon_delta_kg": 314.3360537368247,
+            "flex_carbon_delta_kg": 67.70879356134213,
+            "charge_kwh": 8963.47550302744,
+            "discharge_kwh": 8260.739125311375,
+            "flex_deferred_kwh": 2781.8056266545605
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -17.0205182241542,
+            "mean_mc": -11.009417043986755,
+            "bias": -6.0111011801674445,
+            "rmse": 7.150226949893055
+          }
+        },
+        {
+          "start_index": 6454,
+          "first_timestamp": "2024-09-25T22:00:00Z",
+          "last_timestamp": "2024-10-02T21:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.19511348983565802,
+            "std": 6.0808072650531955,
+            "p99_abs": 31.868301648406305,
+            "max_abs": 54.34088938205337,
+            "sum_squares": 6218.400093131449
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.19511348983565802,
+            "std": 0.4649241282126207,
+            "p99_abs": 2.3111620401699446,
+            "max_abs": 3.3130215380616415,
+            "sum_squares": 42.70958477689928
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": -0.024472631033143264,
+            "std": 6.206590119358525,
+            "p99_abs": 31.093796914261098,
+            "max_abs": 56.30515558763695,
+            "sum_squares": 6471.756449657274
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": -0.024472631033143302,
+            "std": 0.3093430212627514,
+            "p99_abs": 1.4293624515220982,
+            "max_abs": 3.3061011816371035,
+            "sum_squares": 16.17705843157345
+          },
+          "first_step_original_reward": 54.34088938205337,
+          "first_step_shaped_reward": -1.9642662055835842,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": 3094.478590174585,
+          "carbon_delta_kg": 288.44455569196,
+          "degradation_cost_cny": 1342.6156464219093,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 1745.357654425657,
+            "flex_energy_cost_delta_cny": -815.77511338666,
+            "bess_carbon_delta_kg": 241.66530859958232,
+            "flex_carbon_delta_kg": 46.77924709235459,
+            "charge_kwh": 8733.709137886763,
+            "discharge_kwh": 8048.986442387104,
+            "flex_deferred_kwh": 2188.9295245278167
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -16.320893945970706,
+            "mean_mc": -11.894966688751897,
+            "bias": -4.4259272572188095,
+            "rmse": 5.226732932285823
+          }
+        },
+        {
+          "start_index": 4233,
+          "first_timestamp": "2024-06-25T09:00:00Z",
+          "last_timestamp": "2024-07-02T08:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.18786718277133194,
+            "std": 3.1740259588421305,
+            "p99_abs": 14.21649185089742,
+            "max_abs": 29.131977245670175,
+            "sum_squares": 1698.435457448712
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.18786718277133194,
+            "std": 3.1740259588421305,
+            "p99_abs": 14.21649185089742,
+            "max_abs": 29.131977245670175,
+            "sum_squares": 1698.435457448712
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": -0.014601188069904288,
+            "std": 3.224146214842706,
+            "p99_abs": 14.554029261747857,
+            "max_abs": 30.465456455395206,
+            "sum_squares": 1746.4157775754366
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": -0.014601188069904288,
+            "std": 3.224146214842706,
+            "p99_abs": 14.554029261747857,
+            "max_abs": 30.465456455395206,
+            "sum_squares": 1746.4157775754366
+          },
+          "first_step_original_reward": 29.131977245670175,
+          "first_step_shaped_reward": 29.131977245670175,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": -1479.9917206703321,
+          "carbon_delta_kg": 649.360755148924,
+          "degradation_cost_cny": 1287.5447438657284,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": -1045.0745277008416,
+            "flex_energy_cost_delta_cny": -2213.06185598404,
+            "bess_carbon_delta_kg": 468.66438693236034,
+            "flex_carbon_delta_kg": 180.69636821656215,
+            "charge_kwh": 8375.473149120808,
+            "discharge_kwh": 7718.836149200797,
+            "flex_deferred_kwh": 5286.640917241614
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -19.204196416905948,
+            "mean_mc": -12.934374774250072,
+            "bias": -6.2698216426558755,
+            "rmse": 7.271391055762572
+          }
+        },
+        {
+          "start_index": 6647,
+          "first_timestamp": "2024-10-03T23:00:00Z",
+          "last_timestamp": "2024-10-10T22:00:00Z",
+          "original_reward": {
+            "n": 168,
+            "mean": -0.19811156033193583,
+            "std": 6.5336859750644924,
+            "p99_abs": 31.986221121805034,
+            "max_abs": 58.41989825615282,
+            "sum_squares": 7178.354502663389
+          },
+          "demand_potential_reward": {
+            "n": 168,
+            "mean": -0.19811156033193575,
+            "std": 0.4544064514023412,
+            "p99_abs": 2.122864728241195,
+            "max_abs": 4.14330750883795,
+            "sum_squares": 41.28321345342137
+          },
+          "original_demand_component": {
+            "n": 168,
+            "mean": -0.014601187100971828,
+            "std": 6.636238073106359,
+            "p99_abs": 31.48534041244183,
+            "max_abs": 60.01671593292048,
+            "sum_squares": 7398.6979848786705
+          },
+          "shaped_demand_component": {
+            "n": 168,
+            "mean": -0.014601187100971861,
+            "std": 0.1332193906857247,
+            "p99_abs": 0.38288279645792955,
+            "max_abs": 1.2927485346059782,
+            "sum_squares": 3.0173809208648015
+          },
+          "first_step_original_reward": 58.41989825615282,
+          "first_step_shaped_reward": -1.5968176767676567,
+          "full_return_difference": 0.0,
+          "cost_delta_cny": 3563.1132490978575,
+          "carbon_delta_kg": 257.7862648379323,
+          "degradation_cost_cny": 1350.0401966273785,
+          "train_only_soft_cap_kw": 24196.384765625,
+          "demand_rate_cny_per_kw": 8.739219712525667,
+          "clipped_feature_count": 2,
+          "accounting": {
+            "bess_energy_cost_delta_cny": 2304.895693277401,
+            "flex_energy_cost_delta_cny": -582.4225273996165,
+            "bess_carbon_delta_kg": 225.77294236171187,
+            "flex_carbon_delta_kg": 32.0133224762143,
+            "charge_kwh": 8782.005807384849,
+            "discharge_kwh": 8093.496650457382,
+            "flex_deferred_kwh": 1103.1844720589079
+          },
+          "critic_vs_deterministic_mc": {
+            "mean_q": -14.506973163668244,
+            "mean_mc": -11.082257024449927,
+            "bias": -3.424716139218318,
+            "rmse": 4.187399926976414
+          }
+        }
+      ]
+    }
+  ],
+  "claim_boundary": "Public/engineering training-only diagnosis. Counterfactual reward transformation on identical executed trajectories, not a retrained policy result or measured port saving."
+}

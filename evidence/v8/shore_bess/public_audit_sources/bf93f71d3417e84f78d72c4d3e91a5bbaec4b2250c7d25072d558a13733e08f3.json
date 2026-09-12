@@ -1,0 +1,9 @@
+{
+  "run_id": "shore_bess-dqn-v7-20260907T031026Z",
+  "status": "CANDIDATE_NOT_ADMITTED",
+  "report_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T031026Z/report.json",
+  "report_sha256": "e8105d85b5bfaf3982d455b462f8e426b4caa5bd6de096911a7c7e5bba951a71",
+  "model_path": "evidence/v7/shore_bess/runs/shore_bess-dqn-v7-20260907T031026Z/seed_1137/selected_model.zip",
+  "model_sha256": "a7e4fb2783f46c831a2419886081ec7ce1f1301f9ba730cf2d23aec1a94f8969",
+  "production_authority": false
+}

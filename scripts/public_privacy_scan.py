@@ -4,6 +4,9 @@
 from __future__ import annotations
 
 import re
+import base64
+import json
+import zipfile
 import subprocess
 from pathlib import Path
 
@@ -59,6 +62,43 @@ def _text(path: Path) -> str | None:
         return None
 
 
+def archive_findings(path: Path) -> list[str]:
+    """Inspect bytes and base64 metadata without extracting or executing pickle."""
+    findings: list[str] = []
+    def inspect(raw: bytes, member: str) -> None:
+        text = raw.decode("latin-1")
+        for label, pattern in (("local account path", LOCAL_ACCOUNT_RE),
+                               ("private key", PRIVATE_KEY_RE), ("access token", TOKEN_RE)):
+            if pattern.search(text):
+                findings.append(f"archive {member}: {label}")
+    def metadata(value, member: str) -> None:
+        if isinstance(value, dict):
+            for key, child in value.items():
+                if key == ":serialized:" and isinstance(child, str):
+                    inspect(base64.b64decode(child, validate=True), member + "/base64")
+                else:
+                    metadata(child, member + "/" + str(key))
+        elif isinstance(value, list):
+            for child in value:
+                metadata(child, member)
+    try:
+        with zipfile.ZipFile(path) as archive:
+            if archive.testzip() is not None:
+                findings.append("archive CRC failure")
+            for member in archive.namelist():
+                raw = archive.read(member)
+                inspect(raw, member)
+                if member == "data" or member.endswith(".json"):
+                    try:
+                        value = json.loads(raw)
+                    except (UnicodeDecodeError, json.JSONDecodeError):
+                        continue
+                    metadata(value, member)
+    except (OSError, ValueError, zipfile.BadZipFile):
+        findings.append("archive metadata could not be inspected")
+    return findings
+
+
 def main() -> int:
     findings: list[tuple[str, int, str]] = []
     scanner = Path(__file__).resolve()
@@ -69,6 +109,9 @@ def main() -> int:
             findings.append((relative, 0, "personal-material filename"))
         if "/" not in relative and lowered.endswith(ROOT_MEDIA_SUFFIXES):
             findings.append((relative, 0, "root-level personal-media risk"))
+        if path.is_file() and path.suffix.lower() in {".zip", ".npz"}:
+            findings.extend((relative, 0, finding) for finding in archive_findings(path))
+            continue
         content = _text(path)
         if content is None or path.resolve() == scanner:
             continue

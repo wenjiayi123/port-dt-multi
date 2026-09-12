@@ -13,3 +13,8 @@ data/rl/model_registry*.json*
 *.docx
 *.pdf
 *.zip
+
+# Only metadata-sanitized model copies enter the image.
+!evidence/v7/public_models/*.zip
+!evidence/v8/shore_bess/public_models/*.zip
+!evidence/public_models/legacy_v3_v6_20260912/*.zip
