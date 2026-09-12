@@ -41,7 +41,7 @@
 
 最终冻结轮日志位于 `.codex_artifacts/ui_full_audit_20260912/linkage/final_after_all_ui_fixes/`：`unittest.log`、`compileall.log`、`release_check.log`、`public_privacy_scan.log`、`business_verify.log`、`static_button_binding.log`、`inline_script_syntax.json`。最终完整回归为 424 tests / 139.819 s / OK，包含全部 13 个 VM 脚本；没有把可选 Playwright 计入。此前第一轮 422 tests 的失败日志与中间复测均在上级目录保留。
 
-本次最终完整回归已覆盖副驾错误证明栏、剪贴板失败反馈、两类图像导出和首页未知状态规则。此前各阶段定向日志仍保留，最终证据以 `final_after_all_ui_fixes/verification.json` 为准。测试前后冻结代码、配置和 CI 文件均按 SHA-256 比对；只允许审计文档更新。V8 原模型验证与已封存重放没有重复执行，也没有新增 test/forward 评测。
+本次最终完整回归已覆盖副驾错误证明栏、剪贴板失败反馈、两类图像导出和首页未知状态规则。此前各阶段定向日志仍保留，最终证据以 `final_after_all_ui_fixes/verification.json` 为准。测试前后 580 个冻结代码、配置和 CI 文件均按 SHA-256 比对，未发生变化。另仅更新文档，并对已封存 Matplotlib SVG 精确追加 `.gitattributes` 行尾空格规则；原 SVG 字节及 SHA 不改，不扩大到其他文件。V8 原模型验证与已封存重放没有重复执行，也没有新增 test/forward 评测。
 
 逐控件浏览器清单位于上级 `linkage/` 目录 `control_inventory_and_click_plan.json`、`priority_click_scenarios.json`、`main_module_click_plan.json`。这些清单仅描述操作步骤，实际完成状态以独立浏览器记录为准。API 只读/动作预览回执与 VM 结果也不冒充真实点击。
 
