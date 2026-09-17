@@ -656,32 +656,6 @@ Contributions should be provenance-aware, reproducible, and explicit about safet
 
 安全问题请不要提交公开 Issue；请使用 GitHub Private Vulnerability Reporting。/ Do not disclose vulnerabilities in public issues; use GitHub Private Vulnerability Reporting.
 
-## 学术顾问与致谢 / Academic Advisor & Acknowledgements
-
-### [Hamid Reza Karimi 教授 / Prof. Dr. Hamid Reza Karimi](https://www.ae-info.org/ae/Member/Karimi_Hamid_Reza)
-
-- 米兰理工大学机械工程系应用力学教授
-  （Professor of Applied Mechanics, Department of Mechanical Engineering, Politecnico di Milano）
-- 欧洲科学院院士
-  （Ordinary Member of Academia Europaea, MAE）
-- 欧洲科学与艺术院院士
-  （Member of the European Academy of Sciences and Arts, MEASA）
-- 欧洲科学院院士
-  （Member of the European Academy of Sciences, MEurASc）
-- 国家人工智能科学院院士
-  （Member of the National Academy of Artificial Intelligence, MNAAI）
-- 国际声学与振动研究所杰出会士
-  （Distinguished Fellow of the International Institute of Acoustics and Vibration, DFIIAV）
-- 国际状态监测学会会士
-  （Fellow of the International Society for Condition Monitoring, FISCM）
-- 亚太人工智能学会会士
-  （Fellow of the Asia-Pacific Artificial Intelligence Association, FAAIA）
-- 国际声学与振动研究所理事
-  （Member of the Board of Directors of the International Institute of Acoustics and Vibration, IIAV）
-
-> 谨向 Karimi 教授为本项目提供的学术支持与指导致以诚挚谢意。
-> *With sincere appreciation to Professor Karimi for his academic support and guidance on this project.*
-
 ## 📄 许可证与引用 / License & citation
 
 源代码和仓库原生视觉资产使用 [MIT License](LICENSE)；公开数据仍遵循各自来源条款，详见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) 与[数据卡](docs/DATASET_CARD_public_port_ops_v1.md)。<br>
