@@ -36,6 +36,7 @@ from typing import Optional, List, Tuple, Union
 from pathlib import Path
 import json
 import os
+from app.infra.private_file import protect
 import base64
 import time
 import datetime as dt
@@ -108,7 +109,7 @@ class ObjectStorage:
                 os.fsync(stream.fileno())
             # Audit/model objects may include operational context.  Local mode
             # therefore uses owner-only permissions and an atomic replace.
-            os.chmod(temporary, 0o600)
+            protect(temporary)
             os.replace(temporary, full)
             return f"file://{full.as_posix()}"
         else:

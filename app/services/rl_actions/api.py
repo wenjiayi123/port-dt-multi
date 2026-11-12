@@ -1,6 +1,6 @@
 """Allow-listed action registry for Xiaoyi-to-port-operations commands.
 
-The registry converts Xiaoyi's recognized intent or a raw user instruction
+The registry converts GullMate's recognized intent or a raw user instruction
 into a bounded command packet.  Mission actions are read-only navigation into
 the evidence-bound copilot; training, desktop launch and policy actions keep
 their existing confirmation and dry-run gates.
@@ -49,11 +49,11 @@ DEFAULT_TRAIN_CONFIG: Dict[str, Any] = {
 RL_ACTIONS: List[Dict[str, Any]] = [
     {
         "id": "open_ops_copilot",
-        "label": "打开小懿运营副驾",
+        "label": "打开舷鸥运营副驾",
         "category": "xiaoyi_mission",
-        "description": "打开小懿任务工作台；默认读取当前孪生态势，不执行生产动作。",
-        "intent_aliases": ["open_ops_copilot", "open_xiaoyi_copilot", "打开运营副驾", "打开小懿工作台"],
-        "keywords": ["小懿运营副驾", "小懿工作台", "运营副驾", "智能副驾"],
+        "description": "打开舷鸥任务工作台；默认读取当前孪生态势，不执行生产动作。",
+        "intent_aliases": ["open_ops_copilot", "open_xiaoyi_copilot", "打开运营副驾", "打开舷鸥工作台"],
+        "keywords": ["舷鸥运营副驾", "舷鸥工作台", "运营副驾", "智能副驾"],
         "route": "/ops-copilot?mission=situation&from=xiaoyi",
         "button_selector": None,
         "button_label": None,
@@ -65,7 +65,7 @@ RL_ACTIONS: List[Dict[str, Any]] = [
     },
     {
         "id": "summarize_current_situation",
-        "label": "小懿研判当前态势",
+        "label": "舷鸥研判当前态势",
         "category": "xiaoyi_mission",
         "description": "读取回放、数据质量、预测、模型和安全门，形成带哈希的当班态势。",
         "intent_aliases": ["summarize_current_situation", "current_situation", "研判当前态势", "总结当前态势"],
@@ -81,7 +81,7 @@ RL_ACTIONS: List[Dict[str, Any]] = [
     },
     {
         "id": "review_twin_forecast",
-        "label": "小懿解释未来风险",
+        "label": "舷鸥解释未来风险",
         "category": "xiaoyi_mission",
         "description": "解释后端预测区间、工程阈值风险及尚未接入的现场校准证据。",
         "intent_aliases": ["review_twin_forecast", "forecast_risk", "解释未来风险", "查看未来预测"],
@@ -97,7 +97,7 @@ RL_ACTIONS: List[Dict[str, Any]] = [
     },
     {
         "id": "explain_current_strategy",
-        "label": "小懿解释当前策略",
+        "label": "舷鸥解释当前策略",
         "category": "xiaoyi_mission",
         "description": "解释当前模型、相对基线变化、硬约束、安全投影和声明边界。",
         "intent_aliases": ["explain_current_strategy", "strategy_explain", "解释当前策略", "为什么这样调度"],
@@ -113,7 +113,7 @@ RL_ACTIONS: List[Dict[str, Any]] = [
     },
     {
         "id": "triage_monitoring",
-        "label": "小懿执行告警分诊",
+        "label": "舷鸥执行告警分诊",
         "category": "xiaoyi_mission",
         "description": "联动异常、漂移和准入门，生成检查与安全回退顺序。",
         "intent_aliases": ["triage_monitoring", "alert_triage", "告警分诊", "异常分诊"],
@@ -129,7 +129,7 @@ RL_ACTIONS: List[Dict[str, Any]] = [
     },
     {
         "id": "prepare_shift_handoff",
-        "label": "小懿准备交接班",
+        "label": "舷鸥准备交接班",
         "category": "xiaoyi_mission",
         "description": "生成包含上下文哈希、模型/数据版本、风险和缺失字段的交接预览。",
         "intent_aliases": ["prepare_shift_handoff", "shift_handoff", "准备交接班", "生成交接摘要"],
@@ -145,7 +145,7 @@ RL_ACTIONS: List[Dict[str, Any]] = [
     },
     {
         "id": "prepare_strategy_dry_run",
-        "label": "小懿准备策略预演",
+        "label": "舷鸥准备策略预演",
         "category": "xiaoyi_mission",
         "description": "只进入策略dry-run准备；监控门阻断时保持安全基线，不下发设备指令。",
         "intent_aliases": ["prepare_strategy_dry_run", "strategy_dry_run", "准备策略预演", "策略演练"],
@@ -294,14 +294,14 @@ RL_ACTIONS: List[Dict[str, Any]] = [
     },
     {
         "id": "start_xiaoyi_ai",
-        "label": "启动小懿AI",
+        "label": "启动舷鸥 · GullMate",
         "category": "assistant_linkage",
-        "description": "启动桌面小懿AI本地服务，并让 /health 与 /api/chat 可用。",
-        "intent_aliases": ["start_xiaoyi_ai", "start_xiaoyi", "启动小懿", "打开小懿AI", "启动小懿AI"],
-        "keywords": ["启动小懿", "打开小懿", "启动小懿ai", "打开小懿ai", "拉起小懿", "小懿服务", "启动ai助手"],
+        "description": "启动桌面舷鸥 · GullMate本地服务，并让 /health 与 /api/chat 可用。",
+        "intent_aliases": ["start_xiaoyi_ai", "start_xiaoyi", "启动舷鸥", "打开舷鸥 · GullMate", "启动舷鸥 · GullMate"],
+        "keywords": ["启动舷鸥", "打开舷鸥", "启动舷鸥 · GullMate", "打开舷鸥 · GullMate", "拉起舷鸥", "舷鸥服务", "启动ai助手"],
         "route": "/integration-hub?action=start_xiaoyi_ai&from=xiaoyi",
         "button_selector": "#btnXiaoyiStart",
-        "button_label": "启动小懿AI",
+        "button_label": "启动舷鸥 · GullMate",
         "button_sequence": ["#btnXiaoyiStart"],
         "backend_request": {"method": "POST", "path": "/api/xiaoyi/launch", "body": {"confirm": True}},
         "execution": {"type": "local_assistant_launch", "dry_run_default": True},
@@ -637,14 +637,14 @@ def action_registry() -> JSONResponse:
     return JSONResponse(
         {
             "updated_at": _utc_now(),
-            "scope": "Xiaoyi mission navigation plus gated RL and desktop linkage",
+            "scope": "GullMate mission navigation plus gated RL and desktop linkage",
             "count": len(RL_ACTIONS),
             "actions": [_public_action(action) for action in RL_ACTIONS],
         }
     )
 
 
-@router.post("/resolve", summary="把小懿意图或自然语言指令映射为动作")
+@router.post("/resolve", summary="把舷鸥意图或自然语言指令映射为动作")
 def action_resolve(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
     instruction = str(payload.get("instruction") or payload.get("text") or payload.get("question") or "")
     xiaoyi = payload.get("xiaoyi") if isinstance(payload.get("xiaoyi"), dict) else {}
@@ -694,7 +694,7 @@ def action_execute(request: Request, payload: Dict[str, Any] = Body(default={}))
     )
 
 
-@router.post("/from-xiaoyi", summary="接收小懿识别结果并生成可执行动作")
+@router.post("/from-xiaoyi", summary="接收舷鸥识别结果并生成可执行动作")
 def action_from_xiaoyi(request: Request, payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
     xiaoyi = payload.get("xiaoyi") if isinstance(payload.get("xiaoyi"), dict) else {}
     instruction = str(payload.get("instruction") or payload.get("text") or payload.get("question") or xiaoyi.get("question") or xiaoyi.get("answer") or "")

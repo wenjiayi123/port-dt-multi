@@ -28,6 +28,7 @@
       .rl-proof-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px}
       .rl-proof-title{font-size:21px;font-weight:950;letter-spacing:.2px}.rl-proof-title small{display:block;margin-top:5px;color:#7dd3fc;font-size:11px;letter-spacing:1.4px;text-transform:uppercase}
       .rl-proof-actions{display:flex;gap:8px;flex-wrap:wrap}.rl-proof-btn{border:1px solid #31527a;border-radius:10px;background:#102540;color:#d9efff;padding:8px 11px;font-weight:850;cursor:pointer}.rl-proof-btn.primary{background:linear-gradient(180deg,#0ea5e9,#0369a1);border-color:#38bdf8;color:white}
+      .rl-proof-panel.is-proof-focus{border-color:#22d3ee;box-shadow:0 0 0 3px rgba(34,211,238,.13),0 18px 42px rgba(8,145,178,.18);animation:rlProofPulse .7s ease both}.rl-proof-panel.is-proof-focus tr{animation:rlProofRows .45s ease both}@keyframes rlProofPulse{from{transform:translateY(4px);filter:brightness(.82)}to{transform:none;filter:brightness(1)}}@keyframes rlProofRows{from{opacity:.42;transform:translateX(-5px)}to{opacity:1;transform:none}}
       .rl-proof-kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}.rl-proof-kpi{border:1px solid #223a59;border-radius:12px;background:rgba(5,18,35,.82);padding:10px}.rl-proof-kpi span{display:block;color:#8db6d8;font-size:10px}.rl-proof-kpi b{display:block;margin-top:5px;color:#f1f8ff;font-size:18px}.rl-proof-kpi em{display:block;margin-top:4px;color:#7dd3fc;font-size:10px;font-style:normal}
       .rl-proof-grid{display:grid;grid-template-columns:1.15fr 1fr .9fr;gap:10px;margin-top:10px}.rl-proof-panel{border:1px solid #223a59;border-radius:13px;background:rgba(4,14,29,.84);padding:12px;min-width:0}.rl-proof-panel h3{margin:0 0 8px;color:#eaf7ff;font-size:13px}.rl-proof-panel h3 small{color:#7f9fbd;font-size:10px;margin-left:5px}
       .rl-algo-table,.rl-data-table{width:100%;border-collapse:collapse;font-size:10px}.rl-algo-table th,.rl-algo-table td,.rl-data-table th,.rl-data-table td{border-bottom:1px solid #1a304b;padding:6px 5px;text-align:left;vertical-align:top}.rl-algo-table th,.rl-data-table th{color:#7fa7c9;font-weight:800}.rl-algo-table td,.rl-data-table td{color:#cfe7fa}.rl-proof-status{display:inline-flex;border-radius:999px;padding:2px 6px;border:1px solid #3b5471;color:#a8c5dc}.rl-proof-status.ok{color:#86efac;border-color:#217a4c;background:rgba(22,101,52,.17)}.rl-proof-status.warn{color:#fde68a;border-color:#8a5b17;background:rgba(113,63,18,.18)}
@@ -46,11 +47,13 @@
     root.id = "rlProofConsole";
     root.innerHTML = `
       <div class="rl-proof-head">
-        <div class="rl-proof-title">训练中心 · 落地证据总览<small>TRAINING CENTER · ALGORITHM MATRIX · XIAOYI ADVISOR</small></div>
+        <div class="rl-proof-title">训练中心 · 落地证据总览<small>TRAINING CENTER · ALGORITHM MATRIX · GullMate ADVISOR</small></div>
         <div class="rl-proof-actions">
           <button class="rl-proof-btn" data-proof-refresh>刷新后端证据</button>
-          <button class="rl-proof-btn" data-proof-xiaoyi>打开小懿全系统助手</button>
-          <button class="rl-proof-btn primary" data-proof-advice>小懿解读训练门禁</button>
+          <button class="rl-proof-btn" data-proof-datasets-focus>聚焦训练数据集</button>
+          <button class="rl-proof-btn" data-proof-contract-focus>展开训练契约</button>
+          <button class="rl-proof-btn" data-proof-xiaoyi>打开舷鸥全系统助手</button>
+          <button class="rl-proof-btn primary" data-proof-advice>舷鸥解读训练门禁</button>
         </div>
       </div>
       <div class="rl-proof-kpis">
@@ -60,7 +63,7 @@
         <div class="rl-proof-kpi"><span>可用于比较结论的算法</span><b data-proof-ready>—</b><em>RL 需 ≥ 3 独立种子且每次 ≥ 10k 步</em></div>
       </div>
       <div class="rl-proof-grid">
-        <div class="rl-proof-panel">
+        <div class="rl-proof-panel" data-proof-contract-panel>
           <h3>算法矩阵 <small>真实实现与证据门禁</small></h3>
           <table class="rl-algo-table"><thead><tr><th>算法</th><th>实现</th><th>动作</th><th>种子/状态</th></tr></thead><tbody data-proof-algos><tr><td colspan="4">读取中…</td></tr></tbody></table>
         </div>
@@ -72,12 +75,12 @@
           <div class="rl-factor-cloud" data-proof-factors></div>
         </div>
         <div class="rl-proof-panel xiaoyi">
-          <h3>小懿训练顾问 <small>按钮—接口—门禁联动</small></h3>
+          <h3>舷鸥训练顾问 <small>按钮—接口—门禁联动</small></h3>
           <div class="rl-xiaoyi-card">
-            <img src="/static/xiaoyi_maritime_officer.png?v=20260725-q" alt="小懿Q版海事训练顾问">
-            <div><strong>小懿AI · 训练与全系统助手</strong><p>读取后端数据指纹、算法实现、多种子门禁和场景包状态；训练按钮仍保留人工确认。</p></div>
+            <img src="/static/xiaoyi_maritime_officer.png?v=20260725-q" alt="舷鸥Q版海事训练顾问">
+            <div><strong>舷鸥 · GullMate · 训练与全系统助手</strong><p>读取后端数据指纹、算法实现、多种子门禁和场景包状态；训练按钮仍保留人工确认。</p></div>
           </div>
-          <div class="rl-xiaoyi-advice" data-proof-advice-text>等待后端证据。点击“解读训练门禁”后，小懿只解释真实状态，不生成优秀指标。</div>
+          <div class="rl-xiaoyi-advice" data-proof-advice-text>等待后端证据。点击“解读训练门禁”后，舷鸥只解释真实状态，不生成优秀指标。</div>
         </div>
         <div class="rl-proof-panel rl-regulatory">
           <h3>海事 / 海关检查连锁延误 <small>2026 独立前向挑战 · 模型锁定后只评估</small></h3>
@@ -90,7 +93,7 @@
           </div>
           <div class="rl-regulatory-boundary" data-reg-boundary>只读取哈希门禁后的持久化证据；不将工程压力情景表述为海事局、海关或码头现场 KPI。</div>
         </div>
-        <div class="rl-proof-panel rl-data-wrap">
+        <div class="rl-proof-panel rl-data-wrap" data-proof-dataset-panel>
           <h3>公开数据包可信度对照 <small>行数不等于独立信息量</small></h3>
           <table class="rl-data-table"><thead><tr><th>数据集</th><th>训练行</th><th>独立官方观测</th><th>证据等级</th><th>因素覆盖</th><th>场景包 / SHA-256</th></tr></thead><tbody data-proof-datasets><tr><td colspan="6">读取中…</td></tr></tbody></table>
           <div class="rl-data-note">原新加坡数据、模型登记和业务KPI证据全部保留。新增洛杉矶包用于高频公开观测对照；二者都不是码头生产遥测，只有通过现场字段映射、来源授权、校准、影子运行和安全验收后才能形成现场结论。</div>
@@ -207,7 +210,27 @@
   function install(){
     addStyle();
     const root = build();
-    root.querySelector("[data-proof-refresh]").addEventListener("click", () => load(root));
+    root.querySelector("[data-proof-refresh]").addEventListener("click", async () => {
+      await load(root);
+      window.portDtDemoReceipt?.("rl-overview", {
+        message: "训练中心后端证据已刷新",
+        target: "#rlProofConsole"
+      });
+    });
+    function focusProof(selector, stepId, message){
+      root.querySelectorAll(".is-proof-focus").forEach(node => node.classList.remove("is-proof-focus"));
+      const panel = root.querySelector(selector);
+      if(!panel) return;
+      panel.classList.add("is-proof-focus");
+      panel.scrollIntoView({behavior:"smooth", block:"center", inline:"nearest"});
+      window.portDtDemoReceipt?.(stepId, {message, target:`#rlProofConsole ${selector}`});
+    }
+    root.querySelector("[data-proof-datasets-focus]").addEventListener("click", () => {
+      focusProof("[data-proof-dataset-panel]", "rl-dataset", "训练数据集表已展开：来源等级、记录量、独立观测、场景包和 SHA-256 同屏可见");
+    });
+    root.querySelector("[data-proof-contract-focus]").addEventListener("click", () => {
+      focusProof("[data-proof-contract-panel]", "rl-contract", "RL 训练契约已展开：目标、State、Action、算法证据和安全边界可见");
+    });
     root.querySelector("[data-proof-advice]").addEventListener("click", () => {
       const state = root.__proofState;
       if(state) advise(root, state.capabilities, state.benchmark, state.regulatory);

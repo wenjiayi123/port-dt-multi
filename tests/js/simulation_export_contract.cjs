@@ -7,17 +7,18 @@ function harness(){
  const nodes=new Map(),downloads=[],texts=[],drawing=[],messages=[];
  const context=new Proxy({createLinearGradient:()=>({addColorStop(){}}),fillText:(text)=>texts.push(text),lineTo:(...args)=>drawing.push(args)},{get(target,key){return key in target?target[key]:()=>{}},set(target,key,value){target[key]=value;return true}});
  function element(id){return {id,value:'',textContent:'',innerHTML:'',dataset:{},disabled:false,style:{},width:640,height:180,handlers:{},selectedOptions:[],
-  getContext:()=>context,getBoundingClientRect:()=>({width:640,height:180}),toDataURL:()=>{drawing.push('toDataURL');return'data:image/png;base64,fixture'},
+  getContext:()=>context,getBoundingClientRect:()=>({width:640,height:180}),toDataURL:()=>{drawing.push('toDataURL');return'data:image/png;base64,fixture'},toBlob:callback=>callback({type:'image/png'}),remove(){},
   addEventListener(name,fn){(this.handlers[name]??=[]).push(fn)},click(){downloads.push(this.download)},setAttribute(){}}}
  const node=id=>{id=id.replace(/^#/,'');if(!nodes.has(id))nodes.set(id,element(id));return nodes.get(id)};
  node('rlpanel-strategy').value='model-a';node('rlpanel-strategy').dataset.payload='[{"id":"model-a"},{"id":"model-b"}]';
- const document={getElementById:node,createElement:element};
- const c=vm.createContext({document,$:node,window:{location:{origin:'http://unit.test'},selAsset:{value:'WRONG-OLD-ASSET'}},Date,Math,Number,Array,String,JSON,devicePixelRatio:1,
+ const document={getElementById:node,createElement:element,body:{append(){}}};
+ const c=vm.createContext({document,$:node,window:{location:{origin:'http://unit.test'},selAsset:{value:'WRONG-OLD-ASSET'}},Date,Math,Number,Array,String,JSON,devicePixelRatio:1,URL:{createObjectURL:()=> 'blob:fixture',revokeObjectURL(){}},setTimeout(){},
   show:message=>messages.push(message),renderStrategyDecisionChain(){},updateExecSid(){},calibStats:{available:false},fetch:async()=>({ok:true,json:async()=>({strategy_id:'model-a',baseline:{agg_kW:[200,220,210]},simulated:{agg_kW:[190,205,215]},summary:{}})})});
  vm.runInContext(part("    const btnOpenRL = $('#btn-rlpanel-open');",'    function humanList('),c);
  vm.runInContext(part('    function drawSimChart(aggBase, aggSim){','    /************** 可解释特征'),c);
  vm.runInContext(part('    function saveCanvasPNG(id, filename){','    function ensureSimSaveButton(){'),c);
  vm.runInContext(part('    btnSimRL.onclick = async () => {','        // ====== 新增：仿真图保存'),c);
+ vm.runInContext(part("    const expCanvas = $('#expBar');",'    /************** 南向执行能力'),c);
  vm.runInContext(part("    selRL?.addEventListener('change', ()=>{",'    function proxyTopNavAction('),c);
  vm.runInContext('drawSim()',c);
  return {c,node,downloads,texts,drawing,messages,run:code=>vm.runInContext(code,c)};
@@ -48,4 +49,16 @@ test('left-panel image uses actual asset selection and marks missing forecast/ac
  assert(h.texts.some(text=>text.includes('实时功率（储能 BESS）')&&text.includes('预测实绩对齐数据待接入港口')));
  assert(h.texts.includes('MAPE：待接入港口'));assert.equal(h.downloads.length,1);
  h.c.calibStats.available=true;h.texts.length=0;h.c.exportLeftPanelPNG();assert(h.texts.includes('MAPE：1.0%'));
+});
+test('a strategy change while PNG encoding cannot download the previous evaluation',async()=>{
+ const h=harness();await h.run('btnSimRL.onclick()');let finish;
+ h.node('simCanvas').toBlob=callback=>finish=callback;h.c.saveCurrentSimulationPNG();assert.equal(h.downloads.length,0);
+ h.node('rlpanel-strategy').value='model-b';h.node('rlpanel-strategy').handlers.change[0]();finish({type:'image/png'});
+ assert.equal(h.downloads.length,0);assert(h.messages.some(m=>String(m.warn).includes('未导出旧评测图')));
+});
+test('a late explanation cannot replace the newly selected strategy evidence',async()=>{
+ const h=harness();let finish;h.c.fetch=()=>new Promise(resolve=>finish=resolve);const pending=h.run('btnExpRL.onclick()');
+ h.node('rlpanel-strategy').value='model-b';h.node('rlpanel-strategy').handlers.change[0]();
+ finish({ok:true,json:async()=>({features:[{name:'old-feature',contribution_kWh:9}],reasons:['OLD MODEL REASON']})});await pending;
+ assert.equal(h.run('expData.length'),0);assert(!h.node('expReasons').innerHTML.includes('OLD MODEL'));assert.match(h.node('expReasons').innerHTML,/尚未读取当前策略/);assert.equal(h.node('btn-rlpanel-explain').disabled,false);
 });

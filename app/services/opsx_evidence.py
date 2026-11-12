@@ -4,6 +4,7 @@ import hashlib
 import json
 import os
 import stat
+from app.infra.private_file import owner_only
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict
@@ -40,8 +41,8 @@ class OpsXEvidenceService:
                 "kind": kind,
                 "sha256": self._sha(path),
                 "bytes": path.stat().st_size,
-                "mode": oct(mode),
-                "owner_only": mode & 0o077 == 0,
+                "mode": oct(mode) if os.name != "nt" else "NTFS DACL",
+                "owner_only": owner_only(path),
                 "recorded_at": datetime.fromtimestamp(path.stat().st_mtime, tz=timezone.utc).isoformat(),
             })
         return {

@@ -4,6 +4,36 @@
   if (window.__standaloneNavigationRequested) return;
   window.__standaloneNavigationRequested = true;
 
+  // The independent documents share the same desktop presentation and lazy visual workspace.
+  const visualStyle = document.createElement('link');
+  visualStyle.rel = 'stylesheet';
+  visualStyle.href = '/static/module-visuals.css?v=20261023-7';
+  document.head.appendChild(visualStyle);
+  const keepAcceptedModelUI=location.pathname==='/rl-panel';
+  const chartsReady = location.pathname==='/docs' || keepAcceptedModelUI || window.echarts ? Promise.resolve() : new Promise(function (resolve) {
+    const charts = document.createElement('script');
+    charts.src = '/static/vendor/echarts/echarts.min.js';
+    charts.onload = charts.onerror = resolve;
+    document.head.appendChild(charts);
+  });
+  chartsReady.then(function () {
+    if (keepAcceptedModelUI) return;
+    if (location.pathname === '/docs') {
+      const themeDocs = function () { document.body.classList.add('mv-desktop'); };
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', themeDocs, { once: true });
+      else themeDocs();
+      return;
+    }
+    const visuals = document.createElement('script');
+    visuals.src = '/static/module-visuals.js?v=20261023-10';
+    visuals.onload = function () {
+      const style=document.createElement('link');style.rel='stylesheet';style.href='/static/public-port-desk.css?v=20261023-4';document.head.appendChild(style);
+      const desk=document.createElement('script');desk.src='/static/public-port-desk.js?v=20261023-10';document.head.appendChild(desk);
+    };
+    const dataStyle=document.createElement('link');dataStyle.rel='stylesheet';dataStyle.href='/static/demo-data-workspace.css?v=20261023-2';document.head.appendChild(dataStyle);
+    const dataScript=document.createElement('script');dataScript.src='/static/demo-data-workspace.js?v=20261023-3';dataScript.onload=dataScript.onerror=()=>document.head.appendChild(visuals);document.head.appendChild(dataScript);
+  });
+
   // Start in <head>, before the business scripts can queue slower API calls.
   // Settle failures into a value immediately: DOMContentLoaded may be delayed.
   const cacheKey = 'port-dt.module-menu.v20260912-2';
@@ -201,6 +231,9 @@
       const active = nav.querySelector('[aria-current="page"]');
       if (active && nav.scrollWidth > nav.clientWidth) {
         nav.scrollLeft = Math.max(0, active.offsetLeft - (nav.clientWidth - active.offsetWidth) / 2);
+      }
+      if (typeof window.dispatchEvent === 'function' && typeof CustomEvent === 'function') {
+        window.dispatchEvent(new CustomEvent('port-dt:module-menu-ready'));
       }
       return true;
     }

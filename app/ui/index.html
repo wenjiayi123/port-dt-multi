@@ -2700,6 +2700,16 @@ border-left:3px solid rgba(148,163,184,.22);
     }
   </style>
 
+  <link rel="stylesheet" href="/static/home-dashboard.css?v=20261023-3">
+  <script defer src="/static/home-dashboard.js?v=20261031-compatible-1"></script>
+  <link rel="stylesheet" href="/static/demo-data-workspace.css?v=20261023-2">
+  <script defer src="/static/demo-data-workspace.js?v=20261023-3"></script>
+  <link rel="stylesheet" href="/static/module-visuals.css?v=20261023-7">
+  <script defer src="/static/module-visuals.js?v=20261031-compatible-1"></script>
+  <link rel="stylesheet" href="/static/public-port-desk.css?v=20261023-4">
+  <script defer src="/static/public-port-desk.js?v=20261023-10"></script>
+  <link rel="stylesheet" href="/static/strategy-workspace.css?v=20261023-4">
+  <script defer src="/static/strategy-workspace.js?v=20261023-5"></script>
 </head>
 
 <body>
@@ -2823,63 +2833,106 @@ border-left:3px solid rgba(148,163,184,.22);
     </div>
   </header>
 
-  <section class="home-shell" id="home-hero">
-    <div class="home-hero">
-      <div class="home-hero-grid">
-        <div>
-          <div class="home-eyebrow"><span class="home-eyebrow-dot"></span><span>首页总入口 · 先结论后细节</span></div>
-          <div class="home-lead" id="home-lead">当前为公开数据离线验证态；现场运行状态与风险等待真实来源确认。</div>
-          <div class="home-desc" id="home-desc">这一屏先只回答四件事：当前运行是否稳、风险是否正在抬升、最值得优先处理的动作是什么、下一步该进入哪条主链路。通过上方菜单进入孪生、策略、执行与审计的独立模块，随时返回主页查看整体态势。</div>
+<!-- The overview uses existing read-only contracts and the existing module router. -->
+<section class="home-shell hd-home" id="home-hero" aria-label="港区运营全景" data-i18n-skip>
+  <div class="hd-heading">
+    <div><div class="hd-eyebrow">PORT OPERATIONS / DIGITAL TWIN</div><h1>港区运营全景<span>让每一次决策，看得见。</span></h1></div>
+    <div class="hd-heading-tools"><span class="hd-source-pill"><i></i>公开数据回放</span><span class="hd-clock" id="hd-clock">--:--:--</span><button class="hd-icon-button" id="hd-refresh" type="button" aria-label="刷新首页数据" title="刷新首页数据">↻</button></div>
+  </div>
 
+  <div class="hd-metrics" aria-label="当前 PortViz 回放记录指标">
+    <article class="hd-metric"><span class="hd-metric-icon cyan" aria-hidden="true">ϟ</span><div><span class="hd-metric-label">回放基础负荷</span><div class="hd-metric-number"><strong id="hd-load">—</strong><span>kW</span></div><span class="hd-metric-foot">PortViz · 当前记录</span></div><svg class="hd-mini-line" viewBox="0 0 100 38" aria-hidden="true"><path id="hd-load-spark" d=""/></svg></article>
+    <article class="hd-metric"><span class="hd-metric-icon blue" aria-hidden="true">▤</span><div><span class="hd-metric-label">回放吞吐量</span><div class="hd-metric-number"><strong id="hd-throughput">—</strong><span>TEU/h</span></div><span class="hd-metric-foot">标定场景速率 · 非现场产量</span></div><svg class="hd-mini-line blue" viewBox="0 0 100 38" aria-hidden="true"><path id="hd-throughput-spark" d=""/></svg></article>
+    <article class="hd-metric"><span class="hd-metric-icon amber" aria-hidden="true">⌗</span><div><span class="hd-metric-label">岸桥作业</span><div class="hd-metric-number"><strong id="hd-qc-busy">—</strong><span id="hd-qc-total">/ — 台</span></div><span class="hd-metric-foot">当前回放繁忙设备</span></div><div class="hd-equipment-bars" id="hd-qc-bars" aria-hidden="true"></div></article>
+    <article class="hd-metric"><span class="hd-metric-icon violet" aria-hidden="true">▥</span><div><span class="hd-metric-label">场桥作业</span><div class="hd-metric-number"><strong id="hd-yc-busy">—</strong><span id="hd-yc-total">/ — 台</span></div><span class="hd-metric-foot">当前回放繁忙设备</span></div><div class="hd-equipment-bars violet" id="hd-yc-bars" aria-hidden="true"></div></article>
+  </div>
 
-          <div class="home-action-row">
-            <a class="home-action primary" href="/v3?from=home"><span>打开 V3 决策中枢</span><span class="en">V3 Decision Center</span></a>
-            <a class="home-action" href="#exec-cockpit" data-panel="cockpit"><span>查看管理驾驶舱</span><span class="en">Executive Cockpit</span></a>
-            <a class="home-action" href="#twin-section" data-panel="twin"><span>进入孪生场景</span><span class="en">Digital Twin</span></a>
-            <a class="home-action" href="#strategy-exec-module" data-panel="strategy"><span>进入策略编排</span><span class="en">Strategy Orchestration</span></a>
-            <a class="home-action" href="#opsx-section" data-panel="audit"><span>查看审计 / OpsX</span><span class="en">Audit & OpsX</span></a>
-          </div>
-          <div class="home-triad">
-            <div class="triad-card featured">
-              <div class="triad-label">整体状态</div>
-              <div class="triad-value" id="home-status">证据受限</div>
-              <div class="triad-sub" id="home-status-sub">未接入现场遥测、工单和控制回执前，不推断港区运行健康。</div>
-            </div>
-            <div class="triad-card">
-              <div class="triad-label">风险热度</div>
-              <div class="triad-value" id="home-risk">待验证</div>
-              <div class="triad-sub" id="home-risk-sub">运行风险必须由现场告警、工单与执行权限状态确认。</div>
-            </div>
-            <div class="triad-card">
-              <div class="triad-label">优先动作</div>
-              <div class="triad-value" id="home-focus">先核验数据来源</div>
-              <div class="triad-sub" id="home-focus-sub">先检查来源、时间戳、质量门与权限，再进入策略和孪生分析。</div>
-            </div>
-          </div>
-        </div>
+  <div class="hd-command-grid">
+    <aside class="hd-left">
+      <section class="hd-panel hd-energy">
+        <div class="hd-panel-head"><h2><i class="hd-section-mark"></i>能源脉搏</h2><span class="hd-kicker">ENERGY</span></div>
+        <label class="hd-asset-select"><span class="hd-sr-only">选择负荷曲线设备</span><select id="hd-energy-asset"><option value="">读取设备…</option></select></label>
+        <div class="hd-energy-value"><strong id="hd-energy-value">—</strong><span>kW</span><span class="hd-tiny-tag">校准回放</span></div>
+        <div class="hd-energy-chart" id="hd-energy-chart" role="img" aria-label="所选设备近期负荷回放曲线，等待数据"></div>
+        <div class="hd-chart-caption"><span id="hd-energy-period">读取时间范围…</span><span>来源时间</span></div>
+        <a class="hd-text-link" href="#realtime-section">查看能耗与碳排 <span>↗</span></a>
+      </section>
+      <section class="hd-panel hd-assets">
+        <div class="hd-panel-head"><h2><i class="hd-section-mark blue"></i>场景资产</h2><span class="hd-kicker">ASSETS</span></div>
+        <button class="hd-asset-row" type="button" data-hd-focus="quay"><span class="hd-asset-symbol amber">⌗</span><span>岸桥 / QC</span><strong id="hd-asset-qc">—</strong><span class="hd-row-arrow">↗</span></button>
+        <button class="hd-asset-row" type="button" data-hd-focus="yard"><span class="hd-asset-symbol violet">▥</span><span>场桥 / YC</span><strong id="hd-asset-yc">—</strong><span class="hd-row-arrow">↗</span></button>
+        <button class="hd-asset-row" type="button" data-hd-focus="transport"><span class="hd-asset-symbol cyan">⇆</span><span>AGV / 集卡</span><strong id="hd-asset-agv">—</strong><span class="hd-row-arrow">↗</span></button>
+        <button class="hd-asset-row" type="button" data-hd-focus="vessel"><span class="hd-asset-symbol blue">▰</span><span>船舶 / VESSEL</span><strong id="hd-asset-vessel">—</strong><span class="hd-row-arrow">↗</span></button>
+        <p class="hd-note">来自回放帧的可视化实体，位置为数据投影。</p>
+      </section>
+    </aside>
+
+    <section class="hd-scene-panel" aria-label="可交互三维港区沙盘">
+      <div class="hd-scene-top"><div><span class="hd-scene-index">01 / TWIN SPACE</span><h2>港区数字孪生<span>3D</span></h2></div><div class="hd-scene-top-right"><span class="hd-stream-status" id="hd-stream-status"><i></i>连接回放</span><span class="hd-render-stamp">设施示意 · 动态投影</span></div></div>
+      <div class="hd-viewbar"><label><span class="hd-sr-only">三维观察视角</span><select id="hd-camera"><option value="overview">全港鸟瞰</option><option value="quay">前沿装卸</option><option value="yard">堆场作业</option><option value="transport">水平运输</option><option value="energy">岸电与储能</option><option value="gate">闸口与铁路</option></select></label><button type="button" id="hd-tour" aria-pressed="false">▷ 自动巡航</button><span class="hd-view-divider"></span><button type="button" id="hd-theme" aria-pressed="false">☀ 日景</button><button type="button" id="hd-labels-toggle" aria-pressed="true">标签</button></div>
+      <button class="hd-minimap" id="hd-map-reset" type="button" aria-label="场景小地图，点击返回全港鸟瞰"><span>场景定位 <b>N ↑</b></span><svg id="hd-minimap-svg" viewBox="0 0 160 90" aria-hidden="true"></svg></button>
+      <div class="hd-scene-host" id="hd-scene-host" tabindex="0" role="img" aria-label="港区三维示意沙盘，拖动旋转，滚轮缩放，方向键旋转，点选岸桥和堆场查看详情">
+        <div class="hd-scene-loading" id="hd-scene-loading"><span class="hd-loader"></span>正在构建三维港区…</div>
+        <div class="hd-scene-fallback" id="hd-scene-fallback" hidden><span>三维视图暂不可用</span><p id="hd-scene-error">您仍可查看指标、趋势与场景资产。</p><button id="hd-scene-retry" type="button">重新加载场景 ↻</button><a href="#realtime-section">打开港区二维视图 ↗</a></div>
+        <div class="hd-scene-label" id="hd-label-quay" data-hd-label="quay"><button type="button" data-hd-focus="quay"><i class="amber"></i>前沿泊位<span>QUAYSIDE</span></button></div>
+        <div class="hd-scene-label" id="hd-label-yard" data-hd-label="yard"><button type="button" data-hd-focus="yard"><i class="violet"></i>集装箱堆场<span>CONTAINER YARD</span></button></div>
+        <div class="hd-scene-label" id="hd-label-transport" data-hd-label="transport"><button type="button" data-hd-focus="transport"><i></i>水平运输<span>AGV NETWORK</span></button></div>
+        <div class="hd-scene-label" id="hd-label-energy" data-hd-label="energy"><button type="button" data-hd-focus="energy"><i></i>岸电与储能<span>SHORE POWER / BESS</span></button></div>
+        <div class="hd-scene-label" id="hd-label-gate" data-hd-label="gate"><button type="button" data-hd-focus="gate"><i class="amber"></i>闸口与铁路<span>INTERMODAL GATEWAY</span></button></div>
       </div>
+      <div class="hd-scene-toolbar"><div class="hd-layer-switch" role="group" aria-label="沙盘显示图层"><button class="active" type="button" data-hd-layer="overview" aria-pressed="true">全景</button><button type="button" data-hd-layer="operations" aria-pressed="false">作业</button><button type="button" data-hd-layer="transport" aria-pressed="false">运输</button><button type="button" data-hd-layer="services" aria-pressed="false">设施</button></div><div class="hd-scene-controls"><button type="button" id="hd-play" aria-label="暂停态势回放" aria-pressed="false" title="暂停回放">Ⅱ</button><button type="button" id="hd-reset" aria-label="复位三维视角" title="复位视角">⌖</button><button type="button" id="hd-fullscreen" aria-label="全屏三维沙盘" title="全屏沙盘">⛶</button></div></div>
+      <div class="hd-scene-inspector" id="hd-scene-inspector" hidden><div><span class="hd-kicker">ASSET INSPECTOR</span><button type="button" id="hd-inspector-close" aria-label="关闭场景详情">×</button></div><strong id="hd-inspector-title">前沿泊位</strong><div class="hd-inspector-metrics" id="hd-inspector-metrics"></div><p id="hd-inspector-body"></p><a id="hd-inspector-link" href="#realtime-section">进入详细态势 ↗</a></div>
+      <div class="hd-scene-legend"><span><i></i>作业中</span><span><i class="idle"></i>待命</span><span><i class="facility"></i>示意设施</span></div>
+      <div class="hd-history"><span id="hd-history-label">回放留帧</span><label><span class="hd-sr-only">本次会话已接收回放帧</span><input type="range" id="hd-history-slider" min="0" max="0" value="0" disabled></label><span id="hd-history-count">0 帧</span><button type="button" id="hd-history-latest">最新帧 →</button></div>
+      <div class="hd-scene-bottom"><span><i class="hd-live-dot"></i><span id="hd-scene-mode">数据集投影 · 示意布局</span></span><span id="hd-frame-time">等待回放帧</span></div>
+      <div class="hd-scene-help">拖动旋转 · 滚轮缩放 · 点选探索<span>几何示意，不代表上海港现场布局</span></div>
+    </section>
 
-      <div class="hero-panel contract-registry-panel">
-        <div class="contract-registry-head">
-          <div>
-            <h4>数据源就绪态 / Contract Registry</h4>
-            <div class="contract-registry-sub">按运行时来源登记研究数据、现场适配器、孪生证据与执行边界；就绪态由后端实时返回，不使用静态演示结论。</div>
-          </div>
-          <div class="small" style="color:#8aa6d8;">点击模块查看当前证据接口、主键和时间字段。</div>
-        </div>
-        <div class="contract-grid" id="contract-grid">
-          <div class="contract-item active" data-contract-key="portviz">
-            <div class="contract-head"><div class="contract-name">运行时来源登记</div><span class="contract-badge pending">读取中</span></div>
-            <div class="contract-meta">/api/system/provenance</div>
-          </div>
-        </div>
-        <div class="contract-detail" id="contract-detail">
-          <div class="contract-detail-title">等待读取来源证据</div>
-          <div class="contract-detail-body">未返回来源状态前，不宣称任何模块已经接入现场数据。</div>
-        </div>
-      </div>
+    <aside class="hd-right">
+      <section class="hd-panel hd-attention">
+        <div class="hd-panel-head"><h2><i class="hd-section-mark amber"></i>运行关注</h2><span class="hd-kicker">ATTENTION</span></div>
+        <div class="hd-status-line"><span class="hd-status-orbit" aria-hidden="true">◎</span><div><span class="hd-kicker">现场证据状态</span><strong id="home-status">等待读取</strong></div></div>
+        <div class="hd-status-row"><span>运行风险</span><strong id="home-risk">未评定</strong></div>
+        <div class="hd-status-row"><span>现场遥测</span><strong class="hd-amber" id="hd-site-status">核验中</strong></div>
+        <div class="hd-status-row"><span>生产控制</span><strong id="hd-authority">核验中</strong></div>
+        <button class="hd-next-action" type="button" id="hd-open-evidence"><span class="hd-kicker">建议下一步</span><span><strong id="home-focus">核验数据来源</strong><b>→</b></span></button>
+        <div class="hd-data-message" id="hd-data-message" role="status" aria-live="polite"></div>
+      </section>
+      <section class="hd-panel hd-coverage">
+        <div class="hd-panel-head"><h2><i class="hd-section-mark"></i>软件场景覆盖</h2><span class="hd-kicker">AI LAB</span></div>
+        <div class="hd-coverage-body"><div class="hd-ring" id="hd-coverage-ring"><div><strong id="hd-coverage-count">—</strong><span>离线场景</span></div></div><div class="hd-coverage-legend"><span><i></i>已覆盖 <b id="hd-coverage-ready">—</b></span><span><i class="muted"></i>其余 <b id="hd-coverage-rest">—</b></span><small>现场准入另行核验</small></div></div>
+        <a class="hd-text-link" href="/rl-panel">进入策略实验室 <span>↗</span></a>
+      </section>
+    </aside>
+  </div>
+
+  <div class="hd-workspace-head hd-service-heading"><h2>港口综合服务</h2><span>环境 · 靠泊 · 能源 · 协同</span><span class="hd-kicker">PORT SERVICE DESK</span></div>
+  <div class="hd-service-grid">
+    <button class="hd-service-card" type="button" data-hd-service="environment"><span class="hd-service-icon">≋</span><span class="hd-service-title">气象与海况 <small id="hd-weather-state">读取公开序列</small></span><span class="hd-environment-values"><span><b id="hd-weather-wind">—</b><small>风速 m/s</small></span><span><b id="hd-weather-tide">—</b><small>潮位 m</small></span><span><b id="hd-weather-wave">—</b><small>浪高 m</small></span></span><span class="hd-service-footer">查看 24 点环境序列 <b>↗</b></span></button>
+    <button class="hd-service-card" type="button" data-hd-service="berth"><span class="hd-service-icon blue">⚓</span><span class="hd-service-title">船舶与靠泊 <small id="hd-berth-state">核验来源</small></span><span class="hd-service-value" id="hd-berth-value">—</span><span class="hd-service-note">到港 → 引航 → 拖轮 → 系泊 → 装卸 → 离港</span><span class="hd-service-footer">查看靠泊服务链与接入状态 <b>↗</b></span></button>
+    <button class="hd-service-card" type="button" data-hd-service="energy"><span class="hd-service-icon amber">ϟ</span><span class="hd-service-title">岸电与能源 <small>设备校准回放</small></span><span class="hd-service-value"><b id="hd-service-energy">—</b><small> kW</small></span><span class="hd-service-note">选择岸电、储能或冷藏箱，联动查看设备曲线</span><span class="hd-service-footer">打开能源服务工作台 <b>↗</b></span></button>
+    <button class="hd-service-card" type="button" data-hd-service="coordination"><span class="hd-service-icon violet">⌘</span><span class="hd-service-title">全链条协同 <small id="hd-coordination-state">核验中</small></span><span class="hd-service-value" id="hd-coordination-value">—</span><span class="hd-service-note">航道 · 泊位 · 设备 · 箱位 · 闸口 · 铁路</span><span class="hd-service-footer">查看资源合同与规划入口 <b>↗</b></span></button>
+  </div>
+  <dialog class="hd-service-dialog" id="hd-service-dialog" aria-labelledby="hd-service-dialog-title"><div class="hd-service-dialog-head"><div><span class="hd-eyebrow">PORT SERVICE DESK</span><h2 id="hd-service-dialog-title">港口综合服务</h2></div><button id="hd-service-close" type="button" aria-label="关闭服务详情">×</button></div><div id="hd-service-dialog-body"></div><div class="hd-service-dialog-footer"><span id="hd-service-source"></span><a id="hd-service-route" href="#ext-section">打开业务工作台 ↗</a></div></dialog>
+
+  <div class="hd-workspace-head"><h2>从态势到行动</h2><span>一个工作台，贯通决策全程</span><span class="hd-kicker">YOUR WORKSPACE</span></div>
+  <div class="hd-workspace">
+    <a class="hd-workspace-card home-action" href="#exec-cockpit" data-panel="cockpit"><span class="hd-workspace-icon cyan">◴</span><span><strong>管理驾驶舱</strong><small>经营 · 能源 · 碳排</small></span><b>↗</b></a>
+    <a class="hd-workspace-card home-action" href="#twin-section" data-panel="twin"><span class="hd-workspace-icon blue">◇</span><span><strong>孪生推演</strong><small>预测 · 场景 · 对比</small></span><b>↗</b></a>
+    <a class="hd-workspace-card home-action" href="#strategy-exec-module" data-panel="strategy"><span class="hd-workspace-icon violet">⌘</span><span><strong>策略编排</strong><small>策略 · 审批 · 回执</small></span><b>↗</b></a>
+    <a class="hd-workspace-card home-action" href="/v3?from=home"><span class="hd-workspace-icon amber">⌁</span><span><strong>V3 决策中枢</strong><small>多港 · 业务 · 证据</small></span><b>↗</b></a>
+  </div>
+
+  <details class="hd-evidence" id="hd-evidence">
+    <summary><span><i class="hd-section-mark"></i>数据来源与决策依据<span class="hd-evidence-sub">来源、规则与执行边界</span></span><span>展开核验 <b>⌄</b></span></summary>
+    <div class="hd-evidence-body">
+      <div class="hd-brief"><strong id="home-lead">等待读取当前运行证据。</strong><p id="home-desc">当前为公开数据离线验证态，现场风险等待真实来源确认。</p><div class="hd-brief-grid"><p id="home-status-sub">现场运行状态待确认。</p><p id="home-risk-sub">现场风险待评定。</p><p id="home-focus-sub">先核验来源与权限。</p></div></div>
+      <div class="hero-panel contract-registry-panel"><div class="contract-registry-head"><div><h4>数据源就绪态 / Contract Registry</h4><div class="contract-registry-sub">点击模块核验当前证据、主键与时间字段。</div></div></div><div class="contract-grid" id="contract-grid"><div class="contract-item active" data-contract-key="portviz"><div class="contract-head"><div class="contract-name">运行时来源登记</div><span class="contract-badge pending">读取中</span></div><div class="contract-meta">/api/system/provenance</div></div></div><div class="contract-detail" id="contract-detail"><div class="contract-detail-title">等待读取来源证据</div><div class="contract-detail-body">来源状态尚未返回。</div></div></div>
     </div>
-  </section>
+  </details>
+  <footer class="hd-footer"><span>TWINPORT AI <b>/</b> 公开数据驱动 · 决策建议态</span><span>独立研发 · 温家懿<span class="hd-footer-divider">/</span> DIGITAL TWIN + REINFORCEMENT LEARNING</span></footer>
+</section>
+
 
     <!-- ====== 管理驾驶舱（董事会 / CEO 视角） ====== -->
   <div class="wrap-kpi" id="exec-cockpit">
@@ -3779,6 +3832,8 @@ border-left:3px solid rgba(148,163,184,.22);
 
   <!-- ====== 港区 3D 大屏（保持） ====== -->
   <div class="wrap-3d" id="twin3d-section">
+<p><a href="/static/external-load/index.html">外部负荷与电价压力复算</a></p>
+<p><a href="/static/load-outlook/index.html">三个港区的日前负荷预测与实绩</a></p>
     <div class="card">
       <div class="title">
         <span>港区 3D 数字孪生</span>
@@ -4037,7 +4092,7 @@ border-left:3px solid rgba(148,163,184,.22);
           <div class="kpi"><h4>单位TEU能耗</h4><div class="v" id="kpiEperTEU">加载中…</div><div class="s">= 模拟器墙钟日能耗 ÷ 工程 TEU</div></div>
           <div class="kpi"><h4>单位作业碳排</h4><div class="v" id="kpiCperTEU">加载中…</div><div class="s" id="kpiCperTEUSub">电力范围；油/气待接入港口</div></div>
           <div class="kpi"><h4>设备利用率</h4><div class="v" id="kpiUtil">加载中…</div><div class="s">公开校准模拟器资产画像</div></div>
-          <div class="kpi"><h4>PUE</h4><div class="v" id="kpiPUE">待接入港口</div><div class="s">冷站与 IT 分项计量待接入港口</div></div>
+          <div class="kpi"><h4>设施 PUE</h4><div class="v" id="kpiPUE">不适用全港</div><div class="s">仅数据中心适用；需设施边界与 IT 分表</div></div>
         </div>
       </div>
 
@@ -4329,7 +4384,7 @@ border-left:3px solid rgba(148,163,184,.22);
       <div class="strategy-subcard strategy-sim-card">
         <h4 class="title" style="margin-top:0;">聚合仿真（总负荷 P10/P50/P90）</h4>
         <canvas id="aggLine" height="120"></canvas>
-        <div class="small" id="aggLegend">选择场景后点击“聚合仿真”渲染置信带。</div>
+        <div class="small" id="aggLegend">选择场景后点击“运行场景推演”，读取 P10/P50/P90。</div>
       </div>
         </div>
 
@@ -5213,7 +5268,13 @@ border-left:3px solid rgba(148,163,184,.22);
   async function selectExternalDetail(view){
     externalDetailView=view;
     byId('ext-v3-detail').textContent='正在读取所选证据…';
-    try{if(!externalV3Evidence)await loadExternalV3();renderExternalDetail();}
+    try{
+      if(!externalV3Evidence)await loadExternalV3();
+      renderExternalDetail();
+      if(view==='provenance')window.portDtDemoReceipt?.('dataset',{
+        message:'公开来源、数据版本与哈希证据已显示',target:'#ext-v3-detail'
+      });
+    }
     catch(error){byId('ext-v3-status').textContent='外部信号加载失败：'+error.message;byId('ext-v3-detail').textContent='所选证据读取失败；可点击刷新重试。'+error.message;}
   }
   function portCallContractSample(){
@@ -6667,7 +6728,9 @@ border-left:3px solid rgba(148,163,184,.22);
     // 右侧原有操作按钮
     let strategyActionId=0;
     async function readStrategyAction(kind){
-      const token=++strategyActionId,asset=selAsset.value;
+      const actionAsset=()=>$('#sw-asset-select')?.value||selAsset.value;
+      const token=++strategyActionId,asset=actionAsset();
+      if(['forecast','report'].includes(kind)&&(!asset||asset==='加载中...'))return show({error:'请先在补充查询中选择已读取的资产'});
       const button=$('#btn-'+kind);button.disabled=true;
       show({status:'loading',action:kind,asset_id:asset});
       try{
@@ -6676,7 +6739,7 @@ border-left:3px solid rgba(148,163,184,.22);
         const response=await fetch(urls[kind],{cache:'no-store'});
         if(!response.ok)throw new Error(`HTTP ${response.status}`);
         const data=await response.json();
-        if(token!==strategyActionId||asset!==selAsset.value)return;
+        if(token!==strategyActionId||asset!==actionAsset())return;
         if(data?.available===false)throw new Error(data.reason||'运行证据不可用');
         if(kind==='rl'){
           if(!data.available||!data.decision||!data.policy)throw new Error('当前没有经运行时核验的状态与策略决策，不生成替代建议。');
@@ -6701,6 +6764,11 @@ border-left:3px solid rgba(148,163,184,.22);
       if(!ctxAgg || !data || !Array.isArray(data.p50)) return;
       latestAggData = data;
       const p10=data.p10||[], p50=data.p50||[], p90=data.p90||[];
+      if(window.PortStrategyCharts){
+        window.PortStrategyCharts.draw(canvasAgg,[{name:'P50',values:p50,color:'#7bd8bf'}],{low:p10,high:p90,times:data.times,label:'场景负荷 kW，P50 与 P10–P90 区间',xLabel:'运行时时间 CST'});
+        if(updateLegend)$('#aggLegend').textContent=`${p50.length} 个展示采样点 · P10/P50/P90 · 校准回放推演，非现场实测`;
+        return;
+      }
       const all = p10.concat(p50,p90);
       const mn = Math.min(...all, 0), mx = Math.max(...all, 1);
       if(updateLegend) $('#aggLegend').textContent = `点数 ${p50.length}；范围 ${fmt1(mn)}~${fmt1(mx)} kW`;
@@ -6751,6 +6819,7 @@ border-left:3px solid rgba(148,163,184,.22);
     let aggregateRequestId=0;
     async function runAggregateScenario(){
       const token=++aggregateRequestId,button=$('#btn-agg-sim');
+      window.dispatchEvent?.(new CustomEvent('port-strategy-aggregate',{detail:{result:null}}));
       const scen = $('#sel-scenario').value || '基线场景';
       const scenarioId=runtimeScenarioId(scen);
       button.disabled=true;drawAgg({p10:[],p50:[],p90:[]},false);$('#aggLegend').textContent='正在推演所选场景…';
@@ -6760,12 +6829,11 @@ border-left:3px solid rgba(148,163,184,.22);
       const j=await response.json();
       if(token!==aggregateRequestId||scen!==$('#sel-scenario').value)return;
       if (!j?.available || !j?.series?.p50?.length)throw new Error(j?.reason||'策略运行时未返回可验证结果');
-      drawAgg({
-        p10:(j.series.p10||[]).map(p=>Number(p.kW||0)),
-        p50:(j.series.p50||[]).map(p=>Number(p.kW||0)),
-        p90:(j.series.p90||[]).map(p=>Number(p.kW||0))
-      });
+      const bands=['p10','p50','p90'].map(key=>(j.series[key]||[]).map(p=>p.kW));
+      if(bands.some(values=>values.length<2||values.length!==bands[1].length||values.some(v=>typeof v!=='number'||!Number.isFinite(v))))throw new Error('推演置信带缺失或含无效数值');
+      drawAgg({p10:bands[0],p50:bands[1],p90:bands[2],times:j.series.p50.map(p=>p.ts)});
       show(j); // 输出到右侧 JSON 面板
+      window.dispatchEvent?.(new CustomEvent('port-strategy-aggregate',{detail:{result:j,scenario:scen}}));
       }catch(error){if(token===aggregateRequestId){drawAgg({p10:[],p50:[],p90:[]},false);$('#aggLegend').textContent='推演失败，旧曲线已清除：'+error.message;}}
       finally{if(token===aggregateRequestId)button.disabled=false;}
     }
@@ -7169,6 +7237,8 @@ border-left:3px solid rgba(148,163,184,.22);
       }
       cancelAnimationFrame(localTwin.raf);localTwin.raf=0;syncLocalTwinAnimation();
       clearInterval(localTwin.timer);localTwin.timer=setInterval(()=>{if(localTwin.visible&&twinSceneVisible()&&VIEW_MODE==='now')refresh3DColors();},2000);
+      host.dataset.renderState='ready';host.dataset.renderMode='local-perspective';
+      window.dispatchEvent(new CustomEvent('port-dt:demo-receipt',{detail:{stepId:'twin3d-showcase',target:'#sceneHost',message:'本地透视孪生画面与业务图层已加载（WebGL 不可用时的兼容渲染）。'}}));
     }
 
     function init3DOnce(){
@@ -7178,7 +7248,14 @@ border-left:3px solid rgba(148,163,184,.22);
       const w=Math.max(1,host.clientWidth), h=Math.max(1,host.clientHeight);
       const scene=new THREE.Scene(); scene.background=new THREE.Color(0x0a152a);
       const camera=new THREE.PerspectiveCamera(45, w/h, 1, 2000); camera.position.set(140,120,160);
-      const renderer=new THREE.WebGLRenderer({antialias:true}); renderer.setPixelRatio(devicePixelRatio); renderer.setSize(w,h); host.appendChild(renderer.domElement);
+      let renderer;
+      try { renderer = new THREE.WebGLRenderer({antialias:true}); }
+      catch (error) {
+        console.warn('[twin3d] WebGL unavailable; using the existing local perspective renderer.');
+        initLocalCanvasTwin(host,(ALL_ASSETS&&ALL_ASSETS.length)?ALL_ASSETS:[]);
+        return;
+      }
+      renderer.setPixelRatio(devicePixelRatio); renderer.setSize(w,h); host.appendChild(renderer.domElement);
       const controls = typeof THREE.OrbitControls === 'function'
         ? new THREE.OrbitControls(camera, renderer.domElement)
         : createFallbackOrbitControls(camera, renderer.domElement);
@@ -7223,6 +7300,8 @@ border-left:3px solid rgba(148,163,184,.22);
       window.addEventListener('port-module-shown',syncThreeAnimation);
       syncThreeAnimation();
       enablePicking(); refresh3DColors(); setInterval(()=>{ if (twinSceneVisible() && VIEW_MODE==='now' && three.scene) refresh3DColors(); }, 2000);
+      host.dataset.renderState='ready';host.dataset.renderMode='webgl';
+      window.dispatchEvent(new CustomEvent('port-dt:demo-receipt',{detail:{stepId:'twin3d-showcase',target:'#sceneHost',message:'WebGL 孪生场景与业务图层已加载。'}}));
     }
 
     /************** 悬浮小曲线（保持 + 修复 Y 轴计算） **************/
@@ -8256,10 +8335,11 @@ border-left:3px solid rgba(148,163,184,.22);
         kpiCperTEU.textContent = carbonIntensity==null?'待接入港口':`${fmt3(Number(carbonIntensity))} kgCO₂e/TEU`;
         kpiCperTEUSub.textContent = avgCI==null?'电网碳因子待接入港口':`电力 EF=${fmt1(avgCI)} g/kWh · 油/气待接入港口`;
         kpiUtil.textContent = utilPct==null?'待接入港口':`${fmt1(utilPct)} %`;
-        kpiPUE.textContent = '待接入港口';
+        kpiPUE.textContent = '不适用全港';
         if (kpiBasis) kpiBasis.textContent=`${measured?'现场计量':'公开校准实时模拟器'} · ${data?.data_status?.today_semantics||'口径待核验'} · TEU 为工程输入 · 现场 TOS/EMS/电价合同待接入港口`;
       }catch(_){
         [kpiElec,kpiTOU,kpiEperTEU,kpiCperTEU,kpiUtil,kpiPUE].forEach(el=>{if(el)el.textContent='待接入港口';});
+        if(kpiPUE)kpiPUE.textContent='不适用全港';
         if(kpiElecSub)kpiElecSub.textContent='能耗接口不可用；未生成替代指标';
         if(kpiCperTEUSub)kpiCperTEUSub.textContent='碳因子待接入港口';
         if(kpiBasis)kpiBasis.textContent='港口 TOS/EMS/计量与碳因子待接入港口';
@@ -8316,6 +8396,7 @@ border-left:3px solid rgba(148,163,184,.22);
       simState={base:[],sim:[],strategyId:null,rendered:false};
       strategyDecisionState.sim=null;
       simMeta.textContent=message||'当前策略尚无有效评测图；完成评测后可保存。';
+      window.dispatchEvent?.(new CustomEvent('port-strategy-result',{detail:{type:'invalidated',reason:message}}));
       drawSim();
     }
 
@@ -8470,6 +8551,10 @@ border-left:3px solid rgba(148,163,184,.22);
 
     btnListRL.onclick = async () => {
       clearSimulationPlot('正在重读策略列表；原评测图已失效。');
+      selRL.dataset.payload='[]';selRL.innerHTML='<option value="">正在读取登记策略…</option>';
+      strategyDecisionState={strategy:null,sim:null,list:[]};renderStrategyDecisionChain();
+      clearStrategyExplanation();
+      btnSimRL.disabled=true;btnExpRL.disabled=true;
       btnListRL.disabled = true;
       try{
         const res = await fetch('/api/rl/strategies?horizon_min=360&step_min=5&max_items=12');
@@ -8499,6 +8584,7 @@ border-left:3px solid rgba(148,163,184,.22);
         $('#btn-exec-auto').disabled = true;
         $('#btn-exec-manual').disabled = true;
         show({info:'已拉取策略列表', total:list.length, first:list[0]});
+        simMeta.textContent='已选择登记策略；运行留出集评测后生成当前基线对比。';
         updateExecSid();
         // 成功拿到策略后，尝试渲染 Rollout 状态卡 & 确保保存按钮已插入
         try { tryLoadRollout(); } catch(_) {}
@@ -8511,6 +8597,7 @@ border-left:3px solid rgba(148,163,184,.22);
         $('#btn-exec-auto').disabled = true;
         $('#btn-exec-manual').disabled = true;
         show({error:'拉取策略失败', detail:String(err).slice(0,300)});
+        selRL.innerHTML='<option value="">读取失败，请重试</option>';simMeta.textContent='策略列表读取失败，请重新读取。';
       }finally{
         btnListRL.disabled = false;
       }
@@ -8518,6 +8605,7 @@ border-left:3px solid rgba(148,163,184,.22);
 
     selRL?.addEventListener('change', ()=>{
       clearSimulationPlot('策略已重选，请完成当前策略评测后保存。');
+      clearStrategyExplanation();
       btnSimRL.disabled=!selRL.value;
       strategyDecisionState.strategy = selectedStrategy();
       strategyDecisionState.sim = null;
@@ -8588,20 +8676,20 @@ border-left:3px solid rgba(148,163,184,.22);
           },
           production_dispatched:data.production_dispatched
         });
-        strategyDecisionState.sim = data;
-        renderStrategyDecisionChain();
         const metric = (value,digits)=>value!=null&&Number.isFinite(Number(value))?Number(value).toFixed(digits):'待接入/未计算';
         const peakValue=data.summary?.peak_reduction_kW;
         const peakText=peakValue==null?'峰值差=待接入/未计算':Number(peakValue)>=0?`削峰=${metric(peakValue,2)} kW`:`峰值增加=${metric(Math.abs(Number(peakValue)),2)} kW`;
         simMeta.textContent = `节电=${metric(data.summary?.delta_kWh,3)} kWh | ΔkgCO₂e=${metric(data.summary?.delta_carbon_kg,3)} | ${peakText} | 设备执行权=未授予`;
         const base=data.baseline?.agg_kW, policy=data.simulated?.agg_kW;
         if(!validSimulationSeries(base,policy))throw new Error('评测未提供两条长度一致、有限数值的有效功率曲线');
+        strategyDecisionState.sim = data;renderStrategyDecisionChain();
         simState={base,sim:policy,strategyId:sid,rendered:false};
         drawSim();
+        window.dispatchEvent?.(new CustomEvent('port-strategy-result',{detail:{type:'evaluated',result:data}}));
       }catch(err){
         if(requestId!==simRequestId || sid!==selRL.value)return;
         show({error:'模拟失败', detail:String(err).slice(0,400)});
-        clearSimulationPlot(`评测失败，图表已清空：${String(err).slice(0,160)}`);
+        clearSimulationPlot('评测失败，图表已清空。可重新评测；错误详情见接口回执。');
         renderStrategyDecisionChain();
         btnSimRL.disabled=!selRL.value;
       }finally{
@@ -8618,9 +8706,13 @@ border-left:3px solid rgba(148,163,184,.22);
       const cv = document.getElementById(id);
       if(!cv){ return show({warn:`未找到画布 ${id}`}); }
       try{
-        const url = cv.toDataURL('image/png');
-        const a = document.createElement('a');
-        a.href = url; a.download = filename || 'chart.png'; a.click();
+        cv.toBlob(blob=>{
+          if(!blob)return show({error:'保存PNG失败',detail:'未生成有效图片'});
+          if(id==='simCanvas'&&!hasCurrentSimulationPlot())return show({warn:'策略已变化，未导出旧评测图'});
+          const url=URL.createObjectURL(blob),a=document.createElement('a');
+          a.href=url;a.download=filename||'chart.png';document.body.append(a);a.click();a.remove();
+          setTimeout(()=>URL.revokeObjectURL(url),1000);
+        },'image/png');
       }catch(e){
         show({error:'保存PNG失败', detail:String(e).slice(0,200)});
       }
@@ -8731,6 +8823,7 @@ border-left:3px solid rgba(148,163,184,.22);
 
     function drawSimChart(aggBase, aggSim){
       if (!simCanvas) return false;
+      if(window.PortStrategyCharts){const step=strategyDecisionState.sim?.summary?.decision_interval_hours;return window.PortStrategyCharts.draw(simCanvas,[{name:'基线',values:aggBase,color:'#81aae0'},{name:'策略',values:aggSim,color:'#7bd8bf'}],{label:'独立留出集基线与策略聚合功率对比，kW',xLabel:typeof step==='number'?`评测时间步 · ${(step*60).toFixed(0)}分钟/步`:'评测时间步'});}
       const ctx = simCanvas.getContext('2d');
       if (!ctx) return false;
       const r = simCanvas.getBoundingClientRect(); simCanvas.width = Math.max(320,(r.width||600))*devicePixelRatio; simCanvas.height = Math.max(180,(r.height||180))*devicePixelRatio;
@@ -8786,6 +8879,13 @@ border-left:3px solid rgba(148,163,184,.22);
     const expReasons = $('#expReasons');
     const expTableBody = $('#expTable tbody');
     let expData = [];
+    let explanationRequestId=0;
+    function clearStrategyExplanation(){
+      explanationRequestId+=1;expData=[];drawExpBar();
+      expReasons.innerHTML='<li class="small">尚未读取当前策略解释。</li>';
+      expTableBody.innerHTML='<tr><td colspan="5" class="small">尚未读取当前策略解释；请点击“读取模型证据与解释”。</td></tr>';
+      btnExpRL.disabled=!selRL.value;
+    }
     function featLabel(name){ const map = {avg_load_kw:'平均负荷',is_peak_window:'峰段覆盖',price_proxy:'电价（代理）',action_intensity:'动作强度',lighting_dim_ratio:'照明调光比例',setpoint_shift_degC:'设定点上移(℃)',scope_size:'作用范围大小',cnt_qc:'岸桥数量',cnt_yc:'场桥数量',cnt_agv:'AGV数量',cnt_wh:'仓库数量',cnt_cs:'充电数量',cnt_ps:'配电数量',cnt_yard:'堆场数量'}; return map[name] || name; }
     function drawExpBar(){ const g = expCanvas.getContext('2d'); const r = expCanvas.getBoundingClientRect(); expCanvas.width = r.width*devicePixelRatio; expCanvas.height = r.height*devicePixelRatio; const W = expCanvas.width, H = expCanvas.height; g.clearRect(0,0,W,H); if(!expData.length){ g.fillStyle='#8aa6d8'; g.fillText('暂无可解释特征数据', 12, 20); return; } const pad = 32*devicePixelRatio; const innerW = W - pad*2; const barH = 18*devicePixelRatio; const gap=8*devicePixelRatio; const N = expData.length; const totalH = N*(barH+gap)-gap; const top = (H-totalH)/2; const maxAbs = Math.max(1e-6, Math.max(...expData.map(x=>Math.abs(x.contribution)))); g.strokeStyle='#1f3158'; g.lineWidth=1; g.beginPath(); g.moveTo(W/2, top-10); g.lineTo(W/2, top+totalH+10); g.stroke(); expData.forEach((x, i)=>{ const y = top + i*(barH+gap); const sign = x.contribution >= 0 ? 1 : -1; const w = Math.min(innerW/2, Math.abs(x.contribution)/maxAbs * (innerW/2)); const x0 = W/2 + (sign>0? 0 : -w); g.fillStyle = sign>0 ? '#f87171' : '#60a5fa'; g.fillRect(x0, y, w, barH); g.fillStyle='#cfe0ff'; g.fillText(featLabel(x.name), pad/2, y + barH*0.7); g.fillStyle= sign>0 ? '#fecaca' : '#bfdbfe'; g.fillText((x.contribution>=0?'+':'')+fmt3(x.contribution)+' kWh', x0 + (sign>0? w+6 : -80), y + barH*0.7); }); g.fillStyle='#cfe0ff'; g.fillText('节电 ←', pad, top-14); g.fillText('→ 变差', W-pad-60, top-14); }
     function renderExpReasons(list){ expReasons.innerHTML = ''; if(!list || !list.length){ expReasons.innerHTML = '<li class="small" style="color:#eab308;">该登记模型未产出解释理由；不生成猜测值</li>'; return; } list.forEach(t=>{ const li=document.createElement('li'); li.textContent=t; expReasons.appendChild(li); }); }
@@ -8793,18 +8893,21 @@ border-left:3px solid rgba(148,163,184,.22);
     btnExpRL.onclick = async ()=>{
       const sid = selRL.value;
       if (!sid){ show({warn:'请先选择一条策略'}); return; }
+      const requestId=++explanationRequestId;
       btnExpRL.disabled = true;
       try{
         const payload = { strategy_id: sid, horizon_min: 360, step_min: 1 };
         const res = await fetch('/api/rl/explain', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
         if(!res.ok) throw new Error(await res.text());
         const data = await res.json();
+        if(requestId!==explanationRequestId||sid!==selRL.value)return;
         const feats = (data.features||[]).map(f=>({name: f.name, contribution: Number(f.contribution_kWh||0), importance: Number(f.importance||0), direction: f.direction||'neutral', value: (f.value??'—')})).sort((a,b)=> Math.abs(b.contribution) - Math.abs(a.contribution)).slice(0,8);
         expData = feats; drawExpBar(); renderExpReasons(data.reasons||[]); renderExpTable((data.features||[]).sort((a,b)=> Math.abs(b.contribution_kWh)-Math.abs(a.contribution_kWh)));
         show({explain_meta:data.meta, top_features:feats.map(x=>({name:x.name, contribution:x.contribution}))});
       }catch(err){
+        if(requestId!==explanationRequestId||sid!==selRL.value)return;
         show({error:'解释失败', detail:String(err).slice(0,400)}); expData=[]; drawExpBar(); renderExpReasons([]); renderExpTable([]);
-      }finally{ btnExpRL.disabled = false; }
+      }finally{if(requestId===explanationRequestId)btnExpRL.disabled=!selRL.value;}
     };
 
     /************** 南向执行能力（失效安全） **************/
@@ -8822,6 +8925,7 @@ border-left:3px solid rgba(148,163,184,.22);
         const r = await fetch('/api/actuators/capabilities', {cache:'no-store'});
         if (!r.ok) throw new Error(await r.text());
         const cap = await r.json();
+        window.dispatchEvent?.(new CustomEvent('port-strategy-capability',{detail:{capability:cap}}));
         const constraints = Array.isArray(cap.site_constraint_names) ? cap.site_constraint_names : [];
         tblHistBody.innerHTML = `<tr>
           <td>南向网关</td>
@@ -8834,6 +8938,7 @@ border-left:3px solid rgba(148,163,184,.22);
         </tr>`;
       }catch(err){
         tblHistBody.innerHTML = `<tr><td colspan="7" class="small" style="color:#ef4444;">南向能力读取失败：${escapeHtml(String(err).slice(0,200))}</td></tr>`;
+        window.dispatchEvent?.(new CustomEvent('port-strategy-capability',{detail:{capability:null,error:String(err)}}));
       }
     }
 
@@ -11249,6 +11354,7 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
 <!-- === [Module D · Shore BESS · BEGIN] =============================== -->
 <div class="card" id="sbess-section" style="grid-column:1 / -1; margin-top:8px;">
   <div class="title" id="d-evidence-title">模块D · 岸电储能（Shore BESS）｜训练与碳约束证据核验</div>
+  <p><a href="/static/shore-policy-scene.html">受训岸电策略 · 同周三方案逐时与三维回放</a></p>
   <div class="small" id="d-evidence-source" style="color:#8aa6d8;">
     来源：<code>/api/v3/modules/shore-bess/evidence</code> ｜ 正在核验历史V3.1与V8独立训练证据；数据区间、种子数和模型状态以返回的对应版本报告为准。
   </div>
@@ -11644,8 +11750,16 @@ window.__enableOptionalModule = window.__enableOptionalModule || function(flag, 
   const shoreBessRefreshButton = document.getElementById('btn-d-refresh');
   shoreBessRefreshButton?.addEventListener('click',()=>window.runVisibleModuleRefresh(shoreBessRefreshButton,loadShoreBessV3));
   document.getElementById('btn-d-model')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?{current_model_output:shoreBessV3Evidence.v8.current_model_output,checks:shoreBessV3Evidence.v8.checks}:{current_model_output:shoreBessV3Evidence.current_model_output,quality_gates:shoreBessV3Evidence.quality_gates},null,2);});
-  document.getElementById('btn-d-convergence')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?{convergence:shoreBessV3Evidence.v8.convergence,training_process:shoreBessV3Evidence.v8.training_process,selection:shoreBessV3Evidence.v8.selection}:{convergence:shoreBessV3Evidence.formal_training?.convergence,checkpoint_reward_replay:shoreBessV3Evidence.checkpoint_reward_replay,training_process:shoreBessV3Evidence.training_process},null,2);});
-  document.getElementById('btn-d-business')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?{benchmark_summaries:shoreBessV3Evidence.v8.benchmark_summaries,checks:shoreBessV3Evidence.v8.checks,boundary:shoreBessV3Evidence.v8.boundary}:{business_metrics:shoreBessV3Evidence.business_metrics,blind_test_protocol:shoreBessV3Evidence.formal_training?.blind_test_protocol,quality_gates:shoreBessV3Evidence.quality_gates},null,2);});
+  document.getElementById('btn-d-convergence')?.addEventListener('click',async()=>{
+    if(!shoreBessV3Evidence)await loadShoreBessV3();
+    $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?{convergence:shoreBessV3Evidence.v8.convergence,training_process:shoreBessV3Evidence.v8.training_process,selection:shoreBessV3Evidence.v8.selection}:{convergence:shoreBessV3Evidence.formal_training?.convergence,checkpoint_reward_replay:shoreBessV3Evidence.checkpoint_reward_replay,training_process:shoreBessV3Evidence.training_process},null,2);
+    window.portDtDemoReceipt?.('convergence',{message:'历史收敛曲线与训练过程证据已显示',target:'#d-evidence-detail'});
+  });
+  document.getElementById('btn-d-business')?.addEventListener('click',async()=>{
+    if(!shoreBessV3Evidence)await loadShoreBessV3();
+    $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?{benchmark_summaries:shoreBessV3Evidence.v8.benchmark_summaries,checks:shoreBessV3Evidence.v8.checks,boundary:shoreBessV3Evidence.v8.boundary}:{business_metrics:shoreBessV3Evidence.business_metrics,blind_test_protocol:shoreBessV3Evidence.formal_training?.blind_test_protocol,quality_gates:shoreBessV3Evidence.quality_gates},null,2);
+    window.portDtDemoReceipt?.('business',{message:'配对业务评估、约束门禁与结果边界已显示',target:'#d-evidence-detail'});
+  });
   document.getElementById('btn-d-v32')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.value_improvement||{},null,2);});
   document.getElementById('btn-d-contract-tech')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify(shoreBessV3Evidence.v8?.available?shoreBessV3Evidence.v8.config:shoreBessV3Evidence.formal_training?.contract||{},null,2);});
   document.getElementById('btn-d-history')?.addEventListener('click',()=>{if(shoreBessV3Evidence) $('#d-evidence-detail').textContent=JSON.stringify({historical_evidence:shoreBessV3Evidence.historical_evidence,historical_business_replay:shoreBessV3Evidence.historical_business_replay,legacy_history_points:shoreBessV3Evidence.legacy_history_series?.length,data_manifest:shoreBessV3Evidence.data_manifest},null,2);});
@@ -13207,7 +13321,13 @@ window.drawGroupedCompareBars = function(canvasOrId, cfg){
   }
   Object.keys(details).forEach(id=>byId(id)?.addEventListener('click',async()=>{
     selectedOpsxDetail=id;byId('opsx-v3-detail').textContent='正在读取所选审计证据…';
-    try{if(!opsxV3Evidence)await loadOpsXV3();if(selectedOpsxDetail===id)renderOpsXSelected();}
+    try{
+      if(!opsxV3Evidence)await loadOpsXV3();
+      if(selectedOpsxDetail===id)renderOpsXSelected();
+      if(id==='btn-opsx-audit')window.portDtDemoReceipt?.('audit',{
+        message:'历史审计哈希与清单已显示',target:'#opsx-v3-detail'
+      });
+    }
     catch(error){if(selectedOpsxDetail===id)byId('opsx-v3-detail').textContent='所选证据不可用，点击可重试：'+error.message;}
   }));
   const start=()=>opsxV3Evidence?Promise.resolve(opsxV3Evidence):loadOpsXV3().catch(error=>{byId('opsx-v3-status').textContent='OpsX证据加载失败：'+error.message;throw error;});
@@ -16134,6 +16254,7 @@ async function pullOverview(scenario=masScenario){
 
 <script>
   let aiTrustV3Evidence = null;
+  let aiTrustV3Request = null;
   const trustJson = (value)=>JSON.stringify(value, null, 2);
 
   function renderAITrustV3(payload){
@@ -16191,10 +16312,17 @@ async function pullOverview(scenario=masScenario){
       `V3可信结论：${payload.trust_label}。全港SAC在公开数据的3种子时间盲测中形成可复核优势，但各子模块的工程回放均单独执行门禁；现场遥测、影子运行、A/B因果识别与生产下发权限仍待接入港口。`;
   }
 
-  async function loadAITrustV3(){
-    const response = await fetch('/api/v3/ai-trust/evidence', {cache:'no-store'});
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-    renderAITrustV3(await response.json());
+  function loadAITrustV3(){
+    if(aiTrustV3Evidence) return Promise.resolve(aiTrustV3Evidence);
+    if(aiTrustV3Request) return aiTrustV3Request;
+    aiTrustV3Request = (async()=>{
+      const response = await fetch('/api/v3/ai-trust/evidence', {cache:'no-store'});
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      renderAITrustV3(payload);
+      return payload;
+    })().finally(()=>{ aiTrustV3Request = null; });
+    return aiTrustV3Request;
   }
 
   document.getElementById('btn-trust-benchmark')?.addEventListener('click',()=>{
@@ -16206,8 +16334,13 @@ async function pullOverview(scenario=masScenario){
   document.getElementById('btn-trust-modules')?.addEventListener('click',()=>{
     if (aiTrustV3Evidence) document.getElementById('trust-evidence-detail').textContent = trustJson({scenes:aiTrustV3Evidence.scenes});
   });
-  document.getElementById('btn-trust-boundary')?.addEventListener('click',()=>{
-    if (aiTrustV3Evidence) document.getElementById('trust-evidence-detail').textContent = trustJson({boundary:aiTrustV3Evidence.boundary, admission_ladder:aiTrustV3Evidence.admission_ladder, claim_registry:aiTrustV3Evidence.claim_registry});
+  document.getElementById('btn-trust-boundary')?.addEventListener('click',async()=>{
+    document.getElementById('trust-evidence-detail').textContent = '正在读取现场准入、安全门与声明边界…';
+    if(!aiTrustV3Evidence)await loadAITrustV3();
+    document.getElementById('trust-evidence-detail').textContent = trustJson({boundary:aiTrustV3Evidence.boundary, admission_ladder:aiTrustV3Evidence.admission_ladder, claim_registry:aiTrustV3Evidence.claim_registry});
+    window.portDtDemoReceipt?.('safety',{
+      message:'现场准入、安全门和生产权限边界已显示',target:'#trust-evidence-detail'
+    });
   });
   window.__portDtLoadWhenActive('ai-trust-scenes',()=>loadAITrustV3().catch((error)=>{
     const status = document.getElementById('trust-v3-status');
@@ -16309,7 +16442,7 @@ async function pullOverview(scenario=masScenario){
       const lab = $('story-hour-label');
       if (rng) rng.value = String(h);
       if (lab) lab.textContent = (h === 0 ? 'T' : (h > 0 ? `T+${h}h` : `T${h}h`));
-      loadStory(h);
+      return loadStory(h);
     }
     // 可选：对外暴露，方便其他脚本调用
     window.loadStory = loadStory;
@@ -16330,6 +16463,7 @@ async function pullOverview(scenario=masScenario){
     let __isPlaying = false;
     let __storyHour = null;
     let __storyPlaybackRevision = 0;
+    let __storyReadyPromise = null;
 
     function storyViewOpen(){
       return !document.hidden&&!!$('story-section')?.getClientRects().length;
@@ -16356,7 +16490,11 @@ async function pullOverview(scenario=masScenario){
         return;
       }
       if(!storyViewOpen()) return;
-      if(!__storyAvailable) return;
+      if(!__storyAvailable){
+        if(btn){btn.disabled=false;btn.textContent='正在准备回放…';}
+        await (__storyReadyPromise || (__storyReadyPromise=setHour(Number($('story-hour')?.value||0))));
+        if(!__storyAvailable) return;
+      }
 
       const isNewRun = __storyHour == null || __storyHour >= 24;
       if (isNewRun) __storyHour = -24;
@@ -16364,13 +16502,17 @@ async function pullOverview(scenario=masScenario){
       const playbackRevision=++__storyPlaybackRevision;
       if (btn){ btn.disabled = false; btn.textContent = '⏸ 播放中…'; }
 
-      // 新一轮回放时通知后端进入剧情模式；从暂停处继续时不重复触发。
+      // 按钮已即时进入播放态；新一轮回放仍等待后端确认，避免面板在
+      // 确认期间被关闭后继续推进一个不可见帧。
       if (isNewRun) await postPlay().catch(()=>{});
       if(playbackRevision!==__storyPlaybackRevision||!__isPlaying) return;
       if(!storyViewOpen()){pauseStory();return;}
 
       // 从当前小时继续播放；首次为 -24h，直至 +24h。
       setHour(__storyHour);
+      window.portDtDemoReceipt?.('situation',{
+        message:'双策略态势时间轴已开始播放',target:'#story-section'
+      });
       if (__storyTimer) clearInterval(__storyTimer);
       __storyTimer = setInterval(()=>{
         if(!storyViewOpen()){pauseStory();return;}
@@ -16402,11 +16544,11 @@ async function pullOverview(scenario=masScenario){
         // 原来是 postPlay；现在用自动播放的 handlePlay（内部会调用 postPlay）
         btn.addEventListener('click', handlePlay);
       }
-      const changeSelection=()=>{__storyAvailable=false;pauseStory();if(btn){btn.disabled=true;btn.textContent='读取可核验轨迹…';}setHour(parseInt((rng?.value)||'0')||0);};
+      const changeSelection=()=>{__storyAvailable=false;pauseStory();if(btn){btn.disabled=false;btn.textContent='读取可核验轨迹…';}__storyReadyPromise=setHour(parseInt((rng?.value)||'0')||0);};
       if (selPort){ selPort.addEventListener('change', changeSelection); }
       if (selScn){ selScn.addEventListener('change', changeSelection); }
 
-      setHour(0); // 首帧
+      __storyReadyPromise=setHour(0); // 首帧；播放按钮复用同一个进行中请求
     }
 
 
@@ -16724,6 +16866,12 @@ async function pullOverview(scenario=masScenario){
   const routeButtons = Array.from(document.querySelectorAll('.nav-trigger[data-route]'));
   const directButtons = Array.from(document.querySelectorAll('.nav-trigger[data-direct-target]'));
   const dropdownLinks = Array.from(document.querySelectorAll('.nav-dropdown a[href^="#"]'));
+  const demoStepByTarget = {
+    '#twin3d-section': ['twin3d-showcase', '#twinModeConsole', 'Twin 3D 三态大屏与联动图层已显示。'],
+    '#multiport-section': ['multiport-showcase', '#multiport-section', '多港区复用总览与适用边界已显示。'],
+    '#esg-section': ['esg-showcase', '#esg-section', 'ESG 指标、核算口径与合规入口已显示。'],
+    '#strategy-exec-module': ['strategy-showcase', '#strategy-exec-module', '策略编排、候选方案与执行边界已显示。']
+  };
 
   function closeAllMenus(){
     navGroups.forEach((group) => {
@@ -16783,6 +16931,13 @@ async function pullOverview(scenario=masScenario){
           if (fallback && fallback !== selector) {
             scrollToTarget(fallback);
           }
+        }
+        const demoReceipt = demoStepByTarget[selector];
+        if (ok && demoReceipt) {
+          window.requestAnimationFrame(() => window.portDtDemoReceipt?.(demoReceipt[0], {
+            target: demoReceipt[1],
+            message: demoReceipt[2]
+          }));
         }
       }
     });
@@ -17170,15 +17325,25 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     window.__portDtLoadWhenActive('twin-section',refreshForecastForContext);
     window.__portDtLoadWhenActive('strategy-exec-module',renderStrategyDecisionChain);
 
-    document.querySelector('a[data-panel="cockpit"]')?.addEventListener('click', (ev) => { ev.preventDefault(); syncFromOverview(); scrollToSectionWithHeader('exec-cockpit', { title: '首页为何跳到这里', sub: '管理驾驶舱负责提供首页规则来源：状态等级、峰值需量风险、可信度与年度收益摘要。' }); });
+    document.querySelector('a[data-panel="cockpit"]')?.addEventListener('click', (ev) => {
+      ev.preventDefault();
+      syncFromOverview();
+      scrollToSectionWithHeader('exec-cockpit', { title: '首页为何跳到这里', sub: '管理驾驶舱负责提供首页规则来源：状态等级、峰值需量风险、可信度与年度收益摘要。' });
+      window.portDtDemoReceipt?.('opening',{
+        message:'管理驾驶舱已定位，业务状态与关键指标已同步',target:'#exec-cockpit'
+      });
+    });
     document.querySelector('a[data-panel="twin"]')?.addEventListener('click', jumpToTwinWithContext);
     document.querySelector('a[data-panel="strategy"]')?.addEventListener('click', jumpToStrategyWithContext);
     document.querySelector('a[data-panel="audit"]')?.addEventListener('click', jumpToAuditWithContext);
     $('btn-context-to-strategy')?.addEventListener('click', pushTwinContextToStrategy);
-    $('btn-agg-sim')?.addEventListener('click', async () => {
+    window.addEventListener('port-strategy-aggregate', event => {
+      const data=event.detail?.result;if(!data)return;
       chainState.source = 'twin.aggregate_sim';
-      if ($('sel-scenario')?.value) chainState.scenario = $('sel-scenario').value;
-      await refreshForecastForContext();
+      chainState.scenario = event.detail.scenario;
+      const values=(data.series?.p50||[]).map(p=>p.kW).filter(v=>typeof v==='number'&&Number.isFinite(v));
+      if(values.length){chainState.forecast=`P50 峰值 ${Math.max(...values).toFixed(1)} kW`;chainState.forecastDetail='来自本次场景推演的同一响应，无额外预测请求。';}
+      renderChain();
     });
     $('btn-tw-run')?.addEventListener('click', () => {
       chainState.source = 'twin.stress_run';
@@ -17802,12 +17967,12 @@ const chainState = globalThis.__strategyChainState || (globalThis.__strategyChai
     guide.className = 'xiaoyi-rl-guide';
     guide.innerHTML = `
       <div class="xiaoyi-rl-guide-title">
-        <span>小懿正在执行 RL 训练引导</span>
+        <span>舷鸥正在执行 RL 训练引导</span>
         <b class="xiaoyi-rl-guide-chip"></b>
       </div>
       <div class="xiaoyi-rl-guide-sub"></div>
       <div class="xiaoyi-rl-guide-steps">
-        <div class="xiaoyi-rl-guide-step active"><div class="xiaoyi-rl-guide-dot">1</div><div><b>回到平台首页</b><br>从总入口开始承接小懿指令。</div></div>
+        <div class="xiaoyi-rl-guide-step active"><div class="xiaoyi-rl-guide-dot">1</div><div><b>回到平台首页</b><br>从总入口开始承接舷鸥指令。</div></div>
         <div class="xiaoyi-rl-guide-step"><div class="xiaoyi-rl-guide-dot">2</div><div><b>定位顶部菜单</b><br>找到“强化学习面板 / RL Panel”。</div></div>
         <div class="xiaoyi-rl-guide-step"><div class="xiaoyi-rl-guide-dot">3</div><div><b>点击强化学习面板</b><br>进入训练控制台并载入推荐参数。</div></div>
         <div class="xiaoyi-rl-guide-step"><div class="xiaoyi-rl-guide-dot">4</div><div><b>打开训练 UI</b><br>弹出人工确认框，确认后才会启动训练。</div></div>

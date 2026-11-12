@@ -15,7 +15,7 @@ def resolve_runtime_artifact(run_dir: Path, expected_sha256: str) -> Path:
     if not expected_sha256:
         raise ValueError('model manifest has no original model SHA-256')
     if original.is_relative_to(ROOT):
-        return resolve_model_artifact(ROOT, str(original.relative_to(ROOT)), expected_sha256)
+        return resolve_model_artifact(ROOT, original.relative_to(ROOT).as_posix(), expected_sha256)
     # Isolated local/test training roots have no repository export manifest.
     if not original.is_file() or file_sha256(original) != expected_sha256:
         raise ValueError('runtime model artifact checksum failed')

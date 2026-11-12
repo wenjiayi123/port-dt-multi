@@ -27,3 +27,8 @@ evidence/v8/**/source/** -text
 evidence/v8/shore_bess/public_audit_sources/* -text
 # Matplotlib path data includes line-end spaces; retain the archived plot bytes.
 evidence/v8/shore_bess/figures/**/validation_curves.svg whitespace=-blank-at-eol
+
+# Preserve the original bytes of SHA-256 verified evidence.
+scripts/gullmate_external_load/data/shanghai_2026_jun_sep_external.csv -text -whitespace
+scripts/gullmate_external_load/data/shanghai_2026_jun_sep_external.meta.json -text -whitespace
+scripts/gullmate_shore/manifest.json -text -whitespace

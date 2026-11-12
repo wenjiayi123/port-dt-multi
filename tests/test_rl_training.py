@@ -67,6 +67,19 @@ class DatasetTests(unittest.TestCase):
             self.assertLess(datetime.fromisoformat(dataset.timestamps[train.stop - 1].replace("Z", "+00:00")), datetime.fromisoformat(dataset.timestamps[test.start].replace("Z", "+00:00")))
             self.assertEqual(len(dataset.fingerprint), 64)
 
+    def test_dataset_load_reuses_unchanged_snapshot_and_invalidates_on_replace(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            write_canonical_rows("port_cache", rows(), {"license": "test"}, root)
+            first = load_port_dataset("port_cache", root)
+            second = load_port_dataset("port_cache", root)
+            self.assertIs(first, second)
+
+            write_canonical_rows("port_cache", rows(97), {"license": "test-v2"}, root)
+            replaced = load_port_dataset("port_cache", root)
+            self.assertIsNot(first, replaced)
+            self.assertEqual(replaced.rows, 97)
+
     def test_v3_three_way_split_keeps_blind_test_isolated(self):
         dataset = load_port_dataset("public_cn_sha_hourly_v3")
         train, validation, test = dataset.split_three_way(0.2, 0.1)

@@ -1,7 +1,7 @@
 """Health and configuration endpoints for the RL panel linkage.
 
 This module is intentionally scoped to the top-menu RL panel.  It reports
-whether the local Xiaoyi assistant is reachable, whether the current FastAPI app
+whether the local GullMate assistant is reachable, whether the current FastAPI app
 has the RL routes mounted, and whether the desktop sailing simulator can be
 started from the configured Godot project.
 """
@@ -33,7 +33,7 @@ DEFAULT_CONFIG: Dict[str, Any] = {
         "rl_panel_route": "/rl-panel",
     },
     "xiaoyi_ai": {
-        "name": "小懿AI",
+        "name": "舷鸥 · GullMate",
         "base_url": "http://127.0.0.1:8010",
         "health_path": "/health",
         "chat_path": "/api/chat",
@@ -257,9 +257,9 @@ async def rl_integration_health(request: Request) -> JSONResponse:
             "rl_panel_route": cfg["port_dt_multi"].get("rl_panel_route"),
         },
         "xiaoyi_ai": {
-            "name": xiaoyi_cfg.get("name", "小懿AI"),
+            "name": xiaoyi_cfg.get("name", "舷鸥 · GullMate"),
             "online": xiaoyi_online,
-            "label": "小懿在线" if xiaoyi_online else "小懿未在线 · 后端证据兜底",
+            "label": "舷鸥在线" if xiaoyi_online else "舷鸥未在线 · 后端证据兜底",
             "base_url": xiaoyi_base_url,
             "health_url": xiaoyi_health_url,
             "chat_url": xiaoyi_base_url + xiaoyi_chat_path,

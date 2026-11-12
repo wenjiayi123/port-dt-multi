@@ -83,6 +83,18 @@ test('aggregate request uses selected scenario and removes old graph on HTTP fai
  const draws=[],urls=[];const {c,byId}=setup({fetch:async url=>{urls.push(url);return {ok:false,status:503}},drawAgg:x=>draws.push(x),runtimeScenarioId:()=> 'typhoon',show(){}});c.$=s=>byId(s.slice(1));byId('sel-scenario').value='台风扰动';
  vm.runInContext(section('    let aggregateRequestId=0;','    /************** 3D 场景（保持）'),c);await c.runAggregateScenario();assert.match(urls[0],/scenario=typhoon/);assert.equal(draws.at(-1).p50.length,0);assert.match(byId('aggLegend').textContent,/旧曲线已清除.*503/);assert.equal(byId('btn-agg-sim').disabled,false);
 });
+test('aggregate graph and upstream context use one validated response without a duplicate forecast',async()=>{
+ const urls=[],draws=[],handlers={};const payload={available:true,series:{p10:[{ts:'2026-01-01T00:00:00Z',kW:8},{ts:'2026-01-01T00:01:00Z',kW:9}],p50:[{ts:'2026-01-01T00:00:00Z',kW:10},{ts:'2026-01-01T00:01:00Z',kW:11}],p90:[{ts:'2026-01-01T00:00:00Z',kW:12},{ts:'2026-01-01T00:01:00Z',kW:13}]}};
+ const {c,byId}=setup({fetch:async url=>{urls.push(url);return response(payload)},drawAgg:data=>draws.push(data),runtimeScenarioId:()=> 'typhoon',show(){},renderChain(){},chainState:{},CustomEvent:class{constructor(type,options){this.type=type;this.detail=options.detail;}}});c.$=s=>byId(s.slice(1));byId('sel-scenario').value='台风扰动';
+ c.window.addEventListener=(type,handler)=>{handlers[type]=handler};c.window.dispatchEvent=event=>handlers[event.type]?.(event);
+ vm.runInContext(section("    window.addEventListener('port-strategy-aggregate',", "    $('btn-tw-run')"),c);
+ vm.runInContext(section('    let aggregateRequestId=0;','    /************** 3D 场景（保持）'),c);await c.runAggregateScenario();
+ assert.equal(urls.length,1);assert.deepEqual(Array.from(draws.at(-1).p50),[10,11]);assert.equal(c.chainState.scenario,'台风扰动');assert.match(c.chainState.forecast,/11.0/);assert.equal(draws.at(-1).times[0],payload.series.p50[0].ts);
+});
+test('missing confidence values are rejected rather than plotted as zero',async()=>{
+ const draws=[],events=[];const {c,byId}=setup({fetch:async()=>response({available:true,series:{p10:[{kW:1},{kW:2}],p50:[{kW:2},{}],p90:[{kW:3},{kW:4}]}}),drawAgg:data=>draws.push(data),runtimeScenarioId:()=> 'strategy',show(){},CustomEvent:class{constructor(type,options){this.type=type;this.detail=options.detail;}}});c.$=s=>byId(s.slice(1));byId('sel-scenario').value='基线场景';c.window.dispatchEvent=event=>events.push(event);
+ vm.runInContext(section('    let aggregateRequestId=0;','    /************** 3D 场景（保持）'),c);await c.runAggregateScenario();assert.match(byId('aggLegend').textContent,/无效数值/);assert(draws.every(d=>d.p50.length===0));assert(!events.some(e=>e.detail.result));
+});
 test('3D layer changed during a pending refresh gets its own refresh',async()=>{
  const pending=[];const {c}=setup({VIEW_MODE:'now',OVERLAY_CARBON:false,TWIN_REFRESH_IN_FLIGHT:null,refresh3DColorsOnce:()=>new Promise(resolve=>pending.push(resolve))});vm.runInContext(section('    async function refresh3DColors(){','    async function refresh3DColorsOnce(){'),c);
  const a=c.refresh3DColors();c.OVERLAY_CARBON=true;const b=c.refresh3DColors();assert.equal(pending.length,1);pending.shift()(['old']);await a;await flush();assert.equal(pending.length,1);pending.shift()(['carbon']);assert.deepEqual(await b,['carbon']);

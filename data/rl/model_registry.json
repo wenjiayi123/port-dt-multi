@@ -34692,7 +34692,7 @@
             "n": 10,
             "mean": 2.2999999999999998e-08,
             "std": 3.056868404829433e-08,
-            "median": 1.0e-08,
+            "median": 1e-08,
             "ci_low": 6.999999999999999e-09,
             "ci_high": 4.2e-08,
             "confidence": 0.95,
@@ -35362,9 +35362,467 @@
         },
         "evaluated_at": "2026-08-30T08:06:45.090287Z"
       }
+    },
+    "rl-20261015T084034652Z": {
+      "job_id": "rl-20261015T084034652Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-15T08:40:34.653018Z",
+      "updated_at": "2026-10-15T08:41:10.356522Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "961f46655fc63f2590d8abeb266490c25c12bb166182fb6d464b9706a67db720",
+        "actual_sha256": "961f46655fc63f2590d8abeb266490c25c12bb166182fb6d464b9706a67db720",
+        "training_sha256": "961f46655fc63f2590d8abeb266490c25c12bb166182fb6d464b9706a67db720",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261017T113826987Z": {
+      "job_id": "rl-20261017T113826987Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-17T11:38:26.988250Z",
+      "updated_at": "2026-10-17T11:38:32.405688Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "5ae0d8d799fe3965f9eacf9c0e6bd7b6013851555b4e949c63f8d0b99665db93",
+        "actual_sha256": "5ae0d8d799fe3965f9eacf9c0e6bd7b6013851555b4e949c63f8d0b99665db93",
+        "training_sha256": "5ae0d8d799fe3965f9eacf9c0e6bd7b6013851555b4e949c63f8d0b99665db93",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261017T153511034Z": {
+      "job_id": "rl-20261017T153511034Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-17T15:35:11.035010Z",
+      "updated_at": "2026-10-17T15:35:16.152834Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "4b4d4129e3d60c5ec2cbb066e7062e3be1f40926a1fd22edebaa4f7237d48910",
+        "actual_sha256": "4b4d4129e3d60c5ec2cbb066e7062e3be1f40926a1fd22edebaa4f7237d48910",
+        "training_sha256": "4b4d4129e3d60c5ec2cbb066e7062e3be1f40926a1fd22edebaa4f7237d48910",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261017T154057271Z": {
+      "job_id": "rl-20261017T154057271Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-17T15:40:57.272201Z",
+      "updated_at": "2026-10-17T15:41:02.284609Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "9d6544c0960753c7aa3f3e160140a8af4c2e6e05a580a86c2603364521e277bf",
+        "actual_sha256": "9d6544c0960753c7aa3f3e160140a8af4c2e6e05a580a86c2603364521e277bf",
+        "training_sha256": "9d6544c0960753c7aa3f3e160140a8af4c2e6e05a580a86c2603364521e277bf",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261017T233007841Z": {
+      "job_id": "rl-20261017T233007841Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-17T23:30:07.842094Z",
+      "updated_at": "2026-10-17T23:30:12.737825Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "36dd1f64708e9ea2aead9cd7e80675910358a1ec347f9b9492bc3efb92610399",
+        "actual_sha256": "36dd1f64708e9ea2aead9cd7e80675910358a1ec347f9b9492bc3efb92610399",
+        "training_sha256": "36dd1f64708e9ea2aead9cd7e80675910358a1ec347f9b9492bc3efb92610399",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261017T234522717Z": {
+      "job_id": "rl-20261017T234522717Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-17T23:45:22.718371Z",
+      "updated_at": "2026-10-17T23:45:28.178371Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "d8ae59b14208ddd7fa8b90533985b6249954aa73876560a6e18ee939b2351e2b",
+        "actual_sha256": "d8ae59b14208ddd7fa8b90533985b6249954aa73876560a6e18ee939b2351e2b",
+        "training_sha256": "d8ae59b14208ddd7fa8b90533985b6249954aa73876560a6e18ee939b2351e2b",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261018T000823078Z": {
+      "job_id": "rl-20261018T000823078Z",
+      "algorithm": "sac",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-18T00:08:23.079501Z",
+      "updated_at": "2026-10-18T00:12:34.909446Z",
+      "implementation": "stable_baselines3.SAC",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "a35ee5ab13268270893216f726c8c68c69d308e7bd2697bd61122120aa46cf8c",
+        "actual_sha256": "a35ee5ab13268270893216f726c8c68c69d308e7bd2697bd61122120aa46cf8c",
+        "training_sha256": "a35ee5ab13268270893216f726c8c68c69d308e7bd2697bd61122120aa46cf8c",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261018T043100406Z": {
+      "job_id": "rl-20261018T043100406Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-18T04:31:00.407282Z",
+      "updated_at": "2026-10-18T04:31:01.590767Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "5f9e99d97995895a4b1c42c7de3a26423eeae1ee62bbd3fef759c2212397d841",
+        "actual_sha256": "5f9e99d97995895a4b1c42c7de3a26423eeae1ee62bbd3fef759c2212397d841",
+        "training_sha256": "5f9e99d97995895a4b1c42c7de3a26423eeae1ee62bbd3fef759c2212397d841",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261018T044134033Z": {
+      "job_id": "rl-20261018T044134033Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-18T04:41:34.034578Z",
+      "updated_at": "2026-10-18T04:41:34.942939Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "f75de2004cc03d0175cbcbaba57d1eaa6965fb37d9c186b085b94afc35a19871",
+        "actual_sha256": "f75de2004cc03d0175cbcbaba57d1eaa6965fb37d9c186b085b94afc35a19871",
+        "training_sha256": "f75de2004cc03d0175cbcbaba57d1eaa6965fb37d9c186b085b94afc35a19871",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261019T012318357Z": {
+      "job_id": "rl-20261019T012318357Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-19T01:23:18.358524Z",
+      "updated_at": "2026-10-19T01:23:51.160581Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "77525b7622a51c4d2233aaea609298c4e0366512655abb1f43110c01a504dbe7",
+        "actual_sha256": "77525b7622a51c4d2233aaea609298c4e0366512655abb1f43110c01a504dbe7",
+        "training_sha256": "77525b7622a51c4d2233aaea609298c4e0366512655abb1f43110c01a504dbe7",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261019T065210797Z": {
+      "job_id": "rl-20261019T065210797Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-19T06:52:10.798183Z",
+      "updated_at": "2026-10-19T06:52:39.088176Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "a30293c51361b3fdfe8e2b99b49b1cbb970a77d4307bb063c7883569d00c4a30",
+        "actual_sha256": "a30293c51361b3fdfe8e2b99b49b1cbb970a77d4307bb063c7883569d00c4a30",
+        "training_sha256": "a30293c51361b3fdfe8e2b99b49b1cbb970a77d4307bb063c7883569d00c4a30",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261021T004553865Z": {
+      "job_id": "rl-20261021T004553865Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-21T00:45:53.867167Z",
+      "updated_at": "2026-10-21T00:45:55.654176Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "d7835e4212b330134e84a11098785975cb655a94a80aa05f1e9947b67f9d0cc0",
+        "actual_sha256": "d7835e4212b330134e84a11098785975cb655a94a80aa05f1e9947b67f9d0cc0",
+        "training_sha256": "d7835e4212b330134e84a11098785975cb655a94a80aa05f1e9947b67f9d0cc0",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261021T073407455Z": {
+      "job_id": "rl-20261021T073407455Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-21T07:34:07.456333Z",
+      "updated_at": "2026-10-21T07:34:45.030265Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "c63a1365a088d322a2ca699b8e1979651a785ed9fc75ccf548d66748877fafb3",
+        "actual_sha256": "c63a1365a088d322a2ca699b8e1979651a785ed9fc75ccf548d66748877fafb3",
+        "training_sha256": "c63a1365a088d322a2ca699b8e1979651a785ed9fc75ccf548d66748877fafb3",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261029T085444086Z": {
+      "job_id": "rl-20261029T085444086Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-29T08:54:44.087521Z",
+      "updated_at": "2026-10-29T08:54:45.378581Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "31888a3f47e981d34021b9408cab71aaf3d083d37e609d350a0b9dd21df6a6b2",
+        "actual_sha256": "31888a3f47e981d34021b9408cab71aaf3d083d37e609d350a0b9dd21df6a6b2",
+        "training_sha256": "31888a3f47e981d34021b9408cab71aaf3d083d37e609d350a0b9dd21df6a6b2",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261029T100200043Z": {
+      "job_id": "rl-20261029T100200043Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-29T10:02:00.044932Z",
+      "updated_at": "2026-10-29T10:02:35.936732Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "d2e9184593009b690a7dcb39c6408eca4ae4aad06afc16c6216248cce121d2dc",
+        "actual_sha256": "d2e9184593009b690a7dcb39c6408eca4ae4aad06afc16c6216248cce121d2dc",
+        "training_sha256": "d2e9184593009b690a7dcb39c6408eca4ae4aad06afc16c6216248cce121d2dc",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261031T095725501Z": {
+      "job_id": "rl-20261031T095725501Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-31T09:57:25.502202Z",
+      "updated_at": "2026-10-31T09:57:26.653139Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "f4e5859dd2669e96f84fa9330e08404e230ac04466596a0e924d5250459d6ee0",
+        "actual_sha256": "f4e5859dd2669e96f84fa9330e08404e230ac04466596a0e924d5250459d6ee0",
+        "training_sha256": "f4e5859dd2669e96f84fa9330e08404e230ac04466596a0e924d5250459d6ee0",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
+    },
+    "rl-20261031T101130669Z": {
+      "job_id": "rl-20261031T101130669Z",
+      "algorithm": "ppo",
+      "dataset_id": "public_us_la_6min_v1",
+      "dataset_sha256": "9455a32251c521f567887f0205b0b5db4556801924d443ae1856db9ab4262897",
+      "seed": 42,
+      "status": "COMPLETED",
+      "created_at": "2026-10-31T10:11:30.671107Z",
+      "updated_at": "2026-10-31T10:12:02.462129Z",
+      "implementation": "stable_baselines3.PPO",
+      "artifact": {
+        "artifact_id": "model.zip",
+        "expected_sha256": "d1b5b12d634c4dc0ddb02f3807664bf6e487fe0cfd905326a09ab81992967476",
+        "actual_sha256": "d1b5b12d634c4dc0ddb02f3807664bf6e487fe0cfd905326a09ab81992967476",
+        "training_sha256": "d1b5b12d634c4dc0ddb02f3807664bf6e487fe0cfd905326a09ab81992967476",
+        "metadata_only_public_export": false,
+        "verified": true,
+        "controller_only": false
+      },
+      "evaluation": {
+        "available": false,
+        "episodes": null,
+        "metrics": null,
+        "uncertainty": null,
+        "evaluated_at": null
+      }
     }
   },
-  "aliases": {
-  },
-  "updated_at": "2026-08-30T08:06:45.321340Z"
+  "aliases": {},
+  "updated_at": "2026-10-31T10:12:02.487514Z"
 }

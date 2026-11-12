@@ -3,6 +3,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+from app.infra.private_file import protect
 import tempfile
 import threading
 from datetime import datetime, timezone
@@ -77,18 +78,17 @@ class MobileWorkflowStore:
         temp_path = Path(temp_name)
         try:
             with os.fdopen(descriptor, "w", encoding="utf-8") as handle:
-                json.dump(
+                handle.write(json.dumps(
                     state,
-                    handle,
                     ensure_ascii=False,
                     sort_keys=True,
                     separators=(",", ":"),
-                )
+                ))
                 handle.flush()
                 os.fsync(handle.fileno())
-            os.chmod(temp_path, 0o600)
+            protect(temp_path)
             os.replace(temp_path, self.path)
-            os.chmod(self.path, 0o600)
+            protect(self.path)
         finally:
             temp_path.unlink(missing_ok=True)
 

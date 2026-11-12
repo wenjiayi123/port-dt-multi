@@ -4,6 +4,7 @@ import asyncio
 import csv
 import hashlib
 import json
+import os
 import stat
 import tempfile
 import unittest
@@ -1291,7 +1292,11 @@ class V3FactsApiTests(unittest.TestCase):
             storage = ObjectStorage(StorageConfig(backend_url=f"file://{directory}"))
             uri = storage.save_json("audit/evidence.json", {"ok": True})
             path = Path(uri.removeprefix("file://"))
-            self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600)
+            if os.name == "nt":
+                from app.infra.private_file import owner_only
+                self.assertTrue(owner_only(path))
+            else:
+                self.assertEqual(stat.S_IMODE(path.stat().st_mode), 0o600)
             self.assertEqual(storage.load_json(uri), {"ok": True})
             self.assertFalse(any(item.name.startswith(".evidence.json.tmp") for item in path.parent.iterdir()))
 

@@ -10,8 +10,10 @@ repository-native rule comparator, as declared by the capability response.
 The Web dashboard bundles Apache ECharts 6.1.0 under the Apache License 2.0 in
 `app/static/vendor/echarts`. This checked-in runtime removes the dashboard's
 CDN dependency so charts remain available in an offline first-clone review.
-The port perspective renderer itself is repository-native Canvas 2D code and
-does not download a 3D engine at runtime.
+The detailed port perspective view retains its repository-native Canvas 2D
+renderer. The overview dashboard additionally bundles Three.js 0.160.1 under
+the MIT License in `app/static/vendor/three`, including its licence text.
+The 3D engine is served locally; no external CDN is required at runtime.
 
 The bundled `public_port_ops_v1` integration dataset combines:
 

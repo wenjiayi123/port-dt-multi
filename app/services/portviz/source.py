@@ -3,7 +3,8 @@
 # PortViz 数据源选择器：
 # - 定义统一协议 PortVizSource（两个方法：get_bootstrap / next_frame）
 # - get_source() 按环境变量/配置选择数据源
-#   * 默认：dataset（公开/映射数据集的确定性回放）
+#   * 默认：public_demo（洋山四期公开参数标定的独立展示源）
+#   * dataset：保留既有公开/映射数据集的确定性回放
 #   * real：严格 JSONL 实体轨迹适配器，配置错误时快速失败
 #
 # 前端字段对齐（约定）：
@@ -76,8 +77,8 @@ def _resolve_default_config_path() -> Optional[str]:
 class SourceConfig:
     """可选配置：通过环境变量 / JSON 文件覆盖模拟源的基本参数。"""
 
-    # 数据源模式：dataset / mock / real（默认 dataset，不伪装成实时生产源）
-    mode: str = field(default_factory=lambda: os.getenv("PORTVIZ_MODE", "dataset").strip().lower())
+    # 数据源模式：public_demo / dataset / mock / real，不伪装成实时生产源
+    mode: str = field(default_factory=lambda: os.getenv("PORTVIZ_MODE", "public_demo").strip().lower())
 
     dataset_path: str = field(default_factory=lambda: os.getenv("PORTVIZ_DATASET_PATH", "data/rl/datasets/public_port_ops_v1.csv").strip())
     frames_path: str = field(default_factory=lambda: os.getenv("PORTVIZ_FRAME_PATH", "").strip())
@@ -159,9 +160,11 @@ def get_source() -> PortVizSource:
     3) 其它值：直接报错，不静默回落到模拟源
     """
     cfg = SourceConfig()
+    mode = (cfg.mode or "public_demo").lower()
+    if mode == "public_demo":
+        from .public_presentation_source import PublicPresentationSource
+        return PublicPresentationSource()
     overrides = _load_overrides(cfg)
-
-    mode = (cfg.mode or "dataset").lower()
 
     if mode in ("dataset", "replay", "public"):
         from .replay_source import DatasetReplaySource
@@ -188,7 +191,7 @@ def get_source() -> PortVizSource:
         return JsonLinesPortSource(overrides=overrides, frames_path=cfg.frames_path)
 
     else:
-        raise ValueError(f"unknown PORTVIZ_MODE={mode!r}; expected dataset, mock, or real")
+        raise ValueError(f"unknown PORTVIZ_MODE={mode!r}; expected public_demo, dataset, mock, or real")
 
 
 __all__ = ["PortVizSource", "get_source", "SourceConfig"]

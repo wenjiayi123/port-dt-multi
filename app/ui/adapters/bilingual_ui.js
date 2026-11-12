@@ -77,8 +77,8 @@
     ["模块G · 岸桥（QC）输出数据（Port G QC MVP）", "Module G · Quay Crane Outputs · Port G QC MVP"],
     ["项目联动中枢", "Project Linkage Hub"], ["回首页", "Back to Home"],
     ["打开 RL 面板", "Open RL Panel"], ["刷新联动状态", "Refresh Linkage Status"],
-    ["小懿问答 / 指令网关", "Xiaoyi Q&A · Command Gateway"], ["启动小懿AI", "Start Xiaoyi AI"],
-    ["让小懿判断", "Ask Xiaoyi"], ["确认执行", "Confirm Execution"], ["清空", "Clear"],
+    ["舷鸥问答 / 指令网关", "GullMate Q&A · Command Gateway"], ["启动舷鸥 · GullMate", "Start GullMate"],
+    ["让舷鸥判断", "Ask GullMate"], ["确认执行", "Confirm Execution"], ["清空", "Clear"],
     ["RL 训练 / 测试链路", "RL Training & Test Pipeline"], ["低风险训练", "Low-Risk Training"],
     ["查看训练状态", "View Training Status"], ["策略测试", "Policy Test"], ["进入训练 UI", "Open Training UI"],
     ["航行模拟器状态", "Sailing Simulator Status"], ["打开 Godot 航行模拟器", "Open Godot Sailing Simulator"],
@@ -92,9 +92,9 @@
     ["暂停", "Pause"], ["查看状态", "View Status"], ["拉取策略列表", "Load Policies"],
     ["先模拟", "Simulate First"], ["验证上线(dry-run)", "Validate Release · Dry Run"],
     ["仿真通过后记录 dry-run 下发", "Record Dry-Run Dispatch After Simulation"],
-    ["刷新下发历史", "Refresh Dispatch History"], ["小懿请求执行 RL 训练", "Xiaoyi Requests RL Training"],
+    ["刷新下发历史", "Refresh Dispatch History"], ["舷鸥请求执行 RL 训练", "GullMate Requests RL Training"],
     ["取消", "Cancel"], ["开始执行", "Start Execution"],
-    ["您好！我是小懿AI", "Hello! I’m Xiaoyi AI"], ["您的港航智能助手", "Your Smart Maritime Assistant"],
+    ["您好！我是小鸥", "Hello! I’m GullMate"], ["您的港航智能助手", "Your Smart Maritime Assistant"],
     ["正常", "Healthy"], ["在线", "Online"], ["离线", "Offline"], ["待命", "Standby"],
     ["运行中", "Running"], ["暂停中", "Paused"], ["已完成", "Completed"], ["待审批", "Pending Approval"],
     ["刷新", "Refresh"], ["加载", "Load"], ["查询", "Query"], ["执行", "Execute"],
@@ -122,7 +122,7 @@
   ];
 
   const placeholderMap = new Map([
-    ["例如：小懿，开始训练碳排最低目标", "例如：小懿，开始训练碳排最低目标 / e.g. Xiaoyi, train for minimum carbon"],
+    ["例如：舷鸥，开始训练碳排最低目标", "例如：舷鸥，开始训练碳排最低目标 / e.g. GullMate, train for minimum carbon"],
     ["输入港航问题或操作指令", "输入港航问题或操作指令 / Enter a maritime question or command"]
   ]);
 

@@ -1,0 +1,36 @@
+{
+  "schema": "port-dt-public-presentation-profile.v1",
+  "profile_id": "cnsha_yangshan_phase4_public_20261023",
+  "name": "洋山四期 · 公开参数标定演示",
+  "port_code": "CNSHA",
+  "terminal": "洋山四期自动化码头",
+  "verified_at": "2026-10-23",
+  "timezone": "Asia/Shanghai",
+  "facts": {
+    "berths": {"value": 7, "unit": "个", "source_id": "operator_profile", "class": "official_public_parameter"},
+    "quay_length_m": {"value": 2350, "unit": "m", "source_id": "operator_profile", "class": "official_public_parameter"},
+    "land_area_m2": {"value": 2230000, "unit": "m²", "source_id": "operator_profile", "class": "official_public_parameter"},
+    "average_berth_depth_m": {"value": 15.5, "unit": "m", "source_id": "operator_profile", "class": "official_public_parameter"},
+    "design_annual_teu": {"value": 6300000, "unit": "TEU/year", "source_id": "operator_profile", "class": "design_capacity_not_actual_throughput"},
+    "annual_throughput_lower_bound_teu": {"value": 8000000, "unit": "TEU/year", "period": "2025", "comparison": ">", "source_id": "operator_2025_milestone", "class": "published_lower_bound_not_exact_total"},
+    "qc_count": {"value": 29, "unit": "台", "source_id": "port_authority_2026", "as_of": "2026-08-12", "class": "published_resource_count"},
+    "rmg_count": {"value": 121, "unit": "台", "source_id": "port_authority_2026", "as_of": "2026-08-12", "class": "published_resource_count"},
+    "agv_count": {"value": 155, "unit": "台", "source_id": "operator_agv", "as_of": "2025-08-11", "corroboration_source_id": "port_authority_2026", "class": "published_resource_count"},
+    "qc_record_moves_per_hour_lower_bound": {"value": 60, "unit": "自然箱/台时", "comparison": ">", "source_id": "port_authority_2026", "class": "record_not_average"},
+    "daily_record_teu_lower_bound": {"value": 28000, "unit": "TEU/day", "comparison": ">", "source_id": "operator_2025_milestone", "class": "record_not_daily_average"}
+  },
+  "sources": [
+    {"id": "operator_profile", "publisher": "上港集团尚东分公司", "title": "公司简介", "published_at": "2020-06-16", "url": "https://shangdong.portshanghai.com.cn/gsjjOurCompany/738.jhtml"},
+    {"id": "operator_2025_milestone", "publisher": "上港集团尚东分公司", "title": "开港八周年吞吐量突破800万标箱", "published_at": "2025-12-12", "url": "https://shangdong.portshanghai.com.cn/xwtg/5109.jhtml"},
+    {"id": "operator_agv", "publisher": "上港集团尚东分公司", "title": "洋山四期再添生产强引擎", "published_at": "2025-08-11", "url": "https://shangdong.portshanghai.com.cn/xwtg/4807.jhtml"},
+    {"id": "port_authority_2026", "publisher": "上海市商务委员会口岸服务办公室", "title": "洋山港四期开港九年屡创世界纪录", "published_at": "2026-08-12", "url": "https://kab.sww.sh.gov.cn/xwzx/001001/20260812/8b18ff21-02a2-45c9-9bce-8d40d8b89139.html", "note": "政府网站刊载人民日报现场采访，设备数量为码头负责人公开陈述。"}
+  ],
+  "scenario_parameters": {
+    "annual_teu_calibration_target": {"value": 8000000, "unit": "TEU/year", "basis": "采用公开年度超过800万TEU的下界作保守演示标定，不作为精确年报值。"},
+    "teu_per_natural_box": {"value": 1.5, "unit": "TEU/自然箱", "basis": "显式工程假设：20尺与40尺自然箱各半，1×50%+2×50%=1.5；待TOS箱型分布替换。"},
+    "net_qc_rate_fraction_of_public_record": {"value": 0.5, "unit": "ratio", "basis": "演示净效率采用公开最快单机60自然箱/台时的50%=30，保留工况损失余量；不是洋山平均效率实测。"},
+    "qcs_per_call": {"value": 4, "unit": "台/航次", "basis": "演示配桥参数：7泊位×4台=28台，不超过公开29台岸桥；实际配桥由TOS替换。"},
+    "replay_start": {"value": "2025-12-15T00:00:00+08:00", "basis": "选取仓库公开气象海洋再分析覆盖内的固定冬季演示日；与2026设备公开参数组合为工程场景，非同日实况。"}
+  },
+  "boundary": "公开事实用于资源规模与吞吐标定；运行中、占用率、航次计划和能碳均为可复现推演/工程派生。无真实船名、IMO、MMSI或实际ETA；无现场财务/事故/合规结论；不授予生产控制。"
+}

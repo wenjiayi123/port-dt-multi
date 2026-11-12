@@ -705,7 +705,7 @@ def main() -> int:
         "production_authority",
     ):
         if marker not in mission_api:
-            errors.append(f"Xiaoyi mission API marker missing: {marker}")
+            errors.append(f"GullMate mission API marker missing: {marker}")
     for marker in (
         "/api/copilot/mission",
         "missionRail",
@@ -714,7 +714,7 @@ def main() -> int:
         "xiaoyi_maritime_officer.png",
     ):
         if marker not in mission_ui:
-            errors.append(f"Xiaoyi mission UI marker missing: {marker}")
+            errors.append(f"GullMate mission UI marker missing: {marker}")
     verify_container_contract(errors)
     try:
         runtime_root = ROOT / "evidence/v3/runtime"
@@ -738,7 +738,7 @@ def main() -> int:
     if xiaoyi_asset.is_file():
         observed_xiaoyi_sha256 = hashlib.sha256(xiaoyi_asset.read_bytes()).hexdigest()
         if observed_xiaoyi_sha256 != "8f56a569dcb098ef08cd2bed92ffc098474c7d6ef911141760982e9323ffe714":
-            errors.append("Xiaoyi Q-style character asset fingerprint changed")
+            errors.append("GullMate Q-style character asset fingerprint changed")
     try:
         report = load_verified_report()
         claims = report.get("summary_metrics_rounded_percent") or {}
@@ -1252,9 +1252,9 @@ def main() -> int:
     ):
         source = script_path.read_text(encoding="utf-8")
         if "/static/xiaoyi_maritime_officer.png" not in source:
-            errors.append(f"Xiaoyi Q-style asset is not wired: {script_path.name}")
+            errors.append(f"GullMate Q-style asset is not wired: {script_path.name}")
         if "xiaoyi_maritime_officer.svg" in source:
-            errors.append(f"legacy Xiaoyi SVG is still referenced: {script_path.name}")
+            errors.append(f"legacy GullMate SVG is still referenced: {script_path.name}")
     if errors:
         for error in errors:
             print(f"ERROR: {error}")

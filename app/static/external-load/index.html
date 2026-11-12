@@ -1,0 +1,17 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>港口负荷与电价压力复算 · 舷鸥</title>
+<style>
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:#eff4f1;color:#143e41;font:16px/1.55 "Source Sans 3","Microsoft YaHei",sans-serif}main{max-width:1060px;margin:auto;padding:28px clamp(14px,4vw,44px) 48px}header{border-bottom:2px solid #266a64;padding:12px 0}h1{font-size:clamp(29px,5vw,43px);line-height:1.2;margin:12px 0}h2{font-size:20px;margin:0 0 8px}p{margin:8px 0}a{color:#11665b}nav,.filters{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0}button,select{font:inherit;color:inherit;border:1px solid #8da6a1;border-radius:5px;padding:6px 12px;background:white}button{cursor:pointer}button[aria-pressed=true]{background:#175d5a;color:white}label{display:grid;gap:3px;min-width:140px}section{background:white;border:1px solid #cedcd4;border-radius:7px;padding:clamp(12px,3vw,22px);margin:15px 0}.metric{font-size:19px;font-weight:600}.note{color:#4d6461}.scroll{overflow-x:auto}table{border-collapse:collapse;min-width:100%;font-variant-numeric:tabular-nums}td,th{text-align:right;white-space:nowrap;padding:6px 8px;border-bottom:1px solid #d8e3dc}td:first-child,th:first-child{text-align:left}svg{width:100%;height:165px;background:#f6f9f6}input[type=range]{width:100%}code{overflow-wrap:anywhere}summary{cursor:pointer}
+</style><main><a id="back" href="../load-outlook/index.html">返回三港预测与实绩</a>
+<header><h1>负荷与电价压力复算</h1><p>查看上海新月份的策略表现，以及外部工业负荷、电价时段变化对账单、碳排和峰值的影响。</p></header>
+<nav><button id="ctrl" aria-pressed="true">储能调度</button><button id="fc" aria-pressed="false">负荷与日峰值预测</button></nav>
+<div class="filters"><label><span id="sourceLabel">工况</span><select id="source"></select></label><label><span id="dateLabel">周起点（UTC）</span><select id="date"></select></label></div>
+<p id="status" role="status"></p><div id="result" hidden>
+<section><h2 id="heading"></h2><p id="scope" class="note"></p><p id="outcome" class="metric"></p><p id="uncertainty"></p></section>
+<section><h2 id="detail"></h2><div class="scroll"><table><thead id="head"></thead><tbody id="rows"></tbody></table></div><p id="dispatchNote" class="note"></p></section>
+<section><h2 id="chartTitle"></h2><svg id="plot" viewBox="0 0 700 150" aria-label="逐时功率比较" role="img"></svg><p id="legend" class="note"></p><label>小时<input type="range" min="0" max="167" value="0" id="hour"></label><p id="hourVal"></p></section>
+<details id="timeline"><summary>当周八段电价识别与控制记录</summary><div class="scroll"><table><thead><tr><th>规划起点 UTC</th><th>时长</th><th>已读电价</th><th>确认状态</th><th>处理</th></tr></thead><tbody id="plans"></tbody></table></div></details>
+</div><section><h2>输入与复算</h2><p>上海按四份新公布的月度增量及洋山逐时气象、海洋资料构造工程负荷。Øra 是挪威工业配网匿名用户实测，丰沙尔是港口电表。压力工况沿用上海设备和计费参数，现场权限关闭。</p>
+<p><a href="https://www.mot.gov.cn/shuju/tongjishuju/gangkoutuntuliang/">交通运输部统计</a> · <a href="https://open-meteo.com/en/docs/historical-weather-api">Open-Meteo</a> · <a href="https://doi.org/10.5281/zenodo.7763891">Øra 电表</a> · <a href="https://doi.org/10.5281/zenodo.22834087">丰沙尔电表</a></p>
+<p>本机重新计算所选工况的命令</p><code id="cmd"></code><p class="note">显式加上 <code>--verify-twin</code> 可以核对已启动的 TwinLab。页面读取冻结回执，无需开启模型服务。</p></section></main>
+<script type="module" src="./view.js"></script></html>

@@ -1,8 +1,8 @@
-"""Evidence-bound Xiaoyi mission context and frontline handoff packets.
+"""Evidence-bound GullMate mission context and frontline handoff packets.
 
 The language model is never the source of telemetry, policy metrics or control
 authority.  This service first builds one compact, hash-addressed operational
-context from the active twin/runtime services.  Xiaoyi may explain that packet;
+context from the active twin/runtime services.  GullMate may explain that packet;
 all executable navigation stays in a deterministic allow-list and production
 control remains disabled.
 """
@@ -51,7 +51,7 @@ def _load_json(path: Path) -> dict[str, Any]:
 
 
 class XiaoyiMissionControl:
-    """Build the only operational context Xiaoyi is allowed to describe."""
+    """Build the only operational context GullMate is allowed to describe."""
 
     MISSION_MODES: tuple[dict[str, str], ...] = (
         {
@@ -327,7 +327,7 @@ class XiaoyiMissionControl:
             "signals": signals,
             "events": list(realtime.get("events") or []),
             "claim_boundary": (
-                "小懿只解释当前后端返回的公开数据回放、预测和模型输出；"
+                "舷鸥只解释当前后端返回的公开数据回放、预测和模型输出；"
                 "不得将其表述为现场告警、集团收益或生产指令。"
             ),
             "production_authority": False,

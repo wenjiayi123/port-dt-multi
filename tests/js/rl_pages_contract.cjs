@@ -43,10 +43,10 @@ function harness(script, html = '') {
     getElementById:node,createElement:tag=>new Element(tag),addEventListener(){},
     querySelector(selector){ if(selector.startsWith('#'))return node(selector.slice(1)); if(selector==='.run-stage.active')return [...nodes.values()].find(x=>x.classList.contains('active'))||null;return null; },
     querySelectorAll:selector=>groups.get(selector)||[]};
-  const context={document,console,URL,URLSearchParams,Intl,Date,Math,Number,JSON,Promise,Array,Object,Set,Map,AbortController,
+  const context={document,console,URL,URLSearchParams,Intl,Date,Math,Number,JSON,Promise,Array,Object,Set,Map,AbortController,CustomEvent:class{constructor(type,init={}){this.type=type;this.detail=init.detail;}},
     setTimeout:()=>1,clearTimeout(){},setInterval:()=>1,clearInterval(){},devicePixelRatio:1,
     fetch:async()=>({ok:true,json:async()=>({}),text:async()=>''})};
-  context.window={location:{search:'',hash:'',origin:'http://unit.test',assign(){}},addEventListener(){},setTimeout:context.setTimeout,setInterval:context.setInterval,clearInterval(){},alert(){},history:{length:1}};
+  context.window={location:{search:'',hash:'',origin:'http://unit.test',assign(){}},addEventListener(){},dispatchEvent(){},setTimeout:context.setTimeout,setInterval:context.setInterval,clearInterval(){},alert(){},history:{length:1}};
   vm.createContext(context);vm.runInContext(script,context);
   return {context,node,groups,run:code=>vm.runInContext(code,context)};
 }
@@ -54,10 +54,16 @@ function harness(script, html = '') {
 const server=fs.readFileSync(path.join(root,'app/server.py'),'utf8');
 const panelHTML=server.split('_RL_PANEL_HTML = r"""')[1].split('"""')[0];
 const panelScript=panelHTML.match(/<script>([\s\S]*?)<\/script>/)[1];
-function panel(){ const h=harness(panelScript,panelHTML);h.node('selDataset').value='fixture_dataset';h.run("trainingDatasetCatalog=[{dataset_id:'fixture_dataset'}]");return h; }
+function panel(){ const h=harness(panelScript,panelHTML);h.node('selDataset').value='fixture_dataset';h.node('selDataset').setAttribute('data-training-ready','true');h.run("trainingDatasetCatalog=[{dataset_id:'fixture_dataset'}]");return h; }
 
 (async()=>{
   let checks=0;
+  {
+    const h=panel();h.node('selDataset').setAttribute('data-training-ready','false');
+    h.run('showAssistantRunConfirm()');assert.notEqual(h.node('assistantConfirmBackdrop').style.display,'flex');
+    h.node('selDataset').setAttribute('data-training-ready','true');h.run('showAssistantRunConfirm()');
+    assert.equal(h.node('assistantConfirmBackdrop').style.display,'flex');checks++;
+  }
   {
     const h=panel();h.run("requestTrainStart=async cfg=>{globalThis.submitted=cfg;return {job_id:'fixture-job',status:'QUEUED'}};renderTrainingStatus=()=>{};startStatusPolling=()=>{}");
     h.run('showAssistantRunConfirm()');

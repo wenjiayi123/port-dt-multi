@@ -28,6 +28,7 @@ app/adapters/actuators.py
 
 from __future__ import annotations
 import os
+from app.infra.private_file import protect
 import json
 import math
 import time
@@ -165,7 +166,7 @@ def _write_json_atomic(path: str, payload: Dict[str, Any]) -> None:
         json.dump(payload, stream, ensure_ascii=False, indent=2)
         stream.flush()
         os.fsync(stream.fileno())
-    os.chmod(temporary, 0o600)
+    protect(temporary)
     os.replace(temporary, path)
 
 

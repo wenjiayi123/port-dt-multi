@@ -166,7 +166,7 @@ class IndependentVerifierTests(unittest.TestCase):
                 "config_and_dataset_files_unchanged", "historical_pointers_preserved", "no_training_rendering")}
             config_sha = save(source_dir / "config.json", source["config"])
             manifest_sha = save(source_dir / "manifest.json", source_manifest)
-            source["evidence_files_sha256"] = {str(path.relative_to(root)): hashlib.sha256(path.read_bytes()).hexdigest()
+            source["evidence_files_sha256"] = {path.relative_to(root).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
                                               for path in source_dir.rglob("*") if path.is_file()}
             report_sha = save(source_dir / "report.json", source)
             report["results"].append({**original, "source_training_run_id": f"pilot{seed}", "training_reused": True})

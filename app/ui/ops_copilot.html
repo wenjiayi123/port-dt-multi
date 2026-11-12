@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>运营副驾 / Ops Copilot</title>
   <link rel="stylesheet" href="/static/standalone_navigation.css?v=20260912-2">
-  <script src="/static/standalone_navigation.js?v=20260912-2"></script>
+  <script src="/static/standalone_navigation.js?v=20261023-6"></script>
   <style>
     :root{
       --bg:#07111f;--panel:#0b1426;--panel2:#0e1b32;--line:#203456;--text:#e8f1ff;--muted:#91a7c7;
@@ -133,7 +133,7 @@
       <div class="mark" aria-hidden="true"></div>
       <div>
         <h1>运营副驾 / Ops Copilot</h1>
-        <div class="brand-sub">Twin Context · Xiaoyi Reasoning · Human-in-loop</div>
+        <div class="brand-sub">Twin Context · GullMate Reasoning · Human-in-loop</div>
       </div>
     </div>
     <div class="top-actions">
@@ -148,11 +148,11 @@
       <div class="hero-copy">
         <div class="eyebrow">Live Operations Assistant</div>
         <h2>把告警、SOP、证据和闭环动作<br><span>合成一个可交接的运营答案</span></h2>
-        <div class="hero-text">面向港口值班、能源、设备与审计角色：先读数字孪生、预测、模型、漂移和准入门的后端事实，再真实调用小懿。调用状态、执行模型、耗时、上下文哈希和回答接地校验全部可见；生产动作仍必须人工确认。</div>
+        <div class="hero-text">面向港口值班、能源、设备与审计角色：先读数字孪生、预测、模型、漂移和准入门的后端事实，再真实调用舷鸥。调用状态、执行模型、耗时、上下文哈希和回答接地校验全部可见；生产动作仍必须人工确认。</div>
         <div class="hero-chips">
           <span class="chip ok" id="ctxStatus">Context READY</span>
           <span class="chip warn" id="ctxRisk">Risk WATCH</span>
-          <span class="chip" id="llmChip">小懿AI Checking</span>
+          <span class="chip" id="llmChip">舷鸥 · GullMate Checking</span>
           <span class="chip hot">No Production Authority</span>
         </div>
       </div>
@@ -160,7 +160,7 @@
         <div class="beacon-scene">
           <div class="radar-ring r1"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div>
           <div class="tower"><div class="signal"></div><div class="cap"></div><div class="mast"></div><div class="deck"></div><div class="base"></div></div>
-          <img class="xiaoyi-officer" src="/static/xiaoyi_maritime_officer.png" alt="小懿AI港航运营副驾"/>
+          <img class="xiaoyi-officer" src="/static/xiaoyi_maritime_officer.png" alt="舷鸥 · GullMate港航运营副驾"/>
         </div>
         <div class="floating-card">
           <b id="liveHeadline">等待上下文同步</b>
@@ -169,9 +169,9 @@
       </div>
     </section>
 
-    <section class="mission-rail" id="missionRail" aria-label="小懿六类一线任务"></section>
+    <section class="mission-rail" id="missionRail" aria-label="舷鸥六类一线任务"></section>
 
-    <section class="runtime-rail" aria-label="小懿运行证据状态">
+    <section class="runtime-rail" aria-label="舷鸥运行证据状态">
       <div class="runtime-cell" id="sourceCell"><small>Data source</small><b id="sourceRail">等待后端</b></div>
       <div class="runtime-cell" id="policyCell"><small>Policy</small><b id="policyRail">等待模型</b></div>
       <div class="runtime-cell" id="gateCell"><small>Admission gate</small><b id="gateRail">等待监控</b></div>
@@ -237,7 +237,7 @@
           <div class="field">
             <label for="engine">生成引擎 / Engine</label>
             <select id="engine">
-              <option value="xiaoyi_ai" selected>小懿AI · 桌面港航助手</option>
+              <option value="xiaoyi_ai" selected>舷鸥 · GullMate · 桌面港航助手</option>
               <option value="local_rag">Ops Copilot · 本地兜底</option>
             </select>
           </div>
@@ -255,7 +255,7 @@
           <div class="field"><label for="topK">知识检索上限 / 运行信号另列</label><input id="topK" type="number" min="1" max="10" value="8"></div>
           <div class="field">
             <label>模型状态 / Model Status</label>
-            <div class="stage-log" id="llmStatusBox" style="min-height:40px;">正在检查小懿AI...</div>
+            <div class="stage-log" id="llmStatusBox" style="min-height:40px;">正在检查舷鸥 · GullMate...</div>
           </div>
         </div>
         <div class="row">
@@ -339,18 +339,18 @@
     const THINKING_DELAY_MS = 2000;
     const stages = [
       "读取孪生、预测与模型上下文 / Loading twin context",
-      "真实调用小懿 / Calling Xiaoyi",
+      "真实调用舷鸥 / Calling GullMate",
       "校验回答是否引用当前运行态 / Checking grounding",
       "应用漂移和准入护栏 / Applying safety gates",
       "生成带哈希的审计与交接包 / Building audit packet"
     ];
     const missionQuestions = {
-      situation: "小懿，请基于当前数字孪生后端状态给本班一个简明态势判断。",
-      forecast: "小懿，请解释当前预测峰值、区间和工程阈值风险，并指出缺失的现场证据。",
-      strategy: "小懿，请解释当前策略为什么这样决策、相对基线改善什么、风险和边界是什么。",
-      triage: "小懿，请根据当前异常、漂移和策略准入门给出一线分诊与回退顺序。",
-      handoff: "小懿，请把当前态势、模型版本、未决风险和下一班检查项整理成交接摘要。",
-      dry_run: "小懿，请判断当前是否适合进入策略预演；只给dry-run与人工审批步骤。"
+      situation: "小鸥，请基于当前数字孪生后端状态给本班一个简明态势判断。",
+      forecast: "小鸥，请解释当前预测峰值、区间和工程阈值风险，并指出缺失的现场证据。",
+      strategy: "小鸥，请解释当前策略为什么这样决策、相对基线改善什么、风险和边界是什么。",
+      triage: "小鸥，请根据当前异常、漂移和策略准入门给出一线分诊与回退顺序。",
+      handoff: "小鸥，请把当前态势、模型版本、未决风险和下一班检查项整理成交接摘要。",
+      dry_run: "小鸥，请判断当前是否适合进入策略预演；只给dry-run与人工审批步骤。"
     };
 
     async function getJSON(url, fallback){
@@ -378,7 +378,7 @@
     }
     function renderMissionRail(modes){
       const active = $("#mission").value;
-      $("#missionRail").innerHTML = (modes || []).map((m,i) => `<button class="mission-card ${m.id===active?"active":""}" data-mission="${escapeHTML(m.id)}"><em>0${i+1} · XIAOYI MISSION</em><b>${escapeHTML(m.label)}</b><span>${escapeHTML(m.description)}</span></button>`).join("");
+      $("#missionRail").innerHTML = (modes || []).map((m,i) => `<button class="mission-card ${m.id===active?"active":""}" data-mission="${escapeHTML(m.id)}"><em>0${i+1} · GullMate MISSION</em><b>${escapeHTML(m.label)}</b><span>${escapeHTML(m.description)}</span></button>`).join("");
       $$('[data-mission]').forEach(btn => btn.addEventListener("click", () => selectMission(btn.dataset.mission, true)));
     }
     function renderContext(data){
@@ -403,11 +403,11 @@
     function renderLLMStatus(data){
       const configured = !!data.configured;
       const online = !!data.online || data.status === "ready";
-      const model = data.model || "小懿AI";
+      const model = data.model || "舷鸥 · GullMate";
       $("#llmStatusBox").textContent = configured
-        ? (online ? `小懿AI 已在线 · ${model}` : `小懿AI 未在线，当前会回退到 ${data.fallback || "本地兜底"}。`)
-        : `无法检查小懿AI，当前使用 ${data.fallback || "本地兜底"}。`;
-      $("#llmChip").textContent = online ? "小懿AI Online" : "小懿AI Offline";
+        ? (online ? `舷鸥 · GullMate 已在线 · ${model}` : `舷鸥 · GullMate 未在线，当前会回退到 ${data.fallback || "本地兜底"}。`)
+        : `无法检查舷鸥 · GullMate，当前使用 ${data.fallback || "本地兜底"}。`;
+      $("#llmChip").textContent = online ? "舷鸥 · GullMate Online" : "舷鸥 · GullMate Offline";
       $("#llmChip").className = online ? "chip ok" : "chip warn";
     }
     function renderPlaybooks(items){
@@ -477,7 +477,7 @@
     }
     function isRlTrainingCommand(text){
       const q = String(text || "").replace(/\s+/g, "");
-      return /(小懿)?(请|帮我|现在)?(开始|启动|执行|训练).*(RL|rl|强化学习|策略|模型|目标|能耗|碳排|电费|峰值|岸电|AGV|agv|泊位|安全|韧性|低风险)/.test(q)
+      return /(舷鸥)?(请|帮我|现在)?(开始|启动|执行|训练).*(RL|rl|强化学习|策略|模型|目标|能耗|碳排|电费|峰值|岸电|AGV|agv|泊位|安全|韧性|低风险)/.test(q)
         || /(RL|rl|强化学习).*(开始|启动|训练)/.test(q);
     }
     function escapeHTML(value){
@@ -526,12 +526,12 @@
       const objective = cfg.objective_label || rec.objective_label || "综合最优";
       const algo = String(configValue(cfg, "algorithm", "sac")).toUpperCase();
       $("#actions").innerHTML = `
-        <div class="action"><b>目标识别</b><span>${escapeHTML(objective)} · 小懿动作网关已映射 start_rl_training</span></div>
+        <div class="action"><b>目标识别</b><span>${escapeHTML(objective)} · 舷鸥动作网关已映射 start_rl_training</span></div>
         <div class="action"><b>推荐算法</b><span>${escapeHTML(algo)} · ${escapeHTML(rec.reason || "基于目标和护栏生成默认训练参数")}</span></div>
         <div class="action"><b>人工边界</b><span>进入 RL 面板后弹出确认框，确认前不会调用 /api/rl/train/start</span></div>`;
       $("#sopSteps").innerHTML = `
         <div class="step"><div class="step-num">1</div><div><b>先回答操作员</b><p>说明识别目标、推荐算法、参数和风险边界。</p></div><div class="eta">answer</div></div>
-        <div class="step"><div class="step-num">2</div><div><b>回到首页</b><p>让平台从总入口开始承接小懿指令。</p></div><div class="eta">home</div></div>
+        <div class="step"><div class="step-num">2</div><div><b>回到首页</b><p>让平台从总入口开始承接舷鸥指令。</p></div><div class="eta">home</div></div>
         <div class="step"><div class="step-num">3</div><div><b>点击顶部菜单</b><p>高亮并进入“强化学习面板 / RL Panel”。</p></div><div class="eta">menu</div></div>
         <div class="step"><div class="step-num">4</div><div><b>打开训练 UI</b><p>自动填入推荐参数，弹出开始执行 / 取消确认框。</p></div><div class="eta">gate</div></div>`;
       lastAudit = {
@@ -544,7 +544,7 @@
       $("#auditBox").textContent = JSON.stringify(lastAudit, null, 2);
     }
     async function handoffRlTrainingCommand(p, runId){
-      setProgress(18, "识别到 RL 训练指令，正在请求小懿动作网关...");
+      setProgress(18, "识别到 RL 训练指令，正在请求舷鸥动作网关...");
       $("#headline").textContent = "正在调出强化学习训练面板...";
       const data = await postJSON("/api/assistant/actions/execute", {
         instruction: p.query,
@@ -557,14 +557,14 @@
       }
       await wait(THINKING_DELAY_MS);
       if(runId !== answerRunId) return true;
-      $("#headline").textContent = "小懿已生成 RL 训练执行建议";
+      $("#headline").textContent = "舷鸥已生成 RL 训练执行建议";
       $("#riskBadge").textContent = "Human Gate ON";
       $("#intentMetric").textContent = "start_rl_training";
       $("#evidenceMetric").textContent = "动作注册表";
-      $("#llmMetric").textContent = "小懿AI";
+      $("#llmMetric").textContent = "舷鸥 · GullMate";
       $("#modeMetric").textContent = "训练引导";
       renderRlTrainingPlan(data);
-      setProgress(56, "小懿已生成推荐参数，正在校验完整回答...");
+      setProgress(56, "舷鸥已生成推荐参数，正在校验完整回答...");
       $("#askBtn").textContent = "校验完整回答中...";
       await typeText("#operatorNote", rlTrainingAnswer(data), runId);
       if(runId !== answerRunId) return true;
@@ -613,7 +613,7 @@
       $("#riskBadge").textContent = `Risk ${s.risk_level || "—"} · ${data.audit_packet?.risk_basis==="operator_report"?"人工报告等级":"运行护栏"}`;
       $("#intentMetric").textContent = s.intent || "—";
       $("#evidenceMetric").textContent = String((data.evidence || []).length);
-      $("#llmMetric").textContent = llm.true_xiaoyi_called ? "小懿已调用" : "证据兜底";
+      $("#llmMetric").textContent = llm.true_xiaoyi_called ? "舷鸥已调用" : "证据兜底";
       $("#modeMetric").textContent = $("#mission").selectedOptions[0]?.textContent || "—";
       $("#invokeProof").textContent = llm.true_xiaoyi_called ? `TRUE · ${Number(llm.latency_ms||0).toFixed(0)} ms` : "FALSE · 本地证据模式";
       $("#executionProof").textContent = `${generation.provider || llm.engine_execution || "local"} / ${generation.model || "evidence-guardrail"}`;
@@ -636,17 +636,17 @@
         : `第 ${generationCount} 次生成`;
       $("#answerStamp").textContent = stamp;
       if(llm.true_xiaoyi_called){
-        $("#llmStatusBox").textContent = `小懿真实调用 · ${generation.provider || "provider-unreported"}/${generation.model || "model-unreported"} · ${Number(llm.latency_ms||0).toFixed(0)} ms · 答案源=${llm.answer_source}`;
-        $("#llmChip").textContent = grounding.passed ? "小懿 Grounded" : "小懿 Called · Guarded";
+        $("#llmStatusBox").textContent = `舷鸥真实调用 · ${generation.provider || "provider-unreported"}/${generation.model || "model-unreported"} · ${Number(llm.latency_ms||0).toFixed(0)} ms · 答案源=${llm.answer_source}`;
+        $("#llmChip").textContent = grounding.passed ? "舷鸥 Grounded" : "舷鸥 Called · Guarded";
         $("#llmChip").className = grounding.passed ? "chip ok" : "chip warn";
       }else{
-        $("#llmStatusBox").textContent = llm.reason || "小懿未调用，已使用后端证据兜底。";
-        $("#llmChip").textContent = "小懿AI Fallback";
+        $("#llmStatusBox").textContent = llm.reason || "舷鸥未调用，已使用后端证据兜底。";
+        $("#llmChip").textContent = "舷鸥 · GullMate Fallback";
         $("#llmChip").className = "chip warn";
       }
       $("#ctxRisk").textContent = `Risk ${s.risk_level || "WATCH"}`;
       $("#liveHeadline").textContent = `Context ${String(data.context_sha256 || "").slice(0,12)} · ${data.status || "ready"}`;
-      $("#liveSub").textContent = `小懿调用=${!!llm.true_xiaoyi_called} · 接地校验=${!!grounding.passed} · 生产权限=false`;
+      $("#liveSub").textContent = `舷鸥调用=${!!llm.true_xiaoyi_called} · 接地校验=${!!grounding.passed} · 生产权限=false`;
       $("#askBtn").textContent = "校验完整回答中...";
       return await typeText("#operatorNote", s.operator_note || "已生成运营副驾答案。", runId);
     }
@@ -727,7 +727,7 @@
         if(runId !== answerRunId) return;
         window.clearInterval(timer);
         const doneAt = new Date().toLocaleTimeString("zh-CN",{hour12:false});
-        setProgress(92, "小懿答案已就绪，正在一次性展示完整回答 / Showing verified answer");
+        setProgress(92, "舷鸥答案已就绪，正在一次性展示完整回答 / Showing verified answer");
         const finished = await renderBrief(data, runId);
         if(finished && runId === answerRunId){
           setProgress(100, `完成 / Copilot answer ready · ${doneAt}`);
@@ -800,7 +800,7 @@
       if(packet){
         lastAudit={kind:"shift_handoff_snapshot",packet,persisted:data.persisted,production_action_executed:false};
         $("#auditBox").textContent=JSON.stringify(lastAudit,null,2);$("#copyAudit").disabled=false;
-        $("#invokeProof").textContent="交接快照 · 未新增小懿调用";$("#llmMetric").textContent="本地交接证据";
+        $("#invokeProof").textContent="交接快照 · 未新增舷鸥调用";$("#llmMetric").textContent="本地交接证据";
       }
       $("#handoffMeta").textContent = data.persisted
         ? `已留痕 · ${data.handoff_sha256} · 无生产动作`

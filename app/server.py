@@ -27,6 +27,7 @@ import re
 import subprocess
 import sys
 import time
+from urllib.parse import urlencode, urlparse
 from pathlib import Path
 from typing import Any, AsyncGenerator, Dict, List, Literal, Optional
 from datetime import datetime, timezone, timedelta  # <- 加上 timedelta
@@ -52,6 +53,8 @@ from app.services.portx.api import router as portx_router
 from app.services.ux.api import router as ux_router
 from app.services.portx.deep import router as port_deep_router
 from app.services.portviz.api import router as portviz_router  # Port visualization and stream routes
+from app.services.public_port_demo.api import router as public_port_demo_router
+from app.services.shanghai_lab_v1.api import router as shanghai_lab_router
 from app.services.mas_orchestrator.api import router as mas_router
 from app.services.rl_ops_center.api import router as rlops_router
 from app.services.rl_integration.api import router as rl_integration_router
@@ -76,6 +79,7 @@ from app.services.execution.api import router as site_execution_router
 from app.services.mobile_api.api import router as mobile_api_router
 from app.services.v3_port_ai import router as v3_port_ai_router
 from app.services.v3_runtime import V3RuntimeService
+from app.services.agent_runtime_receipts import AgentRuntimeReceipts, build_router as build_agent_runtime_router
 from app.services.story_evidence import StoryEvidenceService
 from app.services.realtime_insights import RealtimeInsightsService
 from app.services.copilot.mission_control import XiaoyiMissionControl
@@ -293,7 +297,7 @@ if not is_production():
             '← 返回主界面</a></div>'
         )
         html = response.body.decode("utf-8").replace("<body>", "<body>" + home_bar)
-        return HTMLResponse(_inject_standalone_navigation(html))
+        return HTMLResponse(_inject_demo_guide(_inject_standalone_navigation(html)))
 
     @app.get(app.swagger_ui_oauth2_redirect_url, include_in_schema=False)
     async def api_docs_oauth_redirect() -> HTMLResponse:
@@ -349,6 +353,8 @@ if os.getenv("PORT_DT_ENABLE_TWINPLUS_DEMO", "").strip().lower() in {"1", "true"
     app.include_router(twin_router, prefix="/api/twin", tags=["twinplus-demo"])
 app.include_router(ux_router,       prefix="/api/ux",       tags=["ux"])
 app.include_router(portviz_router, prefix="/api/portviz", tags=["portviz"])
+app.include_router(public_port_demo_router)
+app.include_router(shanghai_lab_router)
 app.include_router(rlops_router, prefix="/api/rlops", tags=["rlops"])
 app.include_router(rl_integration_router)
 app.include_router(rl_actions_router)
@@ -369,6 +375,10 @@ app.include_router(v3_port_ai_router)
 
 di = Container()
 di.strategy_runtime = V3RuntimeService(di)
+app.include_router(build_agent_runtime_router(AgentRuntimeReceipts(
+    di.strategy_runtime, di.telemetry,
+    Path(os.getenv("PORT_DT_AGENT_RECEIPTS_DIR", str(Path(__file__).resolve().parents[1] / ".runtime/agent-receipts"))),
+)))
 story_evidence = StoryEvidenceService(TRAINING_MANAGER.run_root, di.strategy_runtime)
 stacked = CurvesStacked(di)
 curves = CurvesService(di)
@@ -1158,6 +1168,7 @@ _UI_INDEX = Path(__file__).resolve().parent / "ui" / "index.html"
 _OPS_COPILOT_UI = Path(__file__).resolve().parent / "ui" / "ops_copilot.html"
 _INTEGRATION_HUB_UI = Path(__file__).resolve().parent / "ui" / "integration_hub.html"
 _XIAOYI_SPRITE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "xiaoyi_sprite.js"
+_DEMO_GUIDE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "demo_guide.js"
 _RUNTIME_RECOVERY_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "runtime_recovery.js"
 _BILINGUAL_UI_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "bilingual_ui.js"
 _RL_EVIDENCE_CONSOLE_JS = Path(__file__).resolve().parent / "ui" / "adapters" / "rl_evidence_console.js"
@@ -1169,7 +1180,7 @@ def _inject_standalone_navigation(html: str) -> str:
         return html
     resources = (
         '  <link rel="stylesheet" href="/static/standalone_navigation.css?v=20260912-2">\n'
-        '  <script src="/static/standalone_navigation.js?v=20260912-2"></script>\n'
+        '  <script src="/static/standalone_navigation.js?v=20261023-6"></script>\n'
     )
     return html.replace("</head>", resources + "</head>")
 
@@ -1185,9 +1196,19 @@ def _inject_xiaoyi_sprite(html: str) -> str:
         )
         html = html.replace("</head>", f"{preload}</head>") if "</head>" in html else preload + html
     if marker not in html:
-        tag = '  <script src="/ui/adapters/xiaoyi_sprite.js?v=20260831-navigation-recovery-v5"></script>\n'
+        tag = '  <script src="/ui/adapters/xiaoyi_sprite.js?v=20261018-demo-sync-v2"></script>\n'
         html = html.replace("</body>", f"{tag}</body>") if "</body>" in html else html + tag
     return html
+
+
+def _inject_demo_guide(html: str) -> str:
+    marker = "/ui/adapters/demo_guide.js"
+    if marker in html:
+        return html
+    tag = '  <script src="/ui/adapters/demo_guide.js?v=20261018-native-v3"></script>\n'
+    if "</body>" in html:
+        return html.replace("</body>", f"{tag}</body>")
+    return f"{html}\n{tag}"
 
 
 def _inject_runtime_recovery(html: str) -> str:
@@ -1214,7 +1235,7 @@ def _inject_rl_evidence_console(html: str) -> str:
     marker = "/ui/adapters/rl_evidence_console.js"
     if marker in html:
         return html
-    tag = '  <script src="/ui/adapters/rl_evidence_console.js?v=20260725-v1"></script>\n'
+    tag = '  <script src="/ui/adapters/rl_evidence_console.js?v=20261018-demo-sync-v1"></script>\n'
     if "</body>" in html:
         return html.replace("</body>", f"{tag}</body>")
     return html + tag
@@ -1251,6 +1272,10 @@ _RL_PANEL_HTML = r"""
     header .hint{color:var(--muted);font-size:12px}
     main{padding:18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px;align-items:start}
     .card{background:rgba(17,24,39,.85);border:1px solid #1f2937;border-radius:14px;padding:14px;box-shadow:0 18px 40px rgba(0,0,0,.18)}
+    .mobile-request-focus{border-color:#4de4ff!important;box-shadow:0 0 0 3px rgba(77,228,255,.22),0 0 34px rgba(77,228,255,.28);animation:mobileRequestPulse 1.2s ease-in-out 3}
+    @keyframes mobileRequestPulse{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px);box-shadow:0 0 0 5px rgba(77,228,255,.18),0 0 42px rgba(77,228,255,.38)}}
+    body.portai-handoff header{padding-right:250px}
+    body.portai-handoff #btnBackToPlatform{position:fixed;right:18px;top:12px;z-index:1000;padding:11px 18px;background:linear-gradient(135deg,#1769e0,#078b91);border:1px solid rgba(118,247,197,.75);box-shadow:0 10px 30px rgba(23,105,224,.38);font-weight:900}
     .toolbar{display:flex;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
     .toolbar input,.toolbar select{background:#0b1020;color:#e5e7eb;border:1px solid #1f2937;border-radius:8px;padding:7px 9px}
     .btn{background:var(--btn);border:none;color:#fff;border-radius:10px;padding:8px 12px;cursor:pointer}
@@ -1371,7 +1396,7 @@ _RL_PANEL_HTML = r"""
 </div>
 
 <main>
-  <section class="card" style="grid-column:1 / -1;border-color:rgba(77,228,255,.42);">
+  <section id="mobileRequestSection" class="card" style="grid-column:1 / -1;border-color:rgba(77,228,255,.42);">
     <div class="train-head">
       <div>
         <div class="train-title">移动端训练申请 <span class="en">Mobile Training Requests</span></div>
@@ -1439,11 +1464,12 @@ _RL_PANEL_HTML = r"""
           </div>
           <div class="field">
             <label for="selDataset">训练数据集 / Dataset</label>
-            <select id="selDataset"><option value="public_us_la_6min_v1">正在校验数据集…</option></select>
+            <select id="selDataset" data-training-ready="false"><option value="public_us_la_6min_v1">正在校验数据集…</option></select>
           </div>
           <div class="field">
             <label for="selObjective">任务目标标签 / Objective metadata</label>
             <select id="selObjective">
+              <option value="demo_quick">演示级快速训练 · Demo Quick Chain Test</option>
               <option value="multi_objective" selected>综合最优 · Energy + Carbon + Cost + Safety</option>
               <option value="energy_min">能耗最低 · Min Energy</option>
               <option value="carbon_min">碳排最低 · Min Carbon</option>
@@ -1523,7 +1549,7 @@ _RL_PANEL_HTML = r"""
             <div class="section-label">算法接入口 / Algorithm Adapter</div>
             <div id="connectorStatus" class="status-warn">接入口状态：待启动训练</div>
             <div class="link-health-grid" id="linkHealthGrid" aria-live="polite">
-              <div class="link-health-item" id="linkHealthXiaoyi"><span>小懿AI</span><b>检测中</b></div>
+              <div class="link-health-item" id="linkHealthXiaoyi"><span>舷鸥 · GullMate</span><b>检测中</b></div>
               <div class="link-health-item" id="linkHealthRl"><span>RL接口</span><b>检测中</b></div>
               <div class="link-health-item" id="linkHealthSailing"><span>航行模拟器</span><b>检测中</b></div>
             </div>
@@ -1658,7 +1684,7 @@ _RL_PANEL_HTML = r"""
       <div class="confirm-item"><span>将调用接口</span><b>POST /api/rl/train/start</b></div>
       <div class="confirm-item"><span>算法 / 场景</span><b id="confirmAlgoScenarioText">—</b></div>
       <div class="confirm-item"><span>设备组 / 时窗</span><b id="confirmAssetHorizonText">—</b></div>
-      <div class="confirm-item recommend"><span>小懿推荐参数</span><b id="confirmRecommendText">—</b></div>
+      <div class="confirm-item recommend"><span>舷鸥推荐参数</span><b id="confirmRecommendText">—</b></div>
     </div>
     <details><summary>本次将提交的完整配置</summary><pre id="confirmConfigSnapshot" class="small mono" style="white-space:pre-wrap;overflow-wrap:anywhere"></pre></details>
     <div class="risk-list" id="confirmRiskText"></div>
@@ -1675,17 +1701,19 @@ const $$ = sel => Array.from(document.querySelectorAll(sel));
 const query = new URLSearchParams(window.location.search);
 const returnTo = query.get("return_to") || "/#strategy-exec-module";
 const sourceFrom = query.get("from") || "";
+const traceFrom = query.get("trace_id") || `PORTAI-${Date.now()}`;
 const actionFrom = query.get("action") || "";
-const commandFrom = query.get("command") || "";
-const objectiveFrom = query.get("objective") || "";
-const objectiveLabelFrom = query.get("objective_label") || "";
-const advancedConfigFrom = (()=>{
+const requestFocusFrom = query.get("request_id") || "";
+let commandFrom = query.get("command") || "";
+let objectiveFrom = query.get("objective") || "";
+let objectiveLabelFrom = query.get("objective_label") || "";
+let advancedConfigFrom = (()=>{
   try{return JSON.parse(query.get("advanced_config") || "{}");}
   catch(_err){return {};}
 })();
-const recommendationTitleFrom = query.get("recommendation_title") || "";
-const recommendationReasonFrom = query.get("recommendation_reason") || "";
-const operatorNoteFrom = query.get("operator_note") || "";
+let recommendationTitleFrom = query.get("recommendation_title") || "";
+let recommendationReasonFrom = query.get("recommendation_reason") || "";
+let operatorNoteFrom = query.get("operator_note") || "";
 let selectedId = null;
 let currentList = [];
 let lastSimulation = null;
@@ -1713,6 +1741,7 @@ const TRAIN_STAGES = [
   {cn:"待独立测试", en:"Evaluation Pending", detail:"训练结束后才允许读取测试段并生成回放轨迹。"}
 ];
 const OBJECTIVE_RISK = {
+  demo_quick: ["320 步只验证指令、训练、进度与检查点链路，不能作为收敛或业务收益结论。", "严格安全边界和人工确认保持启用，生产权限不开放。"],
   multi_objective: ["多目标权重会影响能耗、碳排、成本与安全之间的取舍。", "训练过程中只进入演示任务，不直接生产下发。"],
   energy_min: ["能耗最低可能牺牲部分吞吐和设备舒适边界。", "需人工复核关键作业窗口，避免对高峰作业造成延迟。"],
   carbon_min: ["碳排最低会偏向低碳时段，可能推迟部分可延后负荷。", "需关注碳因子数据是否实时可信。"],
@@ -1813,12 +1842,13 @@ function renderMobileTrainingRequests(data={}){
     const cfg = item.config || {};
     const pending = item.status === "pending_desktop_confirmation";
     const approved = item.status === "approved";
+    const focused = sourceFrom === "portai" && item.request_id === requestFocusFrom;
     const time = item.created_at ? new Date(item.created_at).toLocaleTimeString("zh-CN",{hour12:false}) : "—";
     const statusClassName = approved ? "status-ok" : (item.status === "rejected" ? "status-warn" : "status-warn");
     const actions = pending ? `
       <button class="btn" data-mobile-action="approve" data-request-id="${item.request_id}">电脑端批准并启动训练</button>
       <button class="btn ghost" data-mobile-action="reject" data-request-id="${item.request_id}">电脑端拒绝申请</button>` : "";
-    return `<div style="padding:13px;border:1px solid rgba(77,228,255,.25);border-radius:14px;background:rgba(5,15,34,.52);">
+    return `<div class="${focused ? "mobile-request-focus" : ""}" data-mobile-request-card="${item.request_id || ""}" style="padding:13px;border:1px solid rgba(77,228,255,.25);border-radius:14px;background:rgba(5,15,34,.52);">
       <div class="train-head" style="gap:8px;">
         <div><b class="mono">${item.request_id || "—"}</b><div class="tiny muted">手机提交 ${time} · ${item.requested_by || "mobile_operator"}</div></div>
         <div class="${statusClassName}">${mobileRequestStatusLabel(item.status)}</div>
@@ -1846,6 +1876,25 @@ async function loadMobileTrainingRequests(){
     const list = $("#mobileTrainingRequestList");
     if(list) list.innerHTML = `<div class="small" style="color:#fca5a5;">移动端申请读取失败：${String(err).slice(0,160)}</div>`;
     return null;
+  }
+}
+
+function focusMobileTrainingRequest(){
+  if(sourceFrom !== "portai" || actionFrom !== "review_mobile_request") return;
+  const section = $("#mobileRequestSection");
+  const card = requestFocusFrom
+    ? document.querySelector(`[data-mobile-request-card="${CSS.escape(requestFocusFrom)}"]`)
+    : null;
+  const target = card || section;
+  if(!target) return;
+  target.scrollIntoView({behavior:"smooth", block:"start"});
+  if(card){
+    card.classList.add("mobile-request-focus");
+    const approve = card.querySelector('[data-mobile-action="approve"]');
+    if(approve) approve.focus({preventScroll:true});
+    if($("#returnBannerText")){
+      $("#returnBannerText").textContent = `PortAI 已下发任务 ${requestFocusFrom}。请在当前高亮卡片完成人工批准，再点击“返回 PortAI”回收结果凭证。`;
+    }
   }
 }
 
@@ -1939,8 +1988,8 @@ function setSelectIfExists(selector, value){
   return false;
 }
 
-function setInputFromQuery(selector, key){
-  const value = query.get(key);
+function setInputFromQuery(selector, key, sourceQuery=query){
+  const value = sourceQuery.get(key);
   if(value === null || value === "") return false;
   const el = $(selector);
   if(!el) return false;
@@ -1948,32 +1997,49 @@ function setInputFromQuery(selector, key){
   return true;
 }
 
-function applyAssistantTrainingParams(){
+function applyAssistantTrainingParams(sourceQuery=query){
+  commandFrom = sourceQuery.get("command") || commandFrom;
+  objectiveFrom = sourceQuery.get("objective") || objectiveFrom;
+  objectiveLabelFrom = sourceQuery.get("objective_label") || objectiveLabelFrom;
+  recommendationTitleFrom = sourceQuery.get("recommendation_title") || recommendationTitleFrom;
+  recommendationReasonFrom = sourceQuery.get("recommendation_reason") || recommendationReasonFrom;
+  operatorNoteFrom = sourceQuery.get("operator_note") || operatorNoteFrom;
+  try{
+    advancedConfigFrom = JSON.parse(sourceQuery.get("advanced_config") || JSON.stringify(advancedConfigFrom || {}));
+  }catch(_err){ /* Keep the last validated configuration. */ }
   setSelectIfExists("#selObjective", objectiveFrom);
-  setSelectIfExists("#selAlgo", query.get("algorithm"));
-  setSelectIfExists("#selScenario", query.get("scenario"));
-  setSelectIfExists("#selAsset", query.get("asset_group"));
-  setSelectIfExists("#selGuardrail", query.get("guardrail_mode"));
-  setInputFromQuery("#inpTrainHorizon", "horizon_min");
-  setInputFromQuery("#inpTrainStep", "step_min");
-  setInputFromQuery("#inpTotalSteps", "total_steps");
-  setInputFromQuery("#inpBatch", "batch_size");
-  setInputFromQuery("#inpLR", "learning_rate");
-  setInputFromQuery("#inpGamma", "gamma");
-  setInputFromQuery("#inpTau", "tau");
-  setInputFromQuery("#inpEntropy", "entropy_coef");
-  setInputFromQuery("#inpReplay", "replay_buffer");
-  setInputFromQuery("#inpDemandCap", "demand_cap_kw");
-  setInputFromQuery("#inpCostW", "cost_w");
-  setInputFromQuery("#inpCarbonW", "carbon_w");
-  setInputFromQuery("#inpPeakW", "peak_w");
-  setInputFromQuery("#inpSafetyW", "safety_w");
+  setSelectIfExists("#selAlgo", sourceQuery.get("algorithm"));
+  setSelectIfExists("#selScenario", sourceQuery.get("scenario"));
+  setSelectIfExists("#selAsset", sourceQuery.get("asset_group"));
+  setSelectIfExists("#selGuardrail", sourceQuery.get("guardrail_mode"));
+  setInputFromQuery("#inpTrainHorizon", "horizon_min", sourceQuery);
+  setInputFromQuery("#inpTrainStep", "step_min", sourceQuery);
+  setInputFromQuery("#inpTotalSteps", "total_steps", sourceQuery);
+  setInputFromQuery("#inpBatch", "batch_size", sourceQuery);
+  setInputFromQuery("#inpLR", "learning_rate", sourceQuery);
+  setInputFromQuery("#inpGamma", "gamma", sourceQuery);
+  setInputFromQuery("#inpTau", "tau", sourceQuery);
+  setInputFromQuery("#inpEntropy", "entropy_coef", sourceQuery);
+  setInputFromQuery("#inpReplay", "replay_buffer", sourceQuery);
+  setInputFromQuery("#inpDemandCap", "demand_cap_kw", sourceQuery);
+  setInputFromQuery("#inpCostW", "cost_w", sourceQuery);
+  setInputFromQuery("#inpCarbonW", "carbon_w", sourceQuery);
+  setInputFromQuery("#inpPeakW", "peak_w", sourceQuery);
+  setInputFromQuery("#inpSafetyW", "safety_w", sourceQuery);
   if(commandFrom && $("#trainDetail")){
-    $("#trainDetail").textContent = `${operatorNoteFrom || "小懿已载入推荐训练参数"} · 指令：${commandFrom}`;
+    $("#trainDetail").textContent = `${operatorNoteFrom || "舷鸥已载入推荐训练参数"} · 指令：${commandFrom}`;
   }
   updateConnectorPreview();
   renderBaselineCards();
 }
+
+window.addEventListener("port-dt:xiaoyi-training-task", event=>{
+  const openUrl = event.detail?.openUrl;
+  if(!openUrl) return;
+  const taskUrl = new URL(openUrl, window.location.origin);
+  if(taskUrl.pathname !== "/rl-panel" || taskUrl.searchParams.get("action") !== "start_rl_training") return;
+  applyAssistantTrainingParams(taskUrl.searchParams);
+});
 
 function recommendationSummaryText(cfg){
   const title = recommendationTitleFrom || "推荐训练参数";
@@ -2007,7 +2073,7 @@ function showAssistantRunConfirm(){
       return;
     }
   }
-  if(!trainingDatasetCatalog.some(row=>row.dataset_id === $("#selDataset")?.value && isTrainableDataset(row))){
+  if($("#selDataset")?.getAttribute("data-training-ready") === "false" || !trainingDatasetCatalog.some(row=>row.dataset_id === $("#selDataset")?.value && isTrainableDataset(row))){
     $("#trainDetail").textContent = "训练数据集尚未完成校验，请刷新接入口后重试。";
     return;
   }
@@ -2019,10 +2085,15 @@ function showAssistantRunConfirm(){
   $("#confirmAssetHorizonText").textContent = s.assetHorizon;
   $("#confirmRecommendText").textContent = s.recommendation;
   $("#confirmConfigSnapshot").textContent = JSON.stringify(pendingTrainConfig, null, 2);
+  box.querySelector("details")?.setAttribute("open", "");
   $("#confirmRiskText").innerHTML = `<b>执行风险与边界</b><br>${s.risks.map(x=>`• ${x}`).join("<br>")}<br>• 点击“开始执行”后才会调用 /api/rl/train/start；训练结果仍需策略测试、安全校验和 dry-run，不能直接生产执行。`;
   box.style.display = "flex";
   $("#btnCancelAssistantRun").focus();
   appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] training confirmation pending · ${s.objective}`);
+  window.portDtDemoReceipt?.("training-review", {
+    message:"训练目标、算法、步数、Reward 权重与风险边界已进入人工确认门",
+    target:"#assistantConfirmBackdrop"
+  });
 }
 
 function hideAssistantRunConfirm(){
@@ -2247,7 +2318,7 @@ function renderLinkHealth(data){
   const xiaoyi = systems.xiaoyi_ai || {};
   const rl = systems.rl_interface || {};
   const sailing = systems.sailing_simulator || {};
-  setLinkHealthItem("linkHealthXiaoyi", xiaoyi.label || "小懿未启动", Boolean(xiaoyi.online));
+  setLinkHealthItem("linkHealthXiaoyi", xiaoyi.label || "舷鸥未启动", Boolean(xiaoyi.online));
   setLinkHealthItem("linkHealthRl", rl.label || "RL接口缺失", Boolean(rl.online));
   setLinkHealthItem("linkHealthSailing", sailing.label || "航行模拟器不可启动", Boolean(sailing.launchable));
   const detail = $("#linkHealthDetail");
@@ -2255,7 +2326,7 @@ function renderLinkHealth(data){
     const time = data?.updated_at ? new Date(data.updated_at).toLocaleTimeString("zh-CN",{hour12:false}) : new Date().toLocaleTimeString("zh-CN",{hour12:false});
     const xiaoyiUrl = xiaoyi.base_url || "未配置";
     const project = sailing.project_file?.path || sailing.project_root?.path || "未配置";
-    detail.textContent = `最近检查 ${time} · 小懿 ${xiaoyiUrl} · 航行模拟器 ${project}`;
+    detail.textContent = `最近检查 ${time} · 舷鸥 ${xiaoyiUrl} · 航行模拟器 ${project}`;
   }
   updateConnectorPreview();
 }
@@ -2270,12 +2341,12 @@ async function refreshLinkHealth(){
   }catch(err){
     renderLinkHealth({
       systems: {
-        xiaoyi_ai: {label:"小懿未启动", online:false},
+        xiaoyi_ai: {label:"舷鸥未启动", online:false},
         rl_interface: {label:"RL接口待检查", online:false},
         sailing_simulator: {label:"航行模拟器待检查", launchable:false}
       },
       summary: {
-        xiaoyi:"小懿未启动",
+        xiaoyi:"舷鸥未启动",
         rl:"RL接口待检查",
         sailing:"航行模拟器待检查"
       }
@@ -2370,17 +2441,31 @@ async function startTraining(confirmedConfig=null){
   $("#trainLog").textContent = "";
   $("#evaluationPanel").style.display = "none";
   $("#btnEvaluateTrain").disabled = true;
-  setProgress(0);
+  setProgress(1);
   $("#btnStartTrain").disabled = true;
+  if($("#trainJobChip")) $("#trainJobChip").textContent = "正在提交 · SUBMITTING";
+  if($("#trainStatus")){
+    $("#trainStatus").textContent = "SUBMITTING";
+    $("#trainStatus").className = "status-warn";
+  }
+  if($("#trainStage")) $("#trainStage").textContent = "训练请求已提交，等待后端受理 / Submitting";
+  if($("#trainRunSummary")) $("#trainRunSummary").textContent = "训练配置已锁定，正在创建任务；请勿重复点击。";
+  appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] submitting · ${cfg.algorithm_label} · dataset=${cfg.dataset_id}`);
   try{
     const status = await requestTrainStart(cfg);
     renderTrainingStatus(status, "accepted");
     appendTrainLog(`[${new Date().toLocaleTimeString("zh-CN",{hour12:false})}] backend training started · ${cfg.algorithm_label} · dataset=${cfg.dataset_id}`);
+    window.portDtDemoReceipt?.("training-start", {
+      message:`真实训练任务已受理：${status.job_id || trainJobId || "job pending"}，进度与指标由后端回调更新`,
+      target:"#trainJobChip"
+    });
     startStatusPolling();
+    return status;
   }catch(err){
     $("#btnStartTrain").disabled = false;
     $("#trainStatus").textContent = "FAILED";
     $("#trainRunSummary").textContent = `训练任务未创建：${String(err).slice(0,220)}`;
+    return null;
   }finally{
     trainingStartPending = false;
   }
@@ -2464,16 +2549,16 @@ async function handleAssistantAction(){
   const action = String(actionFrom || "").toLowerCase();
   if(action === "start_rl_training"){
     applyAssistantTrainingParams();
-    if($("#trainDetail")) $("#trainDetail").textContent = "小懿指令已映射到 RL 训练面板；请在确认框中核对详情和风险。";
+    if($("#trainDetail")) $("#trainDetail").textContent = "舷鸥指令已映射到 RL 训练面板；请在确认框中核对详情和风险。";
     showAssistantRunConfirm();
   }else if(action === "view_rl_training_status"){
-    if($("#trainDetail")) $("#trainDetail").textContent = "小懿指令已映射到 /api/rl/train/status，正在读取训练状态和指标。";
+    if($("#trainDetail")) $("#trainDetail").textContent = "舷鸥指令已映射到 /api/rl/train/status，正在读取训练状态和指标。";
     await pollTrainingStatus({log:true, sourceLabel:"xiaoyi query"});
   }else if(action === "run_policy_test"){
-    if($("#trainDetail")) $("#trainDetail").textContent = "小懿指令已映射到真实留出集评测，评测完成后才会返回轨迹。";
+    if($("#trainDetail")) $("#trainDetail").textContent = "舷鸥指令已映射到真实留出集评测，评测完成后才会返回轨迹。";
     await runPolicyTestFromArtifact();
   }else if(action === "verify_policy_for_online"){
-    if($("#trainDetail")) $("#trainDetail").textContent = "小懿指令已映射到模型登记与上线证据门禁；本步不执行设备指令。";
+    if($("#trainDetail")) $("#trainDetail").textContent = "舷鸥指令已映射到模型登记与上线证据门禁；本步不执行设备指令。";
     await verifyPolicyForOnline({source:"xiaoyi_verify_online"});
   }
 }
@@ -2482,7 +2567,13 @@ function applyReturnBanner(){
   const banner = $("#returnBanner");
   const text = $("#returnBannerText");
   if(!banner || !text) return;
-  if(sourceFrom === 'strategy'){
+  if(sourceFrom === 'portai'){
+    document.body.classList.add('portai-handoff');
+    banner.style.display = 'block';
+    text.textContent = '当前由 PortAI 移动端在同一窗口打开。完成人工审批、训练/留出验证或状态查看后，点击右上角“返回 PortAI”，结果凭证会交回舷鸥。';
+    if($("#btnBackToPlatform")) $("#btnBackToPlatform").textContent = '← 返回 PortAI 移动端';
+    if($("#btnBackToHome")) $("#btnBackToHome").style.display = 'none';
+  }else if(sourceFrom === 'strategy'){
     banner.style.display = 'block';
     text.textContent = '当前从主平台进入。建议顺序：拉取模型登记 → 留出集评测 → 上线证据门禁 → 回主平台查看审计与孪生支撑。';
   }else{
@@ -2494,7 +2585,35 @@ function applyReturnBanner(){
 function goBackTo(target){
   const url = target || returnTo || '/#strategy-exec-module';
   try{
-    window.location.href = url;
+    if(sourceFrom === 'portai' && url === returnTo){
+      const cfg = trainConfig();
+      const status = lastTrainStatus || {};
+      const metrics = status.metrics || {};
+      const back = new URL(url, window.location.origin);
+      const resultStatus = status.status || $("#trainStatus")?.textContent || 'VIEWED';
+      const validation = trainingEvaluation
+        ? '留出集回放已生成；仍需人工安全复核'
+        : '已查看电脑端审批/训练状态；未声明生产收益';
+      const keyMetrics = `reward=${metrics.reward ?? status.reward ?? '—'}; step=${status.step ?? metrics.step ?? 0}/${status.total_steps ?? metrics.total_steps ?? cfg.total_steps ?? 0}; guardrail=${metrics.guardrail_violation_rate ?? '—'}`;
+      const receipt = {
+        xiaoyi_return:'1',
+        task_goal:cfg.objective || '综合多目标 RL 训练与留出验证',
+        target_system:'port-dt-multi / rl-panel',
+        dataset_version:cfg.dataset_id || $("#selDataset")?.value || 'unknown',
+        algorithm:cfg.algorithm || $("#selAlgo")?.value || 'unknown',
+        parameters:`steps=${cfg.total_steps ?? '—'}, seed=${cfg.seed ?? '—'}, gamma=${cfg.gamma ?? '—'}`,
+        execution_status:String(resultStatus).trim(),
+        key_metrics:keyMetrics,
+        validation_conclusion:validation,
+        trace_id:traceFrom,
+        timestamp:new Date().toISOString(),
+        production_authority:'false'
+      };
+      Object.entries(receipt).forEach(([key,value])=>back.searchParams.set(key,String(value)));
+      window.location.href = back.toString();
+    }else{
+      window.location.href = url;
+    }
   }catch(err){
     window.location.href = '/#strategy-exec-module';
   }
@@ -2528,6 +2647,7 @@ function isTrainableDataset(item){
 
 async function syncSelectedDatasetContract(){
   const generation = ++datasetProfileGeneration;
+  $("#selDataset")?.setAttribute("data-training-ready", "false");
   const selected = trainingDatasetCatalog.find(item=>item.dataset_id === $("#selDataset")?.value);
   if(!selected) return;
   const cadenceMinutes = Number(selected.quality?.time?.median_cadence_seconds || 0) / 60;
@@ -2557,6 +2677,9 @@ async function syncSelectedDatasetContract(){
   }
   updateConnectorPreview();
   await updateBaselineMetrics();
+  if(generation !== datasetProfileGeneration || selected.dataset_id !== $("#selDataset")?.value) return;
+  $("#selDataset")?.setAttribute("data-training-ready", "true");
+  window.dispatchEvent(new CustomEvent("port-dt:training-contract-ready"));
 }
 
 async function loadBusinessEvidence(){
@@ -2841,14 +2964,14 @@ function statusClass(status){
 }
 
 async function runPolicyTestFromArtifact(){
-  $("#simHint").textContent = "小懿正在读取最新 policy artifact...";
+  $("#simHint").textContent = "舷鸥正在读取最新 policy artifact...";
   const artifact = await latestPolicyArtifactInfo();
   await ensureStrategyList();
   if(!selectedId){
     $("#simHint").textContent = "没有可测试策略。";
     return null;
   }
-  $("#simHint").textContent = `小懿策略测试：artifact=${artifact.policy_version || "latest"}，策略=${selectedId}`;
+  $("#simHint").textContent = `舷鸥策略测试：artifact=${artifact.policy_version || "latest"}，策略=${selectedId}`;
   const data = await simulate({source:"xiaoyi_policy_test", artifact});
   if(data){
     const reward = data.evaluation?.metrics?.reward;
@@ -2964,7 +3087,13 @@ $("#btnBackToHome")?.addEventListener("click", ()=> goBackTo('/'));
 $("#btnStartTrain")?.addEventListener("click", showAssistantRunConfirm);
 $("#btnPauseTrain")?.addEventListener("click", pauseTraining);
 $("#btnResetTrain")?.addEventListener("click", resetTraining);
-$("#btnPollTrainStatus")?.addEventListener("click", ()=> pollTrainingStatus({log:true, sourceLabel:"manual poll"}));
+$("#btnPollTrainStatus")?.addEventListener("click", async ()=>{
+  const status = await pollTrainingStatus({log:true, sourceLabel:"manual poll"});
+  if(status) window.portDtDemoReceipt?.("training-status", {
+    message:`训练状态已刷新：${status.status || "UNKNOWN"} · step ${status.step ?? status.metrics?.step ?? 0}/${status.total_steps ?? status.metrics?.total_steps ?? 0}`,
+    target:"#trainRunSummary"
+  });
+});
 $("#btnEvaluateTrain")?.addEventListener("click", evaluateTraining);
 $("#btnVerifyDryRun")?.addEventListener("click", ()=> verifyPolicyForOnline({source:"manual_verify_online"}));
 $("#btnCancelAssistantRun")?.addEventListener("click", ()=>{
@@ -3007,16 +3136,17 @@ window.addEventListener("load", async ()=>{
   applyReturnBanner();
   resetTraining();
   try{ await loadTrainingDatasets(); }catch(err){ $("#trainRunSummary").textContent = `数据集加载失败：${String(err).slice(0,180)}`; }
+  await handleAssistantAction();
   try{ await loadBusinessEvidence(); }catch(err){
     if($("#businessEvidenceChip")) $("#businessEvidenceChip").textContent = "证据校验失败 · BLOCKED";
     if($("#businessEvidenceDetail")) $("#businessEvidenceDetail").textContent = `业务KPI证据不可用：${String(err).slice(0,180)}`;
   }
   await refreshConnector();
   await loadMobileTrainingRequests();
+  focusMobileTrainingRequest();
   mobileRequestPollTimer = window.setInterval(loadMobileTrainingRequests, 3000);
   await loadList();
   await loadHistory();
-  await handleAssistantAction();
 });
 </script>
 </body>
@@ -3062,6 +3192,7 @@ async def home() -> HTMLResponse:
     html = _inject_bilingual_ui(html)
     html = _inject_runtime_recovery(html)
     html = _inject_xiaoyi_sprite(html)
+    html = _inject_demo_guide(html)
     return HTMLResponse(html, status_code=200)
 
 @app.get("/ui/adapters/monitoring.js", response_class=HTMLResponse, tags=["ui"])
@@ -3084,7 +3215,7 @@ async def monitoring_adapter_js() -> HTMLResponse:
 @app.get("/ui/adapters/xiaoyi_sprite.js", response_class=HTMLResponse, tags=["ui"])
 async def xiaoyi_sprite_adapter_js() -> HTMLResponse:
     """
-    小懿AI 全局悬浮入口脚本：动画图标、拖拽、命令网关联动。
+    舷鸥 · GullMate 全局悬浮入口脚本：动画图标、拖拽、命令网关联动。
     """
     try:
         if _XIAOYI_SPRITE_JS.exists():
@@ -3100,6 +3231,24 @@ async def xiaoyi_sprite_adapter_js() -> HTMLResponse:
         )
     except Exception:
         return HTMLResponse("// xiaoyi sprite adapter unavailable", media_type="application/javascript", status_code=500)
+
+
+@app.get("/ui/adapters/demo_guide.js", response_class=HTMLResponse, tags=["ui"])
+async def demo_guide_adapter_js() -> HTMLResponse:
+    try:
+        if _DEMO_GUIDE_JS.exists():
+            return HTMLResponse(
+                _DEMO_GUIDE_JS.read_text(encoding="utf-8"),
+                media_type="application/javascript",
+                headers={"Cache-Control": "no-cache"},
+            )
+        return HTMLResponse(
+            "// demo guide adapter not found: app/ui/adapters/demo_guide.js",
+            media_type="application/javascript",
+            status_code=404,
+        )
+    except Exception:
+        return HTMLResponse("// demo guide adapter unavailable", media_type="application/javascript", status_code=500)
 
 
 @app.get("/ui/adapters/runtime_recovery.js", response_class=HTMLResponse, tags=["ui"])
@@ -3315,8 +3464,10 @@ async def home_brief_adapter_js() -> HTMLResponse:
 @app.get("/rl-panel", response_class=HTMLResponse, tags=["ui"])
 async def rl_panel_page(request: Request) -> HTMLResponse:
     return HTMLResponse(
-        _inject_rl_evidence_console(
-            _inject_xiaoyi_sprite(_inject_bilingual_ui(_inject_standalone_navigation(_RL_PANEL_HTML)))
+        _inject_demo_guide(
+            _inject_rl_evidence_console(
+                _inject_xiaoyi_sprite(_inject_bilingual_ui(_inject_standalone_navigation(_RL_PANEL_HTML)))
+            )
         ),
         status_code=200,
     )
@@ -3326,14 +3477,24 @@ async def rl_panel_page(request: Request) -> HTMLResponse:
 async def ops_copilot_page(request: Request) -> HTMLResponse:
     if not _OPS_COPILOT_UI.exists():
         return HTMLResponse("<h1>Ops Copilot UI 文件缺失</h1>", status_code=404)
-    return HTMLResponse(_inject_xiaoyi_sprite(_inject_bilingual_ui(_OPS_COPILOT_UI.read_text(encoding="utf-8"))), status_code=200)
+    return HTMLResponse(
+        _inject_demo_guide(
+            _inject_xiaoyi_sprite(_inject_bilingual_ui(_OPS_COPILOT_UI.read_text(encoding="utf-8")))
+        ),
+        status_code=200,
+    )
 
 
 @app.get("/integration-hub", response_class=HTMLResponse, tags=["ui"])
 async def integration_hub_page(request: Request) -> HTMLResponse:
     if not _INTEGRATION_HUB_UI.exists():
         return HTMLResponse("<h1>项目联动中枢 UI 文件缺失</h1>", status_code=404)
-    return HTMLResponse(_inject_xiaoyi_sprite(_inject_bilingual_ui(_INTEGRATION_HUB_UI.read_text(encoding="utf-8"))), status_code=200)
+    return HTMLResponse(
+        _inject_demo_guide(
+            _inject_xiaoyi_sprite(_inject_bilingual_ui(_INTEGRATION_HUB_UI.read_text(encoding="utf-8")))
+        ),
+        status_code=200,
+    )
 
 
 # -------------------------------------------------
@@ -4379,6 +4540,12 @@ async def reporting_mini(asset_id: str) -> JSONResponse:
 # -------------------------------------------------
 # 场景聚合（给大屏左上角“总负荷小曲线”）
 # -------------------------------------------------
+from app.services.port_load_outlook.api import router as port_load_forecast_router
+app.include_router(port_load_forecast_router)
+
+from app.services.external_load_api import router as external_load_router
+app.include_router(external_load_router)
+
 @app.get("/api/scene/snapshot", tags=["scene"])
 async def scene_snapshot(
     mode: str = Query("now", pattern="^(now|forecast|sim)$"),
@@ -5410,7 +5577,7 @@ async def rl_business_benchmark() -> JSONResponse:
     )
 
 
-def _rl_desktop_panel_payload() -> Dict[str, Any]:
+def _rl_desktop_panel_payload(request: Request) -> Dict[str, Any]:
     now = datetime.now(timezone.utc)
     last_seen_raw = _RL_DESKTOP_PANEL_STATE.get("last_seen_at")
     panel_active = False
@@ -5428,6 +5595,7 @@ def _rl_desktop_panel_payload() -> Dict[str, Any]:
         message = "电脑端服务在线，审批页尚未打开"
     return {
         **_RL_DESKTOP_PANEL_STATE,
+        "url": str(request.base_url).rstrip("/") + "/rl-panel",
         "panel_active": panel_active,
         "message": message,
         "human_confirmation_required": True,
@@ -5437,34 +5605,63 @@ def _rl_desktop_panel_payload() -> Dict[str, Any]:
 
 
 @app.get("/api/rl/desktop/status", tags=["rl-panel"])
-async def rl_desktop_panel_status() -> JSONResponse:
-    return JSONResponse(_rl_desktop_panel_payload())
+async def rl_desktop_panel_status(request: Request) -> JSONResponse:
+    return JSONResponse(_rl_desktop_panel_payload(request))
 
 
 @app.post("/api/rl/desktop/launch", tags=["rl-panel"])
-async def rl_desktop_panel_launch() -> JSONResponse:
-    url = str(_RL_DESKTOP_PANEL_STATE["url"])
+async def rl_desktop_panel_launch(
+    request: Request,
+    payload: Dict[str, Any] = Body(default={}),
+) -> JSONResponse:
+    url = str(request.base_url).rstrip("/") + "/rl-panel"
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     cache_buster = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S%f")[:-3]
-    launch_url = f"{url}?mobile_launch={cache_buster}"
+    same_window = payload.get("same_window") is True
+    return_to_raw = str(payload.get("return_to") or "").strip()
+    return_to = ""
+    if return_to_raw:
+        parsed = urlparse(return_to_raw)
+        if (
+            parsed.scheme in {"http", "https"}
+            and parsed.hostname in {"127.0.0.1", "localhost", "::1"}
+        ):
+            return_to = return_to_raw
+    query = {
+        "mobile_launch": cache_buster,
+        "from": "portai" if same_window else "mobile",
+        "trace_id": str(payload.get("trace_id") or f"PORTAI-{cache_buster}"),
+    }
+    action = str(payload.get("action") or "").strip()
+    request_id = str(payload.get("request_id") or "").strip()
+    if action:
+        query["action"] = action
+    if request_id:
+        query["request_id"] = request_id
+    if return_to:
+        query["return_to"] = return_to
+    launch_url = f"{url}?{urlencode(query)}"
     launched = False
     launch_error: Optional[str] = None
-    try:
-        if sys.platform == "darwin":
-            command = ["open", launch_url]
-        elif sys.platform.startswith("win"):
-            command = ["cmd", "/c", "start", "", launch_url]
-        else:
-            command = ["xdg-open", launch_url]
-        subprocess.Popen(
-            command,
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            start_new_session=True,
-        )
+    if same_window:
         launched = True
-    except (OSError, ValueError):
-        launch_error = "desktop launch failed; inspect server logs"
+    else:
+        try:
+            if sys.platform == "darwin":
+                command = ["open", launch_url]
+            elif sys.platform.startswith("win"):
+                command = ["cmd", "/c", "start", "", launch_url]
+            else:
+                command = ["xdg-open", launch_url]
+            subprocess.Popen(
+                command,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True,
+            )
+            launched = True
+        except (OSError, ValueError):
+            launch_error = "desktop launch failed; inspect server logs"
     _RL_DESKTOP_PANEL_STATE.update(
         {
             "launch_requested_at": now,
@@ -5472,11 +5669,18 @@ async def rl_desktop_panel_launch() -> JSONResponse:
             "launch_error": launch_error,
         }
     )
-    payload = _rl_desktop_panel_payload()
+    payload = _rl_desktop_panel_payload(request)
     payload.update(
         {
             "launched": launched,
-            "message": "已请求电脑打开强化学习审批页" if launched else f"桌面启动失败：{launch_error}",
+            "same_window": same_window,
+            "message": (
+                "已准备在当前窗口打开强化学习审批页"
+                if same_window and launched
+                else "已请求电脑打开强化学习审批页"
+                if launched
+                else f"桌面启动失败：{launch_error}"
+            ),
         }
     )
     return JSONResponse(payload, status_code=202 if launched else 503)
@@ -5484,6 +5688,7 @@ async def rl_desktop_panel_launch() -> JSONResponse:
 
 @app.post("/api/rl/desktop/heartbeat", tags=["rl-panel"])
 async def rl_desktop_panel_heartbeat(
+    request: Request,
     payload: Dict[str, Any] = Body(default={"panel": "rl-panel"}),
 ) -> JSONResponse:
     _RL_DESKTOP_PANEL_STATE.update(
@@ -5493,7 +5698,7 @@ async def rl_desktop_panel_heartbeat(
             "launch_error": None,
         }
     )
-    return JSONResponse(_rl_desktop_panel_payload())
+    return JSONResponse(_rl_desktop_panel_payload(request))
 
 
 def _rl_artifact_model_for_config(cfg: Dict[str, Any]) -> str:

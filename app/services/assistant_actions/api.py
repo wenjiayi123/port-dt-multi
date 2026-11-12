@@ -1,4 +1,4 @@
-"""Xiaoyi command execution gateway.
+"""GullMate command execution gateway.
 
 This gateway accepts either a natural-language instruction or a registered
 action id, resolves it through the RL panel action registry, and returns a
@@ -35,6 +35,7 @@ router = APIRouter(prefix="/api/assistant/actions", tags=["assistant-actions"])
 
 
 TRAINING_GOAL_ALIASES: List[Dict[str, Any]] = [
+    {"id": "demo_quick", "label": "演示级快速训练", "keywords": ["演示级快速训练", "快速训练", "演示训练", "链路烟测"]},
     {"id": "multi_objective", "label": "综合最优", "keywords": ["综合", "综合最优", "多目标", "整体最优"]},
     {"id": "energy_min", "label": "能耗最低", "keywords": ["能耗最低", "节能", "能耗", "省电", "最低能耗"]},
     {"id": "carbon_min", "label": "碳排最低", "keywords": ["碳排最低", "低碳", "降碳", "碳排", "碳排放最低"]},
@@ -57,6 +58,12 @@ TRAINING_GOAL_ALIASES: List[Dict[str, Any]] = [
 
 
 TRAINING_RECOMMENDATIONS: Dict[str, Dict[str, Any]] = {
+    "demo_quick": {
+        "title": "演示级快速训练（链路验证）",
+        "reason": "使用 320 步真实 PPO 训练，现场展示指令识别、人工确认、进度与检查点；该规模只验证链路，不作为收敛或业务收益结论。",
+        "operator_note": "我会保留严格安全边界和人工确认；训练结果仅作为演示级离线烟测证据。",
+        "config": {"algorithm": "ppo", "scenario": "mapped_dataset", "asset_group": "all_port", "horizon_min": 240, "step_min": 5, "total_steps": 320, "batch_size": 64, "learning_rate": 0.00012, "gamma": 0.990, "tau": 0.004, "entropy_coef": 0.010, "replay_buffer": 4096, "guardrail_mode": "strict", "reward_weights": {"cost": 0.28, "carbon": 0.28, "peak": 0.14, "safety": 0.30}},
+    },
     "multi_objective": {
         "title": "综合稳态推荐",
         "reason": "适合首次演示：SAC 对连续功率调度稳定，四类 reward 权重保持均衡。",
@@ -356,7 +363,7 @@ def _param_spec(action_id: str) -> List[Dict[str, Any]]:
                 "required": True,
                 "source": "payload.confirm",
                 "default": False,
-                "description": "启动小懿AI本地服务前需要人工确认。",
+                "description": "启动舷鸥 · GullMate本地服务前需要人工确认。",
             }
         ]
     if action_id in {"open_sailing_simulator", "start_navigation_demo", "switch_ship_view", "run_sailing_rl_smoke_test"}:
@@ -434,10 +441,23 @@ def _resolve_for_gateway(payload: Dict[str, Any]) -> Dict[str, Any]:
         public["score"] = 999
         public["match_reasons"] = ["explicit_action_id"]
         return {"matched": True, "action": public, "candidates": [public]}
+    instruction = _normalise_text(_input_text(payload))
+    starts_training = (
+        "训练" in instruction
+        and any(token in instruction for token in ("启动", "开始", "执行", "快速训练", "演示训练"))
+        and not any(token in instruction for token in ("停止训练", "暂停训练", "取消训练", "训练状态"))
+    )
+    if starts_training:
+        action = get_action_by_id("start_rl_training")
+        if action:
+            public = public_action(action)
+            public["score"] = 980
+            public["match_reasons"] = ["natural_language_training_start"]
+            return {"matched": True, "action": public, "candidates": [public]}
     return resolve_action(instruction=_input_text(payload), intent=_input_intent(payload))
 
 
-@router.post("/execute", summary="小懿指令执行网关")
+@router.post("/execute", summary="舷鸥指令执行网关")
 def assistant_action_execute(request: Request, payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
     resolved = _resolve_for_gateway(payload)
     action_public = resolved["action"]

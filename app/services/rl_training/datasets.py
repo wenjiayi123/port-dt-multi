@@ -297,6 +297,9 @@ class PortDataset:
         }
 
 
+_DATASET_OBJECT_CACHE: Dict[str, tuple[int, int, int, int, PortDataset]] = {}
+
+
 def dataset_quality_report(dataset: PortDataset) -> Dict[str, Any]:
     """Return a deterministic, auditable quality gate for one canonical dataset."""
     timestamps = [_timestamp_value(value) for value in dataset.timestamps]
@@ -642,6 +645,18 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
     # codeql[py/path-injection]
     if not path.exists():
         raise FileNotFoundError(f"dataset not found: {resolved}")
+    path_stat = path.stat()
+    meta_stat = meta_path.stat() if meta_path.exists() else None
+    cache_key = str(path.resolve())
+    signature = (
+        path_stat.st_mtime_ns,
+        path_stat.st_size,
+        meta_stat.st_mtime_ns if meta_stat else 0,
+        meta_stat.st_size if meta_stat else 0,
+    )
+    cached = _DATASET_OBJECT_CACHE.get(cache_key)
+    if cached and cached[:4] == signature:
+        return cached[4]
     timestamps: List[str] = []
     rows: List[List[float]] = []
     factor_rows: List[List[float]] = []
@@ -714,7 +729,7 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
             "end_at": timestamps[-1],
         }
     )
-    return PortDataset(
+    dataset = PortDataset(
         resolved,
         path,
         timestamps,
@@ -727,6 +742,8 @@ def load_port_dataset(dataset_id: str, data_root: Path = DEFAULT_DATA_ROOT) -> P
         np.asarray(port_wide_rows, dtype=np.float32),
         np.asarray(port_wide_masks, dtype=np.float32),
     )
+    _DATASET_OBJECT_CACHE[cache_key] = (*signature, dataset)
+    return dataset
 
 
 def list_datasets(data_root: Path = DEFAULT_DATA_ROOT) -> List[Dict[str, Any]]:

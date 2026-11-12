@@ -1,0 +1,23 @@
+{
+  "evaluation_id": "ui-eval-efc7079b44cb461bb5171f59991bf5c3",
+  "source_job_id": "rl-20261031T101130669Z",
+  "source_files_sha256": {
+    "config.json": "d65c63f74d6acd5443bb3b959ebc9e14916089b19317e62dca651cb74ba9fd49",
+    "manifest.json": "71d834d3f59b77d0bff2446a649bf131460755c00d0b3df8f36bc05509193db3",
+    "model.zip": "d1b5b12d634c4dc0ddb02f3807664bf6e487fe0cfd905326a09ab81992967476",
+    "status.json": "99bb326c656606a84b52aff45617c1a793f0ddc75fd19c33add063e0537aa949",
+    "model_card.json": "721eb5f9653c37b3c2ed80cf4ec6791de2c64fe940d4d95dc4eaacc1ecb3fdfc",
+    "MODEL_CARD.md": "43f8d8537df4f3cebcd650eabcdade25cbd0232a135064f221dd11602e6b0e3d"
+  },
+  "source_artifacts_unchanged": true,
+  "model_artifact": {
+    "training_sha256": "d1b5b12d634c4dc0ddb02f3807664bf6e487fe0cfd905326a09ab81992967476",
+    "runtime_sha256": "d1b5b12d634c4dc0ddb02f3807664bf6e487fe0cfd905326a09ab81992967476",
+    "metadata_only_public_export": false
+  },
+  "evaluator_source_sha256": "262139b743c1a08b2437768b4d6417de14869e5f2274f8e71e67e0089a5fff04",
+  "frozen_trainer_source_sha256": "dc68ec6885c2e589b440cad2a01cde130f345f57c9d456de8535ee657210a7e1",
+  "evaluation_sha256": "e76ce2dc1b70a321702508ef1aec3b3259d8a2701bca42a71d8d47beb4537c88",
+  "gradient_updates": 0,
+  "formal_or_champion_registration": false
+}

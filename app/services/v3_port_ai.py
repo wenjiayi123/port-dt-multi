@@ -357,7 +357,7 @@ def _portable_evidence_runs() -> list[dict[str, Any]]:
                         "evidence_label": run.get("evidence_label"),
                         "evaluated_at": evaluation.get("evaluated_at"),
                         "_portable_record": run,
-                        "_portable_bundle": str(path.relative_to(ROOT)),
+                        "_portable_bundle": path.relative_to(ROOT).as_posix(),
                     }
                 )
     return rows
@@ -387,7 +387,7 @@ def _portable_run(job_id: str) -> dict[str, Any] | None:
 def _evidence_inventory() -> dict[str, Any]:
     runs = _all_evidence_runs()
     evidence_files = sorted(
-        str(path.relative_to(ROOT))
+        path.relative_to(ROOT).as_posix()
         for folder in (ROOT / "evidence/rl", ROOT / "evidence/v3")
         if folder.exists()
         for path in folder.iterdir()

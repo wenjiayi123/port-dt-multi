@@ -1,0 +1,38 @@
+{
+  "dataset_id": "shanghai_2026_jun_sep_external",
+  "title": "Shanghai withheld UTC summer 2026 engineering load",
+  "scope": "Weather/marine reconstruction and monthly throughput. No site metering or control authority.",
+  "anchors": {
+    "5": {
+      "cell": "G21",
+      "ten_thousand_teu": 2375.0,
+      "sha256": "bc81c244f871e56a4267ee38776c60a030503e35da14b99419ef090c17278ae3"
+    },
+    "6": {
+      "cell": "G21",
+      "ten_thousand_teu": 2874.0,
+      "sha256": "3b5e70c253941a7fd8e2f7fa1e43680a5d8461bab94b7b7610a91eae60cecfe1"
+    },
+    "7": {
+      "cell": "G21",
+      "ten_thousand_teu": 3342.0,
+      "sha256": "d9a21196b01f31ffacd3498cb877dcaad6d43c04bc8637dc5f5b8c5fa3e31714"
+    },
+    "8": {
+      "cell": "G21",
+      "ten_thousand_teu": 3770.0,
+      "sha256": "525c0ebe3b25a578f526b2e71fd3c1f8b7d7fc806c242390226f750f28605ee9"
+    },
+    "9": {
+      "cell": "G21",
+      "ten_thousand_teu": 4283.0,
+      "sha256": "df5e82bd8bf334eb068d696d34b5b825383f395a11baaa507357b323615894de"
+    }
+  },
+  "totals_teu": {
+    "2026-06": 4990000.0,
+    "2026-07": 4680000.0,
+    "2026-08": 4280000.0,
+    "2026-09": 5130000.0
+  }
+}

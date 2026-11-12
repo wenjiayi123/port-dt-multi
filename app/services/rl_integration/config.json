@@ -5,17 +5,17 @@
     "rl_panel_route": "/rl-panel"
   },
   "xiaoyi_ai": {
-    "name": "小懿AI",
+    "name": "舷鸥 · GullMate",
     "base_url": "http://127.0.0.1:8010",
     "health_path": "/health",
     "chat_path": "/api/chat",
-    "project_path": "",
-    "start_command": ""
+    "project_path": "G:\\AI\\WindowsDeploy\\apps\\xiaoyi",
+    "start_command": "G:\\AI\\WindowsDeploy\\portai.cmd start xiaoyi"
   },
   "sailing_simulator": {
     "name": "航行模拟器",
-    "project_path": "",
-    "project_file": "",
-    "godot_executable": ""
+    "project_path": "G:\\AI\\WindowsDeploy\\apps\\ship",
+    "project_file": "G:\\AI\\WindowsDeploy\\apps\\ship\\project.godot",
+    "godot_executable": "G:\\AI\\WindowsDeploy\\tools\\godot471\\Godot_v4.7.1-stable_win64.exe"
   }
 }

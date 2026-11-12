@@ -3,7 +3,7 @@
 Ops Copilot 后端接口。
 
 - 暴露 /api/copilot/ask GET 接口，供前端 “Ops Copilot（知识 + 对接）” 面板使用。
-- 当前实现：优先调用桌面“小懿AI”服务；不可达时回退到本地 JSON 知识库。
+- 当前实现：优先调用桌面“舷鸥 · GullMate”服务；不可达时回退到本地 JSON 知识库。
 - 对前端保持原有协议，避免影响页面结构和下游执行闭环。
 """
 
@@ -216,13 +216,13 @@ _PLAYBOOKS: List[Dict[str, Any]] = [
 def _xiaoyi_config() -> Dict[str, Any]:
     base_url = (os.getenv("XIAOYI_AI_BASE_URL") or "http://127.0.0.1:8010").rstrip("/")
     return {
-        "engine": "小懿AI",
+        "engine": "舷鸥 · GullMate",
         "provider": "desktop-xiaoyi",
         "base_url": base_url,
         "health_url": base_url + "/health",
         "chat_url": base_url + "/api/chat",
         "configured": httpx is not None,
-        "model": "XiaoyiAI local RAG",
+        "model": "GullMate local RAG",
         "fallback": "Ops Copilot local knowledge base",
         "httpx_available": httpx is not None,
     }
@@ -246,7 +246,7 @@ def _xiaoyi_mode(scope: str, mode: str, query: str) -> str:
 def _probe_xiaoyi_status() -> Dict[str, Any]:
     cfg = _xiaoyi_config()
     if httpx is None:
-        return {**cfg, "configured": False, "online": False, "status": "missing_httpx", "reason": "httpx 不可用，无法连接小懿AI。"}
+        return {**cfg, "configured": False, "online": False, "status": "missing_httpx", "reason": "httpx 不可用，无法连接舷鸥 · GullMate。"}
     try:
         with httpx.Client(timeout=2.0) as client:
             health_response = client.get(cfg["health_url"])
@@ -266,7 +266,7 @@ def _probe_xiaoyi_status() -> Dict[str, Any]:
                 "chat_capable": False,
                 "status": "health_only_not_xiaoyi",
                 "health": health,
-                "reason": "目标地址健康检查可达，但没有POST /api/chat；不得标记为小懿在线。",
+                "reason": "目标地址健康检查可达，但没有POST /api/chat；不得标记为舷鸥在线。",
             }
         return {
             **cfg,
@@ -284,7 +284,7 @@ def _probe_xiaoyi_status() -> Dict[str, Any]:
             "online": False,
             "chat_capable": False,
             "status": "offline",
-            "reason": "小懿AI 未在线或不可达；内部连接诊断不向前端暴露。",
+            "reason": "舷鸥 · GullMate 未在线或不可达；内部连接诊断不向前端暴露。",
         }
 
 
@@ -297,7 +297,7 @@ def _call_xiaoyi(
 ) -> Dict[str, Any]:
     cfg = _xiaoyi_config()
     if httpx is None:
-        return {"ok": False, "status": "fallback", "reason": "httpx 不可用，无法调用小懿AI。", "config": cfg}
+        return {"ok": False, "status": "fallback", "reason": "httpx 不可用，无法调用舷鸥 · GullMate。", "config": cfg}
 
     body = {
         "question": query,
@@ -313,7 +313,7 @@ def _call_xiaoyi(
             data = resp.json()
         answer = str(data.get("answer") or "") if isinstance(data, dict) else ""
         if not answer.strip():
-            raise ValueError("小懿响应缺少完整answer字段")
+            raise ValueError("舷鸥响应缺少完整answer字段")
         return {
             "ok": True,
             "status": "xiaoyi",
@@ -337,7 +337,7 @@ def _call_xiaoyi(
             "ok": False,
             "status": "fallback",
             "engine_execution": "local_evidence_fallback",
-            "reason": "小懿AI 调用失败，已退回本地 Copilot；内部异常不向前端暴露。",
+            "reason": "舷鸥 · GullMate 调用失败，已退回本地 Copilot；内部异常不向前端暴露。",
             "config": cfg,
             "request": body,
             "latency_ms": round((time.perf_counter() - started) * 1000, 1),
@@ -371,7 +371,7 @@ def _first_answer_line(answer: str) -> str:
         text = line.strip()
         if text:
             return text[:180]
-    return "小懿AI 已生成港航运营答案。"
+    return "舷鸥 · GullMate 已生成港航运营答案。"
 
 
 def _steps_from_xiaoyi_answer(answer: str, intent: str, query: str, scope: str) -> List[Dict[str, Any]]:
@@ -410,11 +410,11 @@ def _steps_from_xiaoyi_answer(answer: str, intent: str, query: str, scope: str) 
 
 
 def _actions_from_xiaoyi(primary_title: str) -> List[Dict[str, Any]]:
-    title = primary_title or "小懿证据"
+    title = primary_title or "舷鸥证据"
     return [
-        {"priority": "P0", "action": "按小懿建议先确认告警对象、时窗和风险等级", "owner": "值班长", "guardrail": "人工确认", "handoff": "OpsX"},
-        {"priority": "P1", "action": f"核对小懿命中证据：{title}", "owner": "设备/能源工程师", "guardrail": "证据不足不执行", "handoff": "Twin / Monitoring"},
-        {"priority": "P2", "action": "把小懿问答结果写入审计包并进入 dry-run 承接", "owner": "Ops Copilot", "guardrail": "仅建议，不直接生产下发", "handoff": "Execution"},
+        {"priority": "P0", "action": "按舷鸥建议先确认告警对象、时窗和风险等级", "owner": "值班长", "guardrail": "人工确认", "handoff": "OpsX"},
+        {"priority": "P1", "action": f"核对舷鸥命中证据：{title}", "owner": "设备/能源工程师", "guardrail": "证据不足不执行", "handoff": "Twin / Monitoring"},
+        {"priority": "P2", "action": "把舷鸥问答结果写入审计包并进入 dry-run 承接", "owner": "Ops Copilot", "guardrail": "仅建议，不直接生产下发", "handoff": "Execution"},
     ]
 
 
@@ -464,20 +464,20 @@ def _mission_prompt(query: str, context: Dict[str, Any], mission_id: str) -> str
         "missing_site_factors": context.get("missing_site_factors"),
     }
     prompt = (
-        "你是小懿AI港口一线副驾。仅根据下列后端上下文；不得补造现场数据、事故、工单、收益或执行结果。"
+        "你是舷鸥 · GullMate港口一线副驾。仅根据下列后端上下文；不得补造现场数据、事故、工单、收益或执行结果。"
         "明确区分公开回放、预测投影和现场实测。准入门阻断时先保持上一稳定策略或FCFS/MPC基线。"
         "回答：结论、依据、检查项、dry-run、人工确认。"
         f"\n任务:{mission_id}\n问题:{query[:240]}\n上下文:"
         + json.dumps(compact, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
     )
-    # Xiaoyi's public request contract caps the question at 2,000 chars.  The
+    # GullMate's public request contract caps the question at 2,000 chars.  The
     # packet is intentionally compact, but never send an invalid oversized
     # request if a future backend adds fields.
     return prompt if len(prompt) <= 1980 else prompt[:1978] + "…"
 
 
 def _context_grounding(answer: str, context: Dict[str, Any]) -> Dict[str, Any]:
-    """Check whether Xiaoyi actually used the supplied runtime packet.
+    """Check whether GullMate actually used the supplied runtime packet.
 
     A successful HTTP response proves invocation, not grounding.  We only use
     the generated answer as the frontline answer if at least two independent
@@ -507,8 +507,8 @@ def _context_grounding(answer: str, context: Dict[str, Any]) -> Dict[str, Any]:
 
 @router.get(
     "/ask",
-    summary="Ops Copilot：小懿知识检索",
-    description="优先调用桌面小懿AI返回证据；不可达时回退到本地知识库。",
+    summary="Ops Copilot：舷鸥知识检索",
+    description="优先调用桌面舷鸥 · GullMate返回证据；不可达时回退到本地知识库。",
 )
 def copilot_ask(
     query: str = Query(..., min_length=1, description="用户提问内容，可为中文或英文"),
@@ -556,7 +556,7 @@ def copilot_context(
     request: Request,
     port: str = Query("CNSHA", description="港口代码"),
     asset_id: str = Query("qc-01", description="当前资产"),
-    mission: str = Query("situation", description="小懿任务模式"),
+    mission: str = Query("situation", description="舷鸥任务模式"),
 ) -> JSONResponse:
     port = _mapped_port(port)
     now = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
@@ -600,14 +600,14 @@ def copilot_context(
             "signals": context.get("signals") or [],
             "connectors": [
                 {
-                    "name": "小懿AI生成服务",
+                    "name": "舷鸥 · GullMate生成服务",
                     "endpoint": xiaoyi_status.get("chat_url"),
                     "status": assistant_status,
                     "chat_capable": bool(xiaoyi_status.get("chat_capable")),
                     "reason": xiaoyi_status.get("reason"),
                 },
                 {"name": "孪生态势上下文", "endpoint": "/api/copilot/context", "status": "ready"},
-                {"name": "小懿任务推理", "endpoint": "/api/copilot/mission", "status": "ready"},
+                {"name": "舷鸥任务推理", "endpoint": "/api/copilot/mission", "status": "ready"},
                 {"name": "交接班留痕", "endpoint": "/api/copilot/handoff", "status": "confirm-required"},
                 {"name": "OpsX审计", "endpoint": "/api/opsx/*", "status": "ready"},
             ],
@@ -633,7 +633,7 @@ def copilot_playbooks() -> JSONResponse:
 
 @router.get(
     "/llm/status",
-    summary="Ops Copilot：小懿AI 状态",
+    summary="Ops Copilot：舷鸥 · GullMate 状态",
 )
 def copilot_llm_status() -> JSONResponse:
     cfg = _probe_xiaoyi_status()
@@ -650,12 +650,12 @@ def copilot_llm_status() -> JSONResponse:
 
 
 _MISSION_DEFAULT_QUESTIONS = {
-    "situation": "小懿，请基于当前数字孪生后端状态给本班一个简明态势判断。",
-    "forecast": "小懿，请解释当前预测峰值、区间和工程阈值风险，并指出缺失的现场证据。",
-    "strategy": "小懿，请解释当前策略为什么这样决策、相对基线改善什么、风险和边界是什么。",
-    "triage": "小懿，请根据当前异常、漂移和策略准入门给出一线分诊与回退顺序。",
-    "handoff": "小懿，请把当前态势、模型版本、未决风险和下一班检查项整理成交接摘要。",
-    "dry_run": "小懿，请判断当前是否适合进入策略预演；只给dry-run与人工审批步骤。",
+    "situation": "小鸥，请基于当前数字孪生后端状态给本班一个简明态势判断。",
+    "forecast": "小鸥，请解释当前预测峰值、区间和工程阈值风险，并指出缺失的现场证据。",
+    "strategy": "小鸥，请解释当前策略为什么这样决策、相对基线改善什么、风险和边界是什么。",
+    "triage": "小鸥，请根据当前异常、漂移和策略准入门给出一线分诊与回退顺序。",
+    "handoff": "小鸥，请把当前态势、模型版本、未决风险和下一班检查项整理成交接摘要。",
+    "dry_run": "小鸥，请判断当前是否适合进入策略预演；只给dry-run与人工审批步骤。",
 }
 
 
@@ -684,8 +684,8 @@ def _mission_options(payload: Dict[str, Any]) -> Dict[str, Any]:
 
 @router.post(
     "/mission",
-    summary="小懿数字孪生任务推理",
-    description="先读取后端孪生/预测/监控/策略上下文，再真实调用小懿；不可达时使用同一上下文做本地证据兜底。",
+    summary="舷鸥数字孪生任务推理",
+    description="先读取后端孪生/预测/监控/策略上下文，再真实调用舷鸥；不可达时使用同一上下文做本地证据兜底。",
 )
 def copilot_mission(
     request: Request,
@@ -856,7 +856,7 @@ def copilot_mission(
             "sop_steps": sop_steps,
             "evidence": evidence,
             "llm": {
-                "engine": "小懿AI" if grounding.get("passed") else "小懿调用 + 后端证据护栏",
+                "engine": "舷鸥 · GullMate" if grounding.get("passed") else "舷鸥调用 + 后端证据护栏",
                 "status": llm_result.get("status"),
                 "ok": bool(llm_result.get("ok")),
                 "true_xiaoyi_called": bool(llm_result.get("ok")),
@@ -889,7 +889,7 @@ def copilot_mission(
 
 @router.post(
     "/handoff",
-    summary="小懿交接班预览与确认留痕",
+    summary="舷鸥交接班预览与确认留痕",
     description="默认只返回预览；confirm=true才追加写入运行时审计日志，始终不执行生产动作。",
 )
 def copilot_handoff(
@@ -934,7 +934,7 @@ def copilot_handoff(
 @router.post(
     "/brief",
     summary="Ops Copilot：生成解释、SOP 与审计包",
-    description="优先调用桌面小懿AI生成解释、SOP 与审计包；不可达时回退到本地知识库。",
+    description="优先调用桌面舷鸥 · GullMate生成解释、SOP 与审计包；不可达时回退到本地知识库。",
 )
 def copilot_brief(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
     query = str(payload.get("query") or "").strip()
@@ -975,7 +975,7 @@ def copilot_brief(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
     llm_result: Dict[str, Any] = {
         "ok": False,
         "status": "local_rag",
-        "reason": "未请求小懿AI。",
+        "reason": "未请求舷鸥 · GullMate。",
         "config": _xiaoyi_config(),
     }
     xiaoyi_answer = ""
@@ -1000,7 +1000,7 @@ def copilot_brief(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
             intent = str(parsed.get("intent") or intent)
             risk = _risk_from(severity, len(evidence))
             headline = _first_answer_line(xiaoyi_answer)
-            actions = _actions_from_xiaoyi(str(primary.get("title") or "小懿证据"))
+            actions = _actions_from_xiaoyi(str(primary.get("title") or "舷鸥证据"))
             sop_steps = _steps_from_xiaoyi_answer(xiaoyi_answer, intent, query, scope)
         else:
             sop_steps = _steps_for(intent, query, scope)
@@ -1017,7 +1017,7 @@ def copilot_brief(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
         "engine": engine,
         "llm_status": llm_result.get("status"),
         "llm_model": (llm_result.get("config") or {}).get("model"),
-        "assistant": "小懿AI" if llm_result.get("ok") else "local_copilot_fallback",
+        "assistant": "舷鸥 · GullMate" if llm_result.get("ok") else "local_copilot_fallback",
         "assistant_confidence": xiaoyi_confidence or None,
         "scope": scope,
         "severity": severity,
@@ -1037,7 +1037,7 @@ def copilot_brief(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
                     xiaoyi_answer
                     if llm_result.get("ok")
                     else (
-                        "小懿AI 当前不可达，已使用 Ops Copilot 本地规则库生成；请检查脱敏联动状态和环境变量配置。"
+                        "舷鸥 · GullMate 当前不可达，已使用 Ops Copilot 本地规则库生成；请检查脱敏联动状态和环境变量配置。"
                         if uses_xiaoyi
                         else f"{headline}\n\n已按 Ops Copilot 本地知识库生成兜底答案。"
                     )
@@ -1047,7 +1047,7 @@ def copilot_brief(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
             "sop_steps": sop_steps,
             "evidence": evidence,
             "llm": {
-                "engine": "小懿AI" if uses_xiaoyi else "Ops Copilot local",
+                "engine": "舷鸥 · GullMate" if uses_xiaoyi else "Ops Copilot local",
                 "status": llm_result.get("status"),
                 "ok": bool(llm_result.get("ok")),
                 "reason": llm_result.get("reason"),

@@ -11,7 +11,7 @@
 
   function isRlTrainingCommand(text){
     const q = String(text || "").replace(/\s+/g, "");
-    return /(小懿)?(请|帮我|现在)?(开始|启动|执行|训练).*(RL|rl|强化学习|策略|模型|目标|能耗|碳排|电费|峰值|岸电|AGV|agv|泊位|安全|韧性|低风险)/.test(q)
+    return /(舷鸥)?(请|帮我|现在)?(开始|启动|执行|训练).*(RL|rl|强化学习|策略|模型|目标|能耗|碳排|电费|峰值|岸电|AGV|agv|泊位|安全|韧性|低风险)/.test(q)
       || /(RL|rl|强化学习).*(开始|启动|训练)/.test(q);
   }
 
@@ -83,7 +83,7 @@
       .xiaoyi-sprite-root[data-character-state="loading"] .xiaoyi-sprite-character{opacity:.01}
       .xiaoyi-sprite-root[data-character-state="ready"] .xiaoyi-sprite-character{opacity:1;transition:opacity .12s ease-out}
       .xiaoyi-sprite-root[data-character-state="failed"] .xiaoyi-sprite-character{opacity:.01}
-      .xiaoyi-sprite-root[data-character-state="failed"] .xiaoyi-sprite-character-shell::after{content:"小懿";position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:48px;height:48px;border:1px solid rgba(56,189,248,.72);border-radius:50%;background:linear-gradient(145deg,#0b4b80,#082745);color:#eaf8ff;font-size:14px;font-weight:900;box-shadow:0 0 18px rgba(56,189,248,.28)}
+      .xiaoyi-sprite-root[data-character-state="failed"] .xiaoyi-sprite-character-shell::after{content:"舷鸥";position:absolute;right:8px;bottom:8px;display:grid;place-items:center;width:48px;height:48px;border:1px solid rgba(56,189,248,.72);border-radius:50%;background:linear-gradient(145deg,#0b4b80,#082745);color:#eaf8ff;font-size:14px;font-weight:900;box-shadow:0 0 18px rgba(56,189,248,.28)}
       .xiaoyi-sprite-orb:hover .xiaoyi-sprite-character-shell{filter:drop-shadow(0 15px 20px rgba(0,0,0,.46)) drop-shadow(0 0 11px rgba(34,211,238,.38));animation-duration:2.1s}
       .xiaoyi-sprite-speech{position:absolute;right:72px;top:-28px;width:224px;min-height:94px;display:grid;align-content:center;gap:5px;padding:14px 17px 13px;border:1px solid rgba(31,181,255,.78);border-radius:17px 17px 5px 17px;background:linear-gradient(145deg,rgba(7,48,87,.97),rgba(4,28,58,.98));box-shadow:0 16px 38px rgba(0,0,0,.34),inset 0 1px 0 rgba(143,225,255,.12),0 0 18px rgba(14,165,233,.12);text-align:left;pointer-events:none;transition:opacity .2s ease,visibility .2s ease;animation:xiaoyiSpeechGlow 3.4s ease-in-out infinite}
       .xiaoyi-sprite-speech::after{content:"";position:absolute;right:20px;bottom:-13px;width:22px;height:15px;background:linear-gradient(135deg,rgba(5,39,75,.98) 0 52%,transparent 53%);clip-path:polygon(0 0,100% 0,0 100%);filter:drop-shadow(-1px 1px 0 rgba(31,181,255,.72))}
@@ -129,16 +129,16 @@
     root.dataset.page = window.location.pathname;
     root.dataset.characterState = "loading";
     root.innerHTML = `
-      <div class="xiaoyi-sprite-panel" role="dialog" aria-label="小懿AI随身助手">
+      <div class="xiaoyi-sprite-panel" role="dialog" aria-label="舷鸥 · GullMate随身助手">
         <div class="xiaoyi-sprite-head">
           <div>
-            <div class="xiaoyi-sprite-title">小懿AI · 随身助手</div>
+            <div class="xiaoyi-sprite-title">舷鸥 · GullMate · 随身助手</div>
             <div class="xiaoyi-sprite-sub">可拖动 · 运行证据先于回答</div>
           </div>
-          <button class="xiaoyi-sprite-close" type="button" aria-label="收起小懿AI">×</button>
+          <button class="xiaoyi-sprite-close" type="button" aria-label="收起舷鸥 · GullMate">×</button>
         </div>
         <div class="xiaoyi-sprite-log">${defaultMessage}</div>
-        <div class="xiaoyi-sprite-engine warn">正在校验真实小懿调用链</div>
+        <div class="xiaoyi-sprite-engine warn">正在校验真实舷鸥调用链</div>
         <div class="xiaoyi-sprite-context">正在读取 V3 运行证据与上下文回执…</div>
         <div class="xiaoyi-sprite-missions">
           <button type="button" class="xiaoyi-sprite-mission" data-mission="situation">当前态势</button>
@@ -149,22 +149,22 @@
           <button type="button" class="xiaoyi-sprite-mission" data-mission="dry_run">执行预演</button>
         </div>
         <form class="xiaoyi-sprite-form">
-          <textarea class="xiaoyi-sprite-input" placeholder="例如：小懿，为什么当前策略被漂移门阻断？"></textarea>
+          <textarea class="xiaoyi-sprite-input" placeholder="例如：舷鸥，为什么当前策略被漂移门阻断？"></textarea>
           <div class="xiaoyi-sprite-actions">
             <button class="xiaoyi-sprite-btn" type="submit">执行命令</button>
             <button class="xiaoyi-sprite-btn secondary" type="button" data-open-full>打开完整问答</button>
           </div>
-          <div class="xiaoyi-sprite-hint">小懿只能解释、导航、预演和准备交接；无生产控制权。</div>
+          <div class="xiaoyi-sprite-hint">舷鸥只能解释、导航、预演和准备交接；无生产控制权。</div>
         </form>
       </div>
-      <button class="xiaoyi-sprite-orb" type="button" aria-label="打开小懿海事助手">
+      <button class="xiaoyi-sprite-orb" type="button" aria-label="打开舷鸥海事助手">
         <span class="xiaoyi-sprite-speech" aria-hidden="true">
-          <strong>您好！我是小懿AI</strong>
+          <strong>您好！我是小鸥</strong>
           <small>您的港航智能助手</small>
           <span class="xiaoyi-sprite-wave"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
         </span>
         <span class="xiaoyi-sprite-character-shell">
-          <img class="xiaoyi-sprite-character" src="${CHARACTER_SRC}" alt="小懿Q版海事运营助手" width="96" height="136" loading="eager" decoding="async" fetchpriority="high" draggable="false" />
+          <img class="xiaoyi-sprite-character" src="${CHARACTER_SRC}" alt="舷鸥Q版海事运营助手" width="96" height="136" loading="eager" decoding="async" fetchpriority="high" draggable="false" />
         </span>
       </button>
     `;
@@ -315,14 +315,25 @@
     });
   }
 
-  async function postAction(command){
-    const res = await fetch("/api/assistant/actions/execute", {
-      method: "POST",
-      headers: {"Content-Type": "application/json"},
-      body: JSON.stringify({instruction: command, dry_run: true, source: "xiaoyi_sprite"})
+  let actionRequest = null;
+  let actionRequestKey = "";
+
+  function postAction(command){
+    if(actionRequest && actionRequestKey === command) return actionRequest;
+    actionRequestKey = command;
+    actionRequest = (async()=>{
+      const res = await fetch("/api/assistant/actions/execute", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({instruction: command, dry_run: true, source: "xiaoyi_sprite"})
+      });
+      if(!res.ok) throw new Error(await res.text());
+      return await res.json();
+    })().finally(()=>{
+      actionRequest = null;
+      actionRequestKey = "";
     });
-    if(!res.ok) throw new Error(await res.text());
-    return await res.json();
+    return actionRequest;
   }
 
   function openFullQuestion(command){
@@ -352,8 +363,8 @@
       const ready = !!data.online && !!data.chat_capable;
       badge.classList.toggle("warn", !ready);
       badge.textContent = ready
-        ? `真实小懿可调用 · ${data.base_url || "local"}`
-        : `小懿不可达 · 后端证据兜底`;
+        ? `真实舷鸥可调用 · ${data.base_url || "local"}`
+        : `舷鸥不可达 · 后端证据兜底`;
     }catch(_){
       badge.classList.add("warn");
       badge.textContent = "调用链未校验 · 后端证据兜底";
@@ -413,7 +424,7 @@
     const log = root.querySelector(".xiaoyi-sprite-log");
     const command = (input?.value || "").trim();
     if(!command){
-      log.textContent = "你可以直接点上方六类任务，或说：小懿，为什么当前策略不能进入生产？";
+      log.textContent = "你可以直接点上方六类任务，或说：舷鸥，为什么当前策略不能进入生产？";
       return;
     }
     submit.disabled = true;
@@ -422,15 +433,34 @@
       if(isRlTrainingCommand(command)){
         const data = await postAction(command);
         if((data?.will_execute?.action_id || data?.action?.id) === "start_rl_training"){
-          log.textContent = actionText(data) + "\n我会回到首页，从顶部菜单进入强化学习面板，然后弹出确认框。";
-          window.setTimeout(()=>window.location.assign(guidedHomeUrl(data)), 1200);
+          const nativeGuide = window.portDtDemoGuideIsOpen?.() === true;
+          const destination = nativeGuide ? data?.will_execute?.open_url : guidedHomeUrl(data);
+          const destinationUrl = new URL(destination || guidedHomeUrl(data), window.location.origin);
+          const alreadyInDestination = destinationUrl.pathname === window.location.pathname;
+          log.textContent = actionText(data) + (nativeGuide
+            ? alreadyInDestination
+              ? "\n指令、推荐参数和安全边界已载入当前 RL 面板；仍需人工确认。"
+              : "\n指令、推荐参数和安全边界已生成；正在同一窗口进入 RL 面板，仍需人工确认。"
+            : "\n我会回到首页，从顶部菜单进入强化学习面板，然后弹出确认框。");
+          if(nativeGuide && alreadyInDestination){
+            window.dispatchEvent(new CustomEvent("port-dt:xiaoyi-training-task", {
+              detail:{openUrl:destinationUrl.toString(), command}
+            }));
+          }
+          window.portDtDemoReceipt?.("xiaoyi-command", {
+            message:"舷鸥已识别演示级 RL 目标，生成推荐算法、参数与人工确认边界",
+            target:".xiaoyi-sprite-log"
+          });
+          if(!(nativeGuide && alreadyInDestination)){
+            window.setTimeout(()=>window.location.assign(destinationUrl.toString()), 1200);
+          }
           return;
         }
       }
       const data = await postAction(command);
       const openUrl = data?.will_execute?.open_url;
       if(data?.action?.category === "xiaoyi_mission" && openUrl){
-        log.textContent = `已匹配：${data?.action?.label || "小懿运营任务"}。\n正在打开带孪生上下文和调用证明的任务工作台。`;
+        log.textContent = `已匹配：${data?.action?.label || "舷鸥运营任务"}。\n正在打开带孪生上下文和调用证明的任务工作台。`;
         window.setTimeout(()=>window.location.assign(openUrl), 700);
         return;
       }

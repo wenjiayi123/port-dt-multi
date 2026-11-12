@@ -172,6 +172,16 @@ class CalibratedReplayTelemetry:
             "episode_progress": 0.0,
         }
 
+    def agent_snapshot_context(self) -> Dict[str, Any]:
+        """Capture one replay position for a subsequent reproducible calculation."""
+        position = round(self._position(), 6)
+        return {
+            "replay_anchor_position": position,
+            "state": self._interpolated_row(position),
+            "source": self.source_status(),
+            "production_authority": False,
+        }
+
     def _port_state_series_from_position(
         self,
         horizon_min: int,

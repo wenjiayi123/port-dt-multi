@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>岸电与储能 · TwinLab 原生回放</title>
+<style>
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;background:#f4f6f2;color:#163f41;font:16px/1.5 "Source Sans 3","Microsoft YaHei",sans-serif}
+main{max-width:1020px;margin:auto;padding:24px clamp(14px,4vw,42px) 45px}h1{font-size:clamp(28px,5vw,43px);line-height:1.15;margin:18px 0 8px}h2{font-size:20px;margin:0}p{margin:8px 0}a{color:#126961}
+section{background:white;border:1px solid #cedbd5;padding:16px clamp(12px,3vw,25px);margin:14px 0;border-radius:7px}form,.bar{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:end}
+label{display:grid;gap:3px}input,select,button{font:inherit;color:inherit}select,button,input[type=date]{min-height:39px;border:1px solid #8ea8a2;border-radius:4px;padding:5px 10px;background:white}button{cursor:pointer}button:disabled{cursor:default;opacity:.6}form button{background:#165e59;color:white}
+.chart{width:100%;height:160px;background:#f5f8f6}#hour{width:100%}dl{display:grid;grid-template-columns:repeat(auto-fit,minmax(126px,1fr));gap:12px;margin:12px 0}dt{font-size:14px;color:#4c6363}dd{margin:2px 0;font-size:18px;font-variant-numeric:tabular-nums}
+#stage{width:100%;height:clamp(240px,50vw,420px);position:relative;overflow:hidden;background:#142d37;touch-action:none}#stage canvas,#stage svg{display:block;width:100%;height:100%}output{font-variant-numeric:tabular-nums}table{border-collapse:collapse;width:100%;font-size:15px;font-variant-numeric:tabular-nums}th,td{white-space:nowrap;padding:7px;text-align:right;border-bottom:1px solid #d5dfda}th:first-child,td:first-child{text-align:left}.scroll{overflow-x:auto}.note{color:#506965}#source{overflow-wrap:anywhere}#message{min-height:1.5em}
+</style><main>
+<a href="/#sbess-section">返回 TwinLab 岸电模块</a>
+<h1>岸电与储能逐时回放</h1><p>上海工程仿真 · 三种策略从同一个 UTC 周起点运行。设备几何为示意，功率和荷电状态取自本次孪生重算。</p>
+<section><form id="request"><label>周起点（UTC）<input type="date" id="date" value="2026-01-01" required></label><button id="run" disabled>重算 168 小时</button></form><p class="note">可用区间为 2025 年 5 月至 2026 年 5 月，每周需完整落入一个评测分区。</p><p role="status" id="message">请选择周起点并重算。</p></section>
+<p id="bindStatus" aria-live="polite" role="status"></p>
+<div id="results" hidden>
+<p><button type="button" id="bindScene" hidden disabled></button></p>
+<section><h2>逐时电网输入</h2><div class="bar"><label>策略<select id="method"><option value="selected">受训策略</option><option value="idle">待机对照</option><option value="best_fixed">固定优化</option></select></label></div>
+<p><svg class="chart" id="chart" viewBox="0 0 700 150" role="img" aria-label="所选策略的逐时电网输入功率"><path id="line" fill="none" stroke="#16726a" stroke-width="2"></path><line id="cursor" y1="5" y2="145" stroke="#ad561d" stroke-width="2"></line></svg></p>
+<label>窗口内小时 <input type="range" id="hour" min="0" max="167" value="0"></label><output id="time"></output><dl id="metrics"></dl></section>
+<section><div class="bar"><h2>船岸设备场景</h2><button id="toggle" aria-expanded="false">打开三维场景</button><button id="top" hidden>切换俯视</button></div>
+<p id="mode" class="note">按需加载三维设备。切换小时或策略时，电池舱同步显示模型荷电状态。</p><div id="stage" tabindex="0" aria-label="船岸设备示意场景" hidden></div><output id="picked"></output></section>
+<section><h2>同周方案比较</h2><div class="scroll"><table><thead><tr><th>策略</th><th>账单（元）</th><th>碳排（kg）</th><th>峰值（kW）</th></tr></thead><tbody id="totals"></tbody></table></div><p class="note" id="source"></p></section>
+</div></main><script type="module" src="./shore-policy-scene.js?v=handoff1"></script></html>

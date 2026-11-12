@@ -1,1 +1,1 @@
-"""Local Xiaoyi AI desktop service integration."""
+"""Local GullMate desktop service integration."""

@@ -28,7 +28,9 @@ from .business_api import router as business_rl_router
 
 
 router = APIRouter(prefix="/api/rl", tags=["rl-training-real"])
+from .twin_replay_api import router as shore_week_router
 router.include_router(business_rl_router)
+router.include_router(shore_week_router)
 REPO_ROOT = Path(__file__).resolve().parents[3]
 REGULATORY_EVIDENCE_ROOT = REPO_ROOT / "evidence/v4/regulatory_delay"
 INTEGRATED_EVIDENCE_ROOT = REPO_ROOT / "evidence/v5/integrated_business"

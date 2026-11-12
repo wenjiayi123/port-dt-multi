@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>项目联动中枢</title>
   <link rel="stylesheet" href="/static/standalone_navigation.css?v=20260912-2">
-  <script src="/static/standalone_navigation.js?v=20260912-2"></script>
+  <script src="/static/standalone_navigation.js?v=20261023-6"></script>
   <style>
     :root{
       --bg:#08111f;--panel:#0d1a2c;--panel2:#10213a;--line:#22385d;--text:#edf6ff;--muted:#9bb2d1;
@@ -138,7 +138,7 @@
     <div class="topbar">
       <div>
         <h1>项目联动中枢</h1>
-        <div class="subtitle">小懿AI · RL 训练/策略测试 · Godot 航行模拟器</div>
+        <div class="subtitle">舷鸥 · GullMate · RL 训练/策略测试 · Godot 航行模拟器</div>
       </div>
       <div class="top-actions">
         <button class="secondary" id="btnBackHome">返回主界面</button>
@@ -149,7 +149,7 @@
 
     <section class="status-strip">
       <div class="status-pill ok"><span>port-dt-multi</span><b id="stPlatform">在线</b></div>
-      <div class="status-pill warn" id="pillXiaoyi"><span>小懿AI</span><b id="stXiaoyi">检测中</b></div>
+      <div class="status-pill warn" id="pillXiaoyi"><span>舷鸥 · GullMate</span><b id="stXiaoyi">检测中</b></div>
       <div class="status-pill warn" id="pillRl"><span>RL 接口</span><b id="stRl">检测中</b></div>
       <div class="status-pill warn" id="pillSailing"><span>航行模拟器</span><b id="stSailing">检测中</b></div>
     </section>
@@ -185,13 +185,13 @@
     <section class="hub-grid">
       <div class="panel">
         <div class="panel-head">
-          <h2>小懿问答 / 指令网关</h2>
+          <h2>舷鸥问答 / 指令网关</h2>
           <span class="tag">assistant gateway</span>
         </div>
         <div class="panel-body">
           <div class="field">
             <label for="assistantCommand">自然语言或动作 ID</label>
-            <textarea id="assistantCommand" placeholder="例如：小懿，启动航线演示"></textarea>
+            <textarea id="assistantCommand" placeholder="例如：舷鸥，启动航线演示"></textarea>
           </div>
           <div class="field">
             <label for="assistantAction">动作映射</label>
@@ -200,8 +200,8 @@
             </select>
           </div>
           <div class="button-row">
-            <button class="secondary" id="btnXiaoyiStart">启动小懿AI</button>
-            <button id="btnAskXiaoyi">让小懿判断</button>
+            <button class="secondary" id="btnXiaoyiStart">启动舷鸥 · GullMate</button>
+            <button id="btnAskXiaoyi">让舷鸥判断</button>
             <button class="green" id="btnConfirmAction" disabled>确认执行</button>
             <button class="secondary" id="btnClearAssistant">清空</button>
           </div>
@@ -261,10 +261,10 @@
               <div class="parameter-count"><b id="parameterCount">30+</b><span>可传入字段 / controls</span></div>
             </div>
             <div class="recommend-row">
-              <button type="button" class="xiaoyi-recommend" id="btnXiaoyiRecommend">✦ 小懿一键推荐参数</button>
-              <button type="button" class="green" id="btnRlLowRisk">送入小懿确认</button>
+              <button type="button" class="xiaoyi-recommend" id="btnXiaoyiRecommend">✦ 舷鸥一键推荐参数</button>
+              <button type="button" class="green" id="btnRlLowRisk">送入舷鸥确认</button>
             </div>
-            <div class="recommend-note" id="trainingRecommendation">已加载岸电与 BESS 联动的安全训练基线。点击“小懿一键推荐参数”，将通过动作网关生成可解释的参数建议。</div>
+            <div class="recommend-note" id="trainingRecommendation">已加载岸电与 BESS 联动的安全训练基线。点击“舷鸥一键推荐参数”，将通过动作网关生成可解释的参数建议。</div>
           </div>
           <div class="metric-grid">
             <div class="metric"><span>训练状态</span><b id="rlStatus">—</b></div>
@@ -278,7 +278,7 @@
             <button class="secondary" id="btnRlPanel">进入训练 UI</button>
           </div>
           <div class="flow">
-            <div class="flow-row"><div class="flow-dot">1</div><div><b>小懿识别目标</b><span id="flowIntent">等待训练或测试指令。</span></div></div>
+            <div class="flow-row"><div class="flow-dot">1</div><div><b>舷鸥识别目标</b><span id="flowIntent">等待训练或测试指令。</span></div></div>
             <div class="flow-row"><div class="flow-dot">2</div><div><b>RL 面板执行</b><span id="flowRl">训练启动保留人工确认，策略测试读取最新 artifact。</span></div></div>
             <div class="flow-row"><div class="flow-dot">3</div><div><b>航行模拟器承接</b><span id="flowSailing">航行场景启动、视角动作和 smoke test 进入统一日志。</span></div></div>
           </div>
@@ -460,11 +460,11 @@
   <div class="modal-backdrop" id="xiaoyiConfirmBackdrop" aria-hidden="true">
     <section class="modal-window xiaoyi-gate-window" role="dialog" aria-modal="true" aria-labelledby="xiaoyiConfirmTitle">
       <div class="modal-head">
-        <div><h2 id="xiaoyiConfirmTitle">小懿人工确认</h2><p id="xiaoyiConfirmSubtitle">请核对本次动作、接口和安全边界。</p></div>
-        <button type="button" class="modal-close" id="btnCloseXiaoyiConfirm" aria-label="关闭小懿人工确认">×</button>
+        <div><h2 id="xiaoyiConfirmTitle">舷鸥人工确认</h2><p id="xiaoyiConfirmSubtitle">请核对本次动作、接口和安全边界。</p></div>
+        <button type="button" class="modal-close" id="btnCloseXiaoyiConfirm" aria-label="关闭舷鸥人工确认">×</button>
       </div>
       <div class="modal-scroll">
-        <div class="human-gate-banner"><span class="human-gate-icon">H</span><div><b>人工审批节点 / Human-in-the-loop Gate</b><br>只有点击窗口底部的确认按钮，系统才会继续调用小懿或执行已识别动作。</div></div>
+        <div class="human-gate-banner"><span class="human-gate-icon">H</span><div><b>人工审批节点 / Human-in-the-loop Gate</b><br>只有点击窗口底部的确认按钮，系统才会继续调用舷鸥或执行已识别动作。</div></div>
         <div class="confirm-details" id="xiaoyiConfirmDetails"></div>
         <div class="confirm-boundary" id="xiaoyiConfirmBoundary">当前操作不会绕过生产控制边界。</div>
       </div>
@@ -582,7 +582,7 @@
       };
       const disabledReason = integrationCapabilities.desktopEnabled
         ? "桌面项目或对应后端路由当前不可用"
-        : "默认安全配置未启用桌面进程控制；小懿问答与 V3 RL 证据仍可使用";
+        : "默认安全配置未启用桌面进程控制；舷鸥问答与 V3 RL 证据仍可使用";
       setButtonAvailability("#btnXiaoyiStart", integrationCapabilities.xiaoyiLaunch, disabledReason);
       setButtonAvailability("#btnSailingLaunch", integrationCapabilities.sailingLaunch && integrationCapabilities.sailingLaunchable, disabledReason);
       ["#btnSailingRouteDemo", "#btnSailingSwitchView", "#btnSailingSmoke"].forEach(selector=>
@@ -905,20 +905,20 @@
       if(manualConfirmResolver) manualConfirmResolver(false);
       manualConfirmMeta = spec;
       lastModalFocus = document.activeElement;
-      setText("#xiaoyiConfirmTitle", spec.title || "小懿人工确认");
+      setText("#xiaoyiConfirmTitle", spec.title || "舷鸥人工确认");
       setText("#xiaoyiConfirmSubtitle", spec.subtitle || "请核对本次动作、接口和安全边界。");
       setText("#xiaoyiConfirmBoundary", spec.boundary || "当前操作不会绕过生产控制边界。");
       setText("#btnApproveXiaoyiConfirm", spec.confirmLabel || "人工确认并继续");
       const details = Array.isArray(spec.details) ? spec.details : [];
       $("#xiaoyiConfirmDetails").innerHTML = details.map(item=>`<div class="confirm-line"><span>${escapeHtml(item.label)}</span><b>${escapeHtml(item.value)}</b></div>`).join("");
       setBackdropOpen($("#xiaoyiConfirmBackdrop"), true);
-      addLog("HMI/GATE", `人工确认窗口：${spec.operation || spec.title || "小懿动作"}`, "等待操作员确认");
+      addLog("HMI/GATE", `人工确认窗口：${spec.operation || spec.title || "舷鸥动作"}`, "等待操作员确认");
       window.setTimeout(()=>$("#btnApproveXiaoyiConfirm")?.focus(), 0);
       return new Promise(resolve=>{ manualConfirmResolver = resolve; });
     }
     function resolveXiaoyiConfirmation(approved){
       const resolver = manualConfirmResolver;
-      const operation = manualConfirmMeta?.operation || manualConfirmMeta?.title || "小懿动作";
+      const operation = manualConfirmMeta?.operation || manualConfirmMeta?.title || "舷鸥动作";
       manualConfirmResolver = null;
       manualConfirmMeta = null;
       setBackdropOpen($("#xiaoyiConfirmBackdrop"), false);
@@ -937,30 +937,30 @@
           return false;
         }
         return requestXiaoyiConfirmation({
-          title:"确认发送给小懿判断", operation:"小懿意图识别", confirmLabel:"确认发送并判断",
+          title:"确认发送给舷鸥判断", operation:"舷鸥意图识别", confirmLabel:"确认发送并判断",
           details:[{label:"自然语言指令",value:instruction || "未填写"},{label:"动作映射",value:actionId || "自动识别"},{label:"执行模式",value:"只生成动作包 / dry-run preview"},{label:"接口",value:"POST /api/assistant/actions/execute"}],
           boundary:"本次只做意图识别和动作编排，不会直接启动训练、控制设备或下发生产策略。"
         });
       }
       if(kind === "launch"){
         return requestXiaoyiConfirmation({
-          title:"确认启动小懿 AI", operation:"启动本地小懿服务", confirmLabel:"确认启动小懿",
-          details:[{label:"目标服务",value:"小懿 AI · 127.0.0.1:8010"},{label:"接口",value:"POST /api/xiaoyi/launch"},{label:"影响",value:"启动或复用本地服务进程"},{label:"来源",value:"integration_hub"}],
-          boundary:"仅启动本地小懿服务，不会自动执行 RL 训练、策略下发或现场设备控制。"
+          title:"确认启动舷鸥 · GullMate", operation:"启动本地舷鸥服务", confirmLabel:"确认启动舷鸥",
+          details:[{label:"目标服务",value:"舷鸥 · GullMate · 127.0.0.1:8010"},{label:"接口",value:"POST /api/xiaoyi/launch"},{label:"影响",value:"启动或复用本地服务进程"},{label:"来源",value:"integration_hub"}],
+          boundary:"仅启动本地舷鸥服务，不会自动执行 RL 训练、策略下发或现场设备控制。"
         });
       }
       if(kind === "recommend"){
         return requestXiaoyiConfirmation({
-          title:"确认让小懿推荐参数", operation:"生成 RL 高级参数建议", confirmLabel:"确认生成并应用建议",
+          title:"确认让舷鸥推荐参数", operation:"生成 RL 高级参数建议", confirmLabel:"确认生成并应用建议",
           details:[{label:"训练目标",value:`${target.label} / ${target.en}`},{label:"当前算法",value:cfg.algorithm.toUpperCase()},{label:"当前配置规模",value:`${document.querySelectorAll("#trainingParamBackdrop input,#trainingParamBackdrop select").length} 个可调项`},{label:"接口",value:"POST /api/assistant/actions/execute"}],
-          boundary:"小懿只生成并应用参数建议，不会启动训练。建议应用后仍可打开高级参数窗口复核和修改。"
+          boundary:"舷鸥只生成并应用参数建议，不会启动训练。建议应用后仍可打开高级参数窗口复核和修改。"
         });
       }
       if(kind === "prepare_training"){
         return requestXiaoyiConfirmation({
-          title:"确认提交训练计划给小懿", operation:"训练计划意图识别", confirmLabel:"确认提交给小懿",
+          title:"确认提交训练计划给舷鸥", operation:"训练计划意图识别", confirmLabel:"确认提交给舷鸥",
           details:[{label:"实验配置",value:`${target.label} / ${target.en}`},{label:"算法与网络",value:`${cfg.algorithm.toUpperCase()} · 固定 64 × 64`},{label:"训练规模",value:`${cfg.total_steps.toLocaleString("zh-CN")} steps · batch ${cfg.batch_size}`},{label:"执行边界",value:"离线训练 · 尚未执行"},{label:"接口",value:"POST /api/assistant/actions/execute"}],
-          boundary:"这里只把完整高级配置送入小懿动作网关；真正启动训练还需要下一次人工确认，并在 RL 训练界面再次核对。"
+          boundary:"这里只把完整高级配置送入舷鸥动作网关；真正启动训练还需要下一次人工确认，并在 RL 训练界面再次核对。"
         });
       }
       if(kind === "execute"){
@@ -973,7 +973,7 @@
         if(actionId === "verify_policy_for_online") boundary = "只执行 RLOps 守护栏、策略仿真和 dry-run 记录；绝不进入生产控制。";
         if(actionId === "start_rl_training") boundary = "确认后进入 RL 训练界面进行第二次参数核对，不会在当前页面直接启动训练。";
         return requestXiaoyiConfirmation({
-          title:"确认执行小懿识别动作", operation:`执行 ${actionId}`, confirmLabel:"人工确认执行",
+          title:"确认执行舷鸥识别动作", operation:`执行 ${actionId}`, confirmLabel:"人工确认执行",
           details:[{label:"动作名称",value:action.label || actionId},{label:"动作 ID",value:actionId},{label:"接口或路由",value:endpoint},{label:"执行方式",value:will.execution_type || "registered action"},{label:"当前目标",value:target.label}],
           boundary
         });
@@ -992,8 +992,8 @@
       setText("#impactTargetState", "尚无与所选档案绑定的训练任务证据");
       setImpactStage("#stageArtifact", "blocked");
       setText("#parameterProfile", `${targetId.toUpperCase()} · PORT-SAFE`);
-      setText("#trainingRecommendation", `${target.reason} 当前参数为该模块的安全演示基线，可继续手动调节或交给小懿推荐。`);
-      setText("#flowIntent", `已选择 ${target.label}，等待参数确认或小懿推荐。`);
+      setText("#trainingRecommendation", `${target.reason} 当前参数为该模块的安全演示基线，可继续手动调节或交给舷鸥推荐。`);
+      setText("#flowIntent", `已选择 ${target.label}，等待参数确认或舷鸥推荐。`);
       if(announce) addLog("TARGET", `训练目标切换：${target.label}`, `${targetId} · ${target.en}`);
     }
     function setImpactStage(selector, state){
@@ -1102,13 +1102,13 @@
       const button = $("#btnXiaoyiRecommend");
       const target = currentTrainingTarget();
       button.disabled = true;
-      button.textContent = "小懿正在分析数据与约束...";
+      button.textContent = "舷鸥正在分析数据与约束...";
       setText("#trainingRecommendation", `正在读取 ${target.label} 的目标、作业边界和 reward 权重，生成可解释推荐。`);
-      addLog("XIAOYI", `开始推荐 ${target.label} 训练参数`, target.objective);
+      addLog("GullMate", `开始推荐 ${target.label} 训练参数`, target.objective);
       try{
         const data = await api("/api/assistant/actions/execute", {method:"POST", body:{
           action_id:"start_rl_training",
-          instruction:`小懿，为${target.label}推荐一套安全可解释的训练参数`,
+          instruction:`小鸥，为${target.label}推荐一套安全可解释的训练参数`,
           objective:target.objective,
           dry_run:true,
           source:"integration_hub_parameter_recommendation",
@@ -1121,16 +1121,16 @@
         const recommendation = data.recommendation || {};
         applyTrainingConfig(recommendation.config || {});
         syncConfigSummary();
-        setText("#parameterProfile", `XIAOYI · ${selectedTrainingTarget.toUpperCase()}`);
-        setText("#trainingRecommendation", `${recommendation.title || "小懿参数建议"}：${recommendation.reason || target.reason} ${recommendation.operator_note || "训练仍需人工确认。"}`);
-        setText("#impactTargetState", "小懿推荐档案已保存 · 仅支持字段待训练面板复核");
+        setText("#parameterProfile", `GullMate · ${selectedTrainingTarget.toUpperCase()}`);
+        setText("#trainingRecommendation", `${recommendation.title || "舷鸥参数建议"}：${recommendation.reason || target.reason} ${recommendation.operator_note || "训练仍需人工确认。"}`);
+        setText("#impactTargetState", "舷鸥推荐档案已保存 · 仅支持字段待训练面板复核");
         addLog("XIAOYI/REC", `${recommendation.title || "参数推荐已生成"}`, `${target.label} · ${$("#trainAlgorithm").value.toUpperCase()} · steps=${Number($("#trainSteps").value).toLocaleString("zh-CN")}`);
       }catch(err){
-        setText("#trainingRecommendation", `小懿推荐暂不可用，已保留 ${target.label} 的本地安全基线：${String(err)}`);
-        addLog("ERROR", "小懿参数推荐失败", String(err));
+        setText("#trainingRecommendation", `舷鸥推荐暂不可用，已保留 ${target.label} 的本地安全基线：${String(err)}`);
+        addLog("ERROR", "舷鸥参数推荐失败", String(err));
       }finally{
         button.disabled = false;
-        button.textContent = "✦ 小懿一键推荐参数";
+        button.textContent = "✦ 舷鸥一键推荐参数";
       }
     }
     function selectedActionId(){
@@ -1145,14 +1145,14 @@
       if(fromQuery && actionRegistry.some(a=>a.id === fromQuery)) select.value = fromQuery;
     }
     async function refreshHealth(){
-      const health = await api("/api/rl/integration/health").catch(err=>({systems:{}, summary:{xiaoyi:"小懿待检查", rl:"RL待检查", sailing:"航行待检查"}, error:String(err)}));
+      const health = await api("/api/rl/integration/health").catch(err=>({systems:{}, summary:{xiaoyi:"舷鸥待检查", rl:"RL待检查", sailing:"航行待检查"}, error:String(err)}));
       const systems = health.systems || {};
       const sailingRoutes = systems.sailing_simulator?.routes || {};
       const sailing = sailingRoutes["/api/sailing/status"]
         ? await api("/api/sailing/status").catch(err=>({...systems.sailing_simulator, error:String(err)}))
         : {...(systems.sailing_simulator || {}), boundary:"默认安全配置未挂载桌面航行控制路由"};
       updateIntegrationCapabilities(health, sailing);
-      setText("#stXiaoyi", health.summary?.xiaoyi || "小懿待检查");
+      setText("#stXiaoyi", health.summary?.xiaoyi || "舷鸥待检查");
       setText("#stRl", health.summary?.rl || "RL待检查");
       setText("#stSailing", sailing.label || health.summary?.sailing || "航行待检查");
       statusClass($("#pillXiaoyi"), Boolean(systems.xiaoyi_ai?.online), true);
@@ -1286,14 +1286,14 @@
         await typeAnswer("请输入一句指令，或者选择一个动作。");
         return;
       }
-      setText("#assistantPacket", "小懿正在判断动作...");
+      setText("#assistantPacket", "舷鸥正在判断动作...");
       let data;
       try{
         data = await api("/api/assistant/actions/execute", {method:"POST", body:payload});
       }catch(err){
-        const message = `小懿动作网关暂不可用：${String(err)}。未执行任何联动动作。`;
+        const message = `舷鸥动作网关暂不可用：${String(err)}。未执行任何联动动作。`;
         setText("#assistantPacket", message);
-        addLog("ERROR", "小懿动作判断失败", String(err));
+        addLog("ERROR", "舷鸥动作判断失败", String(err));
         await typeAnswer(message);
         return null;
       }
@@ -1319,7 +1319,7 @@
         needConfirm ? "需要人工确认后执行。" : "该动作可直接执行或打开界面。",
       ].filter(Boolean).join("\n");
       await typeAnswer(answer);
-      addLog("XIAOYI", `动作识别：${action.id || "unknown"}`, action.label || "");
+      addLog("GullMate", `动作识别：${action.id || "unknown"}`, action.label || "");
     }
     async function executeOnlineVerification(payloadOverrides={}){
       hidePolicyRecovery();
@@ -1328,7 +1328,7 @@
       setImpactStage("#stageSimulation", "");
       setImpactStage("#stageGuardrail", "active");
       setImpactStage("#stageDryRun", "");
-      addLog("XIAOYI", "上线验证指令已确认", payloadOverrides.strategy_id || "verify_policy_for_online");
+      addLog("GullMate", "上线验证指令已确认", payloadOverrides.strategy_id || "verify_policy_for_online");
       const payload = {...buildAssistantPayload(false, true), action_id:"verify_policy_for_online", ...payloadOverrides};
       try{
         const data = await api("/api/assistant/actions/execute", {method:"POST", body:payload});
@@ -1405,7 +1405,7 @@
       const actionId = pendingPacket.action?.id || pendingPacket.will_execute?.action_id;
       if(actionId === "start_rl_training"){
         const url = pendingPacket.will_execute?.open_url || "/rl-panel?action=start_rl_training&from=integration_hub&confirm=prompt";
-        addLog("XIAOYI", "进入 RL 面板人工确认", url);
+        addLog("GullMate", "进入 RL 面板人工确认", url);
         window.location.assign(url);
         return;
       }
@@ -1453,7 +1453,7 @@
       target.classList.add("autoclick-target");
       const label = packet.will_execute?.button?.label || packet.action?.button_label || target.textContent.trim() || actionId;
       addLog("XIAOYI/CLICK", `定位按钮：${label}`, selector);
-      await typeAnswer(`小懿已定位到按钮：${label}。\n现在点击执行，执行结果会写入右侧状态和底部动作日志。`);
+      await typeAnswer(`舷鸥已定位到按钮：${label}。\n现在点击执行，执行结果会写入右侧状态和底部动作日志。`);
       await wait(360);
       if(actionId === "start_xiaoyi_ai") await launchXiaoyi();
       else target.click();
@@ -1462,24 +1462,24 @@
     }
     async function launchXiaoyi(){
       if(!integrationCapabilities.xiaoyiLaunch){
-        const message = "小懿桌面启动桥当前未挂载；问答将继续使用后端证据兜底。";
+        const message = "舷鸥桌面启动桥当前未挂载；问答将继续使用后端证据兜底。";
         setText("#assistantPacket", message);
         addLog("BOUNDARY", message, "no desktop process started");
         await typeAnswer(message);
         return null;
       }
-      setText("#assistantPacket", "正在启动小懿AI...");
+      setText("#assistantPacket", "正在启动舷鸥 · GullMate...");
       try{
         const data = await api("/api/xiaoyi/launch", {method:"POST", body:{confirm:true, source:"integration_hub"}});
         setText("#assistantPacket", pretty(data));
-        await typeAnswer(`执行结果：${data.result?.status || "完成"}。\n小懿地址：${data.status?.base_url || "http://127.0.0.1:8010"}`);
-        addLog("XIAOYI", `start_xiaoyi_ai · ${data.result?.status || "done"}`, data.result?.pid ? `pid=${data.result.pid}` : "");
+        await typeAnswer(`执行结果：${data.result?.status || "完成"}。\n舷鸥地址：${data.status?.base_url || "http://127.0.0.1:8010"}`);
+        addLog("GullMate", `start_xiaoyi_ai · ${data.result?.status || "done"}`, data.result?.pid ? `pid=${data.result.pid}` : "");
         await refreshHealth();
         return data;
       }catch(err){
         setText("#assistantPacket", String(err));
-        addLog("ERROR", "小懿桌面启动失败", String(err));
-        await typeAnswer(`启动失败：${String(err)}。小懿问答仍会使用后端证据兜底。`);
+        addLog("ERROR", "舷鸥桌面启动失败", String(err));
+        await typeAnswer(`启动失败：${String(err)}。舷鸥问答仍会使用后端证据兜底。`);
         return null;
       }
     }
@@ -1529,7 +1529,7 @@
       setImpactStage("#stageArtifact", "done");
       setImpactStage("#stageSimulation", "active");
       try{
-        const data = await api("/api/assistant/actions/execute", {method:"POST", body:{action_id:"run_policy_test", instruction:"小懿，训练完成后运行策略测试", dry_run:false, source:"integration_hub", horizon_min:Number($("#trainHorizon").value), step_min:5}});
+        const data = await api("/api/assistant/actions/execute", {method:"POST", body:{action_id:"run_policy_test", instruction:"小鸥，训练完成后运行策略测试", dry_run:false, source:"integration_hub", horizon_min:Number($("#trainHorizon").value), step_min:5}});
         setText("#rlPacket", pretty(compactPolicyTestReceipt(data)));
         const status = data.execution_result?.status || "done";
         updateImpactMetrics(simulationSummaryFrom(data));
@@ -1558,9 +1558,9 @@
     async function startLowRiskTraining(){
       const target = currentTrainingTarget();
       const config = trainingConfigFromUi();
-      $("#assistantCommand").value = `小懿，按当前参数启动${target.label}低风险训练，训练步数 ${config.total_steps}，保留人工确认`;
+      $("#assistantCommand").value = `小鸥，按当前参数启动${target.label}低风险训练，训练步数 ${config.total_steps}，保留人工确认`;
       $("#assistantAction").value = "start_rl_training";
-      setText("#flowIntent", `${target.label}训练目标和参数已送入小懿动作网关。`);
+      setText("#flowIntent", `${target.label}训练目标和参数已送入舷鸥动作网关。`);
       setText("#impactTargetState", "训练计划已生成 · 待人工确认");
       await askXiaoyi();
     }
@@ -1652,8 +1652,8 @@
       if(params.get("auto") === "1" && cmd){
         await askXiaoyi();
       }else if(params.get("action") || cmd){
-        setText("#assistantPacket", "已带入联动指令，等待点击“让小懿判断”。");
-        addLog("XIAOYI", "联动指令已带入，等待人工触发判断", cmd || params.get("action") || "");
+        setText("#assistantPacket", "已带入联动指令，等待点击“让舷鸥判断”。");
+        addLog("GullMate", "联动指令已带入，等待人工触发判断", cmd || params.get("action") || "");
       }
     }
     init().catch(err=>{

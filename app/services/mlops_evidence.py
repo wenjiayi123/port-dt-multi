@@ -71,7 +71,7 @@ class MLOpsEvidenceService:
             loaded_path = path
             if name.endswith(".zip") and expected.get(name):
                 try:
-                    loaded_path = resolve_model_artifact(self.root, str(path.relative_to(self.root)), expected[name])
+                    loaded_path = resolve_model_artifact(self.root, path.relative_to(self.root).as_posix(), expected[name])
                     actual = self._sha(loaded_path)
                     verified = True
                 except (ValueError, OSError):
@@ -82,7 +82,7 @@ class MLOpsEvidenceService:
                 "sha256": actual,
                 "expected_sha256": expected.get(name),
                 "verified": verified,
-                "loaded_path": str(loaded_path.relative_to(self.root)),
+                "loaded_path": loaded_path.relative_to(self.root).as_posix(),
                 "loaded_sha256": actual,
                 "portable": True,
             })

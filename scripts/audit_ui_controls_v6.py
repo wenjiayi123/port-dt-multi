@@ -18,6 +18,10 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 SOURCES = (
     "app/ui/index.html",
+    "app/static/home-dashboard.js",
+    "app/static/module-visuals.js",
+    "app/static/public-port-desk.js",
+    "app/static/strategy-workspace.js",
     "app/ui/integration_hub.html",
     "app/ui/ops_copilot.html",
     "app/ui/v3/index.html",

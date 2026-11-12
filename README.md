@@ -23,8 +23,8 @@
 </p>
 
 <p align="center">
-  <strong>面向港口与航运现场的 Web 指挥中心 + Flutter 稳定契约，将连续孪生回放、预测、RL/MPC 建议、小懿AI协同、人工审批与操作追踪组成同一运营闭环。</strong><br />
-  <em>A Web command center and stable Flutter contract unifying continuous twin replay, forecasting, bounded RL/MPC recommendations, Xiaoyi AI collaboration, human approval, and traceable operations.</em>
+  <strong>面向港口与航运现场的 Web 指挥中心 + Flutter 稳定契约，将连续孪生回放、预测、RL/MPC 建议、舷鸥 · GullMate协同、人工审批与操作追踪组成同一运营闭环。</strong><br />
+  <em>A Web command center and stable Flutter contract unifying continuous twin replay, forecasting, bounded RL/MPC recommendations, GullMate collaboration, human approval, and traceable operations.</em>
 </p>
 
 ## 项目介绍 / Project introduction
@@ -44,7 +44,7 @@ It is an executable engineering platform for coordinated port production, energy
 | 双端协同 / Dual-end workflow | 本仓库提供 Web/FastAPI 主系统与稳定 `/api/mobile/*` 契约；Flutter 一线客户端通过同一任务、模型和审计 ID 接入 |
 | 业务覆盖 / Operations | 13 个业务域全部有运行输出：泊位、岸桥、堆场、水平运输、闸口/铁路/驳船、能源、冷藏箱/岸电、维护、监管、安全、审批、核算、迁移/漂移治理 |
 | AI 决策 / AI decisions | 9 个域由 RL 或独立优化器给出建议；4 个安全/治理/核算域明确不交给 RL；另保留 10 类 RL + MPC + FCFS 对照矩阵 |
-| 小懿AI / Xiaoyi AI | 基于当前孪生、预测、模型、异常和准入状态执行态势、解释、分诊、预演与交接班任务 |
+| 舷鸥 · GullMate / GullMate | 基于当前孪生、预测、模型、异常和准入状态执行态势、解释、分诊、预演与交接班任务 |
 | 落地边界 / Deployment boundary | 当前是可开展只读接港与影子运行的离线工程基线；八类现场适配器、校准、联锁回读和独立验收未完成，`production_authority=false` |
 
 > 一句话闭环：公开数据/现场数据 → 数字孪生 → 预测与 RL/MPC 策略 → 软件安全包络 → 人工审批 → 双端任务执行/回放 → 操作记录。
@@ -145,7 +145,7 @@ flowchart LR
 This is not a monolithic “AI that does everything.” Provenance levels, environment isolation, registry gates, and authority separation keep sensing, experimentation, evaluation, recommendations, and equipment actuation accountable to different boundaries.
 
 <p align="center">
-  <img src="docs/assets/system-overview-provenance-governance.png" alt="Port AI operations hub showing provenance status, system modules, decision state, contract registry, and Xiaoyi Q-style assistant" width="96%" />
+  <img src="docs/assets/system-overview-provenance-governance.png" alt="Port AI operations hub showing provenance status, system modules, decision state, contract registry, and GullMate Q-style assistant" width="96%" />
   <br />
   <sub>图 1 · 系统总览与数据契约登记：训练评测、遥测、孪生校准、南向执行和外部适配器状态同屏可核验。</sub>
 </p>
@@ -163,13 +163,13 @@ This is not a monolithic “AI that does everything.” Provenance levels, envir
 以下画面来自当前仓库在本地启动后的真实页面，保留公开数据、现场待接、无生产控制权等运行边界；不是设计稿，也没有把未接入字段修饰成优秀指标。
 
 <p align="center">
-  <img src="docs/assets/current-v6-operations-overview.jpg" alt="Current V6 operations cockpit with evidence-limited status, provenance verification, decision-first navigation, and Xiaoyi assistant" width="96%" />
+  <img src="docs/assets/current-v6-operations-overview.jpg" alt="Current V6 operations cockpit with evidence-limited status, provenance verification, decision-first navigation, and GullMate assistant" width="96%" />
   <br />
   <sub>图 3 · 运营总览：先给出处置结论，再下钻数据来源、管理驾驶舱、数字孪生、策略编排与审计链。</sub>
 </p>
 
 <p align="center">
-  <img src="docs/assets/current-rl-training-evidence.jpg" alt="Current RL training center showing twelve-controller matrix, public training package, observation and action contract, and Xiaoyi advisor" width="96%" />
+  <img src="docs/assets/current-rl-training-evidence.jpg" alt="Current RL training center showing twelve-controller matrix, public training package, observation and action contract, and GullMate advisor" width="96%" />
   <br />
   <sub>图 4 · 强化学习训练中心：12 类控制器、真实实现、随机种子门禁、53D/7D 合同、观测因素与动作权限同屏展示。</sub>
 </p>
@@ -197,12 +197,12 @@ This is not a monolithic “AI that does everything.” Provenance levels, envir
 
 <details>
   <summary><strong>历史界面证据 / Historical UI evidence</strong></summary>
-  <p>V2 的 7 类控制器、37D/5D 合同与小懿按钮联动截图继续保留在 <a href="docs/assets/training-center-algorithm-matrix-xiaoyi.png">训练中心</a>、<a href="docs/assets/rl-training-console-real-backend.png">训练控制台</a>、<a href="docs/assets/seven-controller-backend-results.png">后端结果</a>和<a href="docs/assets/xiaoyi-system-assistant-button-linkage.png">按钮联动</a>中，仅用于版本追溯，不代表当前 V6 合同。</p>
+  <p>V2 的 7 类控制器、37D/5D 合同与舷鸥按钮联动截图继续保留在 <a href="docs/assets/training-center-algorithm-matrix-xiaoyi.png">训练中心</a>、<a href="docs/assets/rl-training-console-real-backend.png">训练控制台</a>、<a href="docs/assets/seven-controller-backend-results.png">后端结果</a>和<a href="docs/assets/xiaoyi-system-assistant-button-linkage.png">按钮联动</a>中，仅用于版本追溯，不代表当前 V6 合同。</p>
 </details>
 
-项目统一使用同一份透明背景“小懿 Q 版海事官”资产；训练顾问、全系统助手和页面悬浮入口不再混用旧写实 SVG。人物只承担解释、导航和受控命令编排，不绕过训练确认或设备执行门禁。
+项目统一使用同一份透明背景“舷鸥 Q 版海事官”资产；训练顾问、全系统助手和页面悬浮入口不再混用旧写实 SVG。人物只承担解释、导航和受控命令编排，不绕过训练确认或设备执行门禁。
 
-The training advisor, full-system assistant, and floating entry point now share one transparent Xiaoyi Q-style maritime-officer asset. The character explains evidence, navigates, and prepares bounded commands without bypassing training confirmation or actuation gates.
+The training advisor, full-system assistant, and floating entry point now share one transparent GullMate Q-style maritime-officer asset. The character explains evidence, navigates, and prepares bounded commands without bypassing training confirmation or actuation gates.
 
 - <strong>运营总览 / Operations cockpit</strong>：港区态势、数据来源、KPI、ESG/合规、策略链与审计入口。缺少正式证据时显示“未接入/未评定”，不补造优秀指标。<br>
   *Port situation, provenance, KPI, ESG/compliance, policy chain, and audit entry points. Missing formal evidence is shown as “not connected / not assessed,” never replaced with flattering metrics.*
@@ -368,13 +368,13 @@ Start from the homepage: <http://127.0.0.1:8000/#home-hero>. Open the V3 decisio
 | Production authority | Disabled until site mapping, calibration, shadow operation and human approval pass |
 | Historical evidence | Append-only; V1/V2 registry, bundles and run manifests are retained |
 
-### V3.2 · 小懿AI 数字孪生任务副驾
+### V3.2 · 舷鸥 · GullMate 数字孪生任务副驾
 
-小懿现在不再只是页面悬浮问答。它在回答前由后端组装一份带 SHA-256 的运行上下文：公开数据校准回放、数据质量、Ridge P10/P50/P90 预测、选中 SAC 模型/数据哈希、异常、PSI 漂移、准入门和缺失现场因子。前端可一键发起“当前态势、未来风险、策略解释、告警分诊、交接班、执行预演”六类任务。
+舷鸥现在不再只是页面悬浮问答。它在回答前由后端组装一份带 SHA-256 的运行上下文：公开数据校准回放、数据质量、Ridge P10/P50/P90 预测、选中 SAC 模型/数据哈希、异常、PSI 漂移、准入门和缺失现场因子。前端可一键发起“当前态势、未来风险、策略解释、告警分诊、交接班、执行预演”六类任务。
 
-真实调用不由一个“Online”文案代替：服务必须同时通过 `/health` 和 OpenAPI `POST /api/chat` 能力校验，每次任务都显示 `true_xiaoyi_called`、执行 provider/model、耗时与上下文接地校验。如果小懿只复述提示词或没有引用足够的当前运行锚点，前端仍如实标明已调用，但一线答案改由后端证据护栏生成。交接班默认只预览，人工确认后才追加审计留痕；所有路径均保持 `production_authority=false`。
+真实调用不由一个“Online”文案代替：服务必须同时通过 `/health` 和 OpenAPI `POST /api/chat` 能力校验，每次任务都显示 `true_xiaoyi_called`、执行 provider/model、耗时与上下文接地校验。如果舷鸥只复述提示词或没有引用足够的当前运行锚点，前端仍如实标明已调用，但一线答案改由后端证据护栏生成。交接班默认只预览，人工确认后才追加审计留痕；所有路径均保持 `production_authority=false`。
 
-按默认端口启动后打开：<http://127.0.0.1:8000/ops-copilot?mission=situation>。如需调用独立小懿服务，请将 `XIAOYI_AI_BASE_URL` 指向其实际监听端口；默认配置不包含其他项目的本机绝对路径。
+按默认端口启动后打开：<http://127.0.0.1:8000/ops-copilot?mission=situation>。如需调用独立舷鸥服务，请将 `XIAOYI_AI_BASE_URL` 指向其实际监听端口；默认配置不包含其他项目的本机绝对路径。
 
 ### 五个专项 V3.1 评测 / Five asset-specific V3.1 evaluations
 
@@ -599,7 +599,7 @@ The default runtime exposes the trusted core only. Legacy engineering simulators
 |---|---|---|
 | `PORT_DT_ENABLE_ENGINEERING_SIMULATORS` | 旧 Dashlets / OpsX / PortX 等界面联调模拟器<br><sub>Legacy Dashlets/OpsX/PortX UI-integration simulators</sub> | off |
 | `PORT_DT_ENABLE_LEGACY_RL` | 旧 RL 模块只读查看，不计入当前基准<br><sub>Read-only legacy RL view, excluded from current benchmarks</sub> | off |
-| `PORT_DT_ENABLE_DESKTOP_INTEGRATIONS` | 小懿/航行模拟器本机联动<br><sub>Local Xiaoyi/sailing-simulator integration</sub> | off |
+| `PORT_DT_ENABLE_DESKTOP_INTEGRATIONS` | 舷鸥/航行模拟器本机联动<br><sub>Local Xiaoyi/sailing-simulator integration</sub> | off |
 | `PORT_DT_TWIN_GRAPH_PATH` | 现场孪生实体关系图<br><sub>Site twin entity graph</sub> | unset |
 | `PORT_DT_TWIN_CALIBRATION_PATH` | 现场校准记录<br><sub>Site calibration record</sub> | unset |
 | `PORT_DT_SHADOW_ACCEPTANCE_PATH` | 同站点影子运行记录<br><sub>Same-site shadow-run record</sub> | unset |

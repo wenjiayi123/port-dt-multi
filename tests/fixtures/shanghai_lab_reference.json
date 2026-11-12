@@ -1,0 +1,2526 @@
+{
+  "schema": "shanghai-joint-result.v1",
+  "id": "sjt-850bb5e971963a645624c141",
+  "actor_id": "local-admin",
+  "request_sha256": "e3e2908d74aee0381b96d9baa4a5a6a50117afc0cf3cf363e168f5266ded6bbe",
+  "request": {
+    "request_id": "plan-v1-5257fee5da574b57a58f02da8abc5af3",
+    "day": "2025-01-15",
+    "scenario": "normal",
+    "seed": 17
+  },
+  "status": "completed_simulation_pending_mobile",
+  "steps": [
+    {
+      "step": "shared_snapshot",
+      "sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1",
+      "status": "passed"
+    },
+    {
+      "step": "malacca_plan_and_resource_recheck",
+      "status": "passed",
+      "metrics": {
+        "feasible": true,
+        "wait_vessel_hours": 1,
+        "late_vessel_hours": 0,
+        "processed_teu": 1620,
+        "shore_kwh": 14300,
+        "crane_hours": 65
+      }
+    },
+    {
+      "step": "energy_ledger_recheck",
+      "status": "passed",
+      "totals": {
+        "electricity_cny": 79489.71953010526,
+        "wear_cny": 1441.8947368421054,
+        "carbon_kg": 62820.10757578948,
+        "grid_kwh": 114218.37741052631,
+        "battery_charge_kwh": 9473.684210526317,
+        "battery_discharge_kwh": 8550.0,
+        "peak_grid_kw": 7280.461668421052,
+        "delay_cny": 0,
+        "terminal_soc_difference_kwh": 0.0,
+        "total_cny": 80931.61426694736
+      }
+    },
+    {
+      "step": "port_execution_readback_and_restore",
+      "status": "passed",
+      "events": 24
+    }
+  ],
+  "created_at": "2026-10-31T08:18:01.305072+00:00",
+  "production_authority": false,
+  "sailing_simulator": "excluded_by_user",
+  "mobile_ack": null,
+  "snapshot": {
+    "schema": "shanghai-unified-trial.v1",
+    "trial_id": "sha-v1-2025-01-15-normal-17",
+    "port_id": "CNSHA",
+    "site_id": "CNSHA-LAB-YANGSHAN",
+    "dataset_id": "shanghai_public_lab_v1_20261031",
+    "dataset_sha256": "da105ce8b19ae37097d395796aa27e65ab291cbdadd50b64865a3e63005d4cee",
+    "event_time": "2025-01-15T00:00:00+08:00",
+    "revision": 1,
+    "scenario": "normal",
+    "seed": 17,
+    "data_mode": "retrospective_public_calibrated_engineering_trial",
+    "quality": "valid_for_engineering_trial",
+    "public_context": {
+      "provider_day": "2025-01-15",
+      "container_calls": 39,
+      "annual_container_teu": 55063000,
+      "annual_usage": "context only; published in 2026; not input to historical forecasting",
+      "reference_calls_mean_2019_2023": 31.688389923329684
+    },
+    "jobs": [
+      {
+        "id": "SIM-CNSHA-20250115-17-01",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 0,
+        "duration_hours": 3,
+        "deadline_hour": 10,
+        "cranes": 2,
+        "shore_kw": 700,
+        "teu": 180,
+        "priority": 1
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-02",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 1,
+        "duration_hours": 2,
+        "deadline_hour": 10,
+        "cranes": 2,
+        "shore_kw": 600,
+        "teu": 120,
+        "priority": 1
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-03",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 2,
+        "duration_hours": 2,
+        "deadline_hour": 11,
+        "cranes": 3,
+        "shore_kw": 300,
+        "teu": 120,
+        "priority": 1
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-04",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 3,
+        "duration_hours": 3,
+        "deadline_hour": 13,
+        "cranes": 2,
+        "shore_kw": 600,
+        "teu": 180,
+        "priority": 2
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-05",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 4,
+        "duration_hours": 2,
+        "deadline_hour": 13,
+        "cranes": 2,
+        "shore_kw": 400,
+        "teu": 120,
+        "priority": 3
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-06",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 6,
+        "duration_hours": 2,
+        "deadline_hour": 15,
+        "cranes": 3,
+        "shore_kw": 700,
+        "teu": 120,
+        "priority": 1
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-07",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 7,
+        "duration_hours": 4,
+        "deadline_hour": 18,
+        "cranes": 3,
+        "shore_kw": 700,
+        "teu": 240,
+        "priority": 2
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-08",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 8,
+        "duration_hours": 3,
+        "deadline_hour": 18,
+        "cranes": 3,
+        "shore_kw": 300,
+        "teu": 180,
+        "priority": 2
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-09",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 9,
+        "duration_hours": 3,
+        "deadline_hour": 19,
+        "cranes": 2,
+        "shore_kw": 600,
+        "teu": 180,
+        "priority": 2
+      },
+      {
+        "id": "SIM-CNSHA-20250115-17-10",
+        "entity_class": "engineered_vessel_call_not_real_identity",
+        "arrival_hour": 10,
+        "duration_hours": 3,
+        "deadline_hour": 20,
+        "cranes": 2,
+        "shore_kw": 300,
+        "teu": 180,
+        "priority": 1
+      }
+    ],
+    "resources": {
+      "berths": 3,
+      "cranes": 8,
+      "pilots": 2,
+      "tugs": 4,
+      "channel_concurrency": 1,
+      "berth_capacity": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "channel_open": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    "weather": [
+      {
+        "hour": 0,
+        "temperature_c": 8.1,
+        "wind_ms": 11.54,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 1,
+        "temperature_c": 7.8,
+        "wind_ms": 11.77,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 2,
+        "temperature_c": 7.4,
+        "wind_ms": 11.96,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 3,
+        "temperature_c": 7.0,
+        "wind_ms": 12.38,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 4,
+        "temperature_c": 6.5,
+        "wind_ms": 12.4,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 5,
+        "temperature_c": 5.8,
+        "wind_ms": 12.29,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 6,
+        "temperature_c": 5.0,
+        "wind_ms": 11.29,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 7,
+        "temperature_c": 4.5,
+        "wind_ms": 11.18,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 8,
+        "temperature_c": 4.1,
+        "wind_ms": 10.56,
+        "radiation_wm2": 68.0
+      },
+      {
+        "hour": 9,
+        "temperature_c": 3.8,
+        "wind_ms": 10.06,
+        "radiation_wm2": 235.0
+      },
+      {
+        "hour": 10,
+        "temperature_c": 3.7,
+        "wind_ms": 9.81,
+        "radiation_wm2": 411.0
+      },
+      {
+        "hour": 11,
+        "temperature_c": 3.8,
+        "wind_ms": 9.57,
+        "radiation_wm2": 528.0
+      },
+      {
+        "hour": 12,
+        "temperature_c": 3.9,
+        "wind_ms": 9.42,
+        "radiation_wm2": 576.0
+      },
+      {
+        "hour": 13,
+        "temperature_c": 4.0,
+        "wind_ms": 9.36,
+        "radiation_wm2": 578.0
+      },
+      {
+        "hour": 14,
+        "temperature_c": 4.1,
+        "wind_ms": 9.19,
+        "radiation_wm2": 481.0
+      },
+      {
+        "hour": 15,
+        "temperature_c": 4.2,
+        "wind_ms": 9.12,
+        "radiation_wm2": 346.0
+      },
+      {
+        "hour": 16,
+        "temperature_c": 4.2,
+        "wind_ms": 9.05,
+        "radiation_wm2": 194.0
+      },
+      {
+        "hour": 17,
+        "temperature_c": 4.1,
+        "wind_ms": 9.02,
+        "radiation_wm2": 65.0
+      },
+      {
+        "hour": 18,
+        "temperature_c": 3.9,
+        "wind_ms": 8.11,
+        "radiation_wm2": 1.0
+      },
+      {
+        "hour": 19,
+        "temperature_c": 3.7,
+        "wind_ms": 7.76,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 20,
+        "temperature_c": 3.5,
+        "wind_ms": 7.15,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 21,
+        "temperature_c": 3.3,
+        "wind_ms": 6.66,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 22,
+        "temperature_c": 3.2,
+        "wind_ms": 6.11,
+        "radiation_wm2": 0.0
+      },
+      {
+        "hour": 23,
+        "temperature_c": 3.1,
+        "wind_ms": 5.76,
+        "radiation_wm2": 0.0
+      }
+    ],
+    "energy": {
+      "base_kw": [
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143
+      ],
+      "pv_kw": [
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        173.4,
+        599.25,
+        1048.05,
+        1346.4,
+        1468.8,
+        1473.9,
+        1226.55,
+        882.3,
+        494.7,
+        165.75,
+        2.55,
+        0.0,
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "price_cny_kwh": [
+        0.38,
+        0.38,
+        0.38,
+        0.38,
+        0.38,
+        0.38,
+        0.78,
+        0.78,
+        1.22,
+        1.22,
+        1.22,
+        0.78,
+        0.78,
+        0.78,
+        0.78,
+        0.78,
+        0.78,
+        0.78,
+        1.22,
+        1.22,
+        1.22,
+        0.78,
+        0.38,
+        0.38
+      ],
+      "grid_limit_kw": [
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000,
+        12000
+      ],
+      "grid_carbon_kg_kwh": 0.55,
+      "crane_kw": 160
+    },
+    "battery": {
+      "capacity_kwh": 6000,
+      "power_kw": 2000,
+      "efficiency": 0.95,
+      "initial_soc": 0.5,
+      "min_soc": 0.15,
+      "max_soc": 0.9,
+      "wear_cny_kwh": 0.08
+    },
+    "delay_cny_vessel_hour": 2000,
+    "recipe": {
+      "version": "scenario_recipe.v1",
+      "job_count": "clip(round(8*container_calls/2019-2023 mean),6,12); surge adds3",
+      "identity": "all individual jobs and resources are declared engineering supplements",
+      "weather_usage": "realized reanalysis drives exogenous replay; an online controller must not read future weather",
+      "official_annual_usage": "context only; no conversion from annual totals to measured hourly telemetry"
+    },
+    "contract": {
+      "schema": "shanghai-unified-trial.v1",
+      "port_id": "CNSHA",
+      "timezone": "Asia/Shanghai",
+      "horizon_hours": 24,
+      "scenario_ids": [
+        "normal",
+        "arrival_surge",
+        "berth_outage",
+        "grid_derating",
+        "weather_closure",
+        "communications_loss"
+      ],
+      "required_context": [
+        "trial_id",
+        "port_id",
+        "dataset_id",
+        "dataset_sha256",
+        "event_time",
+        "revision",
+        "snapshot_sha256"
+      ],
+      "field_contracts": {
+        "public_context.container_calls": {
+          "unit": "calls/provider_day",
+          "evidence_class": "public_provider_derived",
+          "source_id": "imf_portwatch_shanghai",
+          "live_replacement": "AIS/VTS port-call events; geographic boundary reconciliation",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "public_context.annual_container_teu": {
+          "unit": "TEU/year",
+          "evidence_class": "official_aggregate",
+          "source_id": "shanghai_2025_official",
+          "live_replacement": "official annual statistics; context only",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "weather[].temperature_c": {
+          "unit": "degC",
+          "evidence_class": "public_reanalysis",
+          "source_id": "yangshan_era5_2025",
+          "live_replacement": "approved local weather observation",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid",
+          "grid_not_sensor": true
+        },
+        "weather[].wind_ms": {
+          "unit": "m/s",
+          "evidence_class": "public_reanalysis",
+          "source_id": "yangshan_era5_2025",
+          "live_replacement": "approved local weather observation",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid",
+          "grid_not_sensor": true
+        },
+        "weather[].radiation_wm2": {
+          "unit": "W/m2",
+          "evidence_class": "public_reanalysis",
+          "source_id": "yangshan_era5_2025",
+          "live_replacement": "local irradiance sensor",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid",
+          "grid_not_sensor": true
+        },
+        "jobs[].arrival_hour": {
+          "unit": "h since event_time",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "scenario_recipe.v1",
+          "live_replacement": "TOS planned ETA and revision history",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "jobs[].duration_hours": {
+          "unit": "h",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "scenario_recipe.v1",
+          "live_replacement": "work quantity and calibrated equipment productivity",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "jobs[].deadline_hour": {
+          "unit": "h since event_time",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "scenario_recipe.v1",
+          "live_replacement": "contractual service deadline",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "jobs[].cranes": {
+          "unit": "cranes",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "scenario_recipe.v1",
+          "live_replacement": "TOS job-resource requirements",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "jobs[].shore_kw": {
+          "unit": "kW",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "scenario_recipe.v1",
+          "live_replacement": "vessel shore-power request and metering",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "resources": {
+          "unit": "named capacities; see assumptions",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "assumptions.json",
+          "live_replacement": "operator-approved inventory and availability events",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "energy.base_kw": {
+          "unit": "kW",
+          "evidence_class": "simulation_output",
+          "source_id": "scenario_recipe.v1",
+          "live_replacement": "synchronized revenue and sub-meter observations",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "energy.pv_kw": {
+          "unit": "kW",
+          "evidence_class": "simulation_output",
+          "source_id": "scenario_recipe.v1",
+          "live_replacement": "PV inverter telemetry",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid",
+          "formula": "min(PV peak, irradiance/1000*PV peak*0.85)"
+        },
+        "energy.price_cny_kwh": {
+          "unit": "CNY/kWh",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "assumptions.json",
+          "live_replacement": "site retail/market contract; current prices are not Shanghai tariff quotations",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "energy.grid_carbon_kg_kwh": {
+          "unit": "kgCO2e/kWh",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "assumptions.json",
+          "live_replacement": "applicable approved accounting factors",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        },
+        "battery": {
+          "unit": "kWh,kW,fraction,CNY/kWh",
+          "evidence_class": "declared_engineering_assumption",
+          "source_id": "assumptions.json",
+          "live_replacement": "BMS/EMS parameters with site calibration",
+          "null_policy": "unknown_or_unavailable_is_null; zero_is_valid"
+        }
+      },
+      "live_envelope": {
+        "required": [
+          "source_system",
+          "source_record_id",
+          "asset_id",
+          "event_time",
+          "received_at",
+          "revision",
+          "value",
+          "unit",
+          "quality",
+          "evidence_class"
+        ],
+        "checks": [
+          "port/asset mapping",
+          "units",
+          "timezone",
+          "quality",
+          "freshness",
+          "revisions",
+          "reconciliation",
+          "physical constraints"
+        ],
+        "note": "Same business contract supports new adapters; field calibration, identity and acceptance remain required."
+      },
+      "production_authority": false
+    },
+    "production_authority": false,
+    "snapshot_sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1"
+  },
+  "native_heuristic_plan": {
+    "schema": "shanghai-plan.v1",
+    "source_snapshot_sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1",
+    "trial_id": "sha-v1-2025-01-15-normal-17",
+    "port_id": "CNSHA",
+    "method": "fcfs",
+    "feasible": true,
+    "scheduled": [
+      {
+        "job_id": "SIM-CNSHA-20250115-17-01",
+        "start_hour": 0,
+        "end_hour": 3,
+        "berth": 0
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-02",
+        "start_hour": 1,
+        "end_hour": 3,
+        "berth": 1
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-03",
+        "start_hour": 2,
+        "end_hour": 4,
+        "berth": 2
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-04",
+        "start_hour": 3,
+        "end_hour": 6,
+        "berth": 0
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-05",
+        "start_hour": 4,
+        "end_hour": 6,
+        "berth": 1
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-06",
+        "start_hour": 6,
+        "end_hour": 8,
+        "berth": 0
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-07",
+        "start_hour": 7,
+        "end_hour": 11,
+        "berth": 1
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-08",
+        "start_hour": 8,
+        "end_hour": 11,
+        "berth": 0
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-09",
+        "start_hour": 9,
+        "end_hour": 12,
+        "berth": 2
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-10",
+        "start_hour": 11,
+        "end_hour": 14,
+        "berth": 0
+      }
+    ],
+    "metrics": {
+      "wait_vessel_hours": 1,
+      "late_vessel_hours": 0,
+      "processed_teu": 1620
+    },
+    "candidates": [
+      {
+        "method": "fcfs",
+        "feasible": true,
+        "scheduled": [
+          {
+            "job_id": "SIM-CNSHA-20250115-17-01",
+            "start_hour": 0,
+            "end_hour": 3,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-02",
+            "start_hour": 1,
+            "end_hour": 3,
+            "berth": 1
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-03",
+            "start_hour": 2,
+            "end_hour": 4,
+            "berth": 2
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-04",
+            "start_hour": 3,
+            "end_hour": 6,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-05",
+            "start_hour": 4,
+            "end_hour": 6,
+            "berth": 1
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-06",
+            "start_hour": 6,
+            "end_hour": 8,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-07",
+            "start_hour": 7,
+            "end_hour": 11,
+            "berth": 1
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-08",
+            "start_hour": 8,
+            "end_hour": 11,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-09",
+            "start_hour": 9,
+            "end_hour": 12,
+            "berth": 2
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-10",
+            "start_hour": 11,
+            "end_hour": 14,
+            "berth": 0
+          }
+        ],
+        "metrics": {
+          "wait_vessel_hours": 1,
+          "late_vessel_hours": 0,
+          "processed_teu": 1620
+        }
+      },
+      {
+        "method": "earliest-deadline",
+        "feasible": true,
+        "scheduled": [
+          {
+            "job_id": "SIM-CNSHA-20250115-17-01",
+            "start_hour": 0,
+            "end_hour": 3,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-02",
+            "start_hour": 1,
+            "end_hour": 3,
+            "berth": 1
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-03",
+            "start_hour": 2,
+            "end_hour": 4,
+            "berth": 2
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-04",
+            "start_hour": 3,
+            "end_hour": 6,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-05",
+            "start_hour": 4,
+            "end_hour": 6,
+            "berth": 1
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-06",
+            "start_hour": 6,
+            "end_hour": 8,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-07",
+            "start_hour": 7,
+            "end_hour": 11,
+            "berth": 1
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-08",
+            "start_hour": 8,
+            "end_hour": 11,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-09",
+            "start_hour": 9,
+            "end_hour": 12,
+            "berth": 2
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-10",
+            "start_hour": 11,
+            "end_hour": 14,
+            "berth": 0
+          }
+        ],
+        "metrics": {
+          "wait_vessel_hours": 1,
+          "late_vessel_hours": 0,
+          "processed_teu": 1620
+        }
+      },
+      {
+        "method": "shortest-service",
+        "feasible": true,
+        "scheduled": [
+          {
+            "job_id": "SIM-CNSHA-20250115-17-02",
+            "start_hour": 1,
+            "end_hour": 3,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-03",
+            "start_hour": 2,
+            "end_hour": 4,
+            "berth": 1
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-05",
+            "start_hour": 4,
+            "end_hour": 6,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-06",
+            "start_hour": 6,
+            "end_hour": 8,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-01",
+            "start_hour": 0,
+            "end_hour": 3,
+            "berth": 2
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-04",
+            "start_hour": 3,
+            "end_hour": 6,
+            "berth": 2
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-08",
+            "start_hour": 8,
+            "end_hour": 11,
+            "berth": 0
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-09",
+            "start_hour": 9,
+            "end_hour": 12,
+            "berth": 1
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-10",
+            "start_hour": 10,
+            "end_hour": 13,
+            "berth": 2
+          },
+          {
+            "job_id": "SIM-CNSHA-20250115-17-07",
+            "start_hour": 11,
+            "end_hour": 15,
+            "berth": 0
+          }
+        ],
+        "metrics": {
+          "wait_vessel_hours": 4,
+          "late_vessel_hours": 0,
+          "processed_teu": 1620
+        }
+      }
+    ],
+    "production_authority": false,
+    "evidence_class": "simulation_output",
+    "optimality": "Three bounded heuristics; no global optimum claim"
+  },
+  "plan": {
+    "schema": "shanghai-plan.v1",
+    "source_snapshot_sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1",
+    "trial_id": "sha-v1-2025-01-15-normal-17",
+    "port_id": "CNSHA",
+    "method": "coupled_resource_milp_v1",
+    "scheduled": [
+      {
+        "job_id": "SIM-CNSHA-20250115-17-01",
+        "start_hour": 0,
+        "end_hour": 3,
+        "berth": 2
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-02",
+        "start_hour": 1,
+        "end_hour": 3,
+        "berth": 0
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-03",
+        "start_hour": 2,
+        "end_hour": 4,
+        "berth": 1
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-04",
+        "start_hour": 3,
+        "end_hour": 6,
+        "berth": 0
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-05",
+        "start_hour": 4,
+        "end_hour": 6,
+        "berth": 1
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-06",
+        "start_hour": 6,
+        "end_hour": 8,
+        "berth": 1
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-07",
+        "start_hour": 7,
+        "end_hour": 11,
+        "berth": 0
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-08",
+        "start_hour": 8,
+        "end_hour": 11,
+        "berth": 1
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-09",
+        "start_hour": 9,
+        "end_hour": 12,
+        "berth": 2
+      },
+      {
+        "job_id": "SIM-CNSHA-20250115-17-10",
+        "start_hour": 11,
+        "end_hour": 14,
+        "berth": 1
+      }
+    ],
+    "production_authority": false,
+    "evidence_class": "simulation_output",
+    "solver": {
+      "status": 0,
+      "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+      "gap": 0.0,
+      "dual_bound": 18448.8,
+      "elapsed_seconds": 0.021450704894959927,
+      "variables": 519
+    },
+    "frozen_commitments": {},
+    "service_non_degradation_limits": {
+      "wait_vessel_hours": 1,
+      "late_vessel_hours": 0
+    },
+    "information": "retrospective same-horizon public/engineering inputs; not an online forecast test",
+    "objective_definition": "service power tariff + 50 CNY/vessel-hour * declared priority + declared deadline penalty; waiting weight is an engineering preference",
+    "optimality": "MILP bound applies to hourly resource model and declared proxy objective; storage is dispatched subsequently, not a whole-port global optimum",
+    "metrics": {
+      "wait_vessel_hours": 1,
+      "late_vessel_hours": 0,
+      "processed_teu": 1620,
+      "shore_kwh": 14300
+    },
+    "resource_objective_cny": 18448.8,
+    "comparison": {
+      "native_candidates": [
+        {
+          "method": "fcfs",
+          "resource_objective_cny": 18448.8,
+          "metrics": {
+            "wait_vessel_hours": 1,
+            "late_vessel_hours": 0,
+            "processed_teu": 1620
+          }
+        },
+        {
+          "method": "earliest-deadline",
+          "resource_objective_cny": 18448.8,
+          "metrics": {
+            "wait_vessel_hours": 1,
+            "late_vessel_hours": 0,
+            "processed_teu": 1620
+          }
+        },
+        {
+          "method": "shortest-service",
+          "resource_objective_cny": 17514.0,
+          "metrics": {
+            "wait_vessel_hours": 4,
+            "late_vessel_hours": 0,
+            "processed_teu": 1620
+          }
+        }
+      ],
+      "strong_reference": {
+        "schema": "shanghai-plan.v1",
+        "source_snapshot_sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1",
+        "trial_id": "sha-v1-2025-01-15-normal-17",
+        "port_id": "CNSHA",
+        "method": "coupled_resource_milp_v1",
+        "production_authority": false,
+        "evidence_class": "simulation_output",
+        "solver": {
+          "status": 0,
+          "message": "Optimization terminated successfully. (HiGHS Status 7: Optimal)",
+          "gap": 0.0,
+          "dual_bound": 18448.8,
+          "elapsed_seconds": 0.021450704894959927,
+          "variables": 519
+        },
+        "frozen_commitments": {},
+        "service_non_degradation_limits": {
+          "wait_vessel_hours": 1,
+          "late_vessel_hours": 0
+        },
+        "information": "retrospective same-horizon public/engineering inputs; not an online forecast test",
+        "objective_definition": "service power tariff + 50 CNY/vessel-hour * declared priority + declared deadline penalty; waiting weight is an engineering preference",
+        "optimality": "MILP bound applies to hourly resource model and declared proxy objective; storage is dispatched subsequently, not a whole-port global optimum",
+        "metrics": {
+          "wait_vessel_hours": 1,
+          "late_vessel_hours": 0,
+          "processed_teu": 1620,
+          "shore_kwh": 14300
+        },
+        "resource_objective_cny": 18448.8
+      },
+      "native_selected_objective_cny": 18448.8,
+      "selected_objective_cny": 18448.8,
+      "improvement_cny": 0.0
+    },
+    "legacy_rl_champions": "preserved; no Shanghai retraining or promotion claimed"
+  },
+  "native_selected_plan_review": {
+    "schema": "shanghai-native-plan-review.v1",
+    "system": "malacca-sandbox",
+    "source_snapshot_sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1",
+    "plan_transport_sha256": "8e5f9d6d1e818bfb4bd65836d587785058d7ab1a885762157c4ca9fe2aa82e46",
+    "reviewed": true,
+    "job_count": 10,
+    "production_authority": false
+  },
+  "energy": {
+    "schema": "shanghai-energy-ledger.v1",
+    "source_snapshot_sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1",
+    "plan_sha256": "8e5f9d6d1e818bfb4bd65836d587785058d7ab1a885762157c4ca9fe2aa82e46",
+    "operations": {
+      "feasible": true,
+      "wait_vessel_hours": 1,
+      "late_vessel_hours": 0,
+      "processed_teu": 1620,
+      "shore_kwh": 14300,
+      "crane_hours": 65,
+      "load_kw": [
+        5081.5143,
+        6001.5143,
+        6781.5143,
+        5761.5143,
+        5701.5143,
+        5701.5143,
+        5241.5143,
+        6421.5143,
+        6021.5143,
+        6941.5143,
+        6941.5143,
+        5601.5143,
+        4681.5143,
+        4681.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143,
+        4061.5143
+      ],
+      "shore_kw": [
+        700,
+        1300,
+        1600,
+        900,
+        1000,
+        1000,
+        700,
+        1400,
+        1000,
+        1600,
+        1600,
+        900,
+        300,
+        300,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "cranes": [
+        2,
+        4,
+        7,
+        5,
+        4,
+        4,
+        3,
+        6,
+        6,
+        8,
+        8,
+        4,
+        2,
+        2,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "starts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        1,
+        1,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "berth_occupancy": [
+        [
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          1,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ],
+      "completed_teu": [
+        0,
+        0,
+        300,
+        120,
+        0,
+        300,
+        0,
+        120,
+        0,
+        0,
+        420,
+        180,
+        0,
+        180,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "assumptions": "Hourly slot model; berth/pilot/tug/channel/crane constraints; no vessel dynamics or field clearance"
+    },
+    "hourly": [
+      {
+        "hour": 0,
+        "load_kw": 5081.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 0,
+        "discharge_kw": 0,
+        "grid_kw": 5081.5143,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3000.0,
+        "electricity_cny": 1930.975434,
+        "wear_cny": 0.0,
+        "carbon_kg": 2794.8328650000003
+      },
+      {
+        "hour": 1,
+        "load_kw": 6001.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 315.7894736842105,
+        "discharge_kw": 0,
+        "grid_kw": 6317.303773684211,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3300.0,
+        "electricity_cny": 2400.5754340000003,
+        "wear_cny": 25.263157894736842,
+        "carbon_kg": 3474.517075526316
+      },
+      {
+        "hour": 2,
+        "load_kw": 6781.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 0,
+        "discharge_kw": 0,
+        "grid_kw": 6781.5143,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3300.0,
+        "electricity_cny": 2576.975434,
+        "wear_cny": 0.0,
+        "carbon_kg": 3729.8328650000003
+      },
+      {
+        "hour": 3,
+        "load_kw": 5761.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 315.7894736842105,
+        "discharge_kw": 0,
+        "grid_kw": 6077.303773684211,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3600.0,
+        "electricity_cny": 2309.375434,
+        "wear_cny": 25.263157894736842,
+        "carbon_kg": 3342.517075526316
+      },
+      {
+        "hour": 4,
+        "load_kw": 5701.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 315.7894736842105,
+        "discharge_kw": 0,
+        "grid_kw": 6017.303773684211,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3900.0,
+        "electricity_cny": 2286.575434,
+        "wear_cny": 25.263157894736842,
+        "carbon_kg": 3309.517075526316
+      },
+      {
+        "hour": 5,
+        "load_kw": 5701.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 1578.9473684210527,
+        "discharge_kw": 0,
+        "grid_kw": 7280.461668421052,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 5400.0,
+        "electricity_cny": 2766.575434,
+        "wear_cny": 126.31578947368422,
+        "carbon_kg": 4004.253917631579
+      },
+      {
+        "hour": 6,
+        "load_kw": 5241.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 0,
+        "discharge_kw": 0,
+        "grid_kw": 5241.5143,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 5400.0,
+        "electricity_cny": 4088.381154,
+        "wear_cny": 0.0,
+        "carbon_kg": 2882.8328650000003
+      },
+      {
+        "hour": 7,
+        "load_kw": 6421.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 0,
+        "discharge_kw": 0,
+        "grid_kw": 6421.5143,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 5400.0,
+        "electricity_cny": 5008.781154,
+        "wear_cny": 0.0,
+        "carbon_kg": 3531.8328650000003
+      },
+      {
+        "hour": 8,
+        "load_kw": 6021.5143,
+        "pv_kw": 173.4,
+        "charge_kw": 0,
+        "discharge_kw": 1710.0,
+        "grid_kw": 4138.1143,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3600.0,
+        "electricity_cny": 5048.499446,
+        "wear_cny": 136.8,
+        "carbon_kg": 2275.9628650000004
+      },
+      {
+        "hour": 9,
+        "load_kw": 6941.5143,
+        "pv_kw": 599.25,
+        "charge_kw": 0,
+        "discharge_kw": 1425.0,
+        "grid_kw": 4917.2643,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 2100.0,
+        "electricity_cny": 5999.062446,
+        "wear_cny": 114.0,
+        "carbon_kg": 2704.495365
+      },
+      {
+        "hour": 10,
+        "load_kw": 6941.5143,
+        "pv_kw": 1048.05,
+        "charge_kw": 0,
+        "discharge_kw": 1140.0,
+        "grid_kw": 4753.4643,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 900.0,
+        "electricity_cny": 5799.226446,
+        "wear_cny": 91.2,
+        "carbon_kg": 2614.405365
+      },
+      {
+        "hour": 11,
+        "load_kw": 5601.5143,
+        "pv_kw": 1346.4,
+        "charge_kw": 315.7894736842105,
+        "discharge_kw": 0,
+        "grid_kw": 4570.903773684211,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 1200.0,
+        "electricity_cny": 3565.304943473685,
+        "wear_cny": 25.263157894736842,
+        "carbon_kg": 2513.997075526316
+      },
+      {
+        "hour": 12,
+        "load_kw": 4681.5143,
+        "pv_kw": 1468.8,
+        "charge_kw": 315.7894736842105,
+        "discharge_kw": 0,
+        "grid_kw": 3528.5037736842105,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 1500.0,
+        "electricity_cny": 2752.2329434736844,
+        "wear_cny": 25.263157894736842,
+        "carbon_kg": 1940.677075526316
+      },
+      {
+        "hour": 13,
+        "load_kw": 4681.5143,
+        "pv_kw": 1473.9,
+        "charge_kw": 0,
+        "discharge_kw": 0,
+        "grid_kw": 3207.6142999999997,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 1500.0,
+        "electricity_cny": 2501.9391539999997,
+        "wear_cny": 0.0,
+        "carbon_kg": 1764.187865
+      },
+      {
+        "hour": 14,
+        "load_kw": 4061.5143,
+        "pv_kw": 1226.55,
+        "charge_kw": 0,
+        "discharge_kw": 0,
+        "grid_kw": 2834.9642999999996,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 1500.0,
+        "electricity_cny": 2211.272154,
+        "wear_cny": 0.0,
+        "carbon_kg": 1559.230365
+      },
+      {
+        "hour": 15,
+        "load_kw": 4061.5143,
+        "pv_kw": 882.3,
+        "charge_kw": 631.578947368421,
+        "discharge_kw": 0,
+        "grid_kw": 3810.7932473684205,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 2100.0,
+        "electricity_cny": 2972.418732947368,
+        "wear_cny": 50.526315789473685,
+        "carbon_kg": 2095.936286052631
+      },
+      {
+        "hour": 16,
+        "load_kw": 4061.5143,
+        "pv_kw": 494.7,
+        "charge_kw": 1894.7368421052633,
+        "discharge_kw": 0,
+        "grid_kw": 5461.551142105263,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3900.0,
+        "electricity_cny": 4260.009890842106,
+        "wear_cny": 151.57894736842107,
+        "carbon_kg": 3003.8531281578953
+      },
+      {
+        "hour": 17,
+        "load_kw": 4061.5143,
+        "pv_kw": 165.75,
+        "charge_kw": 1578.9473684210527,
+        "discharge_kw": 0,
+        "grid_kw": 5474.711668421052,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 5400.0,
+        "electricity_cny": 4270.275101368421,
+        "wear_cny": 126.31578947368422,
+        "carbon_kg": 3011.091417631579
+      },
+      {
+        "hour": 18,
+        "load_kw": 4061.5143,
+        "pv_kw": 2.55,
+        "charge_kw": 0,
+        "discharge_kw": 1710.0,
+        "grid_kw": 2348.9642999999996,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3600.0,
+        "electricity_cny": 2865.7364459999994,
+        "wear_cny": 136.8,
+        "carbon_kg": 1291.930365
+      },
+      {
+        "hour": 19,
+        "load_kw": 4061.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 0,
+        "discharge_kw": 1425.0,
+        "grid_kw": 2636.5143,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 2100.0,
+        "electricity_cny": 3216.5474459999996,
+        "wear_cny": 114.0,
+        "carbon_kg": 1450.082865
+      },
+      {
+        "hour": 20,
+        "load_kw": 4061.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 0,
+        "discharge_kw": 1140.0,
+        "grid_kw": 2921.5143,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 900.0,
+        "electricity_cny": 3564.247446,
+        "wear_cny": 91.2,
+        "carbon_kg": 1606.832865
+      },
+      {
+        "hour": 21,
+        "load_kw": 4061.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 0,
+        "discharge_kw": 0,
+        "grid_kw": 4061.5143,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 900.0,
+        "electricity_cny": 3167.981154,
+        "wear_cny": 0.0,
+        "carbon_kg": 2233.832865
+      },
+      {
+        "hour": 22,
+        "load_kw": 4061.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 631.578947368421,
+        "discharge_kw": 0,
+        "grid_kw": 4693.093247368421,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 1500.0,
+        "electricity_cny": 1783.3754339999998,
+        "wear_cny": 50.526315789473685,
+        "carbon_kg": 2581.2012860526315
+      },
+      {
+        "hour": 23,
+        "load_kw": 4061.5143,
+        "pv_kw": 0.0,
+        "charge_kw": 1578.9473684210527,
+        "discharge_kw": 0,
+        "grid_kw": 5640.461668421052,
+        "curtailment_kw": 0.0,
+        "stored_kwh": 3000.0,
+        "electricity_cny": 2143.375434,
+        "wear_cny": 126.31578947368422,
+        "carbon_kg": 3102.253917631579
+      }
+    ],
+    "totals": {
+      "electricity_cny": 79489.71953010526,
+      "wear_cny": 1441.8947368421054,
+      "carbon_kg": 62820.10757578948,
+      "grid_kwh": 114218.37741052631,
+      "battery_charge_kwh": 9473.684210526317,
+      "battery_discharge_kwh": 8550.0,
+      "peak_grid_kw": 7280.461668421052,
+      "delay_cny": 0,
+      "terminal_soc_difference_kwh": 0.0,
+      "total_cny": 80931.61426694736
+    },
+    "production_authority": false,
+    "evidence_class": "simulation_output",
+    "method": "causal_storage_mpc_lattice_v1",
+    "comparison": {
+      "no_storage": {
+        "electricity_cny": 84425.98268799999,
+        "wear_cny": 0.0,
+        "carbon_kg": 62312.08126,
+        "grid_kwh": 113294.6932,
+        "battery_charge_kwh": 0,
+        "battery_discharge_kwh": 0,
+        "peak_grid_kw": 6781.5143,
+        "delay_cny": 0,
+        "terminal_soc_difference_kwh": 0.0,
+        "total_cny": 84425.98268799999
+      },
+      "hindsight_lattice_lower_bound": {
+        "electricity_cny": 79489.71953010526,
+        "wear_cny": 1441.8947368421054,
+        "carbon_kg": 62820.10757578948,
+        "grid_kwh": 114218.37741052631,
+        "battery_charge_kwh": 9473.684210526317,
+        "battery_discharge_kwh": 8550.0,
+        "peak_grid_kw": 7280.461668421052,
+        "delay_cny": 0,
+        "terminal_soc_difference_kwh": 0.0,
+        "total_cny": 80931.61426694736
+      },
+      "deltas": {
+        "cost_saving_cny": 3494.368421052626,
+        "cost_saving_pct": 4.138972754354808,
+        "carbon_change_kg": 508.0263157894806,
+        "grid_energy_change_kwh": 923.6842105263204,
+        "regret_to_hindsight_cny": 0.0
+      }
+    },
+    "controller_trace": [
+      {
+        "hour": 0,
+        "latest_observed_hour": 0,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3000.0,
+        "action_ac_kw": 0.0
+      },
+      {
+        "hour": 1,
+        "latest_observed_hour": 1,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3300.0,
+        "action_ac_kw": 315.7894736842105
+      },
+      {
+        "hour": 2,
+        "latest_observed_hour": 2,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3300.0,
+        "action_ac_kw": 0.0
+      },
+      {
+        "hour": 3,
+        "latest_observed_hour": 3,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3600.0,
+        "action_ac_kw": 315.7894736842105
+      },
+      {
+        "hour": 4,
+        "latest_observed_hour": 4,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3900.0,
+        "action_ac_kw": 315.7894736842105
+      },
+      {
+        "hour": 5,
+        "latest_observed_hour": 5,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 5400.0,
+        "action_ac_kw": 1578.9473684210527
+      },
+      {
+        "hour": 6,
+        "latest_observed_hour": 6,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 5400.0,
+        "action_ac_kw": 0.0
+      },
+      {
+        "hour": 7,
+        "latest_observed_hour": 7,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 5400.0,
+        "action_ac_kw": 0.0
+      },
+      {
+        "hour": 8,
+        "latest_observed_hour": 8,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3600.0,
+        "action_ac_kw": -1710.0
+      },
+      {
+        "hour": 9,
+        "latest_observed_hour": 9,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 2100.0,
+        "action_ac_kw": -1425.0
+      },
+      {
+        "hour": 10,
+        "latest_observed_hour": 10,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 900.0,
+        "action_ac_kw": -1140.0
+      },
+      {
+        "hour": 11,
+        "latest_observed_hour": 11,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 1200.0,
+        "action_ac_kw": 315.7894736842105
+      },
+      {
+        "hour": 12,
+        "latest_observed_hour": 12,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 1500.0,
+        "action_ac_kw": 315.7894736842105
+      },
+      {
+        "hour": 13,
+        "latest_observed_hour": 13,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 1500.0,
+        "action_ac_kw": 0.0
+      },
+      {
+        "hour": 14,
+        "latest_observed_hour": 14,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 1500.0,
+        "action_ac_kw": 0.0
+      },
+      {
+        "hour": 15,
+        "latest_observed_hour": 15,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 2100.0,
+        "action_ac_kw": 631.578947368421
+      },
+      {
+        "hour": 16,
+        "latest_observed_hour": 16,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3900.0,
+        "action_ac_kw": 1894.7368421052633
+      },
+      {
+        "hour": 17,
+        "latest_observed_hour": 17,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 5400.0,
+        "action_ac_kw": 1578.9473684210527
+      },
+      {
+        "hour": 18,
+        "latest_observed_hour": 18,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3600.0,
+        "action_ac_kw": -1710.0
+      },
+      {
+        "hour": 19,
+        "latest_observed_hour": 19,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 2100.0,
+        "action_ac_kw": -1425.0
+      },
+      {
+        "hour": 20,
+        "latest_observed_hour": 20,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 900.0,
+        "action_ac_kw": -1140.0
+      },
+      {
+        "hour": 21,
+        "latest_observed_hour": 21,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 900.0,
+        "action_ac_kw": 0.0
+      },
+      {
+        "hour": 22,
+        "latest_observed_hour": 22,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 1500.0,
+        "action_ac_kw": 631.578947368421
+      },
+      {
+        "hour": 23,
+        "latest_observed_hour": 23,
+        "forecast": "current-load persistence plus declared solar shape; no future reanalysis",
+        "stored_kwh": 3000.0,
+        "action_ac_kw": 1578.9473684210527
+      }
+    ],
+    "lattice_step_kwh": 300,
+    "selection": "Fixed causal controller; not selected after seeing test costs; original V7 champion remains active in its original system",
+    "tradeoff": "Cost arbitrage can increase grid energy and carbon because of round-trip losses; all changes retained",
+    "scope": "Storage subproblem with fixed berth/crane service; not an RL gain or a globally optimal whole-port schedule",
+    "benchmark_information": "Oracle reads future realized inputs only for a labelled lower-bound diagnostic; causal controller does not.",
+    "historical_policy_preserved": true
+  },
+  "execution": {
+    "schema": "shanghai-execution-receipt.v1",
+    "run_id": "sha-de4a8b9b5df88bc674adcde2",
+    "trial_id": "sha-v1-2025-01-15-normal-17",
+    "port_id": "CNSHA",
+    "source_snapshot_sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1",
+    "dataset_sha256": "da105ce8b19ae37097d395796aa27e65ab291cbdadd50b64865a3e63005d4cee",
+    "status": "completed_simulation_restored",
+    "events": [
+      {
+        "seq": 1,
+        "event_time": "2025-01-15T01:00:00+08:00",
+        "state_sha256": "2bd27e7b46960f909825a26b504e49e6746a940a8df60886cdddecdf6c11c106",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "running",
+            "SIM-CNSHA-20250115-17-02": "planned",
+            "SIM-CNSHA-20250115-17-03": "planned",
+            "SIM-CNSHA-20250115-17-04": "planned",
+            "SIM-CNSHA-20250115-17-05": "planned",
+            "SIM-CNSHA-20250115-17-06": "planned",
+            "SIM-CNSHA-20250115-17-07": "planned",
+            "SIM-CNSHA-20250115-17-08": "planned",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 0,
+          "stored_kwh": 3000.0
+        },
+        "previous_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+        "sha256": "96a460f851f280dfcc47d651925412f08a0d6573d6dac5cfbb28f012a448991f"
+      },
+      {
+        "seq": 2,
+        "event_time": "2025-01-15T02:00:00+08:00",
+        "state_sha256": "5a163227e36fa8f72d851673ca80533ab3ca6b2f70782e8a4e712eabf5f40692",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "running",
+            "SIM-CNSHA-20250115-17-02": "running",
+            "SIM-CNSHA-20250115-17-03": "planned",
+            "SIM-CNSHA-20250115-17-04": "planned",
+            "SIM-CNSHA-20250115-17-05": "planned",
+            "SIM-CNSHA-20250115-17-06": "planned",
+            "SIM-CNSHA-20250115-17-07": "planned",
+            "SIM-CNSHA-20250115-17-08": "planned",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 0,
+          "stored_kwh": 3300.0
+        },
+        "previous_sha256": "96a460f851f280dfcc47d651925412f08a0d6573d6dac5cfbb28f012a448991f",
+        "sha256": "8b3ae9345def1b6418e5ff206e9d17d6b6219aa3744034e6aa0552ff4b5c642c"
+      },
+      {
+        "seq": 3,
+        "event_time": "2025-01-15T03:00:00+08:00",
+        "state_sha256": "a05b03a18996aac0cccf3c99081e0fe8b74d6c506322673b429696c54ec4c660",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "running",
+            "SIM-CNSHA-20250115-17-04": "planned",
+            "SIM-CNSHA-20250115-17-05": "planned",
+            "SIM-CNSHA-20250115-17-06": "planned",
+            "SIM-CNSHA-20250115-17-07": "planned",
+            "SIM-CNSHA-20250115-17-08": "planned",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 300,
+          "stored_kwh": 3300.0
+        },
+        "previous_sha256": "8b3ae9345def1b6418e5ff206e9d17d6b6219aa3744034e6aa0552ff4b5c642c",
+        "sha256": "cfd04fb580deb487d3703b4534d16e84fdf2cc611214495ef6fe6e1ef763864e"
+      },
+      {
+        "seq": 4,
+        "event_time": "2025-01-15T04:00:00+08:00",
+        "state_sha256": "f367d47094c42d4d0a298ee9de6fe005defafcbe437f7020766c734ae032cd0a",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "running",
+            "SIM-CNSHA-20250115-17-05": "planned",
+            "SIM-CNSHA-20250115-17-06": "planned",
+            "SIM-CNSHA-20250115-17-07": "planned",
+            "SIM-CNSHA-20250115-17-08": "planned",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 420,
+          "stored_kwh": 3600.0
+        },
+        "previous_sha256": "cfd04fb580deb487d3703b4534d16e84fdf2cc611214495ef6fe6e1ef763864e",
+        "sha256": "38d11180fcbbd6e9afe81ae697da13e8a3b6f17b60932d84b47a629b0b2ef6ce"
+      },
+      {
+        "seq": 5,
+        "event_time": "2025-01-15T05:00:00+08:00",
+        "state_sha256": "c11f1a68542cfe9820add28cbafd3b02786340b239795e20671d0d70cc51142a",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "running",
+            "SIM-CNSHA-20250115-17-05": "running",
+            "SIM-CNSHA-20250115-17-06": "planned",
+            "SIM-CNSHA-20250115-17-07": "planned",
+            "SIM-CNSHA-20250115-17-08": "planned",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 420,
+          "stored_kwh": 3900.0
+        },
+        "previous_sha256": "38d11180fcbbd6e9afe81ae697da13e8a3b6f17b60932d84b47a629b0b2ef6ce",
+        "sha256": "990652865ad6935a564412d08ae09ca6f13b060fe7c97f6d6a7330bd5432be78"
+      },
+      {
+        "seq": 6,
+        "event_time": "2025-01-15T06:00:00+08:00",
+        "state_sha256": "9f0b6def43b7996bf853d659c6bae4455f146193cdf92af0e658edebcdcc8559",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "planned",
+            "SIM-CNSHA-20250115-17-07": "planned",
+            "SIM-CNSHA-20250115-17-08": "planned",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 720,
+          "stored_kwh": 5400.0
+        },
+        "previous_sha256": "990652865ad6935a564412d08ae09ca6f13b060fe7c97f6d6a7330bd5432be78",
+        "sha256": "06f030b97ef76276382ab5b9e8ace93f0a015df1c9a2abad0e4a23b74a6e35a5"
+      },
+      {
+        "seq": 7,
+        "event_time": "2025-01-15T07:00:00+08:00",
+        "state_sha256": "7948fc9bc09a9d3d132b79410ecd72dea16a2cee5f9be4c049385bf60b9583a6",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "running",
+            "SIM-CNSHA-20250115-17-07": "planned",
+            "SIM-CNSHA-20250115-17-08": "planned",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 720,
+          "stored_kwh": 5400.0
+        },
+        "previous_sha256": "06f030b97ef76276382ab5b9e8ace93f0a015df1c9a2abad0e4a23b74a6e35a5",
+        "sha256": "96ab9598a44ae77aba4feac5865b976356b49b26e9cf3ee5b6163ed2fa48ccf9"
+      },
+      {
+        "seq": 8,
+        "event_time": "2025-01-15T08:00:00+08:00",
+        "state_sha256": "b2a2f243a7f1d00e3f84cff544f865f54bf822f3d27910f072216fc637c66462",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "running",
+            "SIM-CNSHA-20250115-17-08": "planned",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 840,
+          "stored_kwh": 5400.0
+        },
+        "previous_sha256": "96ab9598a44ae77aba4feac5865b976356b49b26e9cf3ee5b6163ed2fa48ccf9",
+        "sha256": "a668885a8d3a0e117360f955e25760f2f98091381a49aaf90cae67bd02bc8967"
+      },
+      {
+        "seq": 9,
+        "event_time": "2025-01-15T09:00:00+08:00",
+        "state_sha256": "6ec8d47ab8f6f91ec85f650bb02f268075124be55668e663af805997fd2429bd",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "running",
+            "SIM-CNSHA-20250115-17-08": "running",
+            "SIM-CNSHA-20250115-17-09": "planned",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 840,
+          "stored_kwh": 3600.0
+        },
+        "previous_sha256": "a668885a8d3a0e117360f955e25760f2f98091381a49aaf90cae67bd02bc8967",
+        "sha256": "5bacd10fe092acd3deb4247f51a9df9f5dbe72f6fbbe03801d0d78ac55131897"
+      },
+      {
+        "seq": 10,
+        "event_time": "2025-01-15T10:00:00+08:00",
+        "state_sha256": "c09e788568db00f88030324a5834d0ce0a3a992f411ad2d4aa235161046a33f8",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "running",
+            "SIM-CNSHA-20250115-17-08": "running",
+            "SIM-CNSHA-20250115-17-09": "running",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 840,
+          "stored_kwh": 2100.0
+        },
+        "previous_sha256": "5bacd10fe092acd3deb4247f51a9df9f5dbe72f6fbbe03801d0d78ac55131897",
+        "sha256": "1d5c0595ea42068c21b95873442da87726c94f4bb4bac8b576127ca7c7ecdc44"
+      },
+      {
+        "seq": 11,
+        "event_time": "2025-01-15T11:00:00+08:00",
+        "state_sha256": "bfb629da5ce565750a8ceaebfa16c3ea464aa5e1bd8b31b3129457f5ba928a67",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "running",
+            "SIM-CNSHA-20250115-17-10": "planned"
+          },
+          "completed_teu": 1260,
+          "stored_kwh": 900.0
+        },
+        "previous_sha256": "1d5c0595ea42068c21b95873442da87726c94f4bb4bac8b576127ca7c7ecdc44",
+        "sha256": "dc207e7d250e76b382d0b042b40659eefef9ed2c48478bf7259d8f1630c3fbe1"
+      },
+      {
+        "seq": 12,
+        "event_time": "2025-01-15T12:00:00+08:00",
+        "state_sha256": "8abc6668057292925994019e3a8e1f43c7ecabb711b799c3162eb11abace5919",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "running"
+          },
+          "completed_teu": 1440,
+          "stored_kwh": 1200.0
+        },
+        "previous_sha256": "dc207e7d250e76b382d0b042b40659eefef9ed2c48478bf7259d8f1630c3fbe1",
+        "sha256": "aa7616b5b5a909988395d36864dfdb23f1379684bb04d81f02daa1f80a76d50a"
+      },
+      {
+        "seq": 13,
+        "event_time": "2025-01-15T13:00:00+08:00",
+        "state_sha256": "4a8b9b8334b552976d1febeecb577f572d854025f1eabcb66f0fc9dbd64c529c",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "running"
+          },
+          "completed_teu": 1440,
+          "stored_kwh": 1500.0
+        },
+        "previous_sha256": "aa7616b5b5a909988395d36864dfdb23f1379684bb04d81f02daa1f80a76d50a",
+        "sha256": "ded265f9edb6c66df1d1f2343de4c54914f2a665d36d12a4f9342432effb4183"
+      },
+      {
+        "seq": 14,
+        "event_time": "2025-01-15T14:00:00+08:00",
+        "state_sha256": "d17fefe05cc47e27a1af5e6141913168ba69a202cfc10eebadbced395f6c5c1b",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 1500.0
+        },
+        "previous_sha256": "ded265f9edb6c66df1d1f2343de4c54914f2a665d36d12a4f9342432effb4183",
+        "sha256": "cf2860e7cbe648e012344ede08a7cdf92a46b04d74e7e204ca91d68169f9a539"
+      },
+      {
+        "seq": 15,
+        "event_time": "2025-01-15T15:00:00+08:00",
+        "state_sha256": "d17fefe05cc47e27a1af5e6141913168ba69a202cfc10eebadbced395f6c5c1b",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 1500.0
+        },
+        "previous_sha256": "cf2860e7cbe648e012344ede08a7cdf92a46b04d74e7e204ca91d68169f9a539",
+        "sha256": "fde7cfeed024284fcc7d43455fb6b31e0e866441927d34cc778237530a6f2483"
+      },
+      {
+        "seq": 16,
+        "event_time": "2025-01-15T16:00:00+08:00",
+        "state_sha256": "1aa49f6b1022e94c1ab89a4974bd7060d38d0cf35c6dd220a1add60fa6c99661",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 2100.0
+        },
+        "previous_sha256": "fde7cfeed024284fcc7d43455fb6b31e0e866441927d34cc778237530a6f2483",
+        "sha256": "30e8405515f297fe720162b74c0fb649ec9e9e54bed60ee5f1be22303cf99c4e"
+      },
+      {
+        "seq": 17,
+        "event_time": "2025-01-15T17:00:00+08:00",
+        "state_sha256": "83da3d66aee75142de370a80d63dd06ddd50ead129930878ab6f71ff5295b11e",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 3900.0
+        },
+        "previous_sha256": "30e8405515f297fe720162b74c0fb649ec9e9e54bed60ee5f1be22303cf99c4e",
+        "sha256": "2b956c8b9f6a23ce173f6a9b1721a99dcccb0366c1d16fa4016c2799343a1147"
+      },
+      {
+        "seq": 18,
+        "event_time": "2025-01-15T18:00:00+08:00",
+        "state_sha256": "3973bb28d63a8fb4809aba722999d7e16c307653ca18659f71b9d241e5219e40",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 5400.0
+        },
+        "previous_sha256": "2b956c8b9f6a23ce173f6a9b1721a99dcccb0366c1d16fa4016c2799343a1147",
+        "sha256": "8773ede530d4521fb68326e2285c7f77a3025ba14a2d9a9defaa02773e663f2e"
+      },
+      {
+        "seq": 19,
+        "event_time": "2025-01-15T19:00:00+08:00",
+        "state_sha256": "8cf6fefe97d0e8664f2edeb55a0e96a93de7aed0e52e848ca25078e8e89f729a",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 3600.0
+        },
+        "previous_sha256": "8773ede530d4521fb68326e2285c7f77a3025ba14a2d9a9defaa02773e663f2e",
+        "sha256": "4a595415767b6f6ca1c7ac712daea6f398e994753ab4d203f1930bca17a4b443"
+      },
+      {
+        "seq": 20,
+        "event_time": "2025-01-15T20:00:00+08:00",
+        "state_sha256": "1aa49f6b1022e94c1ab89a4974bd7060d38d0cf35c6dd220a1add60fa6c99661",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 2100.0
+        },
+        "previous_sha256": "4a595415767b6f6ca1c7ac712daea6f398e994753ab4d203f1930bca17a4b443",
+        "sha256": "0ef98ab0e886c6b77741ccbf0d3dbf04c8251ce063ed215d0b8f1afac240bb27"
+      },
+      {
+        "seq": 21,
+        "event_time": "2025-01-15T21:00:00+08:00",
+        "state_sha256": "bf9757b1cf52ed00903f60120697f8a8d0ed5ed405bd33e3efe154cd08efb1b7",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 900.0
+        },
+        "previous_sha256": "0ef98ab0e886c6b77741ccbf0d3dbf04c8251ce063ed215d0b8f1afac240bb27",
+        "sha256": "41570cfd6e3f24de5dafabdc58d7b1e52913a51483730262dff34e597f4f1d01"
+      },
+      {
+        "seq": 22,
+        "event_time": "2025-01-15T22:00:00+08:00",
+        "state_sha256": "bf9757b1cf52ed00903f60120697f8a8d0ed5ed405bd33e3efe154cd08efb1b7",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 900.0
+        },
+        "previous_sha256": "41570cfd6e3f24de5dafabdc58d7b1e52913a51483730262dff34e597f4f1d01",
+        "sha256": "6283fab08c119c340c8aaefa125c90d7efd58502696f1f4766d598c253793ad6"
+      },
+      {
+        "seq": 23,
+        "event_time": "2025-01-15T23:00:00+08:00",
+        "state_sha256": "d17fefe05cc47e27a1af5e6141913168ba69a202cfc10eebadbced395f6c5c1b",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 1500.0
+        },
+        "previous_sha256": "6283fab08c119c340c8aaefa125c90d7efd58502696f1f4766d598c253793ad6",
+        "sha256": "d9b2acb191623e24a2c44584ed1e39cc19da2fb8e170b40257ea3e1dcafd9a0d"
+      },
+      {
+        "seq": 24,
+        "event_time": "2025-01-16T00:00:00+08:00",
+        "state_sha256": "de1064c3ef7b46746da2e5fff6f525a2563f86e9e7545b7caf974f7fdec2afbd",
+        "state": {
+          "job_states": {
+            "SIM-CNSHA-20250115-17-01": "completed",
+            "SIM-CNSHA-20250115-17-02": "completed",
+            "SIM-CNSHA-20250115-17-03": "completed",
+            "SIM-CNSHA-20250115-17-04": "completed",
+            "SIM-CNSHA-20250115-17-05": "completed",
+            "SIM-CNSHA-20250115-17-06": "completed",
+            "SIM-CNSHA-20250115-17-07": "completed",
+            "SIM-CNSHA-20250115-17-08": "completed",
+            "SIM-CNSHA-20250115-17-09": "completed",
+            "SIM-CNSHA-20250115-17-10": "completed"
+          },
+          "completed_teu": 1620,
+          "stored_kwh": 3000.0
+        },
+        "previous_sha256": "d9b2acb191623e24a2c44584ed1e39cc19da2fb8e170b40257ea3e1dcafd9a0d",
+        "sha256": "43e9a047c49c6cd2a31de3eeeadcc030280f65ead3ecd2cbca870b6e711b5dc9"
+      }
+    ],
+    "initial_state_sha256": "0e8afc50dbdc017aa0e286626b7ab316338c0c0ba0a479e003e98441f82d2ab7",
+    "final_state": {
+      "job_states": {
+        "SIM-CNSHA-20250115-17-01": "completed",
+        "SIM-CNSHA-20250115-17-02": "completed",
+        "SIM-CNSHA-20250115-17-03": "completed",
+        "SIM-CNSHA-20250115-17-04": "completed",
+        "SIM-CNSHA-20250115-17-05": "completed",
+        "SIM-CNSHA-20250115-17-06": "completed",
+        "SIM-CNSHA-20250115-17-07": "completed",
+        "SIM-CNSHA-20250115-17-08": "completed",
+        "SIM-CNSHA-20250115-17-09": "completed",
+        "SIM-CNSHA-20250115-17-10": "completed"
+      },
+      "completed_teu": 1620,
+      "stored_kwh": 3000.0
+    },
+    "restored_state_sha256": "0e8afc50dbdc017aa0e286626b7ab316338c0c0ba0a479e003e98441f82d2ab7",
+    "restore_verified": true,
+    "totals": {
+      "electricity_cny": 79489.71953010526,
+      "wear_cny": 1441.8947368421054,
+      "carbon_kg": 62820.10757578948,
+      "grid_kwh": 114218.37741052631,
+      "battery_charge_kwh": 9473.684210526317,
+      "battery_discharge_kwh": 8550.0,
+      "peak_grid_kw": 7280.461668421052,
+      "delay_cny": 0,
+      "terminal_soc_difference_kwh": 0.0,
+      "total_cny": 80931.61426694736
+    },
+    "created_at": "2026-10-31T08:18:01.585400+00:00",
+    "production_authority": false,
+    "existing_demo_state_touched": false,
+    "receipt_sha256": "fd632b4da7972cb527db978041fa11ede9c1e197949121726f0517cc821248d7"
+  },
+  "summary": {
+    "authorship": "verified_artifact_compiler_not_llm",
+    "port": "上海港公开数据校准试验",
+    "trial_id": "sha-v1-2025-01-15-normal-17",
+    "source_snapshot_sha256": "36ef4d5cb3bc79ad19967778978de7fb524c8e93f4c827e58a31ed67e8a343b1",
+    "tasks": 10,
+    "processed_teu": 1620,
+    "late_vessel_hours": 0,
+    "total_cny": 80931.61426694736,
+    "notice": "公开统计、AIS派生指标、再分析气象与工程补足共同驱动的模拟结果；未使用现场工单和计量。"
+  },
+  "elapsed_seconds": 0.305801143986173,
+  "completed_at": "2026-10-31T08:18:01.610900+00:00",
+  "result_sha256": "c8a49c13d198c97c9ace01cbfc628513fbe6d60dd0334865f790f5d436507b3b"
+}

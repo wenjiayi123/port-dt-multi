@@ -244,7 +244,7 @@ def metadata(repo: Path, phase: str) -> dict:
         "repo": str(repo), "phase": phase, "python": sys.version, "python_executable": sys.executable,
         "platform": platform.platform(), "hardware": command(["sysctl", "-n", "machdep.cpu.brand_string"]) if sys.platform == "darwin" else platform.processor(),
         "logical_cpus": os.cpu_count(), "memory_bytes": int(command(["sysctl", "-n", "hw.memsize"])) if sys.platform == "darwin" else None,
-        "packages": packages, "load_average_at_start": os.getloadavg(),
+        "packages": packages, "load_average_at_start": (os.getloadavg() if hasattr(os, "getloadavg") else None),
         "request_protocol": {
             "method": "GET", "accept_encoding": "identity", "timeout_seconds": 180,
             "cold": "Fresh server Python process; OS filesystem cache is not purged",
@@ -303,7 +303,7 @@ def finalize_report(repo: Path, report_path: Path, report: dict, before: dict) -
     after = checkout_state(repo)
     report["checkout_after"] = after
     report["checkout_unchanged"] = before == after
-    report["load_average_at_end"] = os.getloadavg()
+    report["load_average_at_end"] = (os.getloadavg() if hasattr(os, "getloadavg") else None)
     report["font_cache_after_phase"] = font_cache_state(report_path.parent)
     log_path = report_path.with_name(f"{report_path.stem}_server.log")
     report["font_cache_rebuild_logged"] = (

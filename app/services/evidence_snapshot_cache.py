@@ -17,6 +17,17 @@ from pathlib import Path
 from typing import Any, Callable, Iterable
 
 
+def _change_time(path, stat, link=False):
+    if os.name == "nt":
+        if link:
+            return os.readlink(path)
+        # NTFS can coalesce change times when the original write time is restored.
+        # Verify the bytes before reusing a previously admitted artifact.
+        with path.open("rb") as stream:
+            return hashlib.file_digest(stream, "sha256").digest()
+    return stat.st_ctime_ns
+
+
 def _within_repo(path: Path, repo: Path) -> Path:
     if not path.resolve().is_relative_to(repo.resolve()):
         raise RuntimeError(f"Evidence dependency escapes repository: {path}")
@@ -39,7 +50,7 @@ def file_snapshot(paths: Iterable[Path], *, root: Path | None = None) -> tuple:
             if root is not None:
                 _within_repo(path, root)
             records[name + ":symlink"] = (stat.st_dev, stat.st_ino, stat.st_size,
-                                           stat.st_mtime_ns, stat.st_ctime_ns)
+                                           stat.st_mtime_ns, _change_time(path, stat, True))
             try:
                 stat = path.stat()
             except FileNotFoundError:
@@ -58,7 +69,7 @@ def file_snapshot(paths: Iterable[Path], *, root: Path | None = None) -> tuple:
         # ctime catches same-size rewrites even when mtime is restored. Inode
         # and device also distinguish atomic replacement and symlink targets.
         records[name] = (stat.st_dev, stat.st_ino, stat.st_mode, stat.st_size,
-                         stat.st_mtime_ns, stat.st_ctime_ns)
+                         stat.st_mtime_ns, _change_time(path, stat))
 
     for path in paths:
         if root is not None:
@@ -100,7 +111,7 @@ def _path_references(value: Any, repo: Path, reports: list[Path] | None = None) 
                     yield path
                     if reports is not None and (key == "report_path" or key.endswith("_report_path")):
                         reports.append(path)
-            elif "/" in key and (item is None or (isinstance(item, str) and len(item) == 64
+            elif ("/" in key or (os.name == "nt" and "\\" in key)) and (item is None or (isinstance(item, str) and len(item) == 64
                                                     and all(char in "0123456789abcdef" for char in item.lower()))):
                 # V8 manifests use {repository_path: sha256}, including absent
                 # historical pointers. Their keys are dependencies as well.

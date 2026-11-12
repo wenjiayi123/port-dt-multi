@@ -1,4 +1,4 @@
-"""Local Xiaoyi AI service launcher and status endpoints."""
+"""Local GullMate service launcher and status endpoints."""
 
 from __future__ import annotations
 
@@ -61,10 +61,10 @@ def _probe_xiaoyi_service(
     chat_path: str,
     timeout_sec: float = 0.8,
 ) -> Dict[str, Any]:
-    """Verify both liveness and the Xiaoyi chat contract.
+    """Verify both liveness and the GullMate chat contract.
 
     A generic FastAPI service can expose ``/health``.  Treating that alone as
-    Xiaoyi produced false-positive "online" states when port-dt-multi itself
+    GullMate produced false-positive "online" states when port-dt-multi itself
     occupied the configured port, so identity now requires POST /api/chat in
     the service OpenAPI document.
     """
@@ -164,10 +164,10 @@ def xiaoyi_status() -> Dict[str, Any]:
         "ok": online,
         "enabled": enabled,
         "updated_at": _utc_now(),
-        "name": cfg.get("name", "小懿AI"),
+        "name": cfg.get("name", "舷鸥 · GullMate"),
         "online": online,
         "launchable": launchable,
-        "label": "小懿在线" if online else ("小懿可启动" if launchable else "小懿不可启动"),
+        "label": "舷鸥在线" if online else ("舷鸥可启动" if launchable else "舷鸥不可启动"),
         "base_url": base_url,
         "health_url": health_url,
         "chat_url": base_url + chat_path,
@@ -197,14 +197,14 @@ def launch_xiaoyi(payload: Optional[Dict[str, Any]] = None, dry_run: bool = Fals
         "command_configured": bool(command),
         "base_url": status.get("base_url"),
         "health_url": status.get("health_url"),
-        "note": "启动小懿本地 FastAPI 服务；启动后健康检查为 /health，问答接口为 /api/chat。",
+        "note": "启动舷鸥本地 FastAPI 服务；启动后健康检查为 /health，问答接口为 /api/chat。",
     }
     if status["online"]:
         packet.update({"status": "already_online", "health": status})
         _append_log("start_xiaoyi_ai", "already_online", packet)
         return packet
     if not status["launchable"]:
-        packet.update({"status": "failed", "error": "小懿项目、run.sh 或 start_command 不可用", "health": status})
+        packet.update({"status": "failed", "error": "舷鸥项目、run.sh 或 start_command 不可用", "health": status})
         _append_log("start_xiaoyi_ai", "failed", packet)
         return packet
     if dry_run:
@@ -246,16 +246,16 @@ def launch_xiaoyi(payload: Optional[Dict[str, Any]] = None, dry_run: bool = Fals
 
 def execute_xiaoyi_action(action_id: str, payload: Optional[Dict[str, Any]] = None, dry_run: bool = True) -> Dict[str, Any]:
     if action_id != "start_xiaoyi_ai":
-        return {"type": "xiaoyi_action", "status": "failed", "error": f"未知小懿动作：{action_id}"}
+        return {"type": "xiaoyi_action", "status": "failed", "error": f"未知舷鸥动作：{action_id}"}
     return launch_xiaoyi(payload, dry_run=dry_run)
 
 
-@router.get("/status", summary="小懿AI状态")
+@router.get("/status", summary="舷鸥 · GullMate状态")
 async def get_xiaoyi_status() -> JSONResponse:
     return JSONResponse(xiaoyi_status())
 
 
-@router.post("/launch", summary="启动小懿AI")
+@router.post("/launch", summary="启动舷鸥 · GullMate")
 async def post_xiaoyi_launch(payload: Dict[str, Any] = Body(default={})) -> JSONResponse:
     dry_run = bool(payload.get("dry_run", False))
     confirm = bool(payload.get("confirm", False))
@@ -272,7 +272,7 @@ async def post_xiaoyi_launch(payload: Dict[str, Any] = Body(default={})) -> JSON
     return JSONResponse({"ok": result.get("status") not in {"failed"}, "result": result, "status": xiaoyi_status()})
 
 
-@router.get("/logs", summary="小懿AI启动日志")
+@router.get("/logs", summary="舷鸥 · GullMate启动日志")
 async def get_xiaoyi_logs(limit: int = 30) -> JSONResponse:
     limit = max(1, min(int(limit or 30), 80))
     return JSONResponse({"updated_at": _utc_now(), "items": _action_log[:limit]})

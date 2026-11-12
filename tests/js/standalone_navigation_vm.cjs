@@ -21,7 +21,7 @@ function harness({cache='',path='/v3',responses=[200],bodyReady=true}={}){
   nav.querySelector=sel=>sel==='a[href]'?nav.links[0]:sel==='[aria-current="page"]'?nav.links.find(a=>a.attrs['aria-current']==='page'):null;
   nav.querySelectorAll=sel=>sel==='a[href]'?nav.links:[];return nav;
  }
- const document={body:bodyReady?element():null,documentElement:element(),
+ const document={body:bodyReady?element():null,documentElement:element(),head:{appendChild(){}},
   getElementById:id=>id==='standalone-module-navigation'?host:null,
   querySelector:selector=>selector.includes('#panel-nav-primary')?host?.nav:null,
   addEventListener:(name,fn)=>add(docEvents,name,fn),
@@ -33,7 +33,7 @@ function harness({cache='',path='/v3',responses=[200],bodyReady=true}={}){
  if(bodyReady)setBody();
  const window={location,innerWidth:1200,innerHeight:800,addEventListener:(n,f)=>add(windowEvents,n,f),
   setTimeout:(fn,delay)=>{const id=++nextTimer;timers.set(id,{fn,delay});return id},clearTimeout:id=>timers.delete(id)};
- const c=vm.createContext({window,document,AbortController,URL,console:{warn:(...a)=>warnings.push(a)},
+ const c=vm.createContext({window,document,location,AbortController,URL,console:{warn:(...a)=>warnings.push(a)},
   sessionStorage:{getItem:k=>storage.get(k),setItem:(k,v)=>storage.set(k,v)},
   fetch:async url=>{requests.push(url);const response=responses[Math.min(requests.length-1,responses.length-1)];return{ok:response===200,status:response,text:async()=>menu}}});
  vm.runInContext(source,c);

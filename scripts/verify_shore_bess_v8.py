@@ -553,7 +553,7 @@ def verify_reused_training(report: dict, run_dir: Path, root: Path) -> list[dict
         original_ledger, copied_ledger = original.get("training_episode_ledger"), result.get("training_episode_ledger")
         require((original_ledger is None) == (copied_ledger is None), "adoption omitted or invented a training ledger")
         if original_ledger is not None:
-            expected_ledger = {**original_ledger, "path": str((formal_seed / "training_episodes.csv").relative_to(root)),
+            expected_ledger = {**original_ledger, "path": (formal_seed / "training_episodes.csv").relative_to(root).as_posix(),
                                "training_reused": True, "source_path": original_ledger["path"],
                                "source_sha256": original_ledger["sha256"]}
             same(copied_ledger, expected_ledger, "immutable training episode ledger descriptor")
@@ -727,12 +727,12 @@ def verify_report(report_path: Path, *, root: Path = ROOT, replay: bool = False,
         require(config["action_mapping"].get("economic_teacher_used") is False, "continuous mapping contains economic teacher")
     evidence = report.get("evidence_files_sha256")
     require(isinstance(evidence, dict) and bool(evidence), "missing exhaustive evidence_files_sha256 anchors")
-    expected_files = {str(path.relative_to(root)) for path in run_dir.rglob("*")
+    expected_files = {path.relative_to(root).as_posix() for path in run_dir.rglob("*")
                       if path.is_file() and path.suffix in {".json", ".csv", ".zip"}
                       and "source" not in path.relative_to(run_dir).parts and path != report_path}
     # Raw training archives remain local; their original identities are still
     # exhaustive evidence entries when an equivalent public copy is present.
-    prefix = str(run_dir.relative_to(root)) + "/"
+    prefix = run_dir.relative_to(root).as_posix() + "/"
     expected_files.update(name for item in model_exports(root) for name in item["source_paths"]
                           if name.startswith(prefix) and "/source/" not in name)
     require(set(evidence) == expected_files, "evidence inventory is incomplete or contains unregistered artifacts")
@@ -768,7 +768,7 @@ def verify_report(report_path: Path, *, root: Path = ROOT, replay: bool = False,
     anchored_inputs = manifest.get("input_files_sha256")
     expected_inputs = None
     if anchored_inputs is not None:
-        expected_inputs = {str(dataset.path.resolve().relative_to(root.resolve())), str(dataset.path.with_suffix(".meta.json").resolve().relative_to(root.resolve())),
+        expected_inputs = {dataset.path.resolve().relative_to(root.resolve()).as_posix(), dataset.path.with_suffix(".meta.json").resolve().relative_to(root.resolve()).as_posix(),
                            physical_sources[0]}
         require(set(anchored_inputs) == expected_inputs, "historical input inventory differs")
         for name, sha in anchored_inputs.items():
@@ -888,7 +888,7 @@ def verify_report(report_path: Path, *, root: Path = ROOT, replay: bool = False,
                 require(forward_manifest["dataset_id"] == source.dataset_id, "forward input dataset differs")
                 require(forward_manifest["opened_after_selection_sha256"] == digest(run_dir / "selection.json"),
                         "forward input manifest does not anchor the frozen selection")
-                forward_inputs = {str(source.path.resolve().relative_to(root.resolve())), str(source.path.with_suffix(".meta.json").resolve().relative_to(root.resolve()))}
+                forward_inputs = {source.path.resolve().relative_to(root.resolve()).as_posix(), source.path.with_suffix(".meta.json").resolve().relative_to(root.resolve()).as_posix()}
                 require(set(forward_manifest["input_files_sha256"]) == forward_inputs, "forward input inventory differs")
                 expected_inputs.update(forward_inputs)
                 for name, sha in forward_manifest["input_files_sha256"].items():
@@ -956,7 +956,7 @@ def verify_report(report_path: Path, *, root: Path = ROOT, replay: bool = False,
         selected_evaluation = next(row["evaluation"] for row in partition["per_seed"] if row["seed"] == chosen["seed"])
         sensitivity[label] = contained_period_sensitivity(selected_evaluation, partition["reference"])
     return {"schema": "shore-bess-v8-independent-verification.v1", "integrity_status": "PASS",
-            "report_path": str(report_path.relative_to(root)), "report_sha256": digest(report_path),
+            "report_path": report_path.relative_to(root).as_posix(), "report_sha256": digest(report_path),
             "run_id": report["run_id"], "reported_status": report["status"], "admitted_offline": admitted,
             "failed_admission_checks": [key for key, passed in checks.items() if not passed],
             "verified_seed_count": len(seeds), "verified_optimizer_updates": report["total_optimizer_updates"],
@@ -1051,7 +1051,7 @@ def replay_selected(report: dict, root: Path, source_drift: list[str]) -> dict:
         output[label] = {"selected_seed": report["selected_seed"], "windows": len(expected["starts"]),
                          "checkpoint_step": final_checkpoint["step"] if label == "final_validation" else selected["selected"]["step"],
                          "model_path": model_path, "model_sha256": model_sha,
-                         "loaded_model_path": str(resolved_path.relative_to(root)), "loaded_model_sha256": digest(resolved_path),
+                         "loaded_model_path": resolved_path.relative_to(root).as_posix(), "loaded_model_sha256": digest(resolved_path),
                          "zero_baseline_replayed": True, "all_persisted_metrics_reproduced": True}
     return output
 
